@@ -238,12 +238,16 @@ NameCard::~NameCard() {
 int Car::GetGasGauge() {
 	return gasolineGauge;
 }
+Car::Car()
+	:gasolineGauge(-1){}
 Car::Car(int gasGauge)
 	:gasolineGauge(gasGauge)
 {}
 int HybridCar::GetElectGauge() {
 	return electricGauge;
 }
+HybridCar::HybridCar()
+	:electricGauge(-1){}
 HybridCar::HybridCar(int gasGauge, int eleGauge)
 	:Car(gasGauge),electricGauge(eleGauge)
 {}
@@ -252,6 +256,8 @@ void HybridWaterCar::ShowCurrentGauge() {
 	cout << "잔여 전기량: " << GetElectGauge() << endl;
 	cout << "잔여 워터량: " << waterGauge << endl;
 }
+HybridWaterCar::HybridWaterCar()
+	:waterGauge(-1){}
 HybridWaterCar::HybridWaterCar(int gasGauge, int eleGauge, int watGauge)
 	:HybridCar(gasGauge,eleGauge),waterGauge(watGauge)
 {}

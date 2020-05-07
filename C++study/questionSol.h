@@ -82,6 +82,7 @@ private:
 	int gasolineGauge;
 public:
 	Car(int gasGauge);
+	Car();
 	int GetGasGauge();
 };
 class HybridCar :public Car {
@@ -89,12 +90,14 @@ private:
 	int electricGauge;
 public:
 	HybridCar(int gasGauge, int eleGauge);
+	HybridCar();
 	int GetElectGauge();
 };
 class HybridWaterCar :public HybridCar {
 	int waterGauge;
 public:
 	HybridWaterCar(int gasGauge, int eleGauge, int watGauge);
+	HybridWaterCar();
 	void ShowCurrentGauge();
 };
 
