@@ -1,7 +1,7 @@
 #include <iostream>
 #include "questionSol.h"
 #include "important.h"
-#include "projectVer4.h"5
+#include "projectVer4.h"
 
 using namespace std;
 
@@ -11,10 +11,10 @@ int main(void) {
 
 	cout << "Hello World" << endl << endl;
 
-	//Question07_1(); 
+	Question07_1(); 
 	//PtrRefTest();
 	//enumTest();
-	BankProgram();
+	//BankProgram();
 
 	return 0;
 }
