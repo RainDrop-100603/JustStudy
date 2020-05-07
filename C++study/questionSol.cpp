@@ -4,6 +4,16 @@
 
 using namespace std;
 
+//귀찮아서 선언
+char* getString(){
+	//띄어쓰기는 받을 수 없다.
+	char buffer[100];
+	cin>>buffer;
+	char* str = new char[strlen(buffer)+1];
+	strcpy(str,buffer);
+	return str;
+}
+
 //특정 solution에서 필요한 전역함수, 변수 선언부
 namespace Part1 {
 	void swap(int* num1, int* num2) {
@@ -579,10 +589,14 @@ void Question07_1(void) {
 
 	//문제2
 	cout << "문제 2" << endl;
-	char* name = "rain";
+	cout << "이름, 주소, 전화번호를 차례로 입력하시오"<<endl;
+	char* name = getString();
 	int age = 24;
-	char* addr = "Bucheon";
-	char* phone = "010-1234-5678";
+	char* addr = getString();
+	char* phone = getString();
 	MyFriendDetailInfo friend1(name, age, addr, phone);
+	delete[] name;
+	delete[] addr;
+	delete[] phone;
 	friend1.ShowMyFriendDetailInfo();
 }
