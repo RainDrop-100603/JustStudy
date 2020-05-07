@@ -100,6 +100,24 @@ public:
 	HybridWaterCar();
 	void ShowCurrentGauge();
 };
+class MyFriendInfo {
+	char* name;
+	int age;
+public:
+	MyFriendInfo();
+	MyFriendInfo(char* name, int age);
+	void ShowMyFriendInfo();
+	~MyFriendInfo();
+};
+class MyFriendDetailInfo : public MyFriendInfo {
+	char* addr;
+	char* phone;
+public:
+	MyFriendDetailInfo();
+	MyFriendDetailInfo(char* name, int age, char* addr, char* phone);
+	void ShowMyFriendDetailInfo();
+	~MyFriendDetailInfo();
+};
 
 //Part1
 void Question01_1(void);

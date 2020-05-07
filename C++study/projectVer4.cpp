@@ -80,7 +80,7 @@ void BankProgram(void) {
 			Menu3_Withdraw(accountArray, accountNum);
 			continue;
 		case 4: 
-			Menu4_PrintAllAcount(accountArray, accountNum);
+			Menu4_PrintAllAccount(accountArray, accountNum);
 			continue;
 		case 5:
 			goto FINISH;
@@ -158,7 +158,7 @@ void Menu3_Withdraw(BankAccount* accArr[], int accNum) {
 	}
 	accArr[realAccNum]->Withdraw();
 }
-void Menu4_PrintAllAcount(BankAccount* accArr[], int accNum) {
+void Menu4_PrintAllAccount(BankAccount* accArr[], int accNum) {
 	for (int i = 0; i < accNum; i++) {
 		accArr[i]->ShowCustomerInfo();
 		cout << endl;

@@ -31,7 +31,7 @@ int ChkAccount(BankAccount* accountArray[], int accNum);
 int Menu1_OpenAccount(BankAccount* AccArr[], int accNum);
 void Menu2_Deposit(BankAccount* accArr[], int accNum);
 void Menu3_Withdraw(BankAccount* accArr[], int accNum);
-void Menu4_PrintAllAcount(BankAccount* accArr[], int accNum);
+void Menu4_PrintAllAccount(BankAccount* accArr[], int accNum);
 void Menu5_Finish(BankAccount* accArr[], int accNum);
 
 

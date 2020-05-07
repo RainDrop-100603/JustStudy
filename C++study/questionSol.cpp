@@ -261,7 +261,40 @@ HybridWaterCar::HybridWaterCar()
 HybridWaterCar::HybridWaterCar(int gasGauge, int eleGauge, int watGauge)
 	:HybridCar(gasGauge,eleGauge),waterGauge(watGauge)
 {}
-
+MyFriendInfo::MyFriendInfo()
+	:name(NULL), age(-1){}
+MyFriendInfo::MyFriendInfo(char* name, int age)
+	:age(age)
+	{
+		this->name = new char[strlen(name)+1];
+		strcpy(this->name, name);
+	}
+void MyFriendInfo::ShowMyFriendInfo(){
+	cout<<"이름: "<<name<<endl;
+	cout<<"나이: "<<age<<endl;
+}
+MyFriendInfo::~MyFriendInfo(){
+	delete[] name;
+}
+MyFriendDetailInfo::MyFriendDetailInfo()
+	:addr(NULL), phone(NULL){}
+MyFriendDetailInfo::MyFriendDetailInfo(char* name, int age, char* addr, char* phone)
+	:MyFriendInfo(name, age)
+	{
+		this->addr = new char[strlen(addr)+1];
+		strcpy(this->addr, addr);
+		this->phone = new char[strlen(phone)+1];
+		strcpy(this->phone, phone);
+	}
+void MyFriendDetailInfo::ShowMyFriendDetailInfo(){
+	ShowMyFriendInfo();
+	cout<<"주소: "<<addr<<endl;
+	cout<<"전화: "<<phone<<endl<<endl;
+}
+MyFriendDetailInfo::~MyFriendDetailInfo(){
+	delete[] addr;
+	delete[] phone;
+}
 
 //Part1
 void Question01_1(void) {
@@ -545,4 +578,11 @@ void Question07_1(void) {
 	cout << endl << endl;
 
 	//문제2
+	cout << "문제 2" << endl;
+	char* name = "rain";
+	int age = 24;
+	char* addr = "Bucheon";
+	char* phone = "010-1234-5678";
+	MyFriendDetailInfo friend1(name, age, addr, phone);
+	friend1.ShowMyFriendDetailInfo();
 }
