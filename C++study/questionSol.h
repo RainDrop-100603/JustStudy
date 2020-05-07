@@ -118,6 +118,17 @@ public:
 	void ShowMyFriendDetailInfo();
 	~MyFriendDetailInfo();
 };
+class Rectangle{
+	int xlength;
+	int ylength;
+public:
+	Rectangle(int xlength, int ylength);
+	void ShowAreaInfo();
+};
+class Square : public Rectangle{
+public:
+	Square(int xlength);
+};
 
 //Part1
 void Question01_1(void);
@@ -126,7 +137,7 @@ void Question01_3(void);
 void Question01_4(void);
 void Question02_1(void);
 void Question02_2(void);
-void Question02_3(void);	// 어려웠으니 주석을 잘 읽어보도록 하자. 다만 참조자를 이용해 함수 내부에서 동적할당하는 것은 바람직하지 않다.(delete가 헷갈린다)
+void Question02_3(void);	// 어려웠으니 주석을 잘 읽어보도록 하자. 다만 참조자를 이용해 함수 내부에서 동적할당하는 것은 바람직하지 않다.(delete가 헷갈린다) -> 이제 잘 모르겠다 
 void Question02_4(void);
 
 //Part2
@@ -139,6 +150,7 @@ void Question05_1(void);
 
 //Part3
 void Question07_1(void);
+void Question07_2(void);
 
 #endif // !__QUESTIONSOL_H__
 

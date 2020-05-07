@@ -305,6 +305,14 @@ MyFriendDetailInfo::~MyFriendDetailInfo(){
 	delete[] addr;
 	delete[] phone;
 }
+Rectangle::Rectangle(int xlength, int ylength)
+	:xlength(xlength), ylength(ylength){}
+void Rectangle::ShowAreaInfo(){
+	cout<<"면적: "<<xlength * ylength <<endl;
+}
+Square::Square(int xlength)
+	:Rectangle(xlength,xlength){}
+
 
 //Part1
 void Question01_1(void) {
@@ -599,4 +607,17 @@ void Question07_1(void) {
 	delete[] addr;
 	delete[] phone;
 	friend1.ShowMyFriendDetailInfo();
+}
+void Question07_2(void) {
+	//문제1
+	cout<<"문제 1"<<endl<<endl;
+	Rectangle rec(4,3);
+	rec.ShowAreaInfo();
+
+	Square sqr(7);
+	sqr.ShowAreaInfo();
+	
+	cout<<endl<<endl;
+	//문제2
+	cout<<"문제 2"<<endl<<endl;
 }
