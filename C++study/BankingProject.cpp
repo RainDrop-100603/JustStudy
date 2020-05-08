@@ -1,8 +1,12 @@
 //#define _CRT_SECURE_NO_WARNINGS
 
-#include "projectVer4.h"
+/*
+ * Banking System Ver 0.5
+ * 작성자: rain
+ * 내 용: 열혈 cpp OOP 단계별 프로젝트 5단계
+ */
 
-using namespace std;
+#include "BankingProject.h"
 
 enum Constant {
 	MAXACCOUNT = 10,

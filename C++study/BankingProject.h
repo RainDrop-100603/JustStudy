@@ -1,12 +1,14 @@
 #ifndef __PROJECTVER4_H__
 #define __PROJECTVER4_H__
-
+/*
+ * Banking System Ver 0.5
+ * 작성자: rain
+ * 내 용: 열혈 cpp OOP 단계별 프로젝트 5단계
+ */
 #include <iostream>
 #include <cstring>
 
-//OOP 단계별 프로젝트
-
-//2단계
+using namespace std;
 
 class BankAccount {
 private:
@@ -23,6 +25,10 @@ public:
 	void Withdraw();
 	void ShowCustomerInfo() const;
 	~BankAccount();
+};
+
+class AccountHandler{
+
 };
 
 void BankProgram(void);
