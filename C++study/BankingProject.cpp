@@ -132,28 +132,40 @@ void AccountHandler::Deposit(){
 	accountArr[accessNum]->BalanceChange(money);
 	cout<<money<<"원 입금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance<<"입니다"<<endl;
 }	
-void Menu2_Deposit(BankAccount* accArr[], int accNum) {
-	int realAccNum;
-	
-	realAccNum = ChkAccount(accArr, accNum);
-	if (realAccNum == -1) {
+void AccountHandler::Withdraw(){
+	cout << "[ 출 금 ]" << endl;
+	int bankID,accessNum,money;
+	cout <<"계좌 ID: ";
+	cin>>bankID;
+	accessNum=ChkAccount(bankID);
+	if (accessNum ==-1){
+		cout<<"존재하지 않는 계좌입니다"<<endl;
 		return;
 	}
-	accArr[realAccNum]->Deposit();
-
+	cout << "잔 액: " << accountArr[accessNum]->GetBalance << endl;
+	cout << "금액을 입력하십시오: ";
+	cin>>money;
+	if (money>accountArr[accessNum]->GetBalance){
+		cout<<"잔액이 부족합니다."<<endl;
+		return;
+	}
+	accountArr[accessNum]->BalanceChange(-money);
+	cout<<money<<"원 출금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance<<"입니다"<<endl;
 }
-	void Deposit();
-	void Withdraw();
-	void PrintAllAccount();
-
+void AccountHandler::PrintAllAccount() const{
+	for(int i=0;i<accountNum;i++){
+		accountArr[i]->ShowCustomerInfo();
+		cout<<endl;
+	}
+}
 
 //함수 정의
 void BankProgram(void) {
-	BankAccount* accountArray[MAXACCOUNT];
-	int accountNum = 0;
+	AccountHandler handler;
+	int work;
 	while (1) {
 		//---------------------continue가 오는 위치  
-		int work = AccountMenu();
+		work = handler.BankingMenu();
 		switch (work) {
 		case 1:
 			accountNum = Menu1_OpenAccount(accountArray, accountNum);
