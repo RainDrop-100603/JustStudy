@@ -12,7 +12,6 @@
 BankAccount::BankAccount(int bankID=-1, char* name=NULL, int balance = 0)
 	 :bankID(bankID), balance(balance) {
 	this->name = new char[strlen(name)+1];
-//	strcpy_s(this->name, len, name);
 	strcpy(this->name, name); 
 }
 
@@ -89,7 +88,7 @@ int AccountHandler::BankingMenu() const{
 int AccountHandler::ChkAccount(int accountID) const{
 	for (int i = 0; i < accountNum; i++) {
 		if (accountID == accountArr[i]->GetBankID()) {
-			return accountID;
+			return i;
 		}
 	}
 	return -1;
