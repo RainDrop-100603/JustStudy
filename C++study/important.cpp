@@ -2,9 +2,51 @@
 #include "important.h"
 
 using namespace std;
+/*	목차
+	기본적인 약속, 규칙
+	enum-enum class
+	bool 자료형 
+	cin - cout 
+	const 키워드
+	메모리공간 - data - stack - hip	
+	Pointer
+	Reference
+	Call by Reference & Call by Value
+	동적 할당 - new
+	Class
+	
 
-//enum
-/* enum
+*/
+
+
+//기본적인 약속, 규칙
+/*기본적인 약속, 규칙
+	이름짓기
+		공통: '_'사용가능, 첫문자는 영문자
+		변수: 첫글자는 소문자, 새로운 뜻마다 대문자
+			myClassMate
+		상수: 모두 대문자
+			COLOR_RED	   						
+		함수: 변수와 같으나 첫글자가 대문자
+			GetColor() 
+	문자열 표현 방법
+		""과 '': ""은 문자열 표현에, ''은 문자(1Byte)표현에 사용한다. 한글과 같이 1Byte로 표현 불가능한 문자도 ""사용 
+	헤더 중복선언 방지
+		#ifndef NAME_: NAME_가 정의되어 있지 않을경우 #endif 까지 실행
+			#ifdef NAME_: 반대로 정의되어 있을경우 실행
+			#endif: if문을 끝내는 라인
+		일반적인 사용:
+			#ifndef NAME_DEFINED__
+			#define NAME_DEFINED__
+			....
+			#endif
+
+*/
+//임시변수는 const 취급?
+//매개변수 및 전달인자
+
+//enum - enum class
+/*enum - enum class
 	열거형 자료형
 ??	enum class에 대한 공부 필요 
 		enum은
@@ -22,21 +64,29 @@ void enumTest(void) {
 	MyEnum Color(RED);		//??
 	cout << Color << endl;
 }
-//cin 사용시의 버퍼문제
-/*cin 사용시의 버퍼문제
-	cin>>string; 과 같이 문자를 입력받을 경우, 문자가 입력 버퍼에 저장된 후 변수에 저장되게 된다.(숫자는 바로 변수에 저장된다)
-	이때 입력 버퍼에는 엔터(\n)까지 입력되지만 num에는 \n이 제외되서 들어가게 된다.
-**	즉 입력 버퍼에는 \n이 남아있게 되는 것이다.
-	이때 cin.getline(string.20)과 같이 \n을 만나기까지 입력을 받는 함수를 사용하면, 해당 함수에 \n이 입력되고 함수가 종료된다.
-
-**	cin.ignore(20,\n) : 20개의 문자 입력 혹은 \n 까지만 입력받고 나머지는 버리는 함수 
-??						cin에서 배열길이 이상으로 입력받으면 문제가 생긴다. 해결방법은?
-						근데 vector인가 쓰면 안되나?
+//cin - cout
+/*cin - cout
+	cin 
+		사용시의 버퍼문제
+			cin>>string; 과 같이 문자를 입력받을 경우, 문자가 입력 버퍼에 저장된 후 변수에 저장되게 된다.(숫자는 바로 변수에 저장된다)
+			이때 입력 버퍼에는 엔터(\n)까지 입력되지만 num에는 \n이 제외되서 들어가게 된다.
+**			즉 입력 버퍼에는 \n이 남아있게 되는 것이다.
+			이때 cin.getline(string.20)과 같이 \n을 만나기까지 입력을 받는 함수를 사용하면, 해당 함수에 \n이 입력되고 함수가 종료된다.
+**		cin.ignore(20,\n) : 20개의 문자 입력 혹은 \n 까지만 입력받고 나머지는 버리는 함수 
+??			cin에서 배열길이 이상으로 입력받으면 문제가 생긴다. 해결방법은?
+			근데 vector인가 쓰면 안되나?
 		cin.ignore(): 아무런 문자도 입력받을수 없으므로 버퍼를 비우는 것과 같은 효과 
-??	cin.claer(); 
-??	cin.fail(); 
-??	cin의 기초적인동작에 대한 조사 
+??		cin.claer(); 
+??		cin.fail(); 
+??		cin의 기초적인동작에 대한 조사 
+	cout 
+		특수문자 출력방법
+			특수문자, 서식문자 등을 출력하려면 앞에 \을 붙여준다.
+			cout<<"\\n";	은 \n 이 출력된다
 */ 
+
+
+
 //키워드 const의 의미 (62p)
 /*키워드 const의 의미 
 	const 변수에 대한 포인터나 참조자 또한 cosnt하게 선언되어야 한다.
@@ -174,17 +224,8 @@ void PtrRefTest(void) {
 		왼쪽: People이라는 자료형을 가리키는 포인터, 이름은 list
 		오른쪽: People 자료형이 10개 들어가도록 동적할당
 */
-//특수문자 출력
-/*	
-	특수문자, 서식문자 등을 출력하려면 앞에 \을 붙여준다.
-	"\\n"을 출력하면 \n이 출력된다.
-*/
-//이름짓기
-/*이름짓기
-	변수: 첫글자는 소문자, 새로운 뜻마다 대문자
-	상수: 모두 대문자
-	함수: 변수와 같으나 첫글자가 대문자 
-*/
+
+
 /*
 class SimpleClass{
 	public:
