@@ -8,20 +8,14 @@
 
 #include "BankingProject.h"
 
-enum Constant {
-	MAXACCOUNT = 10,
-	NAMELENGTH = 100,
-};
-
-
 //class 정의
-BankAccount::BankAccount(int iBankID, char* name, int iBalance = 0) :bankID(iBankID), balance(iBalance) {
-	int len = strlen(name) + 1;
-	this->name = new char[len];
+BankAccount::BankAccount(int bankID=-1, char* name=NULL, int balance = 0)
+	 :bankID(bankID), balance(balance) {
+	this->name = new char[strlen(name)+1];
 //	strcpy_s(this->name, len, name);
 	strcpy(this->name, name); 
 }
-BankAccount::BankAccount(){}
+
 BankAccount::~BankAccount() {
 	delete this->name;
 }
@@ -30,40 +24,128 @@ BankAccount::BankAccount(const BankAccount &ref)
 	name = new char[strlen(ref.name) + 1];
 	strcpy(name, ref.name);
 }
-void BankAccount::OpenAccount(int bankID, char* name, int balance = 0) {
-	this->bankID = bankID;
-	this->balance = balance;
-	int len = strlen(name) + 1;
-	this->name = new char[len];
+//void BankAccount::OpenAccount(int bankID, char* name, int balance = 0) {
+//	this->bankID = bankID;
+//	this->balance = balance;
+//	int len = strlen(name) + 1;
+//	this->name = new char[len];
 //	strcpy_s(this->name, len, name);
-	strcpy(this->name, name);
-}
+//	strcpy(this->name, name);
+//}
 int BankAccount::GetBankID() const {
 	return bankID;
 }
-void BankAccount::Deposit() {
-	int money;
-	cout << "잔 액: " << balance << endl;
-	cout << "금액을 입력하십시오: ";
-	cin >> money;
-	balance += money;
+int BankAccount::GetBalance() const {
+	return balance;
 }
-void BankAccount::Withdraw() {
-	int money;
-	cout << "잔 액: " << balance << endl;
-	cout << "금액을 입력하십시오: ";
-	cin >> money;
-	if (balance - money < 0) {
-		cout << "잔액이 부족합니다" << endl;
-		return;
-	}
-	balance -= money;
+//void BankAccount::Deposit() {
+//	int money;
+//	cout << "잔 액: " << balance << endl;
+//	cout << "금액을 입력하십시오: ";
+//	cin >> money;
+//	balance += money;
+//}
+//void BankAccount::Withdraw() {
+//	int money;
+//	cout << "잔 액: " << balance << endl;
+//	cout << "금액을 입력하십시오: ";
+//	cin >> money;
+//	if (balance - money < 0) {
+//		cout << "잔액이 부족합니다" << endl;
+//		return;
+//	}
+//	balance -= money;
+//}
+void BankAccount::BalanceChange(int change){
+	balance+=change;
 }
 void BankAccount::ShowCustomerInfo() const {
 	cout << "계좌ID: " << bankID << endl;
 	cout << "이 름: " << name << endl;
 	cout << "잔 액: " << balance << endl;
 }
+AccountHandler::AccountHandler()
+	:accountNum(0){}
+AccountHandler::~AccountHandler(){
+	for(int i=0;i<accountNum;i++){
+		delete accountArr[i];
+	}
+}
+int AccountHandler::BankingMenu() const{
+	int num;
+	cout << endl;
+	cout << "-----Menu-----" << endl;
+	cout << "1. 계좌개설" << endl;
+	cout << "2. 입 금" << endl;
+	cout << "3. 출 금" << endl;
+	cout << "4. 계좌번호 전체 출력" << endl;
+	cout << "5. 프로그램 종료" << endl;
+	cout << "선택: ";
+	cin >> num;
+	cout << "---------------" << endl;
+	cout << endl << endl;
+	return num;
+}
+int AccountHandler::ChkAccount(int accountID) const{
+	for (int i = 0; i < accountNum; i++) {
+		if (accountID == accountArr[i]->GetBankID()) {
+			return accountID;
+		}
+	}
+	return -1;
+}
+void AccountHandler::OpenAccount() {
+	if (accountNum == MAXACCOUNT) {
+		cout << "계좌를 더이상 생성할 수 없습니다" << endl;
+		return;
+	}
+
+	int bankID;
+	char name[NAMELENGTH];
+	cout << "[ 계 좌 개 설 ]" << endl;
+	cout << "계좌 ID: ";
+	cin >> bankID;
+	if(ChkAccount(bankID)!=-1){
+		cout<<"이미 존재하는 계좌 ID 입니다"<<endl;
+		return;
+	}
+	cout << "이 름: ";
+	cin >> name;
+	cin.ignore();	//한국어 들어갈때 이거 없으면 에러났던거같음. 이유는?
+	accountArr[accountNum] = new BankAccount(bankID,name);
+	cout << endl << "계좌 생성 완료" << endl;
+	accountNum++;
+}
+void AccountHandler::Deposit(){
+	cout << "[ 입 금 ]" << endl;
+	int bankID,accessNum,money;
+	cout <<"계좌 ID: ";
+	cin>>bankID;
+	accessNum=ChkAccount(bankID);
+	if (accessNum ==-1){
+		cout<<"존재하지 않는 계좌입니다"<<endl;
+		return;
+	}
+	cout << "잔 액: " << accountArr[accessNum]->GetBalance << endl;
+	cout << "금액을 입력하십시오: ";
+	cin>>money;
+	accountArr[accessNum]->BalanceChange(money);
+	cout<<money<<"원 입금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance<<"입니다"<<endl;
+}	
+void Menu2_Deposit(BankAccount* accArr[], int accNum) {
+	int realAccNum;
+	
+	realAccNum = ChkAccount(accArr, accNum);
+	if (realAccNum == -1) {
+		return;
+	}
+	accArr[realAccNum]->Deposit();
+
+}
+	void Deposit();
+	void Withdraw();
+	void PrintAllAccount();
+
 
 //함수 정의
 void BankProgram(void) {
@@ -99,60 +181,10 @@ FINISH:
 	Menu5_Finish(accountArray, accountNum);
 	cout << "프로그램을 종료합니다" << endl;
 }
-int AccountMenu(void) {
-	int num;
-	cout << endl;
-	cout << "-----Menu-----" << endl;
-	cout << "1. 계좌개설" << endl;
-	cout << "2. 입 금" << endl;
-	cout << "3. 출 금" << endl;
-	cout << "4. 계좌번호 전체 출력" << endl;
-	cout << "5. 프로그램 종료" << endl;
-	cout << "선택: ";
-	cin >> num;
-	cout << "---------------" << endl;
-	cout << endl << endl;
-	return num;
-}
-int ChkAccount(BankAccount* accArr[], int accNum) {
-	int accountID;
-	cout << "계좌 ID를 입력하십시오: ";
-	cin >> accountID;
-	for (int i = 0; i < accNum; i++) {
-		if (accountID == accArr[i]->GetBankID()) {
-			return i;
-		}
-	}
-	cout << "입력하신 계좌 ID는 존재하지 않습니다" << endl;
-	return -1;
-}
-int Menu1_OpenAccount(BankAccount* AccArr[], int accNum) {
-	if (accNum == MAXACCOUNT) {
-		cout << "계좌를 더이상 생성할 수 없습니다" << endl;
-		return accNum;
-	}
-	int bankID;
-	char name[NAMELENGTH];
-	cout << "[ 계 좌 개 설 ]" << endl;
-	cout << "계좌 ID: ";
-	cin >> bankID;
-	cout << "이 름: ";
-	cin >> name;
-	cin.ignore();	//한국어 들어갈때 이거 없으면 에러났던거같음. 이유는?
-	AccArr[accNum] = new BankAccount(bankID, name);
-	cout << endl << "계좌 생성 완료" << endl;
-	return (accNum + 1);
-}
-void Menu2_Deposit(BankAccount* accArr[], int accNum) {
-	int realAccNum;
-	cout << "[ 입 금 ]" << endl;
-	realAccNum = ChkAccount(accArr, accNum);
-	if (realAccNum == -1) {
-		return;
-	}
-	accArr[realAccNum]->Deposit();
 
-}
+
+
+
 void Menu3_Withdraw(BankAccount* accArr[], int accNum) {
 	int realAccNum;
 	cout << "[ 출 금 ]" << endl;
