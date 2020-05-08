@@ -251,16 +251,14 @@ int Car::GetGasGauge() {
 Car::Car()
 	:gasolineGauge(-1){}
 Car::Car(int gasGauge)
-	:gasolineGauge(gasGauge)
-{}
+	:gasolineGauge(gasGauge){}
 int HybridCar::GetElectGauge() {
 	return electricGauge;
 }
 HybridCar::HybridCar()
 	:electricGauge(-1){}
 HybridCar::HybridCar(int gasGauge, int eleGauge)
-	:Car(gasGauge),electricGauge(eleGauge)
-{}
+	:Car(gasGauge),electricGauge(eleGauge){}
 void HybridWaterCar::ShowCurrentGauge() {
 	cout << "잔여 가솔린: " << GetGasGauge() << endl;
 	cout << "잔여 전기량: " << GetElectGauge() << endl;
@@ -269,8 +267,7 @@ void HybridWaterCar::ShowCurrentGauge() {
 HybridWaterCar::HybridWaterCar()
 	:waterGauge(-1){}
 HybridWaterCar::HybridWaterCar(int gasGauge, int eleGauge, int watGauge)
-	:HybridCar(gasGauge,eleGauge),waterGauge(watGauge)
-{}
+	:HybridCar(gasGauge,eleGauge),waterGauge(watGauge){}
 MyFriendInfo::MyFriendInfo()
 	:name(NULL), age(-1){}
 MyFriendInfo::MyFriendInfo(char* name, int age)
@@ -305,13 +302,42 @@ MyFriendDetailInfo::~MyFriendDetailInfo(){
 	delete[] addr;
 	delete[] phone;
 }
-Rectangle::Rectangle(int xlength, int ylength)
+Rectangle::Rectangle(int xlength=-1, int ylength=-1)
 	:xlength(xlength), ylength(ylength){}
 void Rectangle::ShowAreaInfo(){
 	cout<<"면적: "<<xlength * ylength <<endl;
 }
 Square::Square(int xlength)
 	:Rectangle(xlength,xlength){}
+
+Book::Book(char* title, char* isbn, int price)
+	:price(price){
+		this->title=new char[strlen(title)+1];
+		strcpy(this->title,title);
+		this->isbn=new char[strlen(isbn)+1];
+		strcpy(this->isbn,isbn);
+	}
+void Book::ShowBookInfo(){
+	cout<<"title: "<<title<<endl;
+	cout<<"isbn: "<<isbn<<endl;
+	cout<<"price: "<<price<<endl;
+}
+Book::~Book(){
+	delete[] title;
+	delete[] isbn;
+}
+EBook::EBook(char* title, char* isbn, int price,char* DRMKey)
+	:Book(title,isbn,price){
+		this->DRMKey=new char[strlen(DRMKey)+1];
+		strcpy(this->DRMKey,DRMKey);
+	}
+void EBook::ShowEBookInfo(){
+	ShowBookInfo();
+	cout<<"DRMKey: "<<DRMKey<<endl;
+}
+EBook::~EBook(){
+	delete[] DRMKey;
+}
 
 
 //Part1
@@ -620,4 +646,9 @@ void Question07_2(void) {
 	cout<<endl<<endl;
 	//문제2
 	cout<<"문제 2"<<endl<<endl;
+	Book book("좋은 C++", "555-12345-890-0",20000);
+	book.ShowBookInfo();
+	cout<<endl;
+	EBook ebook("좋은 C++ ebook","555-12345-890-1",10000,"qlalfqjsgh486");
+	ebook.ShowEBookInfo();
 }

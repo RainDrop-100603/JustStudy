@@ -129,6 +129,23 @@ class Square : public Rectangle{
 public:
 	Square(int xlength);
 };
+class Book{
+	char* title;
+	char* isbn;
+	int price;
+public:
+	Book(char* title, char* isbn, int price);
+	void ShowBookInfo();
+	~Book();
+};
+class EBook : public Book{
+	char* DRMKey;
+public:
+	EBook(char* title, char* isbn, int price, char* DRMKey);
+	void ShowEBookInfo();
+	~EBook();
+};
+
 
 //Part1
 void Question01_1(void);

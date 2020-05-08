@@ -14,8 +14,6 @@ using namespace std;
 	Call by Reference & Call by Value
 	동적 할당 - new
 	Class
-	
-
 */
 
 
@@ -290,6 +288,7 @@ class SimpleClass{
 				public - private:		멤버함수에서만 접근이 가능하게 되었으며, 상속시 접근불가하다.
 */
 //Pointer에서 요소를 선택할 경우 "->", 객체나 참조자에서 요소를 선택할경우 '.' 이용
+//class 생성자에서 default값을 설정할경우, header가아닌 cpp파일에서 설정 (혹은 선언이 아닌 정의 부분에서 설정이 맞는 표현일수도 )
 //vector
 
 //dev에 있던 것들 정리 
