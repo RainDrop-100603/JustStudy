@@ -289,7 +289,61 @@ class SimpleClass{
 */
 //Pointer에서 요소를 선택할 경우 "->", 객체나 참조자에서 요소를 선택할경우 '.' 이용
 //class 생성자에서 default값을 설정할경우, header가아닌 cpp파일에서 설정 (혹은 선언이 아닌 정의 부분에서 설정이 맞는 표현일수도 
+/*
+	프로그램에서 할당과 접근은 별개의 영역이다. 접근을 할 때, 해당 메모리 영역이 할당 받았는지 안받았는지는 신경쓰지 않고 기계적으로 접근한다. 
+		즉 char* ptr은 단일char과 char배열을 모두 나타낼 수 있는데, 둘 모두 시작지점은 같기 때문이다.
+			또한 둘 모두 char[1]접근을 할 수 있는데, ptr[1]은 단순히 *(ptr+1)을 나타내며 접근에 문제가 없다.
+				차이점은 ptr+1의 위치를 할당 받았는지의 여부 뿐이며, 안전한지 불안전한지의 여부 뿐이다. 
+		즉 포인터의 자료형만 잘 지정하면, 포인터가 배열을 가리키는지 단일 자료를 가리키는지는 전혀 신경쓸 필요가 없다.
+			포인터의 사용할 범위를 할당만 잘 해주면 된다.
+*/
 //Control class vs Entity Class
+
+/*상속과 다형성
+	상속의 의미
+		상속을 통해 연관된 일련의 클래스에 대해 공통적인 규약을 정의할 수 있다.
+			Handler class의 변경이 이루어지지 않고 기능을 추가할 수 있다.
+			virtual과 overriding을 이용하면 base class 자료형의 pointer로 dervied class의 멤버에 접근할 수 있다.
+			상속이 여러번 이루어져도, 모든 객체를 base class 자료형의 pointer로 나타낼 수 있게 되는 것이다.
+			
+	함수 overriding (not overloading)
+		base class와 dervied class에 동일한 이름과 형태의 멤버함수가 있는 것
+			형태: 매개변수의 자료형과 개수도 같아야 한다. 만약 다르다면 overloading 임.
+			dervied class의 객체에서는, 현재 class의 멤버함수가 우선적용된다.
+		overriding의 경우, 나중에 정의된 것이 처음 정의된 것을 가린다고 생각하자
+			가려진 함수는 BASE::Func1과 같은 방법으로 호출 가능하다
+		여러번 상속된 경우, 현재 class기준에서 가장 마지막으로 overriding된 함수가 호출된다.
+		base class의 함수와 dervied class의 함수는 접근할 수 있는 영역(멤버변수 및 함수: 멤버)가 다르기 때문에 overriding이 의미가 있다.
+
+	상속 관계에서의 Pointer
+		base class 자료형의 pointer는, base를 직접 및 간접(a->b->c에서 a와 c)상속하는 class의 객체를 가리킬 수 있다.
+			base->derived->derived2: base* ptr= derived2 object;	
+		그러나 base class 자료형의 pointer는 derived class의 멤버에는 접근할 수 없다. 
+			컴파일러의 연산가능여부 판단 기준은 pointer의 자료형이므로, base에는 없는 dervied의 멤버에 접근할 수 없는 것이다.
+		즉 base class 자료형의 pointer가 derived class의 객체를 가리켜도, derived class의 멤버에는 접근할 수 없는 문제가 발생한다.
+			의미가 없어진 셈이다.
+			virtual function으로 문제 해결 가능 
+
+	virtual function
+		선언
+			virtual void MyFunc();
+			가상함수로 선언된 함수를 overriding하는 함수는, 따로 virtual을 선언하지 않아도 자동으로 가상함수가 된다.
+				코드 분석의 용이를 위해 overriding하는 함수에도 virtual을 붙여주는것이 좋다.
+		기능
+			가상함수 호출시, pointer의 자료형이 아닌, pointer가 가리키는 객체를 기준으로 가장 마지막으로 overriding된 가상함수를 호출한다.
+	순수 가상함수 와 추상 클래스
+		순수 가상함수 (Pure virtual function)
+			함수의 몸체가 정의되지 않은 함수
+				=0을 통해 몸체가 정의되지 않았음을 알린다
+				virtual void MyFunc() const = 0;
+		추상 클래스 (Abstract class)
+			객체 생성을 목적으로 정의되지 않는 class
+				base class로서의 의미만 가질뿐, 객체의 생성을 목적으로 하지 않는 class에 유용 - 오류 발생 방지 
+			가상함수를 순수 가상함수로 선언하여 추상클래스 구현 가능
+				순수 가상함수를 지니면 완전하지 않은 class가 되어 객체 생성이 불가능하다.
+
+
+*/
 /*
 	Control class: 프로그램 전체의 기능을 담당
 					프로그램의 기능 및 흐름 파악 가능
