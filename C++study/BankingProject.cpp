@@ -126,11 +126,11 @@ void AccountHandler::Deposit(){
 		cout<<"존재하지 않는 계좌입니다"<<endl;
 		return;
 	}
-	cout << "잔 액: " << accountArr[accessNum]->GetBalance << endl;
+	cout << "잔 액: " << accountArr[accessNum]->GetBalance() << endl;
 	cout << "금액을 입력하십시오: ";
 	cin>>money;
 	accountArr[accessNum]->BalanceChange(money);
-	cout<<money<<"원 입금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance<<"입니다"<<endl;
+	cout<<money<<"원 입금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance()<<"입니다"<<endl;
 }	
 void AccountHandler::Withdraw(){
 	cout << "[ 출 금 ]" << endl;
@@ -142,15 +142,15 @@ void AccountHandler::Withdraw(){
 		cout<<"존재하지 않는 계좌입니다"<<endl;
 		return;
 	}
-	cout << "잔 액: " << accountArr[accessNum]->GetBalance << endl;
+	cout << "잔 액: " << accountArr[accessNum]->GetBalance() << endl;
 	cout << "금액을 입력하십시오: ";
 	cin>>money;
-	if (money>accountArr[accessNum]->GetBalance){
+	if (money>accountArr[accessNum]->GetBalance()){
 		cout<<"잔액이 부족합니다."<<endl;
 		return;
 	}
 	accountArr[accessNum]->BalanceChange(-money);
-	cout<<money<<"원 출금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance<<"입니다"<<endl;
+	cout<<money<<"원 출금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance()<<"입니다"<<endl;
 }
 void AccountHandler::PrintAllAccount() const{
 	for(int i=0;i<accountNum;i++){
@@ -168,52 +168,49 @@ void BankProgram(void) {
 		work = handler.BankingMenu();
 		switch (work) {
 		case 1:
-			accountNum = Menu1_OpenAccount(accountArray, accountNum);
+			handler.OpenAccount();
 			continue;	//continue는 while문의 시작으로 돌아간다. 
 			//break;	//break는 switch문을 탈출한다. 
 		case 2:
-			Menu2_Deposit(accountArray, accountNum);
+			handler.Deposit();
 			continue;
 		case 3:
-			Menu3_Withdraw(accountArray, accountNum);
+			handler.Withdraw();
 			continue;
 		case 4: 
-			Menu4_PrintAllAccount(accountArray, accountNum);
+			handler.PrintAllAccount();
 			continue;
 		case 5:
-			goto FINISH;
-			//return;	//FINISH구문을 여기다 넣고 return 박아도 된다. 
+			cout << "프로그램을 종료합니다" << endl;
+			return;
 		default:
 			cout << "메뉴를 잘못 입력하셨습니다. 다시 입력해 주십시오" << endl << endl;
 			continue;
 		}
 		//------------------------break가 오는 위치  
 	}
-FINISH:
-	Menu5_Finish(accountArray, accountNum);
-	cout << "프로그램을 종료합니다" << endl;
 }
 
 
 
 
-void Menu3_Withdraw(BankAccount* accArr[], int accNum) {
-	int realAccNum;
-	cout << "[ 출 금 ]" << endl;
-	realAccNum = ChkAccount(accArr, accNum);
-	if (realAccNum == -1) {
-		return;
-	}
-	accArr[realAccNum]->Withdraw();
-}
-void Menu4_PrintAllAccount(BankAccount* accArr[], int accNum) {
-	for (int i = 0; i < accNum; i++) {
-		accArr[i]->ShowCustomerInfo();
-		cout << endl;
-	}
-}
-void Menu5_Finish(BankAccount* accArr[], int accNum) {
-	for (int i = 0; i < accNum; i++) {
-		delete accArr[i];
-	}
-}
+// void Menu3_Withdraw(BankAccount* accArr[], int accNum) {
+// 	int realAccNum;
+// 	cout << "[ 출 금 ]" << endl;
+// 	realAccNum = ChkAccount(accArr, accNum);
+// 	if (realAccNum == -1) {
+// 		return;
+// 	}
+// 	accArr[realAccNum]->Withdraw();
+// }
+// void Menu4_PrintAllAccount(BankAccount* accArr[], int accNum) {
+// 	for (int i = 0; i < accNum; i++) {
+// 		accArr[i]->ShowCustomerInfo();
+// 		cout << endl;
+// 	}
+// }
+// void Menu5_Finish(BankAccount* accArr[], int accNum) {
+// 	for (int i = 0; i < accNum; i++) {
+// 		delete accArr[i];
+// 	}
+// }
