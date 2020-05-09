@@ -6,6 +6,14 @@
 #include <ctime>
 #include <cstdlib>
 
+//상수 선언
+enum solConstant{
+	SOL_NAMELENGTH=100,
+	RISK_A=30,
+	RISK_B=20,
+	RISK_C=10
+};
+
 //Class 선언
 class Calculator {
 private:
@@ -145,7 +153,56 @@ public:
 	void ShowEBookInfo();
 	~EBook();
 };
-
+class Employee{
+	char name[SOL_NAMELENGTH];
+public:
+	Employee(char* name);
+	void ShowYourName() const;
+	virtual int GetPay() const = 0;
+	virtual void ShowSalaryInfo() const = 0;
+};
+class PermanentWorker : public Employee{
+	int baseSalary;
+public:
+	PermanentWorker(char* name, int baseSalary);
+	virtual int GetPay() const;
+	virtual void ShowSalaryInfo() const;
+};
+class TemporaryWorker : public Employee{
+	int workTime;
+	int payPerHour;
+public:
+	TemporaryWorker(char* name, int payPerHour);
+	void AddWorkTime(int time);
+	virtual int GetPay() const;
+	virtual void ShowSalaryInfo() const;
+};
+class SalesWorker : public PermanentWorker{
+	int salesResult;
+	double bonusRatio;
+public:
+	SalesWorker(char *name, int baseSalary, double bonusRatio);
+	void AddSalesResult(int sales);
+	virtual int GetPay() const;
+	virtual void ShowSalaryInfo() const;
+};
+class ForeignSalesWorker : public SalesWorker{
+	int riskPayRatio;
+public:
+	ForeignSalesWorker(char* name, int baseSalary, double bonusRatio,int riskPayRatio );
+	virtual int GetPay() const;
+	virtual void ShowSalaryInfo() const;
+};
+class EmployeeHandler{
+	Employee* empList[50];
+	int empNum;
+public:
+	EmployeeHandler();
+	void AddEmpList(Employee* emp);
+	void ShowAllSalaryInfo() const;
+	void ShowTotalSalary() const;
+	~EmployeeHandler();
+};
 
 //Part1
 void Question01_1(void);
@@ -168,6 +225,7 @@ void Question05_1(void);
 //Part3
 void Question07_1(void);
 void Question07_2(void);
+void Question08_1(void);
 
 #endif // !__QUESTIONSOL_H__
 

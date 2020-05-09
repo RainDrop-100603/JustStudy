@@ -339,6 +339,82 @@ EBook::~EBook(){
 	delete[] DRMKey;
 }
 
+Employee::Employee(char *name){
+	strcpy(this->name,name);
+}
+void Employee::ShowYourName() const{
+	cout<<"Name: "<<name<<endl;
+}
+PermanentWorker::PermanentWorker(char* name, int baseSalary)
+	:Employee(name),baseSalary(baseSalary){}
+int PermanentWorker::GetPay() const{
+	return baseSalary;
+}
+void PermanentWorker::ShowSalaryInfo() const{
+	ShowYourName();
+	cout<<"Salary: "<<GetPay()<<endl;
+}
+TemporaryWorker::TemporaryWorker(char* name, int payPerHour)
+	:Employee(name), workTime(0), payPerHour(payPerHour){}
+void TemporaryWorker::AddWorkTime(int time){
+	workTime+=time;
+}
+int TemporaryWorker::GetPay() const{
+	return payPerHour*workTime;
+}
+void TemporaryWorker::ShowSalaryInfo() const{
+	ShowYourName();
+	cout<<"Salary: "<<GetPay()<<endl;
+}
+SalesWorker::SalesWorker(char* name, int baseSalary, double bonusRatio)
+	:PermanentWorker(name, baseSalary), bonusRatio(bonusRatio){}
+void SalesWorker::AddSalesResult(int sales){
+	salesResult+=sales;
+}
+int SalesWorker::GetPay() const{
+	return PermanentWorker::GetPay()+salesResult*bonusRatio;
+}
+void SalesWorker::ShowSalaryInfo() const{
+	ShowYourName();
+	cout<<"Salary: "<<GetPay()<<endl;
+}
+ForeignSalesWorker::ForeignSalesWorker(char* name, int baseSalary, double bonusRatio, int riskPayRatio)
+	:SalesWorker(name, baseSalary, bonusRatio), riskPayRatio(riskPayRatio){}
+int ForeignSalesWorker::GetPay() const{
+	return SalesWorker::GetPay()+SalesWorker::GetPay()*riskPayRatio/100;
+}
+void ForeignSalesWorker::ShowSalaryInfo() const{
+	ShowYourName();
+	cout<<"Salary: "<<SalesWorker::GetPay()<<endl;
+	cout<<"Risk Pay: "<<SalesWorker::GetPay()*riskPayRatio/100<<endl;
+	cout<<"TotalSalary: "<<GetPay()<<endl;
+}
+EmployeeHandler::EmployeeHandler()
+	:empNum(0){}
+void EmployeeHandler::AddEmpList(Employee* emp){
+	empList[empNum]=emp;
+	empNum++;
+}
+void EmployeeHandler::ShowAllSalaryInfo() const{
+	for(int i=0;i<empNum;i++){
+		empList[i]->ShowSalaryInfo();
+		cout<<endl;
+	}
+}
+void EmployeeHandler::ShowTotalSalary() const{
+	int sum=0;
+	for(int i=0;i<empNum;i++){
+		sum+=empList[i]->GetPay();
+	}
+	cout<<"TotalSalary: "<<sum<<endl;
+}
+EmployeeHandler::~EmployeeHandler(){
+	for (int i=0;i<empNum;i++){
+		delete empList[i];
+	}
+}
+
+
 
 //Part1
 void Question01_1(void) {
@@ -651,4 +727,22 @@ void Question07_2(void) {
 	cout<<endl;
 	EBook ebook("좋은 C++ ebook","555-12345-890-1",10000,"qlalfqjsgh486");
 	ebook.ShowEBookInfo();
+}
+void Question08_1(void) {
+	EmployeeHandler handler;
+
+	ForeignSalesWorker* fseller1=new ForeignSalesWorker("Hong", 1000, 0.1, RISK_A);
+	fseller1->AddSalesResult(7000);
+	handler.AddEmpList(fseller1);
+
+	ForeignSalesWorker* fseller2=new ForeignSalesWorker("Yoon", 1000, 0.1, RISK_B);
+	fseller2->AddSalesResult(7000);
+	handler.AddEmpList(fseller2);
+
+	ForeignSalesWorker* fseller3=new ForeignSalesWorker("Lee", 1000, 0.1, RISK_C);
+	fseller3->AddSalesResult(7000);
+	handler.AddEmpList(fseller3);
+
+	handler.ShowAllSalaryInfo();
+	handler.ShowTotalSalary();
 }

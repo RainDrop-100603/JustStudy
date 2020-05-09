@@ -13,7 +13,7 @@ int main(void) {
 //important 정리 필요(이건 천천히)
 //문제 7-2 하는중, 
 
-	//Question07_2(); 
+	Question08_1(); 
 	//PtrRefTest();
 	//enumTest();
 	//BankProgram();
