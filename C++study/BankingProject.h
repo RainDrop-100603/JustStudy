@@ -1,5 +1,5 @@
-#ifndef __PROJECTVER4_H__
-#define __PROJECTVER4_H__
+#ifndef __BANKINGPROJECT_H__
+#define __BANKINGPROJECT_H__
 
 /*
  * Banking System Ver 0.5

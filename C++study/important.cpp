@@ -4,11 +4,11 @@
 using namespace std;
 /*	목차
 	기본적인 약속, 규칙
-	enum-enum class
-	bool 자료형 
-	cin - cout 
-	const 키워드
-	메모리공간 - data - stack - hip	
+		enum-enum class
+		bool 자료형 
+		cin - cout 
+		const 키워드
+		메모리공간 - data - stack - hip	
 	Pointer
 	Reference
 	Call by Reference & Call by Value
