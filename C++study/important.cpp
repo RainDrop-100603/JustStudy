@@ -4,15 +4,21 @@
 using namespace std;
 /*	목차
 	기본적인 약속, 규칙
+		이름짓기
+		문자열 표현 방법
+		헤더 중복선언 방지
 		enum-enum class
 		bool 자료형 
 		cin - cout 
 		const 키워드
+		임시변수
+		매개변수 - 전달인자
 		메모리공간 - data - stack - hip	
-	Pointer
-	Reference
-	Call by Reference & Call by Value
-	동적 할당 - new
+	포인터, 레퍼런스, 동적할당
+		Pointer
+		Reference
+		Call by Reference & Call by Value
+		동적 할당 - new
 	Class
 */
 
@@ -38,17 +44,65 @@ using namespace std;
 			#define NAME_DEFINED__
 			....
 			#endif
-
+	enum - enum class
+		enum
+			열거형 자료형
+		enum class
+			공부필요
+	bool 자료형
+		bool은 그 자체로 true, false를 나타내는 1Byte크기의 자료형이며, 실제로 0,1을 의미하는 것은아니다.
+			0은 false, 0을 제외한 정수는 true를 나타내긴 하지만 오해하지말자.
+			자료형이기 때문에 bool형식의 변수도 선언할 수 있다.
+			bool을 출력하거나 정수 형태로 변환할 때는 각각 1, 0으로 변하긴 한다.
+	cin - cout
+		cin 
+			사용시의 버퍼문제
+				cin>>string; 과 같이 문자를 입력받을 경우, 문자가 입력 버퍼에 저장된 후 변수에 저장되게 된다.(숫자는 바로 변수에 저장된다)
+				이때 입력 버퍼에는 엔터(\n)까지 입력되지만 num에는 \n이 제외되서 들어가게 된다.
+**				즉 입력 버퍼에는 \n이 남아있게 되는 것이다.
+				이때 cin.getline(string.20)과 같이 \n을 만나기까지 입력을 받는 함수를 사용하면, 해당 함수에 \n이 입력되고 함수가 종료된다.
+**			cin.ignore(20,\n) : 20개의 문자 입력 혹은 \n 까지만 입력받고 나머지는 버리는 함수 
+??				cin에서 배열길이 이상으로 입력받으면 문제가 생긴다. 해결방법은?
+				근데 vector인가 쓰면 안되나?
+			cin.ignore(): 아무런 문자도 입력받을수 없으므로 버퍼를 비우는 것과 같은 효과 
+??			cin.clear(); 
+??			cin.fail(); 
+??			cin의 기초적인동작에 대한 조사 
+		cout 
+			특수문자 출력방법
+				특수문자, 서식문자 등을 출력하려면 앞에 \을 붙여준다.
+				cout<<"\\n";	은 \n 이 출력된다
+	const 키워드
+		const 변수
+			const 변수에 대한 포인터나 참조자 또한 cosnt하게 선언되어야 한다.
+			앞 const: 선언되는 변수(포인터)를 상수화 시킨다.
+			뒤 const: 선언되는 포인터가 가리키는 값을 바꿀 수 없다.
+				const int num = 10;				: 변수 num의 상수화											
+				const int* ptr1 = &val1;		: 포인터 ptr1을 통하여 가리키는 것(val1)을 변경할 수 없음
+				int* const ptr2 = &val2;		: 포인터 ptr2가 상수화됨( 가리키는 주소가 변하지 않음)
+				const int* const ptr3 = &val3;	: 포인터 ptr3가 상수화되며 가리키는 것(val3)을 변경할 수 없음
+		const 함수
+			const함수는 내부에서 변수의 값을 변경할 수 없다.
+			const함수 내부에서는 const함수만 호출이 가능하다. 
+	임시변수
+		const취급?
+	매개변수 및 전달인자
+		매개변수
+		전달인자
+		관계
+	Data - Stack- Heap
+		Data
+			전역변수 및 static변수가 저장되는 영역
+??			컴파일 시 저장되며 사라지지 않는 것들
+		Stack
+			지역변수 및 매개변수가 저장되는 영역
+??			컴파일 시 저장되며 사라지는 것들
+		Heap	
+			프로그램이 실행되는 과정에서 동적할당이 이루어지는 영역.
+??			프로그램 실행도중에 생겼다 사라졌다 한다면 heap 사용 	
 */
-//임시변수는 const 취급?
-//매개변수 및 전달인자
 
-//enum - enum class
-/*enum - enum class
-	열거형 자료형
-??	enum class에 대한 공부 필요 
-		enum은
-*/
+
 enum MyEnum
 {
 	RED = 3, BLUE, BLACK = 7, PINK = 9
@@ -59,52 +113,11 @@ void enumTest(void) {
 	cout << MyEnum(0) << endl;
 	//cout << MyEnum[1] << endl;
 	cout << BLUE << endl;
-	MyEnum Color(RED);		//??
+	MyEnum Color(RED);		//??	Color은 MyEnum의 RED라고 초기화?
 	cout << Color << endl;
 }
-//cin - cout
-/*cin - cout
-	cin 
-		사용시의 버퍼문제
-			cin>>string; 과 같이 문자를 입력받을 경우, 문자가 입력 버퍼에 저장된 후 변수에 저장되게 된다.(숫자는 바로 변수에 저장된다)
-			이때 입력 버퍼에는 엔터(\n)까지 입력되지만 num에는 \n이 제외되서 들어가게 된다.
-**			즉 입력 버퍼에는 \n이 남아있게 되는 것이다.
-			이때 cin.getline(string.20)과 같이 \n을 만나기까지 입력을 받는 함수를 사용하면, 해당 함수에 \n이 입력되고 함수가 종료된다.
-**		cin.ignore(20,\n) : 20개의 문자 입력 혹은 \n 까지만 입력받고 나머지는 버리는 함수 
-??			cin에서 배열길이 이상으로 입력받으면 문제가 생긴다. 해결방법은?
-			근데 vector인가 쓰면 안되나?
-		cin.ignore(): 아무런 문자도 입력받을수 없으므로 버퍼를 비우는 것과 같은 효과 
-??		cin.claer(); 
-??		cin.fail(); 
-??		cin의 기초적인동작에 대한 조사 
-	cout 
-		특수문자 출력방법
-			특수문자, 서식문자 등을 출력하려면 앞에 \을 붙여준다.
-			cout<<"\\n";	은 \n 이 출력된다
-*/ 
 
 
-
-//키워드 const의 의미 (62p)
-/*키워드 const의 의미 
-	const 변수에 대한 포인터나 참조자 또한 cosnt하게 선언되어야 한다.
-	앞 const: 선언되는 변수(포인터)를 상수화 시킨다.
-	뒤 const: 선언되는 포인터가 가리키는 값을 바꿀 수 없다.
-			const int num = 10;				: 변수 num의 상수화											
-			const int* ptr1 = &val1;		: 포인터 ptr1을 통하여 가리키는 것(val1)을 변경할 수 없음
-			int* const ptr2 = &val2;		: 포인터 ptr2가 상수화됨( 가리키는 주소가 변하지 않음)
-			const int* const ptr3 = &val3;	: 포인터 ptr3가 상수화되며 가리키는 것(val3)을 변경할 수 없음
-
-*/
-//실행중인 프로그램의 메모리 공간 (62p)
-/*실행중인 프로그램의 메모리 공간
-	데이터: 전역변수 및 static변수가 저장되는 영역
-??		컴파일 시 저장되며 사라지지 않는 것들
-	스택:	지역변수 및 매개변수가 저장되는 영역
-??		컴파일 시 저장되며 사라지는 것들
-	힙:		프로그램이 실행되는 과정에서 동적할당이 이루어지는 영역. 사라지기 때문에 stack 사용
-??		프로그램 실행도중에 생겼다 사라졌다 함. 따라서 heap 사용 
-*/
 //Pointer
 /*Pointer
 ??	Double Pointer (Multi Pointer)
@@ -209,13 +222,7 @@ void PtrRefTest(void) {
 	cout << "dpref: " << dpref << endl;
 
 }
-//bool 자료형
-/*bool 자료형
-	bool은 그 자체로 true, false를 나타내는 1B 자료형이며, 실제로 0,1을 의미하는 것은아니다.
-		0은 false, 0을 제외한 정수는 true를 나타내긴 하지만 오해하지말자.
-		자료형이기 때문에 bool형식의 변수도 선언할 수 있다.
-		bool을 출력하거나 정수 형태로 변환할 때는 각각 1, 0으로 변하긴 한다.
-*/
+
 //동적할당
 /*
 	People* list = new People[10];
