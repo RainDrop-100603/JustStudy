@@ -2,9 +2,9 @@
 #define __BANKINGPROJECT_H__
 
 /*
- * Banking System Ver 0.5
+ * Banking System Ver 0.6
  * 작성자: rain
- * 내 용: 열혈 cpp OOP 단계별 프로젝트 5단계
+ * 내 용: 열혈 cpp OOP 단계별 프로젝트 6단계
  */
 
 #include <iostream>
@@ -24,17 +24,32 @@ private:
 	int balance;
 public:
 	BankAccount(int bankID, char* name, int balance);
-	//BankAccount();
 	BankAccount(const BankAccount &ref);
-	//void OpenAccount(int BankID, char* name, int Balance);
 	int GetBankID() const;
 	int GetBalance() const;
-	void BalanceChange(int change);
-	//void Deposit();
-	//void Withdraw();
+	//void BalanceChange(int change);
+	virtual void Deposit(int money);
+	void WithDraw(int money);
 	void ShowCustomerInfo() const;
-	~BankAccount();
+	virtual ~BankAccount();
 };
+
+class NormalAccount: public BankAccount{
+	int interest;
+public:
+	NormalAccount(int bankID, char* name, int balance, int interest);
+	virtual void Deposit(int money);
+	virtual ~NormalAccount();
+};
+
+class HighCreditAccount: public NormalAccount{
+	int creditRating;
+public:
+	HighCreditAccount(int bankID, char* name, int balance, int interest, int creditRating);
+	virtual void Deposit(int money);
+	virtual ~HighCreditAccount();
+};
+
 
 class AccountHandler{
 	BankAccount* accountArr[MAXACCOUNT];
@@ -47,17 +62,9 @@ public:
 	void Deposit();
 	void Withdraw();
 	void PrintAllAccount() const;
-	~AccountHandler();
+	virtual ~AccountHandler();
 };
 
 void BankProgram(void);
-//int AccountMenu(void);
-//int ChkAccount(BankAccount* accountArray[], int accNum);
-//int Menu1_OpenAccount(BankAccount* AccArr[], int accNum);
-//void Menu2_Deposit(BankAccount* accArr[], int accNum);
-//void Menu3_Withdraw(BankAccount* accArr[], int accNum);
-//void Menu4_PrintAllAccount(BankAccount* accArr[], int accNum);
-//void Menu5_Finish(BankAccount* accArr[], int accNum);
-
 
 #endif // !__PROJECT1__

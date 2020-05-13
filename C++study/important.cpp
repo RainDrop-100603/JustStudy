@@ -339,9 +339,13 @@ class SimpleClass{
 				코드 분석의 용이를 위해 overriding하는 함수에도 virtual을 붙여주는것이 좋다.
 		기능
 			가상함수 호출시, pointer의 자료형이 아닌, pointer가 가리키는 객체를 기준으로 가장 마지막으로 overriding된 가상함수를 호출한다.
+		정의
+			정의시에는 따로 virtual을 붙여주지 않는다.
 		소멸자
 			First -> Second -> Third로 상속되는 class에서, First 자료형 포인터로 Third형을 가리키는 경우, 소멸자도 First만 호출된다.
 				소멸자도 가상함수 처리해서 Third -> Second -> First 순서로 호출되게 만든다.
+				다른 virtual과 마찬가지로 base class의 소멸자가 virtual 선언되면 dervied class들도 모두 virtual 선언이 자동으로 된다.
+					소멸자의 경우 이름이 다름에도(First, Second ...) 자동으로 선언 처리되므로 오해하지 말자 
 	순수 가상함수 와 추상 클래스
 		순수 가상함수 (Pure virtual function)
 			함수의 몸체가 정의되지 않은 함수

@@ -1,9 +1,9 @@
 //#define _CRT_SECURE_NO_WARNINGS
 
 /*
- * Banking System Ver 0.5
+ * Banking System Ver 0.6
  * 작성자: rain
- * 내 용: 열혈 cpp OOP 단계별 프로젝트 5단계
+ * 내 용: 열혈 cpp OOP 단계별 프로젝트 6단계
  */
 
 #include "BankingProject.h"
@@ -23,40 +23,17 @@ BankAccount::BankAccount(const BankAccount &ref)
 	name = new char[strlen(ref.name) + 1];
 	strcpy(name, ref.name);
 }
-//void BankAccount::OpenAccount(int bankID, char* name, int balance = 0) {
-//	this->bankID = bankID;
-//	this->balance = balance;
-//	int len = strlen(name) + 1;
-//	this->name = new char[len];
-//	strcpy_s(this->name, len, name);
-//	strcpy(this->name, name);
-//}
 int BankAccount::GetBankID() const {
 	return bankID;
 }
 int BankAccount::GetBalance() const {
 	return balance;
 }
-//void BankAccount::Deposit() {
-//	int money;
-//	cout << "잔 액: " << balance << endl;
-//	cout << "금액을 입력하십시오: ";
-//	cin >> money;
-//	balance += money;
-//}
-//void BankAccount::Withdraw() {
-//	int money;
-//	cout << "잔 액: " << balance << endl;
-//	cout << "금액을 입력하십시오: ";
-//	cin >> money;
-//	if (balance - money < 0) {
-//		cout << "잔액이 부족합니다" << endl;
-//		return;
-//	}
-//	balance -= money;
-//}
-void BankAccount::BalanceChange(int change){
-	balance+=change;
+void BankAccount::Deposit(int money){
+	balance+=money;
+}
+void BankAccount::WithDraw(int money){
+	balance-=money;
 }
 void BankAccount::ShowCustomerInfo() const {
 	cout << "계좌ID: " << bankID << endl;
@@ -128,7 +105,7 @@ void AccountHandler::Deposit(){
 	cout << "잔 액: " << accountArr[accessNum]->GetBalance() << endl;
 	cout << "금액을 입력하십시오: ";
 	cin>>money;
-	accountArr[accessNum]->BalanceChange(money);
+	accountArr[accessNum]->Deposit(money);
 	cout<<money<<"원 입금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance()<<"입니다"<<endl;
 }	
 void AccountHandler::Withdraw(){
@@ -148,7 +125,7 @@ void AccountHandler::Withdraw(){
 		cout<<"잔액이 부족합니다."<<endl;
 		return;
 	}
-	accountArr[accessNum]->BalanceChange(-money);
+	accountArr[accessNum]->WithDraw(money);
 	cout<<money<<"원 출금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance()<<"입니다"<<endl;
 }
 void AccountHandler::PrintAllAccount() const{
