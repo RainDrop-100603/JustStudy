@@ -322,14 +322,15 @@ class SimpleClass{
 		여러번 상속된 경우, 현재 class기준에서 가장 마지막으로 overriding된 함수가 호출된다.
 		base class의 함수와 dervied class의 함수는 접근할 수 있는 영역(멤버변수 및 함수: 멤버)가 다르기 때문에 overriding이 의미가 있다.
 
-	상속 관계에서의 Pointer
+	상속 관계에서의 Pointer & Reference
 		base class 자료형의 pointer는, base를 직접 및 간접(a->b->c에서 a와 c)상속하는 class의 객체를 가리킬 수 있다.
 			base->derived->derived2: base* ptr= derived2 object;	
 		그러나 base class 자료형의 pointer는 derived class의 멤버에는 접근할 수 없다. 
 			컴파일러의 연산가능여부 판단 기준은 pointer의 자료형이므로, base에는 없는 dervied의 멤버에 접근할 수 없는 것이다.
 		즉 base class 자료형의 pointer가 derived class의 객체를 가리켜도, derived class의 멤버에는 접근할 수 없는 문제가 발생한다.
 			의미가 없어진 셈이다.
-			virtual function으로 문제 해결 가능 
+		virtual function으로 문제 해결 가능 
+		Reference도 Pointer와 동일하게 적용된다.
 
 	virtual function
 		선언
@@ -338,6 +339,9 @@ class SimpleClass{
 				코드 분석의 용이를 위해 overriding하는 함수에도 virtual을 붙여주는것이 좋다.
 		기능
 			가상함수 호출시, pointer의 자료형이 아닌, pointer가 가리키는 객체를 기준으로 가장 마지막으로 overriding된 가상함수를 호출한다.
+		소멸자
+			First -> Second -> Third로 상속되는 class에서, First 자료형 포인터로 Third형을 가리키는 경우, 소멸자도 First만 호출된다.
+				소멸자도 가상함수 처리해서 Third -> Second -> First 순서로 호출되게 만든다.
 	순수 가상함수 와 추상 클래스
 		순수 가상함수 (Pure virtual function)
 			함수의 몸체가 정의되지 않은 함수
