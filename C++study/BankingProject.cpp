@@ -40,6 +40,14 @@ void BankAccount::ShowCustomerInfo() const {
 	cout << "이 름: " << name << endl;
 	cout << "잔 액: " << balance << endl;
 }
+NormalAccount::NormalAccount(int bankID, char* name, int balance, int interest)
+	:BankAccount(bankID, name, balance), interest(interest){}
+	// NormalAccount(int bankID, char* name, int balance, int interest);
+	// virtual void Deposit(int money);
+	// virtual ~NormalAccount();
+	// HighCreditAccount(int bankID, char* name, int balance, int interest, int creditRating);
+	// virtual void Deposit(int money);
+	// virtual ~HighCreditAccount();	
 AccountHandler::AccountHandler()
 	:accountNum(0){}
 AccountHandler::~AccountHandler(){
