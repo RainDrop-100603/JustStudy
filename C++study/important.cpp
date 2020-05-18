@@ -365,6 +365,10 @@ class SimpleClass{
 	Entity class: 데이터를 저장하는 클래스
 					데이터의 종류 파악 가능 
 */
+/*
+	형 변환 주의
+	money * (1+7/100)은 money * 1과 같다.?
+*/
 //vector
 
 //dev에 있던 것들 정리 
