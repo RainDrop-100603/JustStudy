@@ -18,6 +18,5 @@ int main(void) {
 	//PtrRefTest();
 	//enumTest();
 	//BankProgram();
-
 	return 0;
 }

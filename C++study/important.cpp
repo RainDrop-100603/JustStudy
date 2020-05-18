@@ -367,7 +367,8 @@ class SimpleClass{
 */
 /*
 	형 변환 주의
-	money * (1+7/100)은 money * 1과 같다.?
+	money * (1+7/100)은 money * 1과 같다.
+	money * (1+7/100.0) 으로 적용해야 한다.
 */
 //vector
 

@@ -381,8 +381,8 @@ void SalesWorker::ShowSalaryInfo() const{
 ForeignSalesWorker::ForeignSalesWorker(char* name, int baseSalary, double bonusRatio, int riskPayRatio)
 	:SalesWorker(name, baseSalary, bonusRatio), riskPayRatio(riskPayRatio){}
 int ForeignSalesWorker::GetPay() const{
-	return SalesWorker::GetPay()+SalesWorker::GetPay()*riskPayRatio/100;
-	//return SalesWorker::GetPay()*(riskPayRatio/100+1);
+	//return SalesWorker::GetPay()+SalesWorker::GetPay()*riskPayRatio/100;
+	return SalesWorker::GetPay()*(1+riskPayRatio/100.0);
 }
 void ForeignSalesWorker::ShowSalaryInfo() const{
 	ShowYourName();
