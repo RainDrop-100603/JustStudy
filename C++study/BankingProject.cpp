@@ -42,12 +42,25 @@ void BankAccount::ShowCustomerInfo() const {
 }
 NormalAccount::NormalAccount(int bankID, char* name, int balance, int interest)
 	:BankAccount(bankID, name, balance), interest(interest){}
-	// NormalAccount(int bankID, char* name, int balance, int interest);
-	// virtual void Deposit(int money);
-	// virtual ~NormalAccount();
-	// HighCreditAccount(int bankID, char* name, int balance, int interest, int creditRating);
-	// virtual void Deposit(int money);
-	// virtual ~HighCreditAccount();	
+void NormalAccount::Deposit(int money){
+	BankAccount::Deposit(money+money*interest/100);
+}
+NormalAccount::~NormalAccount(){}
+HighCreditAccount::HighCreditAccount(int bankID, char* name, int balance, int interest, int creditRating)
+	:NormalAccount(bankID, name, balance, interest){
+		if(creditRating==1){
+			this->creditRating=7;
+		}else if(creditRating==2){
+			this->creditRating=4;
+		}else{
+			this->creditRating=2;
+		}
+	}
+void HighCreditAccount::Deposit(int money){
+	NormalAccount::Deposit(money+money*creditRating/100);
+}
+HighCreditAccount::~HighCreditAccount(){}
+
 AccountHandler::AccountHandler()
 	:accountNum(0){}
 AccountHandler::~AccountHandler(){
@@ -84,19 +97,53 @@ void AccountHandler::OpenAccount() {
 		return;
 	}
 
-	int bankID;
+	int choice, bankID, balance, interest, creditRating;
 	char name[NAMELENGTH];
-	cout << "[ 계 좌 개 설 ]" << endl;
-	cout << "계좌 ID: ";
-	cin >> bankID;
-	if(ChkAccount(bankID)!=-1){
-		cout<<"이미 존재하는 계좌 ID 입니다"<<endl;
+	cout << "[계좌종류선택]" << endl;
+	cout<<"1. 보통예금계좌 2. 신용신뢰계좌"<<endl;
+	cout<<"선택";
+	cin>>choice;
+
+	if(choice==1){
+		cout<<"[보통예금계좌 개설]"<<endl;
+		cout << "계좌 ID: ";
+		cin >> bankID;
+		if(ChkAccount(bankID)!=-1){
+			cout<<"이미 존재하는 계좌 ID 입니다"<<endl;
+			return;
+		}
+		cout << "이 름: ";
+		cin >> name;
+		cin.ignore();
+		cout<<"입금액: ";
+		cin>>balance;
+		cout<<"이자율: ";
+		cin>>interest;
+		accountArr[accountNum] = new NormalAccount(bankID,name,balance,interest);
+	}
+	else if(choice ==2){
+		cout<<"[신용신뢰계좌 개설]"<<endl;
+		cout << "계좌 ID: ";
+		cin >> bankID;
+		if(ChkAccount(bankID)!=-1){
+			cout<<"이미 존재하는 계좌 ID 입니다"<<endl;
+			return;
+		}
+		cout << "이 름: ";
+		cin >> name;
+		cin.ignore();
+		cout<<"입금액: ";
+		cin>>balance;
+		cout<<"이자율: ";
+		cin>>interest;
+		cout<<"신용등급(1toA,2toB,3toC)";
+		cin>>creditRating;
+		accountArr[accountNum] = new HighCreditAccount(bankID,name,balance,interest,creditRating);
+	}else{
+		cout<<"잘못된 입력입니다"<<endl;
 		return;
 	}
-	cout << "이 름: ";
-	cin >> name;
-	cin.ignore();	//한국어 들어갈때 이거 없으면 에러났던거같음. 이유는?
-	accountArr[accountNum] = new BankAccount(bankID,name);
+
 	cout << endl << "계좌 생성 완료" << endl;
 	accountNum++;
 }

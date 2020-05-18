@@ -17,6 +17,7 @@ enum Constant {
 	NAMELENGTH = 100,
 };
 
+
 class BankAccount {
 private:
 	int bankID;
