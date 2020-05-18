@@ -5,13 +5,18 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"label": "g++ build active file",
+			"label": "g++ build debug",
 			"command": "/usr/bin/g++",
 			"args": [
 				"-g",
 				"${fileDirname}/*.cpp",
 				"-o",
-				"${fileDirname}/${fileBasenameNoExtension}"
+				"${fileDirname}/${fileBasenameNoExtension}",
+				"-O2",
+				"-Wall",
+				"-lm",
+				"-static",
+				
 			],
 			"options": {
 				"cwd": "/usr/bin"
@@ -23,6 +28,93 @@
 				"kind": "build",
 				"isDefault": true
 			}
-		}
+		},
+		
+		{
+			"type": "shell",
+			"label": "g++ if build task",
+			"command": "eval",
+			"args": [
+				"test '${fileExtname}' == '.cpp'",
+				"&& { [ -f ${fileDirname}/${fileBasenameNoExtension} ] && rm ${fileDirname}/${fileBasenameNoExtension} || : }",
+				"&& g++ ",
+				"${fileDirname}/*.cpp",
+				"-o",
+				"${fileDirname}/${fileBasenameNoExtension}",
+				"-O2",
+				"-Wall",
+				"-lm",
+				"-static",
+
+				"&& echo 'build c++'; } || :",
+			],
+			"group": "none"
+		},
+
+		{
+			"type": "shell",
+			"label": "if cpp run task",
+			"command": "eval",
+			"args": [
+				"[[ '${fileExtname}' == '.cpp' && -f ${fileDirname}/${fileBasenameNoExtension} ]]",
+				"&& { tput setaf 1 ",
+				"&& echo '=============== PROGRAM START ==============='",
+				"&& tput sgr0",
+				"&& { test -f '${fileDirname}/in.txt'",
+				"&& ${fileDirname}/${fileBasenameNoExtension} < '${fileDirname}/in.txt'",
+				"|| ${fileDirname}/${fileBasenameNoExtension}; }",
+				"&& tput setaf 1",
+				"&& echo '================ PROGRAM END ================'",
+				"&& tput sgr0; } || :",
+			],
+			"group": "none",
+			"dependsOrder": "sequence",
+			"dependsOn": ["g++ if build task"]
+		},
+
+		{
+			"type": "shell",
+			"label": "if py run task",
+			"command": "eval",
+			"args": [
+				"test '${fileExtname}' == '.py'",
+				"&& { tput setaf 1 ",
+				"&& echo '=============== PROGRAM START ==============='",
+				"&& tput sgr0",
+				"&& { test -f '${fileDirname}/in.txt'",
+				"&& python3 ${fileDirname}/${fileBasename} < '${fileDirname}/in.txt'",
+				"|| python3 ${fileDirname}/${fileBasename}; }",
+				"&& tput setaf 1",
+				"&& echo '================ PROGRAM END ================'",
+				"&& tput sgr0; } || :",
+			],
+			"group": "none"
+		},
+
+		{
+			"type": "shell",
+			"label": "g++ build and excute from file",
+			"command": "echo 'run cpp/py with in.txt'",
+			"group": {
+					"kind": "test",
+					"isDefault": true
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false,
+				"revealProblems": "onProblem"
+			},
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"if cpp run task",
+			]
+		},
 	]
 }

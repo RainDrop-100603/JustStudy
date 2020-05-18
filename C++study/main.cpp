@@ -5,6 +5,10 @@
 
 using namespace std;
 
+//단축기에서 아래 찾아보기 
+//workbench.action.tasks.build : 빌드
+//workbench.action.tasks.test : 실행
+
 //Solutions of each chapter
 
 int main(void) {

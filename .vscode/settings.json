@@ -74,7 +74,20 @@
         "thread": "cpp",
         "typeindex": "cpp",
         "variant": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "concepts": "cpp",
+        "compare": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "numbers": "cpp",
+        "stop_token": "cpp",
+        "filesystem": "cpp"
     },
-    "githubPullRequests.remotes": []
+    "python.pythonPath": "/usr/bin/python3",
+    "C_Cpp.clang_format_fallbackStyle": "Google",
+    "editor.tabSize": 2,
+    "code-runner.fileDirectoryAsCwd": true,
+    "code-runner.saveAllFilesBeforeRun": true,
+    "code-runner.saveFileBeforeRun": true,
+    "code-runner.runInTerminal": true
 }

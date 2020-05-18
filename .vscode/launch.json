@@ -1,19 +1,8 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
-
         {
-            "name": "python debug",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "cwd": "${fileDirname}",
-            "console": "integratedTerminal"
-        },
-        
-        {
-            "name": "gdb debug",
+            "name": "c++ debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
@@ -30,7 +19,28 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "g++ build active file"
-        }
+            "preLaunchTask": "g++ build debug"
+        },
+
+        {
+            "name": "c++ debug from file",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": ["<", "in.txt"],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "g++ build debug"
+        },
     ]
 }

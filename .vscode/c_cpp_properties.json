@@ -3,12 +3,26 @@
         {
             "name": "WSL",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/include/**"
             ],
-            "defines": [],
+            "defines": [ 
+                "__cpp_concepts=201907L",
+                "__cplusplus=201907L"
+                
+            ],
+            
+            "browse": {
+                "databaseFilename": "${default}",
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "${workspaceFolder}/**",
+                    "/usr/include/**"
+                ]
+            },
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",
-            "cppStandard": "c++17",
+            "cppStandard":"gnu++20",
             "intelliSenseMode": "gcc-x64"
         }
     ],
