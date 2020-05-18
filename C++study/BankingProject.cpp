@@ -45,19 +45,27 @@ NormalAccount::NormalAccount(int bankID, char* name, int balance, int interest)
 void NormalAccount::Deposit(int money){
 	BankAccount::Deposit(money+money*interest/100);
 }
+void NormalAccount::ShowCustomerInfo() const{
+	BankAccount::ShowCustomerInfo();
+	cout << "이자율: " << interest << endl;
+}
 NormalAccount::~NormalAccount(){}
 HighCreditAccount::HighCreditAccount(int bankID, char* name, int balance, int interest, int creditRating)
 	:NormalAccount(bankID, name, balance, interest){
 		if(creditRating==1){
-			this->creditRating=7;
+			this->creditRating=RANK_A;
 		}else if(creditRating==2){
-			this->creditRating=4;
+			this->creditRating=RANK_B;
 		}else{
-			this->creditRating=2;
+			this->creditRating=RANK_C;
 		}
 	}
 void HighCreditAccount::Deposit(int money){
 	NormalAccount::Deposit(money+money*creditRating/100);
+}
+void HighCreditAccount::ShowCustomerInfo() const{
+	NormalAccount::ShowCustomerInfo();
+	cout<<"신용이자율: "<<creditRating<<endl;
 }
 HighCreditAccount::~HighCreditAccount(){}
 
@@ -101,7 +109,7 @@ void AccountHandler::OpenAccount() {
 	char name[NAMELENGTH];
 	cout << "[계좌종류선택]" << endl;
 	cout<<"1. 보통예금계좌 2. 신용신뢰계좌"<<endl;
-	cout<<"선택";
+	cout<<"선택: ";
 	cin>>choice;
 
 	if(choice==1){
@@ -136,7 +144,7 @@ void AccountHandler::OpenAccount() {
 		cin>>balance;
 		cout<<"이자율: ";
 		cin>>interest;
-		cout<<"신용등급(1toA,2toB,3toC)";
+		cout<<"신용등급(1toA,2toB,3toC): ";
 		cin>>creditRating;
 		accountArr[accountNum] = new HighCreditAccount(bankID,name,balance,interest,creditRating);
 	}else{
@@ -161,7 +169,7 @@ void AccountHandler::Deposit(){
 	cout << "금액을 입력하십시오: ";
 	cin>>money;
 	accountArr[accessNum]->Deposit(money);
-	cout<<money<<"원 입금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance()<<"입니다"<<endl;
+	cout<<"입금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance()<<"입니다"<<endl;
 }	
 void AccountHandler::Withdraw(){
 	cout << "[ 출 금 ]" << endl;
@@ -181,7 +189,7 @@ void AccountHandler::Withdraw(){
 		return;
 	}
 	accountArr[accessNum]->WithDraw(money);
-	cout<<money<<"원 출금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance()<<"입니다"<<endl;
+	cout<<"출금이 완료되었습니다. 잔액은 "<<accountArr[accessNum]->GetBalance()<<"입니다"<<endl;
 }
 void AccountHandler::PrintAllAccount() const{
 	for(int i=0;i<accountNum;i++){

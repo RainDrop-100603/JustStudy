@@ -17,6 +17,12 @@ enum Constant {
 	NAMELENGTH = 100,
 };
 
+enum CreditRating {
+	RANK_A = 7,
+	RANK_B = 4,
+	RANK_C = 2
+};
+
 
 class BankAccount {
 private:
@@ -31,7 +37,7 @@ public:
 	//void BalanceChange(int change);
 	virtual void Deposit(int money);
 	void WithDraw(int money);
-	void ShowCustomerInfo() const;
+	virtual void ShowCustomerInfo() const;
 	virtual ~BankAccount();
 };
 
@@ -40,6 +46,7 @@ class NormalAccount: public BankAccount{
 public:
 	NormalAccount(int bankID, char* name, int balance, int interest);
 	virtual void Deposit(int money);
+	virtual void ShowCustomerInfo() const;
 	virtual ~NormalAccount();
 };
 
@@ -48,6 +55,7 @@ class HighCreditAccount: public NormalAccount{
 public:
 	HighCreditAccount(int bankID, char* name, int balance, int interest, int creditRating);
 	virtual void Deposit(int money);
+	virtual void ShowCustomerInfo() const;
 	virtual ~HighCreditAccount();
 };
 
