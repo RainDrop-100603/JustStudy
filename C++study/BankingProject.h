@@ -38,7 +38,7 @@ public:
 	virtual void Deposit(int money);
 	void WithDraw(int money);
 	virtual void ShowCustomerInfo() const;
-	virtual ~BankAccount();
+	~BankAccount();
 };
 
 class NormalAccount: public BankAccount{
@@ -47,7 +47,6 @@ public:
 	NormalAccount(int bankID, char* name, int balance, int interest);
 	virtual void Deposit(int money);
 	virtual void ShowCustomerInfo() const;
-	virtual ~NormalAccount();
 };
 
 class HighCreditAccount: public NormalAccount{
@@ -56,7 +55,6 @@ public:
 	HighCreditAccount(int bankID, char* name, int balance, int interest, int creditRating);
 	virtual void Deposit(int money);
 	virtual void ShowCustomerInfo() const;
-	virtual ~HighCreditAccount();
 };
 
 

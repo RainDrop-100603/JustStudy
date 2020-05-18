@@ -49,7 +49,6 @@ void NormalAccount::ShowCustomerInfo() const{
 	BankAccount::ShowCustomerInfo();
 	cout << "이자율: " << interest << endl;
 }
-NormalAccount::~NormalAccount(){}
 HighCreditAccount::HighCreditAccount(int bankID, char* name, int balance, int interest, int creditRating)
 	:NormalAccount(bankID, name, balance, interest){
 		if(creditRating==1){
@@ -61,13 +60,13 @@ HighCreditAccount::HighCreditAccount(int bankID, char* name, int balance, int in
 		}
 	}
 void HighCreditAccount::Deposit(int money){
-	NormalAccount::Deposit(money+money*creditRating/100);
+	NormalAccount::Deposit(money);
+	BankAccount(money*creditRating/100);
 }
 void HighCreditAccount::ShowCustomerInfo() const{
 	NormalAccount::ShowCustomerInfo();
 	cout<<"신용이자율: "<<creditRating<<endl;
 }
-HighCreditAccount::~HighCreditAccount(){}
 
 AccountHandler::AccountHandler()
 	:accountNum(0){}
@@ -114,19 +113,14 @@ void AccountHandler::OpenAccount() {
 
 	if(choice==1){
 		cout<<"[보통예금계좌 개설]"<<endl;
-		cout << "계좌 ID: ";
-		cin >> bankID;
+		cout << "계좌 ID: ";	cin >> bankID;
 		if(ChkAccount(bankID)!=-1){
 			cout<<"이미 존재하는 계좌 ID 입니다"<<endl;
 			return;
 		}
-		cout << "이 름: ";
-		cin >> name;
-		cin.ignore();
-		cout<<"입금액: ";
-		cin>>balance;
-		cout<<"이자율: ";
-		cin>>interest;
+		cout << "이 름: ";	cin >> name;	cin.ignore();
+		cout<<"입금액: ";	cin>>balance;
+		cout<<"이자율: ";	cin>>interest;
 		accountArr[accountNum] = new NormalAccount(bankID,name,balance,interest);
 	}
 	else if(choice ==2){
@@ -137,15 +131,10 @@ void AccountHandler::OpenAccount() {
 			cout<<"이미 존재하는 계좌 ID 입니다"<<endl;
 			return;
 		}
-		cout << "이 름: ";
-		cin >> name;
-		cin.ignore();
-		cout<<"입금액: ";
-		cin>>balance;
-		cout<<"이자율: ";
-		cin>>interest;
-		cout<<"신용등급(1toA,2toB,3toC): ";
-		cin>>creditRating;
+		cout<<"이 름: ";	cin >> name;	cin.ignore();
+		cout<<"입금액: ";	cin>>balance;
+		cout<<"이자율: ";	cin>>interest;
+		cout<<"신용등급(1toA,2toB,3toC): ";	cin>>creditRating;
 		accountArr[accountNum] = new HighCreditAccount(bankID,name,balance,interest,creditRating);
 	}else{
 		cout<<"잘못된 입력입니다"<<endl;
