@@ -19,6 +19,9 @@ using namespace std;
 }
 */
 
+//https://modoocode.com/134
+//https://moodle.ufsc.br/pluginfile.php/2377667/mod_resource/content/0/Effective_Modern_C__.pdf
+
 //Solutions of each chapter
 
 int main(void) {
