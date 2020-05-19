@@ -484,17 +484,25 @@ class SimpleClass{
 					(멤버)Point operator*(int times){...}
 					(전역)Point operator*(int times, Point& ref){...}
 		cin, cout의 오버로딩, 그리고 endl (430p 참고)
-				아래 함수를 보며 이해하자
+				아래 함수는 cout의 실제 구조의 일부를 간략하게 표현한 것이다.
+					실제는 iostream(header)->std(namespace)->ostream(class)->cout(object) 구조이다.
+					함수를 보며 구조를 이해하도록 하자.
 			오버로딩 유의사항
 				cout은 ostream class의 객체이다.
 				ostream class는 이름공간 std안에 선언되어 있으며, 이의 사용을 위해서는 헤더파일 <iostream>을 포함해야 한다.
 					iostream(header)->std(namespace)->ostream(class)->cout(object)
 						ostream(class): operator <<가 정의되어 있음 
 				멤버함수방식 vs 전역함수 방식
-					<iostream> 에 정의된 ostream을 수정할 수는 없으므로, 전역함수에 의한 방법을 선택해야 한다.
-					ostream& operator<< (ostream& os, const Point& pos){...}
-						ostream의 객체와 내가 정의한 class의 객체(여기선 Point class)가 operator<<의 매개변수 일 때
-							cout<<pos1 = operator<<(cout, pos1) 에서 cout은 ostream의 객체, pos1은 Point의 객체이므로 오버로딩된 함수를 호출하게 된다.
+					<iostream> 에 정의된 ostream에 오버로딩함수를 추가할 수 없으므로, 전역함수에 의한 방법을 선택해야 한다.
+						ostream& operator<< (ostream& os, const Point& pos){
+							os<<'['<<xpos<<','<<ypos<<']'<<endl;
+							return os;
+						}
+							ostream의 객체와 내가 정의한 class의 객체(여기선 Point class)가 operator<<의 매개변수 일 때 오버로딩된 함수가 호출된다.
+								cout<<pos1 = operator<<(cout, pos1) 에서 cout은 ostream의 객체, pos1은 Point의 객체이므로 오버로딩된 함수를 호출하게 된다.
+							ostream에 기본적으로 정의된 operator<<을 이용하여 출력을 구성한다.
+				cin
+					iostream(header)->std(namespace)->istream(class)->cin(object)
 */		
 namespace mystd{
 	using namespace std;
