@@ -20,6 +20,7 @@ using namespace std;
 		Call by Reference & Call by Value
 		동적 할당 - new
 	Class
+	연산자 오버로딩
 */
 
 
@@ -421,6 +422,23 @@ class SimpleClass{
 				즉 Derived1과 Derived2가 같은 Base 클래스 멤버를 상속하는 것이다.
 			
 */
+
+//연산자 오버로딩
+/*
+	연산자 오버로딩
+		멤버함수의 의한 오버로딩
+				클래스 내부에서: Point operator+(Point& ref){...}
+						point3=point1.operator+(point2);
+						point3=point1+point2;
+		전역함수에 의한 오버로딩
+				클래스 내부에서: friend Point operator+(const Point& point1, const Point& point2);	
+						(operator+ 함수가 클래스의 private 멤버에 접근할 수 있게 해주는 선언)
+						(Point 클래스가 + 연산자에 대해 오버로딩 되어 있음을 알 수 있다)
+				클래스 외부에서: Point operator+(const Point& point1, const Point& point2){...}
+						point3=operator+(point1,point2);
+						point3=point1+point2;
+*/
+
 //vector
 
 //dev에 있던 것들 정리 
