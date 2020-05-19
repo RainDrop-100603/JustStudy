@@ -484,26 +484,39 @@ class SimpleClass{
 					(멤버)Point operator*(int times){...}
 					(전역)Point operator*(int times, Point& ref){...}
 		cin, cout의 오버로딩, 그리고 endl (430p 참고)
-			
-
+				아래 함수를 보며 이해하자
+			오버로딩 유의사항
+				cout은 ostream class의 객체이다.
+				ostream class는 이름공간 std안에 선언되어 있으며, 이의 사용을 위해서는 헤더파일 <iostream>을 포함해야 한다.
+					iostream(header)->std(namespace)->ostream(class)->cout(object)
+						ostream(class): operator <<가 정의되어 있음 
+				멤버함수방식 vs 전역함수 방식
+					<iostream> 에 정의된 ostream을 수정할 수는 없으므로, 전역함수에 의한 방법을 선택해야 한다.
+					ostream& operator<< (ostream& os, const Point& pos){...}
+						ostream의 객체와 내가 정의한 class의 객체(여기선 Point class)가 operator<<의 매개변수 일 때
+							cout<<pos1 = operator<<(cout, pos1) 에서 cout은 ostream의 객체, pos1은 Point의 객체이므로 오버로딩된 함수를 호출하게 된다.
 */		
 namespace mystd{
 	using namespace std;
 	class ostream{
 		public:
-			void operator<< (char* str){
+			ostream& operator<< (char* str){
 				printf("%s", str);	//오버로딩을 통해 출력을 구현하고 있다.
+				return *this; // cout<<"string"<<123<<endl과 같이 연속적인 사용을 가능하게 하기 위해 반환형을 ostream&으로 구현했다.
 			}
-			void operator<< (char str){
+			ostream& operator<< (char str){
 				printf("%c", str);
+				return *this;
 			}
-			void operator<< (int num){
+			ostream& operator<< (int num){
 				printf("%d", num);
+				return *this;
 			}
-			void operator<< (double e){
+			ostream& operator<< (double e){
 				printf("%g", e);
+				return *this;
 			}
-			void operator<< (ostream& (*fp)(ostream& ostm)){	//함수포인터: 반환형이 ostream&이고, 매개변수가 ostream&인 어떤 함수가 들어갈 수 있다. 
+			ostream& operator<< (ostream& (*fp)(ostream& ostm)){	//함수포인터: 반환형이 ostream&이고, 매개변수가 ostream&인 어떤 함수가 들어갈 수 있다. 
 				fp(*this);	
 				/*
 				cout<<endl; 일 경우
@@ -516,12 +529,13 @@ namespace mystd{
 								fflush(stdout);
 								return cout;
 				*/
+				return *this;
 			}
 	};
 
 	ostream& endl(ostream &ostm){
 		ostm<<'\n';	//줄바꿈, cout<<'\n';과 같다.
-		fflush(stdout);	//버퍼를 비운다.
+		fflush(stdout);	//출력 버퍼를 모두 출력하고 비운다.
 		return ostm;
 	}
 
@@ -544,6 +558,22 @@ namespace mystd{
 	fflush와 입력 버퍼 등 시스템의 구조
 		시스템의 구조
 			입력스트림(키보드) -> 입력 버퍼(stdin) -> 프로그램 -> 출력버퍼(stdout, stderr) -> 출력스트림(모니터)
+		입력의 단계
+			입력 버퍼에 엔터(\n)가 들어오기 전 까지 입력 받는다
+				scanf를 통해 입력버퍼에서 해당하는 자료형을 프로그램에 넣어준다.
+					이때 숫자를 scanf할 경우, \n은 숫자가 아니기 때문에 입력 버퍼에 남아있게 된다.
+						이로인해 다음 scanf사용시 원치않은 입력을 받을 수 있다.
+						따라서 각 운영체제에 맞는 방식으로 버퍼를 비워주는 것이 필요할 수 있다.
+		출력의 단계
+			데이터를 출력버퍼에 저장하고 출력한다.
+				운영체제에 따라 다르게 작동하기도 한다.
+					    int i;
+ 							printf("12345");
+    					for(i=0; i>=0; i++);
+   						printf("67890\n");
+					위 프로그램의 경우 윈도우는 12345를 출력하고 루프를 돈 후 67890을 출력한다.
+						리눅스의 경우는 루프를 모두 돈 후에 1234567890을 한꺼번에 출력한다.
+							프로그래머의 의도대로 루프를 돈 후에 67890을 출력하고 싶다면 fflush(stdout)을 통해 출력버퍼를 모두 출력해버리면 된다.
 		fflush
 			******c표준 라이브러리에서는 출력 스트림에 대해서만 정의되어 있다.*******
 				fflush(stdout): stdout의 내용을 모두 출력해버린다 - > 버퍼가 비워진다.
