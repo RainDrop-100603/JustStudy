@@ -346,6 +346,13 @@ class SimpleClass{
 				소멸자도 가상함수 처리해서 Third -> Second -> First 순서로 호출되게 만든다.
 				다른 virtual과 마찬가지로 base class의 소멸자가 virtual 선언되면 dervied class들도 모두 virtual 선언이 자동으로 된다.
 					소멸자의 경우 이름이 다름에도(First, Second ...) 자동으로 선언 처리되므로 오해하지 말자 
+		Virtual Table
+			가상함수를 포함한 클래스는  V-Table을 가지게 된다.
+				V-Table은 호출하고자 하는 함수를 구분하는 key, 해당하는 함수의 주소를 나타내는 value로 이루어져 있다.
+				오버라이딩 된 함수의 경우, V-Table에는 가장 마지막에 오버라이딩 된 함수가 적혀있게 된다(현재 클래스 기준).
+				각 객체에는 해당하는 class의 V-Table의 주소 값이 저장된다.
+					First class 포인터가 Second class 객체를 가리킬 때, 포인터는 Second class의 V-Table을 참고하여 가상함수를 호출하는 것이다.
+
 	순수 가상함수 와 추상 클래스
 		순수 가상함수 (Pure virtual function)
 			함수의 몸체가 정의되지 않은 함수
@@ -367,8 +374,8 @@ class SimpleClass{
 */
 /*
 	형 변환 주의
-	money * (1+7/100)은 money * 1과 같다.
-	money * (1+7/100.0) 으로 적용해야 한다.
+	money * (1+7/100)은 money * 1과 같다.		int로 적용
+	money * (1+7/100.0) 으로 적용해야 한다.	double로 적용(float로 적용?)
 */
 /*
 함수 포인터 변수
@@ -382,9 +389,37 @@ class SimpleClass{
 
 */
 /*
-	객체의 구조
+	멤버 함수의 실제 위치
 		객체 내부에는 실제로는 멤버변수만 존재한다. 멤버함수는 객체 외부에 존재한다.
 		같은 class의 모든 객체는 하나의 멤버함수를 공유한다.
+	다중 상속
+		여러개의 함수를 동시에 상속
+			class MultiDerived : public BaseOne, protected BaseTwo{...};
+		함수 호출의 모호함
+			BaseOne과 BaseTwo의 멤버함수명이 같을 경우 어떻게 구분하는가?
+				BaseOne::Func1, BaseTwo::Func2와 같은 방식으로 구분
+	가상 상속
+		다중 상속에서 하나의 객체에 Base가 여러개일 경우 함수 호출의 모호함
+				class Derived1: public Base{...};
+				class Derived2: public Base{...};
+				class FinalDerived: public Derived1, public Derived2{...};
+					Base(1)-Derived1-FinalDerived
+					Base(2)-Derived2-			''
+			FinalDerived 객체는 두 개의 Base 클래스 멤버를 가지게 된다.	
+					Base 생성자가 두번 호출된다.
+				즉 Derived1과 Derived2는 다른 Base 클래스 멤버를 상속한다.
+				어느 클래스를 통해 간접상속한 Base 클래스의 멤버함수를 호출할 것인지 명시해야 한다.
+					Derived1::Func, Derived2::Func
+		Virtual 을 통해 하나의 Base만 생성되도록 한다.
+				class Derived1: virtual public Base{...};
+				class Derived2: virtual public Base{...};
+				class FinalDerived: public Derived1, public Derived2{...};
+					Base-Derived1-FinalDerived
+					 ''	-Derived2-			''
+			FinalDerived 객체는 하나의 Base 클래스 멤버를 가진다.
+					Base 생성자가 한번 호출된다.
+				즉 Derived1과 Derived2가 같은 Base 클래스 멤버를 상속하는 것이다.
+			
 */
 //vector
 
