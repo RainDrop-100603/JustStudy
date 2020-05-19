@@ -411,6 +411,58 @@ EmployeeHandler::~EmployeeHandler(){
 	}
 }
 
+PointOL::PointOL(int xpos=0, int ypos=0)
+	:xpos(xpos),ypos(ypos){}
+void PointOL::ShowPosition() const{
+	cout<<"["<<xpos<<", "<<ypos<<"]"<<endl;
+}	
+PointOL& PointOL::operator+=(const PointOL& point){
+	xpos+=point.xpos;
+	ypos+=point.ypos;
+	return *this;
+}
+PointOL& PointOL::operator-=(const PointOL& point){
+	xpos-=point.xpos;
+	ypos-=point.ypos;
+	return *this;
+}
+PointOL operator+(const PointOL& point1, const PointOL& point2){
+	PointOL point3;
+	point3.xpos=point1.xpos+point2.xpos;
+	point3.ypos=point1.ypos+point2.ypos;
+	return point3;
+}
+PointOL operator-(const PointOL& point1, const PointOL& point2){
+	PointOL point3;
+	point3.xpos=point1.xpos-point2.xpos;
+	point3.ypos=point1.ypos-point2.ypos;
+	return point3;
+}
+bool operator==(const PointOL& point1, const PointOL& point2){
+	if((point1.xpos!=point2.xpos)||(point1.ypos!=point2.ypos)){
+		return false;
+	}else{
+		return true;
+	}
+}
+bool operator!=(const PointOL& point1, const PointOL& point2){
+	return !operator==(point1,point2);
+}
+
+// class PointOL{
+// private:
+// 	int xpos, ypos;/
+// public:
+// 	PointOL(int xpos, int ypos);
+// 	void ShowPosition() const;
+// 	friend PointOL Operator+(const PointOL& point1, const PointOL& point2);
+// 	friend PointOL Operator-(const PointOL& point1, const PointOL& point2);
+// 	PointOL& operator+=(const PointOL& point);
+// 	PointOL& operator-=(const PointOL& point);
+	// friend bool operator==(const PointOL& point1, const PointOL& point2);
+	// friend bool operator!=(const PointOL& point1, const PointOL& point2);
+// };
+
 
 
 //Part1
@@ -742,4 +794,19 @@ void Question08_1(void) {
 
 	handler.ShowAllSalaryInfo();
 	handler.ShowTotalSalary();
+}
+void Question10_1(void){
+	PointOL point1(3,7), point2(4, -6);
+	PointOL point3=point1+point2;
+	point3.ShowPosition();
+	PointOL point4=point1-point2;
+	point4.ShowPosition();
+	point4+=point2;
+	point4.ShowPosition();
+	point3-=point1;
+	point3.ShowPosition();
+	cout<<(point1==point2)<<endl;
+	cout<<(point1!=point2)<<endl;
+	cout<<(point1==point4)<<endl;
+
 }

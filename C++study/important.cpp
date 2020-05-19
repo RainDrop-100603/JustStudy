@@ -375,8 +375,11 @@ class SimpleClass{
 */
 /*
 	형 변환 주의
-	money * (1+7/100)은 money * 1과 같다.		int로 적용
-	money * (1+7/100.0) 으로 적용해야 한다.	double로 적용(float로 적용?)
+		money * (1+7/100)은 money * 1과 같다.		int로 적용
+		money * (1+7/100.0) 으로 적용해야 한다.	double로 적용
+			cout<<typeid(1/100.00).name()<<endl;	:	d(double)
+			cout<<typeid(1/100.0).name()<<endl;		:	d(double)
+			cout<<typeid(1/100).name()<<endl;			:	i(int)
 */
 /*
 함수 포인터 변수
@@ -437,7 +440,34 @@ class SimpleClass{
 				클래스 외부에서: Point operator+(const Point& point1, const Point& point2){...}
 						point3=operator+(point1,point2);
 						point3=point1+point2;
-*/
+		오버로딩이 불가능한 연산자
+				.									:멤버 접근 연산자	
+				.*								:멤버 포인터 연산자
+				::								:범위 지정 연산자
+				?:								:조건 연산자(3항 연산자)
+				sizeof						:바이트 단위 크기 계산
+				typeid						:RTTI 관련 연산자
+				static_cast				:형변환 연산자
+				dynamic_cast			:형변환 연산자
+				const_cast				:형변환 연산자
+				reinterpret_cast	:형변환 연산자
+		멤버함수 기반으로만 오버로딩 가능한 연산자
+				=									:대입 연산자
+				()								:함수 호출 연산자
+				[]								:배열 접근 연산자(인덱스 연산자)
+				->								:멤버 접근을 위한 포인터 연산자
+		주의사항
+			본래의 의도를 벗어난 연산자 오버로딩은 좋지 않다.
+				+연산자가 곱셈을 나타낸다면?
+			연산자의 우선순위와 결합성은 바뀌지 않는다.
+			매개변수의 디폴트 값 설정이 불가능하다.
+			연산자의 순수 기능까지 빼앗을 수 없다.
+				int operator+ 연산자와 같은, 이미 정의되어있는 기본연산자를 재정의하여 기능을 바꿀 수 없다.
+		단항 연산자 오버로딩
+			피연산자가 한 개인 단항 연산자
+			피연산자가 두 개인 이항 연산자
+
+*/		
 
 //vector
 

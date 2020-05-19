@@ -209,6 +209,19 @@ public:
 	void ShowTotalSalary() const;
 	~EmployeeHandler();
 };
+class PointOL{
+private:
+	int xpos, ypos;
+public:
+	PointOL(int xpos, int ypos);
+	void ShowPosition() const;
+	friend PointOL operator+(const PointOL& point1, const PointOL& point2);
+	friend PointOL operator-(const PointOL& point1, const PointOL& point2);
+	PointOL& operator+=(const PointOL& point);
+	PointOL& operator-=(const PointOL& point);
+	friend bool operator==(const PointOL& point1, const PointOL& point2);
+	friend bool operator!=(const PointOL& point1, const PointOL& point2);
+};
 
 //Part1
 void Question01_1(void);
@@ -232,6 +245,9 @@ void Question05_1(void);
 void Question07_1(void);
 void Question07_2(void);
 void Question08_1(void);
+
+//Part4
+void Question10_1(void);
 
 #endif // !__QUESTIONSOL_H__
 
