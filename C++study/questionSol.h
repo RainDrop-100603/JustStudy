@@ -1,3 +1,5 @@
+//#define _CRT_SECURE_NO_WARNINGS
+
 #ifndef __QUESTIONSOL_H__
 #define __QUESTIONSOL_H__
 
@@ -5,6 +7,10 @@
 #include <cstring>
 #include <ctime>
 #include <cstdlib>
+
+
+using namespace std;
+
 
 //상수 선언
 enum solConstant{

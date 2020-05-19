@@ -1,8 +1,4 @@
-//#define _CRT_SECURE_NO_WARNINGS
-
 #include "questionSol.h"
-
-using namespace std;
 
 //귀찮아서 선언
 char* getString(){
