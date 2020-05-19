@@ -478,7 +478,55 @@ class SimpleClass{
 						++(++intVar)와 같은 연산은 허용된다.
 						(intVar++)++와 같은 연산은 허용되지 않는다.
 							const키워드를 통해 객체의 경우도 아래 연산이 허용되지 않도록 만들었다.
+		교환법칙의 성립
+			객체*int 형식과 같은 경우, 교환법칙이 성립하지 않는다.
+				전역 함수에 의한 오버로딩을 통해, 교환법칙도 성립하게 만든다.
+					(멤버)Point operator*(int times){...}
+					(전역)Point operator*(int times, Point& ref){...}
+		cin, cout의 오버로딩, 그리고 endl (430p 참고)
+			
+
 */		
+namespace mystd{
+	using namespace std;
+	class ostream{
+		public:
+			void operator<< (char* str){
+				printf("%s", str);	//오버로딩을 통해 출력을 구현하고 있다.
+			}
+			void operator<< (char str){
+				printf("%c", str);
+			}
+			void operator<< (int num){
+				printf("%d", num);
+			}
+			void operator<< (double e){
+				printf("%g", e);
+			}
+			void operator<< (ostream& (*fp)(ostream& ostm)){	//함수포인터: 반환형이 ostream&이고, 매개변수가 ostream&인 어떤 함수가 들어갈 수 있다. 
+				fp(*this);	
+				/*
+				cout<<endl; 일 경우
+					*fp는 endl을 가리키게 된다.
+					cout.operator<<(endl)
+						fp(*this) = endl(*this) = endl(cout)
+						객체는 cout이므로, *this는 cout자신이다.
+							endl(ostream& cout)가 실행된다.
+								cout<<'\n';
+								fflush(stdout);
+								return cout;
+				*/
+			}
+	};
+
+	ostream& endl(ostream &ostm){
+		ostm<<'\n';	//줄바꿈, cout<<'\n';과 같다.
+		fflush(stdout);	//버퍼를 비운다.
+		return ostm;
+	}
+
+	ostream cout;	//cout이 객체임을 알 수 있다.
+}
 /*
 	반환형 에서의 const 선언, const 객체
 		반환형에서의 const 선언
@@ -486,6 +534,27 @@ class SimpleClass{
 		const 객체
 			객체의 저장된 멤버의 변경을 허용하지 않는다.
 				따라서 참조자를 선언할 때도 const로 선언해야 한다.
+*/
+
+/*
+	함수 포인터
+*/
+
+/*
+	fflush와 입력 버퍼 등 시스템의 구조
+		시스템의 구조
+			입력스트림(키보드) -> 입력 버퍼(stdin) -> 프로그램 -> 출력버퍼(stdout, stderr) -> 출력스트림(모니터)
+		fflush
+			******c표준 라이브러리에서는 출력 스트림에 대해서만 정의되어 있다.*******
+				fflush(stdout): stdout의 내용을 모두 출력해버린다 - > 버퍼가 비워진다.
+					버퍼가 비워지는 시점은 os마다 다를 수 있다.
+						어떤 os에서는 출력 스트림 버퍼에 데이터가 들어오자 마자 꺼내어 출력하는 경우가 있고
+						어떤 ost에서는 줄바꿈 캐릭터('\n')가 들어와야 출력을 하기도 한다.
+					본인이 기억하기로는 Windows 에서는 stdout와 stderr가 동일하며 출력 스트림에 데이터가 들어오면 바로 출력하지만 (즉 버퍼를 즉시즉시 비우지만), Linux 는 stdout 과 stderr가 별도의 버퍼를 가지고 있으며, stderr는 즉시 비우는 반면, stdout는 개행을 의미하는 문자가 나타날 때까지, 혹은 표준 입출력 버퍼에 다른 이벤트가 벌어질 때까지 데이터를 출력하지 않고 버퍼에 그대로 쌓는다.
+						(http://andyader.blogspot.com/2013/09/fflush.html)
+				fflush(stdin): fflush는 출력 스트림에 대해서만 정의되어 있기 때문에, os마다 동작이 다르다
+					Windows 계열과 POSIX UNIX의 일부 계열: 입력 스트림 버퍼를 비운다.
+					LINUX등 다른 OS: 아무런 동작도 하지 않는다.
 */
 
 //vector
