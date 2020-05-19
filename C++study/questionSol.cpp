@@ -448,20 +448,16 @@ bool operator==(const PointOL& point1, const PointOL& point2){
 bool operator!=(const PointOL& point1, const PointOL& point2){
 	return !operator==(point1,point2);
 }
-
-// class PointOL{
-// private:
-// 	int xpos, ypos;/
-// public:
-// 	PointOL(int xpos, int ypos);
-// 	void ShowPosition() const;
-// 	friend PointOL Operator+(const PointOL& point1, const PointOL& point2);
-// 	friend PointOL Operator-(const PointOL& point1, const PointOL& point2);
-// 	PointOL& operator+=(const PointOL& point);
-// 	PointOL& operator-=(const PointOL& point);
-	// friend bool operator==(const PointOL& point1, const PointOL& point2);
-	// friend bool operator!=(const PointOL& point1, const PointOL& point2);
-// };
+PointOL PointOL::operator-(){
+	PointOL point(-xpos,-ypos);
+	return point;
+}
+PointOL operator~(const PointOL& point){
+	PointOL pos(point.ypos, point.xpos);
+	return pos;
+}
+	// PointOL operator-();
+	// friend PointOL operator~(const PointOL& point1, const PointOL& point2);
 
 
 
@@ -809,4 +805,12 @@ void Question10_1(void){
 	cout<<(point1!=point2)<<endl;
 	cout<<(point1==point4)<<endl;
 
+}
+void Question10_2(void){
+	PointOL point1(4,7);
+	PointOL point2=-point1;
+	PointOL point3=~point1;
+	point1.ShowPosition();
+	point2.ShowPosition();
+	point3.ShowPosition();
 }

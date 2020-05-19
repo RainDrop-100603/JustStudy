@@ -75,7 +75,7 @@ using namespace std;
 				cout<<"\\n";	은 \n 이 출력된다
 	const 키워드
 		const 변수
-			const 변수에 대한 포인터나 참조자 또한 cosnt하게 선언되어야 한다.
+			const 변수에 대한 포인터나 참조자 또한 const하게 선언되어야 한다.
 			앞 const: 선언되는 변수(포인터)를 상수화 시킨다.
 			뒤 const: 선언되는 포인터가 가리키는 값을 바꿀 수 없다.
 				const int num = 10;				: 변수 num의 상수화											
@@ -464,10 +464,29 @@ class SimpleClass{
 			연산자의 순수 기능까지 빼앗을 수 없다.
 				int operator+ 연산자와 같은, 이미 정의되어있는 기본연산자를 재정의하여 기능을 바꿀 수 없다.
 		단항 연산자 오버로딩
-			피연산자가 한 개인 단항 연산자
-			피연산자가 두 개인 이항 연산자
-
+				피연산자가 한 개인 단항 연산자
+					++, --, ~, - ...
+				피연산자가 두 개인 이항 연산자
+			전위증가 vs 후위증가
+				키워드 int를 통해 구분
+					전위증가:	pos.operator++();
+					후위증가: pos.operator++(int);
+						const Point operator++(int){...}
+						const Point operator++(Point &ref, int){...}	
+				후위증가의 반환형에 const 키워드가 붙은 이유
+					C++의 연산 특성을 그대로 반영, 일관성을 유지하기 위해서다
+						++(++intVar)와 같은 연산은 허용된다.
+						(intVar++)++와 같은 연산은 허용되지 않는다.
+							const키워드를 통해 객체의 경우도 아래 연산이 허용되지 않도록 만들었다.
 */		
+/*
+	반환형 에서의 const 선언, const 객체
+		반환형에서의 const 선언
+			반환시 생성되는 임시 객체를 const로 선언한다
+		const 객체
+			객체의 저장된 멤버의 변경을 허용하지 않는다.
+				따라서 참조자를 선언할 때도 const로 선언해야 한다.
+*/
 
 //vector
 
