@@ -2,9 +2,9 @@
 #define __BANKINGPROJECT_H__
 
 /*
- * Banking System Ver 0.6
+ * Banking System Ver 0.7
  * 작성자: rain
- * 내 용: 열혈 cpp OOP 단계별 프로젝트 6단계
+ * 내 용: 열혈 cpp OOP 단계별 프로젝트 
  */
 
 #include <iostream>

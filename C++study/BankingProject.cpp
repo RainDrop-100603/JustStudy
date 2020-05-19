@@ -61,7 +61,7 @@ HighCreditAccount::HighCreditAccount(int bankID, char* name, int balance, int in
 	}
 void HighCreditAccount::Deposit(int money){
 	NormalAccount::Deposit(money);
-	BankAccount(money*creditRating/100);
+	BankAccount::Deposit(money*creditRating/100);
 }
 void HighCreditAccount::ShowCustomerInfo() const{
 	NormalAccount::ShowCustomerInfo();
@@ -222,23 +222,3 @@ void BankProgram(void) {
 
 
 
-// void Menu3_Withdraw(BankAccount* accArr[], int accNum) {
-// 	int realAccNum;
-// 	cout << "[ 출 금 ]" << endl;
-// 	realAccNum = ChkAccount(accArr, accNum);
-// 	if (realAccNum == -1) {
-// 		return;
-// 	}
-// 	accArr[realAccNum]->Withdraw();
-// }
-// void Menu4_PrintAllAccount(BankAccount* accArr[], int accNum) {
-// 	for (int i = 0; i < accNum; i++) {
-// 		accArr[i]->ShowCustomerInfo();
-// 		cout << endl;
-// 	}
-// }
-// void Menu5_Finish(BankAccount* accArr[], int accNum) {
-// 	for (int i = 0; i < accNum; i++) {
-// 		delete accArr[i];
-// 	}
-// }
