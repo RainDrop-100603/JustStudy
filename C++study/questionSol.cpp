@@ -456,6 +456,19 @@ PointOL operator~(const PointOL& point){
 	PointOL pos(point.ypos, point.xpos);
 	return pos;
 }
+ostream& operator<<(ostream& os,PointOL& pos){
+	 cout<<'['<<pos.xpos<<", "<<pos.ypos<<']'<<endl;
+	 return os;
+}
+istream& operator>>(istream& is,PointOL& pos){
+	// int buffer;
+	// cin>>buffer;
+	// pos.xpos=buffer;
+	// cin>>buffer;
+	// pos.ypos=buffer;
+	is>>pos.xpos>>pos.ypos;
+	return is;
+}
 	// PointOL operator-();
 	// friend PointOL operator~(const PointOL& point1, const PointOL& point2);
 
@@ -813,4 +826,16 @@ void Question10_2(void){
 	point1.ShowPosition();
 	point2.ShowPosition();
 	point3.ShowPosition();
+}
+void Question10_3(void){
+	PointOL pos1;
+	cout<<"x, y 좌표 순으로 입력: "; cin>>pos1;
+	cout<<pos1;
+
+	PointOL pos2;
+	cout<<"x, y 좌표 순으로 입력: "; cin>>pos2;
+	cout<<pos2;
+
+	cout<<"cin>>pos.xpos>>pos.ypos(int형식); 와 같은 상황에서 정수를 입력하고 스페이스바(엔터)를 한번이상 치고 다시 정수를 입력하면 각각 입력이 된다."<<endl;
+	cout<<"cin에 오버로딩된 operator>>가 입력을 문자열 형식으로 받은 뒤, 알아서 공백은 거르고 int로 변형시켜서 입력받는 듯 하다."<<endl;
 }

@@ -503,6 +503,9 @@ class SimpleClass{
 							ostream에 기본적으로 정의된 operator<<을 이용하여 출력을 구성한다.
 				cin
 					iostream(header)->std(namespace)->istream(class)->cin(object)
+		똑똑한 cin
+				cin>>pos.xpos>>pos.ypos(int형식); 와 같은 상황에서 정수를 입력하고 스페이스바(엔터)를 한번이상 치고 다시 정수를 입력하면 각각 입력이 된다.
+				cin에 오버로딩된 operator>>가 입력을 문자열 형식으로 받은 뒤, 알아서 공백은 거르고 int로 변형시켜서 입력받는 듯 하다.
 */		
 namespace mystd{
 	using namespace std;

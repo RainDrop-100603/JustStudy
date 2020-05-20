@@ -223,6 +223,8 @@ public:
 	friend bool operator!=(const PointOL& point1, const PointOL& point2);
 	PointOL operator-();
 	friend PointOL operator~(const PointOL& point);
+	friend ostream& operator<<(ostream& os,PointOL& pos);
+	friend istream& operator>>(istream& os,PointOL& pos);
 };
 
 //Part1
@@ -251,6 +253,7 @@ void Question08_1(void);
 //Part4
 void Question10_1(void);
 void Question10_2(void);
+void Question10_3(void);
 
 #endif // !__QUESTIONSOL_H__
 
