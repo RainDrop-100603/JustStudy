@@ -227,6 +227,22 @@ public:
 	friend istream& operator>>(istream& os,PointOL& pos);
 };
 
+class Gun{
+private:
+	int bullet;
+public:
+	Gun(int bnum) :bullet(bnum){}
+	void Shot(){
+		cout<<"BBANG!"<<endl;
+		bullet--;
+	} 
+};
+
+class Police{
+private:
+	
+}
+
 //Part1
 void Question01_1(void);
 void Question01_2(void);
