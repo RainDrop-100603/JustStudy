@@ -503,9 +503,18 @@ class SimpleClass{
 							ostream에 기본적으로 정의된 operator<<을 이용하여 출력을 구성한다.
 				cin
 					iostream(header)->std(namespace)->istream(class)->cin(object)
-		똑똑한 cin
+			똑똑한 cin
 				cin>>pos.xpos>>pos.ypos(int형식); 와 같은 상황에서 정수를 입력하고 스페이스바(엔터)를 한번이상 치고 다시 정수를 입력하면 각각 입력이 된다.
 				cin에 오버로딩된 operator>>가 입력을 문자열 형식으로 받은 뒤, 알아서 공백은 거르고 int로 변형시켜서 입력받는 듯 하다.
+		대입연산자('=') 오버로딩
+			복사 생성자와의 유사성
+				정의하지 않으면 디폴트 복사 생성자(대입 연산자)가 생성된다.
+				디폴트는 얕은 복사를 진행한다.
+				생성자(연산자)내에서 동적할당을 하거나, 깊은 복사가 필요하다면 직접 정의해야 한다.
+			복사 생성자와의 차이점
+				호출되는 시점이 다르다
+					복사 생성자: 객체가 생성과 동시에 초기화 될 때 호출된다.
+					대입 연산자: 이미 생성 및 초기화가 진행된 객체간 대입이 진행될 때 호출된다.
 */		
 namespace mystd{
 	using namespace std;
@@ -597,6 +606,8 @@ namespace mystd{
 					Windows 계열과 POSIX UNIX의 일부 계열: 입력 스트림 버퍼를 비운다.
 					LINUX등 다른 OS: 아무런 동작도 하지 않는다.
 */
+	
+
 
 //vector
 
