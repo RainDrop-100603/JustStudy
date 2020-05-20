@@ -469,10 +469,63 @@ istream& operator>>(istream& is,PointOL& pos){
 	is>>pos.xpos>>pos.ypos;
 	return is;
 }
-	// PointOL operator-();
-	// friend PointOL operator~(const PointOL& point1, const PointOL& point2);
+int Gun::BulletNum() const{
+	return bullet;
+}
+Police::Police(Police& police)
+	:handcuffs(police.handcuffs){
+		pistol=new Gun(police.pistol->BulletNum());
+		cout<<"복사생성자"<<endl;
+	}
+Police& Police::operator=(const Police& police){
+	handcuffs=police.handcuffs;
+	delete pistol;
+	pistol=new Gun(police.pistol->BulletNum());
+	cout<<"operator="<<endl;
+	return *this;
+}
+Book::Book(Book& book){
+	title=new char[strlen(book.title)+1];
+	isbn= new char[strlen(book.isbn)+1];
+	strcpy(title,book.title);
+	strcpy(isbn, book.isbn);
+}
+Book& Book::operator=(const Book& book){
+	delete title;
+	delete isbn;
+	title=new char[strlen(book.title)+1];
+	isbn= new char[strlen(book.isbn)+1];
+	strcpy(title,book.title);
+	strcpy(isbn, book.isbn);
+	return *this;
+}
+EBook::EBook(EBook& ebook){
+	delete DRMKey;
+	DRMKey=new char[strlen(ebook.DRMKey)+1];
+	strcpy(DRMKey,ebook.DRMKey);
+	//여기 마무리
+}
 
-
+// class Book{
+// 	char* title;
+// 	char* isbn;
+// 	int price;
+// public:
+// 	Book(char* title, char* isbn, int price);
+// 	void ShowBookInfo();
+// 	~Book();
+// 	Book(Book& book);
+// 	Book& operator=(const Book& book);
+// };
+// class EBook : public Book{
+// 	char* DRMKey;
+// public:
+// 	EBook(char* title, char* isbn, int price, char* DRMKey);
+// 	void ShowEBookInfo();
+// 	~EBook();
+// 	EBook(EBook& ebook);
+// 	EBook& operator=(const EBook& ebook);
+// };
 
 //Part1
 void Question01_1(void) {
@@ -838,4 +891,14 @@ void Question10_3(void){
 
 	cout<<"cin>>pos.xpos>>pos.ypos(int형식); 와 같은 상황에서 정수를 입력하고 스페이스바(엔터)를 한번이상 치고 다시 정수를 입력하면 각각 입력이 된다."<<endl;
 	cout<<"cin에 오버로딩된 operator>>가 입력을 문자열 형식으로 받은 뒤, 알아서 공백은 거르고 int로 변형시켜서 입력받는 듯 하다."<<endl;
+}
+void Question11_1(void){
+	//문제1
+	Police police1(10,5);
+	Police police2(police1);
+	Police police3=police1;
+	Police police4;
+	police4=police1;
+
+	//문제2
 }

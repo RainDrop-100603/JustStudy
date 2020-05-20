@@ -151,6 +151,8 @@ public:
 	Book(char* title, char* isbn, int price);
 	void ShowBookInfo();
 	~Book();
+	Book(Book& book);
+	Book& operator=(const Book& book);
 };
 class EBook : public Book{
 	char* DRMKey;
@@ -158,6 +160,8 @@ public:
 	EBook(char* title, char* isbn, int price, char* DRMKey);
 	void ShowEBookInfo();
 	~EBook();
+	EBook(EBook& ebook);
+	EBook& operator=(const EBook& ebook);
 };
 class Employee{
 	char name[SOL_NAMELENGTH];
@@ -236,12 +240,40 @@ public:
 		cout<<"BBANG!"<<endl;
 		bullet--;
 	} 
+	int BulletNum() const;
 };
 
 class Police{
 private:
-	
-}
+	int handcuffs;
+	Gun* pistol;
+public:
+	Police(int bnum=0, int bcuff=0)
+		:handcuffs(bcuff){
+			if(bnum>0){
+				pistol=new Gun(bnum);
+			}else{
+				pistol=NULL;
+			}
+	}		
+	void PutHandCuff(){
+		cout<<"SNAP!"<<endl;
+		handcuffs--;
+	}
+	void shot(){
+		if(pistol==NULL){
+			cout<<"HUT BBANG!"<<endl;
+		}else{
+			pistol->Shot();
+		}
+	}		
+	~Police(){
+		cout<<"called ~Police"<<endl;
+		delete pistol;
+	}		
+	Police(Police& police);
+	Police& operator=(const Police& police);
+};
 
 //Part1
 void Question01_1(void);
@@ -270,6 +302,7 @@ void Question08_1(void);
 void Question10_1(void);
 void Question10_2(void);
 void Question10_3(void);
+void Question11_1(void);
 
 #endif // !__QUESTIONSOL_H__
 
