@@ -151,7 +151,7 @@ public:
 	Book(char* title, char* isbn, int price);
 	void ShowBookInfo();
 	~Book();
-	Book(Book& book);
+	Book(const Book& book);
 	Book& operator=(const Book& book);
 };
 class EBook : public Book{
@@ -160,7 +160,7 @@ public:
 	EBook(char* title, char* isbn, int price, char* DRMKey);
 	void ShowEBookInfo();
 	~EBook();
-	EBook(EBook& ebook);
+	EBook(const EBook& ebook);
 	EBook& operator=(const EBook& ebook);
 };
 class Employee{

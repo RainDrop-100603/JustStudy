@@ -321,6 +321,7 @@ void Book::ShowBookInfo(){
 Book::~Book(){
 	delete[] title;
 	delete[] isbn;
+	cout<<"called Book destructor"<<endl;
 }
 EBook::EBook(char* title, char* isbn, int price,char* DRMKey)
 	:Book(title,isbn,price){
@@ -333,6 +334,7 @@ void EBook::ShowEBookInfo(){
 }
 EBook::~EBook(){
 	delete[] DRMKey;
+	cout<<"called EBook destructor"<<endl;
 }
 
 Employee::Employee(char *name){
@@ -470,40 +472,57 @@ istream& operator>>(istream& is,PointOL& pos){
 	return is;
 }
 int Gun::BulletNum() const{
-	return bullet;
+	return bullet;	
 }
 Police::Police(Police& police)
 	:handcuffs(police.handcuffs){
-		pistol=new Gun(police.pistol->BulletNum());
+		if(police.pistol!=NULL){
+			// pistol=new Gun(police.pistol->BulletNum());
+			pistol=new Gun(*(police.pistol));	// Gun의 디폴트 복사생성자 호출/ 얕은 복사여도 상관 없기 때문에
+		}else{
+			pistol=NULL;
+		}
+	
 		cout<<"복사생성자"<<endl;
 	}
 Police& Police::operator=(const Police& police){
 	handcuffs=police.handcuffs;
-	delete pistol;
-	pistol=new Gun(police.pistol->BulletNum());
+	if(police.pistol!=NULL){
+		delete pistol;
+		// pistol=new Gun(police.pistol->BulletNum());
+		pistol=new Gun(*(police.pistol));	// Gun의 디폴트 복사생성자 호출/ 얕은 복사여도 상관 없기 때문에
+	}
 	cout<<"operator="<<endl;
 	return *this;
 }
-Book::Book(Book& book){
+Book::Book(const Book& book)
+	:price(book.price){
 	title=new char[strlen(book.title)+1];
 	isbn= new char[strlen(book.isbn)+1];
 	strcpy(title,book.title);
 	strcpy(isbn, book.isbn);
 }
 Book& Book::operator=(const Book& book){
-	delete title;
-	delete isbn;
+	delete[] title;
+	delete[] isbn;
 	title=new char[strlen(book.title)+1];
 	isbn= new char[strlen(book.isbn)+1];
 	strcpy(title,book.title);
 	strcpy(isbn, book.isbn);
+	price=book.price;
 	return *this;
 }
-EBook::EBook(EBook& ebook){
-	delete DRMKey;
+EBook::EBook(const EBook& ebook)
+	:Book(ebook){
 	DRMKey=new char[strlen(ebook.DRMKey)+1];
 	strcpy(DRMKey,ebook.DRMKey);
-	//여기 마무리
+}
+EBook& EBook::operator=(const EBook& ebook){
+	delete[] DRMKey;
+	DRMKey=new char[strlen(ebook.DRMKey)+1];
+	strcpy(DRMKey,ebook.DRMKey);
+	Book::operator=(ebook);
+	return *this;
 }
 
 // class Book{
@@ -893,12 +912,35 @@ void Question10_3(void){
 	cout<<"cin에 오버로딩된 operator>>가 입력을 문자열 형식으로 받은 뒤, 알아서 공백은 거르고 int로 변형시켜서 입력받는 듯 하다."<<endl;
 }
 void Question11_1(void){
-	//문제1
+	// //문제1
 	Police police1(10,5);
 	Police police2(police1);
 	Police police3=police1;
 	Police police4;
 	police4=police1;
 
-	//문제2
+	cout<<endl<<endl;
+
+	// //문제2
+	Book book1("book1", "a1000",1000);
+	Book book2("book2", "b2000",2000);
+	Book book3(book1);
+	book1.ShowBookInfo();
+	book2.ShowBookInfo();
+	book3.ShowBookInfo();
+	book3=book2;
+	cout<<"after book3=book2"<<endl;
+	book2.ShowBookInfo();
+
+	cout<<endl<<endl;
+
+	EBook ebook1("ebook1","ea1000",1000,"ea1");
+	EBook ebook2("ebook2","eb2000",2000,"eb2");
+	EBook ebook3(ebook1);
+	ebook1.ShowEBookInfo();
+	ebook2.ShowEBookInfo();
+	ebook3.ShowEBookInfo();
+	ebook3=ebook2;
+	cout<<"after ebook3=ebook2"<<endl;
+	ebook2.ShowEBookInfo();
 }
