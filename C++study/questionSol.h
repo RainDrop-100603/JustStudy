@@ -275,6 +275,20 @@ public:
 	Police& operator=(const Police& police);
 };
 
+typedef Point* POINT_PTR;
+class BoundCheckPointPtrArray{
+	POINT_PTR* arr;
+	int arrlen;
+	BoundCheckPointPtrArray(const BoundCheckPointPtrArray&){}
+	BoundCheckPointPtrArray& operator=(const BoundCheckPointPtrArray&){}
+public:
+	BoundCheckPointPtrArray(int len);
+	POINT_PTR& operator[] (int idx);
+	POINT_PTR operator[] (int idx) const;
+	int GetArrLen() const;
+	~BoundCheckPointPtrArray();
+};
+
 //Part1
 void Question01_1(void);
 void Question01_2(void);
@@ -303,6 +317,7 @@ void Question10_1(void);
 void Question10_2(void);
 void Question10_3(void);
 void Question11_1(void);
+void Question11_2(void);
 
 #endif // !__QUESTIONSOL_H__
 
