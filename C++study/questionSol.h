@@ -290,9 +290,14 @@ public:
 	~BoundCheckPointPtrArray();
 };
 class BoundCheck2DIntArray{
-	PointOL*** matrix2D;	//포인터->Matrix시작주소->행->열 
+	PointOL** matrix2D;	//matrix2D->(PointOL* 포인터 배열)행->(PointOL 배열)열 
 	const int row,column; //생성된 행렬의 크기는 바뀌지 않는다.
 	int tempRow,tempColumn;	//-1일때는 행지정이 안되어 있을 때 
+	int sequence;		//index 찾을 때: 
+										//0: 기본상태, index를 불러올 시 tempRow에 행을 저장한다. 1로 증가
+										//1: 행 지정된 상태, index를 불러올 시 tempRow에 열을 저장한다. 2로 증가
+										//2: 행, 열 모두 지정된 상태. index룰 불러올 시 다시 0으로 초기화 
+									//출력시: 2 상태일 때만 출력 후 0으로 초기화 
 
 	BoundCheck2DIntArray(const BoundCheck2DIntArray&){}
 	BoundCheck2DIntArray& operator=(const BoundCheck2DIntArray&){}
