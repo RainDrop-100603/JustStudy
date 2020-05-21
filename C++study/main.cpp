@@ -29,10 +29,9 @@ int main(void) {
 	cout << "Hello World" << endl << endl;
 //important 정리 필요(이건 천천히)
 //작업중: Banking Project ver6
-//2차원 배열 만들기가 있었던거 같은데 잘 찾아보자
 
 //Question 08_1에서 자료형 자동변환에 따른 실수 발생 가능성(특히 return 부분)을 잘 정리하자 
-	//Question11_1(); 
+	Question11_2(); 
 	//PtrRefTest();
 	//enumTest();
 	//BankProgram();

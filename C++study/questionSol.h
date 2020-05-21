@@ -227,8 +227,9 @@ public:
 	friend bool operator!=(const PointOL& point1, const PointOL& point2);
 	PointOL operator-();
 	friend PointOL operator~(const PointOL& point);
-	friend ostream& operator<<(ostream& os,PointOL& pos);
-	friend istream& operator>>(istream& os,PointOL& pos);
+	friend ostream& operator<<(ostream& os,const PointOL& pos);
+	friend istream& operator>>(istream& os,const PointOL& pos);
+	friend ostream& operator<<(ostream& os,const PointOL* pos);
 };
 
 class Gun{
@@ -275,7 +276,7 @@ public:
 	Police& operator=(const Police& police);
 };
 
-typedef Point* POINT_PTR;
+typedef PointOL* POINT_PTR;
 class BoundCheckPointPtrArray{
 	POINT_PTR* arr;
 	int arrlen;

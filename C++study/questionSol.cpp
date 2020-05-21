@@ -458,11 +458,11 @@ PointOL operator~(const PointOL& point){
 	PointOL pos(point.ypos, point.xpos);
 	return pos;
 }
-ostream& operator<<(ostream& os,PointOL& pos){
+ostream& operator<<(ostream& os,const PointOL& pos){
 	 cout<<'['<<pos.xpos<<", "<<pos.ypos<<']'<<endl;
 	 return os;
 }
-istream& operator>>(istream& is,PointOL& pos){
+istream& operator>>(istream& is,const PointOL& pos){
 	// int buffer;
 	// cin>>buffer;
 	// pos.xpos=buffer;
@@ -524,27 +524,42 @@ EBook& EBook::operator=(const EBook& ebook){
 	Book::operator=(ebook);
 	return *this;
 }
-
-// class Book{
-// 	char* title;
-// 	char* isbn;
-// 	int price;
-// public:
-// 	Book(char* title, char* isbn, int price);
-// 	void ShowBookInfo();
-// 	~Book();
-// 	Book(Book& book);
-// 	Book& operator=(const Book& book);
-// };
-// class EBook : public Book{
-// 	char* DRMKey;
-// public:
-// 	EBook(char* title, char* isbn, int price, char* DRMKey);
-// 	void ShowEBookInfo();
-// 	~EBook();
-// 	EBook(EBook& ebook);
-// 	EBook& operator=(const EBook& ebook);
-// };
+BoundCheckPointPtrArray::BoundCheckPointPtrArray(int len)
+	:arrlen(len){
+		arr=new POINT_PTR[len];
+	}
+POINT_PTR& BoundCheckPointPtrArray::operator[](int idx){
+	if(idx<0||idx>=arrlen){
+		cout<<"Array index out of bound exception"<<endl;
+		exit(1);
+	}
+	return arr[idx];
+}
+POINT_PTR BoundCheckPointPtrArray::operator[](int idx) const{
+	if(idx<0||idx>=arrlen){
+		cout<<"Array index out of bound exception"<<endl;
+		exit(1);
+	}
+	return arr[idx];
+}
+int BoundCheckPointPtrArray::GetArrLen() const{
+	return arrlen;
+}
+BoundCheckPointPtrArray::~BoundCheckPointPtrArray(){
+	for(int i=0;i<arrlen;i++){
+		delete arr[i];
+	}
+	delete[] arr;
+}
+ostream& operator<<(ostream& os, const PointOL* pos){
+	cout<<'['<<pos->xpos<<", "<<pos->ypos<<']'<<endl;
+	return os;
+}
+	// BoundCheckPointPtrArray(int len);
+	// POINT_PTR& operator[] (int idx);
+	// POINT_PTR operator[] (int idx) const;
+	// int GetArrLen() const;
+	// ~BoundCheckPointPtrArray();
 
 //Part1
 void Question01_1(void) {
@@ -944,3 +959,16 @@ void Question11_1(void){
 	cout<<"after ebook3=ebook2"<<endl;
 	ebook2.ShowEBookInfo();
 }
+void Question11_2(void){
+	BoundCheckPointPtrArray arr(3);
+	arr[0]=new PointOL(3,4);
+	arr[1]=new PointOL(5,6);
+	arr[2]=new PointOL(7,8);
+
+	for(int i=0;i<arr.GetArrLen();i++){
+		cout<<arr[i];
+	}
+// 	delete arr[0];
+// 	delete arr[1];
+// 	delete arr[2];
+ }
