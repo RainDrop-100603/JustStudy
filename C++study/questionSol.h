@@ -296,7 +296,7 @@ class BoundCheck2DIntArray{
 	int sequence;		//index 찾을 때: 
 										//0: 기본상태, index를 불러올 시 tempRow에 행을 저장한다. 1로 증가
 										//1: 행 지정된 상태, index를 불러올 시 tempRow에 열을 저장한다. 2로 증가
-										//2: 행, 열 모두 지정된 상태. index룰 불러올 시 다시 0으로 초기화 
+										//2: 행, 열 모두 지정된 상태. index룰 불러올 시 다시 1로 초기화 (다시 불러오면서 행 지정하므로)
 									//출력시: 2 상태일 때만 출력 후 0으로 초기화 
 
 	BoundCheck2DIntArray(const BoundCheck2DIntArray&){}
@@ -307,8 +307,8 @@ public:
 	// const BoundCheck2DIntArray& operator[](const int row);		//행 정보를 업데이트
 	// PointOL& operator[](const int column) const;	//업데이트한 행 정보를 기반으로 위치 찾아 포인트 반환 
 	// 위의 두 줄은 참조는 가능하지만 저장이 안된다.
-	BoundCheck2DIntArray& operator[](const int id);	//temp row를 통해 
-	friend ostream& operator<<(ostream &os, const BoundCheck2DIntArray&);	//arr[][]을 바로 cout으로 출력하기 위해 필요 
+	BoundCheck2DIntArray& operator[](const int idx);	//temp row를 통해 
+	friend ostream& operator<<(ostream &os, const BoundCheck2DIntArray& matrix);	//arr[][]을 바로 cout으로 출력하기 위해 필요 
 };
 
 //Part1

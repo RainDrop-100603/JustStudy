@@ -562,6 +562,27 @@ BoundCheck2DIntArray::BoundCheck2DIntArray(int row, int column)
 			matrix2D[i]=new PointOL[column];
 		}
 	}
+BoundCheck2DIntArray::~BoundCheck2DIntArray(){
+	for(int i=0;i<row;i++){
+		delete[] matrix2D[i];
+	}
+	delete[] matrix2D;
+}
+BoundCheck2DIntArray& BoundCheck2DIntArray::operator[](const int idx){
+	if(sequence==1){//idx=column
+		tempColumn=idx;
+		sequence++;
+		return *this;
+	}
+	tempRow=idx;	//idx=row
+	sequence=1;
+}
+ostream& operator<<(ostream &os, const BoundCheck2DIntArray& matrix){
+	if(matrix.sequence!=2){
+		cout<<"행 열 지정이 완료되지 않았습니다"<<endl;
+	}
+	// cout<<'['<<matrix[]
+}
 // class BoundCheck2DIntArray{
 // 	PointOL*** matrix2D;	//포인터->Matrix시작주소->행->열 
 // 	const int row,column; //생성된 행렬의 크기는 바뀌지 않는다.
@@ -569,7 +590,7 @@ BoundCheck2DIntArray::BoundCheck2DIntArray(int row, int column)
 // 	int sequence;		//index 찾을 때: 
 // 										//0: 기본상태, index를 불러올 시 tempRow에 행을 저장한다. 1로 증가
 // 										//1: 행 지정된 상태, index를 불러올 시 tempRow에 열을 저장한다. 2로 증가
-// 										//2: 행, 열 모두 지정된 상태. index룰 불러올 시 다시 0으로 초기화 
+// 										//2: 행, 열 모두 지정된 상태. index룰 불러올 시 다시 1로 초기화 (다시 불러오면서 행 지정)
 // 									//출력시: 2 상태일 때만 출력 후 0으로 초기화 
 
 // 	BoundCheck2DIntArray(const BoundCheck2DIntArray&){}
