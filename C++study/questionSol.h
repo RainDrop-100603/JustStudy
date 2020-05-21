@@ -289,6 +289,22 @@ public:
 	int GetArrLen() const;
 	~BoundCheckPointPtrArray();
 };
+class BoundCheck2DIntArray{
+	PointOL*** matrix2D;	//포인터->Matrix시작주소->행->열 
+	const int row,column; //생성된 행렬의 크기는 바뀌지 않는다.
+	int tempRow,tempColumn;	//-1일때는 행지정이 안되어 있을 때 
+
+	BoundCheck2DIntArray(const BoundCheck2DIntArray&){}
+	BoundCheck2DIntArray& operator=(const BoundCheck2DIntArray&){}
+public:
+	BoundCheck2DIntArray(int row, int column);
+	~BoundCheck2DIntArray();
+	// const BoundCheck2DIntArray& operator[](const int row);		//행 정보를 업데이트
+	// PointOL& operator[](const int column) const;	//업데이트한 행 정보를 기반으로 위치 찾아 포인트 반환 
+	// 위의 두 줄은 참조는 가능하지만 저장이 안된다.
+	BoundCheck2DIntArray& operator[](const int id);	//temp row를 통해 
+	friend ostream& operator<<(ostream &os, const BoundCheck2DIntArray&);	//arr[][]을 바로 cout으로 출력하기 위해 필요 
+};
 
 //Part1
 void Question01_1(void);
