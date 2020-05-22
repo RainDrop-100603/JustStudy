@@ -217,7 +217,7 @@ class PointOL{
 private:
 	int xpos, ypos;
 public:
-	PointOL(int xpos, int ypos);
+	PointOL(int xpos=0, int ypos=0);
 	void ShowPosition() const;
 	friend PointOL operator+(const PointOL& point1, const PointOL& point2);
 	friend PointOL operator-(const PointOL& point1, const PointOL& point2);
@@ -305,6 +305,7 @@ public:
 	BoundCheck2DIntArray(int row, int column);
 	~BoundCheck2DIntArray();
 	BoundCheck2DIntArray& operator=(const int num);	//matrix[][]에 대입을 하기 위해서 필요하다.
+	BoundCheck2DIntArray& operator=(const PointOL& pos);
 	// const BoundCheck2DIntArray& operator[](const int row);		//행 정보를 업데이트
 	// PointOL& operator[](const int column) const;	//업데이트한 행 정보를 기반으로 위치 찾아 포인트 반환 
 	// 위의 두 줄은 참조는 가능하지만 저장이 안된다.

@@ -413,7 +413,7 @@ EmployeeHandler::~EmployeeHandler(){
 	}
 }
 
-PointOL::PointOL(int xpos=0, int ypos=0)
+PointOL::PointOL(int xpos, int ypos)
 	:xpos(xpos),ypos(ypos){}
 void PointOL::ShowPosition() const{
 	cout<<"["<<xpos<<", "<<ypos<<"]"<<endl;
@@ -590,6 +590,13 @@ BoundCheck2DIntArray& BoundCheck2DIntArray::operator=(const int num){
 	if(sequence==2){
 		sequence=0;
 		matrix2D[tempRow][tempColumn].SetPointOL(num,num);
+	}
+	return *this;
+}
+BoundCheck2DIntArray& BoundCheck2DIntArray::operator=(const PointOL& pos){
+	if(sequence==2){
+		sequence=0;
+		matrix2D[tempRow][tempColumn]=pos;
 	}
 	return *this;
 }
@@ -1034,19 +1041,21 @@ void Question11_2(void){
 // 	delete arr[1];
 // 	delete arr[2];
  }
- void matrixProblem(void){
-	 BoundCheck2DIntArray arr2d(3,4);
-
-	 for(int n=0;n<3;n++){
-		 for(int m=0;m<4;m++){
-			 arr2d[n][m]=n+m;
-		 }
+void matrixProblem(void){
+	BoundCheck2DIntArray arr2d(3,4);
+	PointOL pos;	
+	for(int n=0;n<3;n++){
+		for(int m=0;m<4;m++){
+		//  arr2d[n][m]=n+m;
+		pos.SetPointOL(n,m);
+		arr2d[n][m] = pos;
 	 }
+	}
 
-	 for(int n=0;n<3;n++){
-		 for(int m=0;m<4;m++){
-			 cout<<arr2d[n][m]<<' ';
-		 }
-		 cout<<endl;
-	 }
- }
+	for(int n=0;n<3;n++){
+		for(int m=0;m<4;m++){
+			cout<<arr2d[n][m]<<' ';
+		}
+		cout<<endl;
+	}
+}
