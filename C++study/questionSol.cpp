@@ -459,7 +459,7 @@ PointOL operator~(const PointOL& point){
 	return pos;
 }
 ostream& operator<<(ostream& os,const PointOL& pos){
-	 cout<<'['<<pos.xpos<<", "<<pos.ypos<<']'<<endl;
+	 cout<<'['<<pos.xpos<<", "<<pos.ypos<<']';
 	 return os;
 }
 istream& operator>>(istream& is,const PointOL& pos){
@@ -574,14 +574,31 @@ BoundCheck2DIntArray& BoundCheck2DIntArray::operator[](const int idx){
 		sequence++;
 		return *this;
 	}
+	// else if(sequence==2){
+	// 	cout<<tempColumn<<"행 "<<tempRow<<"열 지정이 취소되었습니다."<<endl;
+	// 	cout<<idx<<"행 을 지정하였습니다"<<endl;
+	// }
 	tempRow=idx;	//idx=row
 	sequence=1;
+	return *this;
+}
+void PointOL::SetPointOL(int xpos, int ypos){
+	this->xpos=xpos;
+	this->ypos=ypos;
+}
+BoundCheck2DIntArray& BoundCheck2DIntArray::operator=(const int num){
+	if(sequence==2){
+		sequence=0;
+		matrix2D[tempRow][tempColumn].SetPointOL(num,num);
+	}
+	return *this;
 }
 ostream& operator<<(ostream &os, const BoundCheck2DIntArray& matrix){
 	if(matrix.sequence!=2){
 		cout<<"행 열 지정이 완료되지 않았습니다"<<endl;
 	}
-	// cout<<'['<<matrix[]
+	 cout<<matrix.matrix2D[matrix.tempRow][matrix.tempColumn];	//Pointer -> (주소)(Pointer+tempRow) ->(객체)(Pointer + tempRow)[tempColumn]
+	 return os;
 }
 // class BoundCheck2DIntArray{
 // 	PointOL*** matrix2D;	//포인터->Matrix시작주소->행->열 
@@ -598,6 +615,7 @@ ostream& operator<<(ostream &os, const BoundCheck2DIntArray& matrix){
 // public:
 // 	BoundCheck2DIntArray(int row, int column);
 // 	~BoundCheck2DIntArray();
+//	BoundCheck2DIntArray& operator=(BoundCheck2DIntArray& matrix);
 // 	// const BoundCheck2DIntArray& operator[](const int row);		//행 정보를 업데이트
 // 	// PointOL& operator[](const int column) const;	//업데이트한 행 정보를 기반으로 위치 찾아 포인트 반환 
 // 	// 위의 두 줄은 참조는 가능하지만 저장이 안된다.
@@ -1015,4 +1033,20 @@ void Question11_2(void){
 // 	delete arr[0];
 // 	delete arr[1];
 // 	delete arr[2];
+ }
+ void matrixProblem(void){
+	 BoundCheck2DIntArray arr2d(3,4);
+
+	 for(int n=0;n<3;n++){
+		 for(int m=0;m<4;m++){
+			 arr2d[n][m]=n+m;
+		 }
+	 }
+
+	 for(int n=0;n<3;n++){
+		 for(int m=0;m<4;m++){
+			 cout<<arr2d[n][m]<<' ';
+		 }
+		 cout<<endl;
+	 }
  }

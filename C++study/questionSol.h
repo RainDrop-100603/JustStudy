@@ -230,6 +230,7 @@ public:
 	friend ostream& operator<<(ostream& os,const PointOL& pos);
 	friend istream& operator>>(istream& os,const PointOL& pos);
 	friend ostream& operator<<(ostream& os,const PointOL* pos);
+	void SetPointOL(int xpos, int ypos);
 };
 
 class Gun{
@@ -293,17 +294,17 @@ class BoundCheck2DIntArray{
 	PointOL** matrix2D;	//matrix2D->(PointOL* 포인터 배열)행->(PointOL 배열)열 
 	const int row,column; //생성된 행렬의 크기는 바뀌지 않는다.
 	int tempRow,tempColumn;	//-1일때는 행지정이 안되어 있을 때 
-	int sequence;		//index 찾을 때: 
+	int sequence;	//index 찾을 때: 
 										//0: 기본상태, index를 불러올 시 tempRow에 행을 저장한다. 1로 증가
 										//1: 행 지정된 상태, index를 불러올 시 tempRow에 열을 저장한다. 2로 증가
 										//2: 행, 열 모두 지정된 상태. index룰 불러올 시 다시 1로 초기화 (다시 불러오면서 행 지정하므로)
 									//출력시: 2 상태일 때만 출력 후 0으로 초기화 
-
-	BoundCheck2DIntArray(const BoundCheck2DIntArray&){}
-	BoundCheck2DIntArray& operator=(const BoundCheck2DIntArray&){}
+	BoundCheck2DIntArray(const BoundCheck2DIntArray&)
+	:	row(0),column(0){}	//const int를 초기화 시켜야 한다.
 public:
 	BoundCheck2DIntArray(int row, int column);
 	~BoundCheck2DIntArray();
+	BoundCheck2DIntArray& operator=(const int num);	//matrix[][]에 대입을 하기 위해서 필요하다.
 	// const BoundCheck2DIntArray& operator[](const int row);		//행 정보를 업데이트
 	// PointOL& operator[](const int column) const;	//업데이트한 행 정보를 기반으로 위치 찾아 포인트 반환 
 	// 위의 두 줄은 참조는 가능하지만 저장이 안된다.
@@ -340,6 +341,7 @@ void Question10_2(void);
 void Question10_3(void);
 void Question11_1(void);
 void Question11_2(void);
+void matrixProblem(void);
 
 #endif // !__QUESTIONSOL_H__
 
