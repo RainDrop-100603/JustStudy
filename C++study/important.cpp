@@ -586,6 +586,22 @@ class SimpleClass{
 					이와같이 주소가 반환되는 함수의 경우, 주소에 직접 접근하여 private한 특성을 무력화 시킬 수 있다.
 						const 선언을 통해 참조만 가능하고 변경은 불가능하게 변경할 수 있다. (여전히 private한 특성이 일부 무력화 된 것 같긴 하다.)
 				easyClass& operator*(){ return *this; }
+		()연산자 오버로딩
+			operator()
+		Functor
+			함수처럼 작동하는 class를 Functor, 혹은 Function object 라고 한다.
+				교재486p에서 functor를 통한 bubble sort 예시 
+		임시 객체로의 자동 형 변환과 형 변환 연산자(conversion operator)
+			같은 객체간의 대입 연산자 사용이 가능함을 알고있다.
+			객체와 다른 객체(혹은 자료형) 간의 대입 연산자 적용 또한 가능하다.
+				A = B 에서, B의 데이터를 전달인자로 하는 A형 클래스의 생성자를 호출하여, 임시 객체를 만든다. 이후 대입 연산 진행
+					A=A'(B의 데이터를 전달인자로 만든 A형 임시객체)
+				객체(기본 자료형)의 형 변환이 자동으로 일어난 것이다.
+			객체에서 기본자료형으로의 자동 형 변환또한 가능하다.
+				operator 자료형 () 로 정의 가능 
+					operator int () { return num; }
+						객체가 int형으로 형 변환될 때 호출된다. 
+				반환형이 없어도 반환이 가능하다는 특징이 있다.
 
 */		
 namespace mystd{
