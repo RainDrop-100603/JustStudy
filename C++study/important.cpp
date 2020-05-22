@@ -535,6 +535,42 @@ class SimpleClass{
 			함수의 const 유무도 오버로딩의 대상이 된다.
 				일반적인 호출에서는 const가 없는 함수를, const 함수에서는 const가 있는 함수를 호출하게 된다.
 				오버로딩의 조건은 함수의 이름, 매개변수의 개수, 매개변수의 자료형이다. 반환형은 포함되지 않는다.
+		new, delete 오버로딩
+			new와 delete의 작동원리
+				new
+					메모리 공간의 할당		  															 : void 형 할당
+					생성자 호출																						: 할당된 메모리 공간 초기화
+					(할당하고자 하는 자료형에 맞게) 반환된 주소 값의 형 변환 : void 형 포인터를 적절한 포인터로 형 변환 
+				delete
+					?소멸자 호출
+					?메모리 공간의 해제
+			오버로딩 대상
+				new
+					메모리 공간의 할당
+				delete
+					메모리 공간의 해제
+				나머지는 컴파일러가 자동으로 진행한다.
+			오버로딩 방법
+				void* operator new (size_t size){
+					//cout 등 다른 명령어도 추가할 수 있다.
+					//아래는 필수
+					void* adr= new char[size];	//malloc으로 대체 가능
+					return adr;
+				}
+						다른 연산자 오버로딩과 다르게 선언은 이렇게 고정된다. (size라는 변수명을 바꿀수는 있을 듯 하지만 굳이?)
+						필요한 메모리 공간(즉 size의 값)은 컴파일러가 자동으로 계산한다. 
+						일반적으로 size_t는 다음과 같의 정의되어 있다.
+							typedef unsigned int size_t;
+							32비트 OS는 32비트, 64비트 OS는 64비트로 정의되어 있다.
+								unsigned int는 64비트 os여도 32비트로 정의되었을수도 있다? unsigned int와 size_t의 차이점?
+				void operator delete (void* adr){
+					//역시 다른 명령어도 추가할 수 있으며 아래는 필수 
+					delete[] adr;	//free로 대체 가능
+				}			
+			멤버함수 형식임에도 호출이 되는 이유
+				멤버함수의 형식으로 선언이 되어도, static로 간주가 된다.
+					static은 객체가 선언되지 않아도 호출 가능?
+						class에서의 static 복습 
 */		
 namespace mystd{
 	using namespace std;
@@ -642,6 +678,11 @@ namespace mystd{
 		 조금 더 직관적일수도 있고 아닐수도 있다. 
 		 	전자의 경우 참조 횟수가 더 직관적이다.
 			후자의 경우 포인터를 원소로 가지는 배열임을 선언함이 직관적이다.
+*/
+
+/*
+	바이트 패딩
+	
 */
 
 //vector
