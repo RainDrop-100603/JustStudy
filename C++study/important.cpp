@@ -231,6 +231,7 @@ void PtrRefTest(void) {
 		오른쪽: People 자료형이 10개 들어가도록 동적할당
 */
 
+// class 멤버함수의 호출: 객체.멤버함수() or 주소->멤버함수()
 
 /*
 class SimpleClass{
@@ -571,6 +572,21 @@ class SimpleClass{
 				멤버함수의 형식으로 선언이 되어도, static로 간주가 된다.
 					static은 객체가 선언되지 않아도 호출 가능?
 						class에서의 static 복습 
+			new[]와 delete[]
+				호출: 배열 할당과 소멸시 선언된다.
+				정의: size는 컴파일러가 계산해주기 때문에 내용면에서 new, delete와 차이는 없다.
+		포인터 연산자 오버로딩
+			-> 과 *
+			피 연산자가 하나인 단항 연산자의 형태로 오버로딩된다.
+				easyClass* operator->(){ return this; }
+						easyobject1->ShowData(); 는
+						easyobject1.operator->() ShowData() 와 같이 해석이 되는데, operator->()함수는 주소를 반환하기 때문에 ->가 있어야 멤버함수를 호출할 수 있다.
+							따라서 ->가 하나 추가되어서, easyobject1.operator->() -> ShowData();와 같이 해석된다.
+							무한루프아님? 해석에 있어서만 저런식으로 해석된다는 건가?
+					이와같이 주소가 반환되는 함수의 경우, 주소에 직접 접근하여 private한 특성을 무력화 시킬 수 있다.
+						const 선언을 통해 참조만 가능하고 변경은 불가능하게 변경할 수 있다. (여전히 private한 특성이 일부 무력화 된 것 같긴 하다.)
+				easyClass& operator*(){ return *this; }
+
 */		
 namespace mystd{
 	using namespace std;
@@ -681,8 +697,18 @@ namespace mystd{
 */
 
 /*
+	스마트 포인터
+	스마트한 포인터를 객체로 구현 
+		책에서는 자동으로 동적 할당을 해제하며 포인터처럼 작동하는 객체를 구현
+	스마트 포인터는 라이브러리의 일부로 구현되어 있으니 필요시 찾아서 쓰자 
+*/
+
+/*
 	바이트 패딩
-	
+		cpu에 접근을 쉽게 하기 위해서, 실제 필요한 공간보다 더 큰 공간을 할당받는 것 -> 성능 향상을 꾀할 수 있다.
+		32bit cpu는 4Byte, 64bit cpu는 8Byte일 때 효율이 좋으므로, 해당 크기에 맞게 패딩을 한다.
+			패딩하는 위치는 자료형 뒤에 한다.
+			1Byte 자료형을 패딩하여 4Byte가 될 경우, 앞 1Byte가 자료, 뒤 3Byte가 패딩이다. 
 */
 
 //vector
