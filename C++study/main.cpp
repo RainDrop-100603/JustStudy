@@ -36,8 +36,5 @@ int main(void) {
 	//enumTest();
 	//BankProgram();
 	//matrixProblem();
-	int num=2;
-	int *ptr=&num;
-	cout<<ptr<<endl<<*ptr;
 	return 0;
 }

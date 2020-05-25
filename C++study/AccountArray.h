@@ -16,7 +16,7 @@ class AccountArray{
 public:
   AccountArray();
   ~AccountArray();
-  BankAccount*& operator[](int idx);  //포인터에 대입 연산을 하면 
+  BankAccount*& operator[](int idx);  // &가 포함되지 않은 반환형은 "Value" 반환이다. 즉 임시변수가 반환된다는 것이다. 포인터의 값을 바꾸고 싶다면 "Reference" 반환을 해야한다.
   BankAccount* operator[](int idx) const;
 };
 
