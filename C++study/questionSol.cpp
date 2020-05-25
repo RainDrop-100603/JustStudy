@@ -641,6 +641,17 @@ String& String::operator+=(const String& str){
 	string=new char[length];
 	strcpy(string,tempstr);
 }
+bool String::operator==(const String& str) const{
+	return strcmp(string,str.string);
+}
+ostream& operator<<(ostream& os, const String& str){
+	cout<<str.string<<endl;
+	return os;
+}
+istream& operator>>(istream& is, String& str){
+	//크기 무관한 입력이 가능한가?
+	return is;
+}
 // class String{
 // 	char* string;
 // public:

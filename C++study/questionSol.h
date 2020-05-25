@@ -323,8 +323,8 @@ public:
 	String operator+(const String& str) const;
 	String& operator+=(const String& str);
 	bool operator==(const String& str) const;
-	friend String& operator<<(ostream& os,const String& str);
-	friend String& operator>>(istream& is,const String& str);
+	friend ostream& operator<<(ostream& os,const String& str);
+	friend istream& operator>>(istream& is,String& str);
 };
 
 //Part1
