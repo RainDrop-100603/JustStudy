@@ -607,28 +607,54 @@ ostream& operator<<(ostream &os, const BoundCheck2DIntArray& matrix){
 	 cout<<matrix.matrix2D[matrix.tempRow][matrix.tempColumn];	//Pointer -> (주소)(Pointer+tempRow) ->(객체)(Pointer + tempRow)[tempColumn]
 	 return os;
 }
-// class BoundCheck2DIntArray{
-// 	PointOL*** matrix2D;	//포인터->Matrix시작주소->행->열 
-// 	const int row,column; //생성된 행렬의 크기는 바뀌지 않는다.
-// 	int tempRow,tempColumn;	//-1일때는 행지정이 안되어 있을 때 
-// 	int sequence;		//index 찾을 때: 
-// 										//0: 기본상태, index를 불러올 시 tempRow에 행을 저장한다. 1로 증가
-// 										//1: 행 지정된 상태, index를 불러올 시 tempRow에 열을 저장한다. 2로 증가
-// 										//2: 행, 열 모두 지정된 상태. index룰 불러올 시 다시 1로 초기화 (다시 불러오면서 행 지정)
-// 									//출력시: 2 상태일 때만 출력 후 0으로 초기화 
 
-// 	BoundCheck2DIntArray(const BoundCheck2DIntArray&){}
-// 	BoundCheck2DIntArray& operator=(const BoundCheck2DIntArray&){}
+String::String(const char* str){
+	string=new char[strlen(str)+1];
+	strcpy(string,str);
+}
+String::String(const String& str){
+	string=new char[strlen(str.string)+1];
+	strcpy(string,str.string);
+}
+String& String::operator=(const String& str){
+	delete[] string;
+	string=new char[strlen(str.string)+1];
+	strcpy(string,str.string);
+	return *this;
+}
+String::~String(){
+	delete[] string;
+}
+String String::operator+(const String& str) const{
+	char* tempstr = new char[strlen(string)+strlen(str.string)+1];
+	strcpy(tempstr,string);
+	strcat(tempstr,str.string);
+	String tempSTR(tempstr);
+	return tempSTR;
+}
+String& String::operator+=(const String& str){
+	int length = strlen(string)+strlen(str.string)+1;
+	char* tempstr = new char[length];
+	strcpy(tempstr,string);
+	strcat(tempstr,str.string);
+	delete[] string;
+	string=new char[length];
+	strcpy(string,tempstr);
+}
+// class String{
+// 	char* string;
 // public:
-// 	BoundCheck2DIntArray(int row, int column);
-// 	~BoundCheck2DIntArray();
-//	BoundCheck2DIntArray& operator=(BoundCheck2DIntArray& matrix);
-// 	// const BoundCheck2DIntArray& operator[](const int row);		//행 정보를 업데이트
-// 	// PointOL& operator[](const int column) const;	//업데이트한 행 정보를 기반으로 위치 찾아 포인트 반환 
-// 	// 위의 두 줄은 참조는 가능하지만 저장이 안된다.
-// 	BoundCheck2DIntArray& operator[](const int id);	//temp row를 통해 
-// 	friend ostream& operator<<(ostream &os, const BoundCheck2DIntArray&);	//arr[][]을 바로 cout으로 출력하기 위해 필요 
+// 	String(const char* str);
+// 	String(const String& str);
+// 	String& operator=(const String& str);
+// 	~String();
+// 	String operator+(const String& str) const;
+// 	String& operator+=(const String& str);
+// 	bool operator==(const String& str) const;
+// 	friend String& operator<<(ostream& os,const String& str);
+// 	friend String& operator>>(istream& is,const String& str);
 // };
+
 
 //Part1
 void Question01_1(void) {

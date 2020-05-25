@@ -313,6 +313,20 @@ public:
 	friend ostream& operator<<(ostream &os, const BoundCheck2DIntArray& matrix);	//arr[][]을 바로 cout으로 출력하기 위해 필요 
 };
 
+class String{
+	char* string;
+public:
+	String(const char* str);
+	String(const String& str);
+	String& operator=(const String& str);
+	~String();
+	String operator+(const String& str) const;
+	String& operator+=(const String& str);
+	bool operator==(const String& str) const;
+	friend String& operator<<(ostream& os,const String& str);
+	friend String& operator>>(istream& is,const String& str);
+};
+
 //Part1
 void Question01_1(void);
 void Question01_2(void);
