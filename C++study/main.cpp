@@ -34,7 +34,10 @@ int main(void) {
 	//Question11_2(); 
 	//PtrRefTest();
 	//enumTest();
-	BankProgram();
+	//BankProgram();
 	//matrixProblem();
+	int num=2;
+	int *ptr=&num;
+	cout<<ptr<<endl<<*ptr;
 	return 0;
 }

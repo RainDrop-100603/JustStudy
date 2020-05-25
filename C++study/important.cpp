@@ -189,7 +189,7 @@ xx	*은 포인터변수가 가리키는 주소에 있는 객체나 변수를 나
 x	예시
 x		int &num1 = num;	// num1의 주소는 num의 것과 같다는 의미다.(선언하는 변수(객체)의 형태는 이미 좌변에 있으므로 우변에 중복 정의할 필요가 없다
 xx		int &num1 = *ptr;	// num1의 주소는 ptr가 가리키는 주소에 있는 변수(객체)와 같다.
-xxx		int *ptr1 = &num;	// ptr1이 가리키는 주소에 있는 객체나 변수는 
+xxx		int *ptr1 = &num;	// ptr1이 참조하는 공간은 num의 공간이다.
 */
 //Call by Value & Call by Reference (63p)
 /*Call by Value & Call by Reference
