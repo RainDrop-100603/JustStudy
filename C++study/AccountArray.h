@@ -16,7 +16,8 @@ class AccountArray{
 public:
   AccountArray();
   ~AccountArray();
-  BankAccount* operator[](int idx);
+  BankAccount*& operator[](int idx);  //포인터에 대입 연산을 하면 
+  BankAccount* operator[](int idx) const;
 };
 
 

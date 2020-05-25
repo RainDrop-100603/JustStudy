@@ -34,7 +34,7 @@ int main(void) {
 	//Question11_2(); 
 	//PtrRefTest();
 	//enumTest();
-	//BankProgram();
-	matrixProblem();
+	BankProgram();
+	//matrixProblem();
 	return 0;
 }

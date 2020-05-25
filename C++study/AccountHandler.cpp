@@ -66,9 +66,6 @@ void AccountHandler::OpenAccount() {
 		cout<<"잘못된 입력입니다"<<endl;
 		return;
 	}
-
-	cout << endl << "계좌 생성 완료" << endl;
-	accountNum++;
 }
 
 void AccountHandler::OPNormalAccount(){
@@ -83,6 +80,8 @@ void AccountHandler::OPNormalAccount(){
 	cout<<"입금액: ";	cin>>balance;
 	cout<<"이자율: ";	cin>>interest;
 	accountArr[accountNum] = new NormalAccount(bankID,name,balance,interest);  
+	cout << endl << "계좌 생성 완료" << endl;
+	accountNum++;
 }
 
 void AccountHandler::OPHighCreditAccount(){
@@ -98,6 +97,8 @@ void AccountHandler::OPHighCreditAccount(){
 	cout<<"이자율: ";	cin>>interest;
 	cout<<"신용등급(1toA,2toB,3toC): ";	cin>>creditRating;
 	accountArr[accountNum] = new HighCreditAccount(bankID,name,balance,interest,creditRating);
+	cout << endl << "계좌 생성 완료" << endl;
+	accountNum++;
 }
 
 void AccountHandler::Deposit(){

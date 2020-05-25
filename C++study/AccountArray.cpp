@@ -16,7 +16,10 @@ AccountArray::AccountArray(){
 AccountArray::~AccountArray(){
   delete accountArr;
 }
-BankAccount* AccountArray::operator[](int idx){
+BankAccount*& AccountArray::operator[](int idx){
+  return accountArr[idx];
+}
+BankAccount* AccountArray::operator[](int idx) const{
   return accountArr[idx];
 }
 
