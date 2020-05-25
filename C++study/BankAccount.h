@@ -1,7 +1,7 @@
 #ifndef __BANKACCOUNT_H__
 #define __BANKACCOUNT_H__
 /*
- * Banking System Ver 0.7
+ * Banking System Ver 0.8
  * 작성자: rain
  * 내 용: 열혈 cpp OOP 단계별 프로젝트 
  */
@@ -18,6 +18,7 @@ private:
 public:
 	BankAccount(int bankID, char* name, int balance);
 	BankAccount(const BankAccount &ref);
+	BankAccount& operator=(const BankAccount& ref);
 	int GetBankID() const;
 	int GetBalance() const;
 	virtual void Deposit(int money);

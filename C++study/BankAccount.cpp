@@ -1,5 +1,5 @@
 /*
- * Banking System Ver 0.6
+ * Banking System Ver 0.8
  * 작성자: rain
  * 내 용: 열혈 cpp OOP 단계별 프로젝트 6단계
  */
@@ -22,6 +22,12 @@ BankAccount::BankAccount(const BankAccount &ref)
 		: bankID(ref.bankID), balance(ref.balance){
 	name = new char[strlen(ref.name) + 1];
 	strcpy(name, ref.name);
+}
+BankAccount& BankAccount::operator=(const BankAccount& ref){
+	bankID=ref.bankID;
+	balance=ref.balance;
+	name = new char[strlen(ref.name) + 1];
+	strcpy(name, ref.name);	
 }
 int BankAccount::GetBankID() const {
 	return bankID;

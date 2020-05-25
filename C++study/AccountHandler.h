@@ -12,9 +12,11 @@
 #include "BankAccount.h"
 #include "NormalAccount.h"
 #include "HighCreditAccount.h"
+#include "AccountArray.h"
 
 class AccountHandler{
-	BankAccount* accountArr[MAXACCOUNT];
+	// BankAccount* accountArr[MAXACCOUNT];
+	AccountArray accountArr;	//
 	int accountNum;
 public:
 	AccountHandler();
