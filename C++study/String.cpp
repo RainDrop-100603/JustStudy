@@ -60,19 +60,10 @@ ostream& operator<<(ostream& os,const String& str){
 }
 istream& operator>>(istream& is,String& str){
   char temp[STRLENGTH];
+  delete[] str.string;
+  is>>temp;
+  str.len=strlen(temp)+1;
+  str.string=new char[str.len];
+  strcpy(str.string, temp);
+  return is;
 }
-// class String{
-// 	char* string;
-//   int len;
-// public:
-// 	String();// String 배열 선언을 위해 필요 
-// 	String(const char* str);
-// 	String(const String& str);
-// 	String& operator=(const String& str);
-// 	~String();
-// 	String operator+(const String& str) const;
-// 	String& operator+=(const String& str);
-// 	bool operator==(const String& str) const;
-// 	friend ostream& operator<<(ostream& os,const String& str);
-// 	friend istream& operator>>(istream& is,String& str);
-// };
