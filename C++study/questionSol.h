@@ -314,19 +314,19 @@ public:
 	friend ostream& operator<<(ostream &os, const BoundCheck2DIntArray& matrix);	//arr[][]을 바로 cout으로 출력하기 위해 필요 
 };
 
-class String{
+class SString{
 	char* string;
 public:
-	String();// String 배열 선언을 위해 필요 
-	String(const char* str);
-	String(const String& str);
-	String& operator=(const String& str);
-	~String();
-	String operator+(const String& str) const;
-	String& operator+=(const String& str);
-	bool operator==(const String& str) const;
-	friend ostream& operator<<(ostream& os,const String& str);
-	friend istream& operator>>(istream& is,String& str);
+	SString();// String 배열 선언을 위해 필요 
+	SString(const char* str);
+	SString(const SString& str);
+	SString& operator=(const SString& str);
+	~SString();
+	SString operator+(const SString& str) const;
+	SString& operator+=(const SString& str);
+	bool operator==(const SString& str) const;
+	friend ostream& operator<<(ostream& os,const SString& str);
+	friend istream& operator>>(istream& is,SString& str);
 };
 
 //Part1

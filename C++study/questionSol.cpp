@@ -607,34 +607,34 @@ ostream& operator<<(ostream &os, const BoundCheck2DIntArray& matrix){
 	 cout<<matrix.matrix2D[matrix.tempRow][matrix.tempColumn];	//Pointer -> (주소)(Pointer+tempRow) ->(객체)(Pointer + tempRow)[tempColumn]
 	 return os;
 }
-String::String()
+SString::SString()
 	:string(NULL){}
-String::String(const char* str){
+SString::SString(const char* str){
 	string=new char[strlen(str)+1];
 	strcpy(string,str);
 }
-String::String(const String& str){
+SString::SString(const SString& str){
 	string=new char[strlen(str.string)+1];
 	strcpy(string,str.string);
 }
-String& String::operator=(const String& str){
+SString& SString::operator=(const SString& str){
 	delete[] string;
 	string=new char[strlen(str.string)+1];
 	strcpy(string,str.string);
 	return *this;
 }
-String::~String(){
+SString::~SString(){
 	delete[] string;
 }
-String String::operator+(const String& str) const{
+SString SString::operator+(const SString& str) const{
 	char* tempstr = new char[strlen(string)+strlen(str.string)+1];
 	strcpy(tempstr,string);
 	strcat(tempstr,str.string);
-	String tempSTR(tempstr);
+	SString tempSTR(tempstr);
 	delete[] tempstr;
 	return tempSTR;
 }
-String& String::operator+=(const String& str){
+SString& SString::operator+=(const SString& str){
 	int length = strlen(string)+strlen(str.string)+1;
 	char* tempstr = new char[length];
 	strcpy(tempstr,string);
@@ -648,7 +648,7 @@ String& String::operator+=(const String& str){
 	//*this=*this+str;
 	//return *this; //간단하게 표현 가능 
 }
-bool String::operator==(const String& str) const{
+bool SString::operator==(const SString& str) const{
 	// if(strcmp(string,str.string)==0){
 	// 	return true;
 	// }else{
@@ -656,12 +656,12 @@ bool String::operator==(const String& str) const{
 	// }
 	return strcmp(string, str.string) ? false : true;
 }
-ostream& operator<<(ostream& os, const String& str){
+ostream& operator<<(ostream& os, const SString& str){
 	cout<<str.string;
 	//os<<str.string 과 같다 
 	return os;
 }
-istream& operator>>(istream& is, String& str){
+istream& operator>>(istream& is, SString& str){
 	delete[] str.string;
 	char temp[STRLENGTH];
 	cin>>temp;
@@ -803,7 +803,7 @@ void Question02_1(void) {
 void Question02_2(void) {
 	const int num1 = 12;
 	const int* ptr1 = &num1;
-	const int* (&pref1) = ptr1;
+	const int* &pref1 = ptr1;
 
 	cout << "num1: " << num1 << endl;
 	cout << "*ptr1: " << *ptr1 << endl;
@@ -1114,10 +1114,10 @@ void matrixProblem(void){
 	}
 }
 void StringClass(void){
-	String str1="i like ";
-	String str2("string class");
+	SString str1="i like ";
+	SString str2("string class");
 	cout<<str1<<endl<<str2<<endl;
-	String str3=str1+str2;
+	SString str3=str1+str2;
 	cout<<str3<<endl;
 	str1+=str2;
 	cout<<str1<<endl;
