@@ -36,5 +36,6 @@ int main(void) {
 	//enumTest();
 	//BankProgram();
 	//matrixProblem();
+	StringClass();
 	return 0;
 }

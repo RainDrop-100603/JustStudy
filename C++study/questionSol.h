@@ -17,7 +17,8 @@ enum solConstant{
 	SOL_NAMELENGTH=100,
 	RISK_A=30,
 	RISK_B=20,
-	RISK_C=10
+	RISK_C=10,
+	STRLENGTH=100
 };
 
 //Class 선언
@@ -357,6 +358,7 @@ void Question10_3(void);
 void Question11_1(void);
 void Question11_2(void);
 void matrixProblem(void);
+void StringClass(void);
 
 #endif // !__QUESTIONSOL_H__
 

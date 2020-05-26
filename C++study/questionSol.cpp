@@ -640,16 +640,25 @@ String& String::operator+=(const String& str){
 	delete[] string;
 	string=new char[length];
 	strcpy(string,tempstr);
+	return *this;
 }
 bool String::operator==(const String& str) const{
-	return strcmp(string,str.string);
+	if(strcmp(string,str.string)==0){
+		return true;
+	}else{
+		return false;
+	}
 }
 ostream& operator<<(ostream& os, const String& str){
-	cout<<str.string<<endl;
+	cout<<str.string;
 	return os;
 }
 istream& operator>>(istream& is, String& str){
-	//크기 무관한 입력이 가능한가?
+	delete[] str.string;
+	char temp[STRLENGTH];
+	cin>>temp;
+	str.string=new char[strlen(temp)+1];
+	strcpy(str.string,temp);
 	return is;
 }
 // class String{
@@ -1095,4 +1104,17 @@ void matrixProblem(void){
 		}
 		cout<<endl;
 	}
+}
+void StringClass(void){
+	String str1="i like ";
+	String str2("string class");
+	cout<<str1<<endl<<str2<<endl;
+	String str3=str1+str2;
+	cout<<str3<<endl;
+	str1+=str2;
+	cout<<str1<<endl;
+	cout<<(str1==str2)<<endl<<(str1==str3)<<endl;
+	cout<<"str에 넣을 문자를 입력하시오, 최대 "<<STRLENGTH<<"글자 입니다.";
+	cin>>str1;
+	cout<<str1<<endl;
 }
