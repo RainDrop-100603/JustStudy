@@ -28,6 +28,7 @@ BankAccount& BankAccount::operator=(const BankAccount& ref){
 	balance=ref.balance;
 	name = new char[strlen(ref.name) + 1];
 	strcpy(name, ref.name);	
+	return *this;
 }
 int BankAccount::GetBankID() const {
 	return bankID;

@@ -213,8 +213,8 @@ void PtrRefTest(void) {
 
 	int& ref = num;
 	//int& pref = ptr;
-	int* (&pref) = ptr;
-	int** (&dpref) = dptr;
+	int* &pref = ptr;
+	int** &dpref = dptr;
 	cout << "참조되는 변수가 가지는 *의 개수를 맞춰준다고 생각하면 된다." << endl;
 	cout << "int& pref = ptr; 로 초기화시 빌드에러 발생" << endl << endl;
 	cout << "ref: " << ref << endl;

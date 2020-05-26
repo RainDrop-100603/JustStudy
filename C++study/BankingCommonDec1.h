@@ -16,6 +16,7 @@ using namespace std;
 enum Constant {
 	MAXACCOUNT = 10,
 	NAMELENGTH = 100,
+	STRLENGTH = 100
 };
 
 enum CreditRating {
