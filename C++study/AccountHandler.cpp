@@ -46,7 +46,7 @@ int AccountHandler::ChkAccount(int accountID) const{
 }
 
 void AccountHandler::OpenAccount() {
-	if (accountNum == MAXACCOUNT) {
+	if (accountNum == Constant::MAXACCOUNT) {
 		cout << "계좌를 더이상 생성할 수 없습니다" << endl;
 		return;
 	}
@@ -70,13 +70,13 @@ void AccountHandler::OpenAccount() {
 
 void AccountHandler::OPNormalAccount(){
   int bankID, balance, interest;
-  char name[NAMELENGTH];
+  String name;
 	cout << "계좌 ID: ";	cin >> bankID;
 	if(ChkAccount(bankID)!=-1){
 		cout<<"이미 존재하는 계좌 ID 입니다"<<endl;
 		return;
 	}
-	cout<<"이 름: ";	cin >> name;	cin.ignore();
+	cout<<"이 름: ";	cin >> name;
 	cout<<"입금액: ";	cin>>balance;
 	cout<<"이자율: ";	cin>>interest;
 	accountArr[accountNum] = new NormalAccount(bankID,name,balance,interest);  
@@ -86,13 +86,13 @@ void AccountHandler::OPNormalAccount(){
 
 void AccountHandler::OPHighCreditAccount(){
   int bankID, balance, interest, creditRating;
-  char name[NAMELENGTH];
+  String name;
 	cout << "계좌 ID: ";  cin >> bankID;
 	if(ChkAccount(bankID)!=-1){
 		cout<<"이미 존재하는 계좌 ID 입니다"<<endl;
 		return;
 	}
-	cout<<"이 름: ";	cin >> name;	cin.ignore();
+	cout<<"이 름: ";	cin >> name;
 	cout<<"입금액: ";	cin>>balance;
 	cout<<"이자율: ";	cin>>interest;
 	cout<<"신용등급(1toA,2toB,3toC): ";	cin>>creditRating;

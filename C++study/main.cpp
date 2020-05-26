@@ -34,8 +34,8 @@ int main(void) {
 	//Question11_2(); 
 	//PtrRefTest();
 	//enumTest();
-	//BankProgram();
+	BankProgram();
 	//matrixProblem();
-	StringClass();
+	//StringClass();
 	return 0;
 }

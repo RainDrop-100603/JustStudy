@@ -18,9 +18,9 @@ private:
 	String name;	//동적할당, 해제는 String class 에서 모두 담당하기 때문에, 전혀 신경 쓸 필요가 없다.
 	int balance;
 public:
-	BankAccount(int bankID, char* name, int balance);
-	BankAccount(const BankAccount &ref);
-	BankAccount& operator=(const BankAccount& ref);
+	BankAccount(int bankID, String name, int balance);
+	// BankAccount(const BankAccount &ref);	//깊은복사 얕은복사를 신경쓸 필요가 없기 때문에 디폴트 사용 
+	// BankAccount& operator=(const BankAccount& ref);
 	int GetBankID() const;
 	int GetBalance() const;
 	virtual void Deposit(int money);

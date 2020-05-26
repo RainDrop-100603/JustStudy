@@ -9,19 +9,19 @@
 #include "BankingCommonDec1.h"
 #include "BankAccount.h"
 
-BankAccount::BankAccount(int bankID=-1, char* name=NULL, int balance = 0)
+BankAccount::BankAccount(int bankID, String name, int balance)
 	 :bankID(bankID), balance(balance), name(name){}
 // BankAccount::~BankAccount() {
 // 	delete this->name;
 // }
-BankAccount::BankAccount(const BankAccount &ref)
-		: bankID(ref.bankID), balance(ref.balance),name(ref.name){}
-BankAccount& BankAccount::operator=(const BankAccount& ref){
-	bankID=ref.bankID;
-	balance=ref.balance;
-	name=ref.name;
-	return *this;
-}
+// BankAccount::BankAccount(const BankAccount &ref)
+// 		: bankID(ref.bankID), balance(ref.balance),name(ref.name){}
+// BankAccount& BankAccount::operator=(const BankAccount& ref){
+// 	bankID=ref.bankID;
+// 	balance=ref.balance;
+// 	name=ref.name;
+// 	return *this;
+// }
 int BankAccount::GetBankID() const {
 	return bankID;
 }

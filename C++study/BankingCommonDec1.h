@@ -1,7 +1,7 @@
 #ifndef __BANKINGCOMMONDEC1_H__
 #define __BANKINGCOMMONDEC1_H__
 /*
- * Banking System Ver 0.7
+ * Banking System Ver 0.9
  * 작성자: rain
  * 내 용: 열혈 cpp OOP 단계별 프로젝트 
  */
@@ -13,11 +13,11 @@
 
 using namespace std;
 
-enum Constant {
-	MAXACCOUNT = 10,
-	NAMELENGTH = 100,
-	STRLENGTH = 100
-};
+namespace Constant{
+	const int MAXACCOUNT=10;
+	const int STRLENGTH=100;
+	const int NAMELENGTH=100;
+}
 
 enum CreditRating {
 	RANK_A = 7,

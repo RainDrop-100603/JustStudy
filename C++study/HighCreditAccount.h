@@ -1,7 +1,7 @@
 #ifndef __HIGHCREDITACCOUNT_H__
 #define __HIGHCREDITACCOUNT_H__
 /*
- * Banking System Ver 0.7
+ * Banking System Ver 0.9
  * 작성자: rain
  * 내 용: 열혈 cpp OOP 단계별 프로젝트
  */
@@ -15,7 +15,7 @@
 class HighCreditAccount: public NormalAccount{
 	int creditRating;
 public:
-	HighCreditAccount(int bankID, char* name, int balance, int interest, int creditRating)
+	HighCreditAccount(int bankID, String name, int balance, int interest, int creditRating)
     :NormalAccount(bankID, name, balance, interest){
 		if(creditRating==1){
 			this->creditRating=RANK_A;
@@ -37,7 +37,7 @@ public:
     }else if(creditRating==RANK_B){
       cout<<"신용이자율: RANK_B ("<<creditRating<<")"<<endl;
     }else{
-      cout<<"신용이자율: RANK_c ("<<creditRating<<")"<<endl;
+      cout<<"신용이자율: RANK_C ("<<creditRating<<")"<<endl;
     }
   }
 };

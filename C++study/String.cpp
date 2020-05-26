@@ -59,9 +59,10 @@ ostream& operator<<(ostream& os,const String& str){
   return os;
 }
 istream& operator>>(istream& is,String& str){
-  char temp[STRLENGTH];
+  char temp[Constant::STRLENGTH];
   delete[] str.string;
   is>>temp;
+  is.ignore();
   str.len=strlen(temp)+1;
   str.string=new char[str.len];
   strcpy(str.string, temp);

@@ -1,5 +1,5 @@
 /*
- * Banking System Ver 0.8
+ * Banking System Ver 0.9
  * 작성자: rain
  * 내 용: 열혈 cpp OOP 단계별 프로젝트 
  */
@@ -11,7 +11,7 @@
 #include "AccountArray.h"
 
 AccountArray::AccountArray(){
-  accountArr=new BankAccount*[MAXACCOUNT];
+  accountArr=new BankAccount*[Constant::MAXACCOUNT];
 }
 AccountArray::~AccountArray(){
   delete accountArr;
