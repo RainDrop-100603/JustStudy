@@ -607,7 +607,8 @@ ostream& operator<<(ostream &os, const BoundCheck2DIntArray& matrix){
 	 cout<<matrix.matrix2D[matrix.tempRow][matrix.tempColumn];	//Pointer -> (주소)(Pointer+tempRow) ->(객체)(Pointer + tempRow)[tempColumn]
 	 return os;
 }
-
+String::String()
+	:string(NULL){}
 String::String(const char* str){
 	string=new char[strlen(str)+1];
 	strcpy(string,str);
@@ -630,6 +631,7 @@ String String::operator+(const String& str) const{
 	strcpy(tempstr,string);
 	strcat(tempstr,str.string);
 	String tempSTR(tempstr);
+	delete[] tempstr;
 	return tempSTR;
 }
 String& String::operator+=(const String& str){
@@ -638,19 +640,25 @@ String& String::operator+=(const String& str){
 	strcpy(tempstr,string);
 	strcat(tempstr,str.string);
 	delete[] string;
-	string=new char[length];
-	strcpy(string,tempstr);
+	// string=new char[length];
+	// strcpy(string,tempstr);
+	string = tempstr;
 	return *this;
+
+	//*this=*this+str;
+	//return *this; //간단하게 표현 가능 
 }
 bool String::operator==(const String& str) const{
-	if(strcmp(string,str.string)==0){
-		return true;
-	}else{
-		return false;
-	}
+	// if(strcmp(string,str.string)==0){
+	// 	return true;
+	// }else{
+	// 	return false;
+	// }
+	return strcmp(string, str.string) ? false : true;
 }
 ostream& operator<<(ostream& os, const String& str){
 	cout<<str.string;
+	//os<<str.string 과 같다 
 	return os;
 }
 istream& operator>>(istream& is, String& str){

@@ -317,6 +317,7 @@ public:
 class String{
 	char* string;
 public:
+	String();// String 배열 선언을 위해 필요 
 	String(const char* str);
 	String(const String& str);
 	String& operator=(const String& str);
