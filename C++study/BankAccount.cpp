@@ -10,7 +10,7 @@
 #include "BankAccount.h"
 
 BankAccount::BankAccount(int bankID, String name, int balance)
-	 :bankID(bankID), balance(balance), name(name){}
+	 :bankID(bankID), name(name), balance(balance){}
 // BankAccount::~BankAccount() {
 // 	delete this->name;
 // }

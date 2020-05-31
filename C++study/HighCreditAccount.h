@@ -16,7 +16,7 @@ class HighCreditAccount: public NormalAccount{
 	int creditRating;
 public:
 	HighCreditAccount(int bankID, String name, int balance, int interest, int creditRating)
-    :NormalAccount(bankID, name, balance, interest){
+    :NormalAccount(bankID,name,balance,interest){
 		if(creditRating==1){
 			this->creditRating=RANK_A;
 		}else if(creditRating==2){

@@ -14,7 +14,7 @@
 class NormalAccount: public BankAccount{
 	int interest;
 public:
-	NormalAccount(int bankID, char* name, int balance, int interest)
+	NormalAccount(int bankID, String name, int balance, int interest)
 	  :BankAccount(bankID, name, balance), interest(interest){}
 
 	virtual void Deposit(int money){

@@ -17,6 +17,8 @@ using namespace std;
   "key": "ctrl+alt+r",
   "command": "workbench.action.tasks.test"
 }
+
+gram - build: ctrl + shift + a
 */
 
 //https://modoocode.com/134
