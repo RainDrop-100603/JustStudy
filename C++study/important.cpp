@@ -748,6 +748,15 @@ namespace mystd{
 					이렇게 만들어진 함수를 템플릿 함수 (혹은 생성된 함수: Generated Func) 라고 한다.
 					일반 함수와 겹칠 경우에는 일반 함수가 우선적으로 호출된다.
 						겹치는 것은 바람직한 구현 방법은 아니다. 
+			특수화
+				template <class T>
+				T Max(T data1, T data2){...}
+				template<>
+				char* Max<char*>(char* data1, char* data2){...}
+				template<>
+				const char* Max(const char* data1, const char* data2){...}
+					char*과 const char*에 대해 특수화를 한 모습이다. 
+					<자료형>은 역시 생략해도 되고 안해도 되지만, 가독성을 위해 해주는 것이 좋다. 
 
 		클래스 템플릿
 
