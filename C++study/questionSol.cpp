@@ -1126,3 +1126,13 @@ void StringClass(void){
 	cin>>str1;
 	cout<<str1<<endl;
 }
+void Question13_1(void){
+	PointOL point1(4,5);
+	PointOL point2(-2,7);
+	cout<<point1<<endl<<point2<<endl;
+	SwapData<PointOL>(point1, point2);
+	cout<<point1<<endl<<point2<<endl;
+
+	double arr[10] = {1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9,11.1};
+	cout<<SumArray<double>(arr,10)<<endl;
+}

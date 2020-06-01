@@ -329,6 +329,22 @@ public:
 	friend istream& operator>>(istream& is,SString& str);
 };
 
+template <class T>
+void SwapData(T &data1, T &data2){
+	T temp = data1;
+	data1=data2;
+	data2=temp;
+}
+
+template <class T>
+T SumArray(T arr[], int len){
+	T sum=0;
+	for(int i=0;i<len;i++){
+		sum+=arr[i];
+	}
+	return sum;
+}
+
 //Part1
 void Question01_1(void);
 void Question01_2(void);
@@ -360,6 +376,7 @@ void Question11_1(void);
 void Question11_2(void);
 void matrixProblem(void);
 void StringClass(void);
+void Question13_1(void);
 
 #endif // !__QUESTIONSOL_H__
 
