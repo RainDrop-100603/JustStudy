@@ -1,7 +1,7 @@
 #ifndef __NORMALACCOUNT_H__
 #define __NORMALACCOUNT_H__
 /*
- * Banking System Ver 0.7
+ * Banking System Ver 0.9
  * 작성자: rain
  * 내 용: 열혈 cpp OOP 단계별 프로젝트 
  */
