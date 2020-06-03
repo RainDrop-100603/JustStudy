@@ -345,6 +345,57 @@ T SumArray(T arr[], int len){
 	return sum;
 }
 
+template <class T>
+class BoundCheckTemplateArray{
+	T* arr;	
+	int arrlen;
+	BoundCheckTemplateArray(const BoundCheckTemplateArray&){}
+	BoundCheckTemplateArray& operator=(const BoundCheckTemplateArray&){}
+public:
+	BoundCheckTemplateArray(int len)
+		:arrlen(len){
+			arr= new T[len];
+		}
+	~BoundCheckTemplateArray(){
+		// for(int i=0;i<arrlen;i++){
+		// 	delete[] arr[i];
+		// }
+		// 더블 포인터, 트리플 포인터가 올 수도 있는데 모든 경우를 클래스에서 지워줄 수는 없다. 차라리 특수화를 하는것이 낫다.
+		delete[] arr;
+	}
+	T& operator[] (int idx){
+		if(idx<0||idx>arrlen){
+			cout<<"Array index out of bound exception"<<endl;
+			exit(1);
+		}
+		return arr[idx];
+	}
+	T operator[] (int idx) const{
+		if(idx<0||idx>arrlen){
+			cout<<"Array index out of bound exception"<<endl;
+			exit(1);
+		}
+		return arr[idx];
+	}
+	int GetArrLen() const{
+		return arrlen;
+	}
+};
+
+// typedef PointOL* POINT_PTR;
+// class BoundCheckPointPtrArray{
+// 	POINT_PTR* arr;
+// 	int arrlen;
+// 	BoundCheckPointPtrArray(const BoundCheckPointPtrArray&){}
+// 	BoundCheckPointPtrArray& operator=(const BoundCheckPointPtrArray&){}
+// public:
+// 	BoundCheckPointPtrArray(int len);
+// 	POINT_PTR& operator[] (int idx);
+// 	POINT_PTR operator[] (int idx) const;
+// 	int GetArrLen() const;
+// 	~BoundCheckPointPtrArray();
+// };
+
 //Part1
 void Question01_1(void);
 void Question01_2(void);
