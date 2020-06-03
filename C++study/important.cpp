@@ -733,6 +733,7 @@ namespace mystd{
 				template <typename T>
 				T Add(T num1, T num2){...}
 					typename은 class 라는 표현으로 대체 가능
+					T는 템플릿 매개변수라 한다.
 					T대신 다른 문자 사용 가능 
 				template <class T1, class T2>
 					둘 이상의 형(type)에 대해서도 선언이 가능하다
@@ -760,8 +761,43 @@ namespace mystd{
 
 		클래스 템플릿
 			함수 템플릿과 정의 방법이 같다.
-			멤버함수를 분리하여 정의할 때, template <class T>를 빼먹지 말자
+				멤버함수를 분리하여 정의할 때, template <class T>를 빼먹지 말자
+			특수화
+				T를 원하는 자료형으로 교체하여 정의한다.
+					template <class T>					//클래스 템플릿
+					class SoSimple{...};
+					template <>									//특수화, T가 사라졌으므로 class T를 생략하였다.
+					class SoSimple<int>{...};
+				<class T>라는 표현은, 뒤이어 오는 정의에 T라는 템플릿 매개변수가 사용될 것임을 미리 알리는 것이다. 즉 T가 사용되지 않는다면 필요 없다.
+				두개 이상의 형에 대해 템플릿이 선언됐을 경우에, 부분 특수화와 전체 특수화 모두 가능하다.
+					전체 특수화가 부분 특수화보다 우선시된다.
+						template	<class T1, classT2>
+							class SoSimple{...};
+						template <class T1>												//부분특수화
+							class SoSimple<T1, int>{...};
+						template <>																//전체특수화
+							class SoSimple<double, int>{...};
+
+		템플릿 매개변수에 변수가 오는 경우
+			비슷한 유형의 자료형(클래스)를 구분할 필요가 있을 때 사용한다.
+					template <class T, int len>
+					class SimpleArr{...};
+						SimpleArr<int, 9>	arr1;
+							SimpleArr<int, 7> arr2;	
+				arr1과 arr2는 각각 다른 템플릿 클래스이므로 서로 대입연산할 수 없게 된다.
+				len을 생성자를 통해 입력했다면, 두 객체는 대입연산이 가능했을 것이고, 에러방지를 위해 프로그램이 복잡해질 것이다.
+				템플릿 클래스는 컴파일 타임에 생성되어야 하므로, len에 상수가 아닌 변수가 오는 것은 불가능 해 보인다.
 		
+		템플릿 매개변수의 디폴트 값 지정이 가능하다
+			template <class T1 = double, class T2, int, int len = 7>
+
+		static 지역변수, 멤버변수
+			각각 다른 템플릿 함수는, 독립적인 static 지역변수를 가진다.
+			각각 다른 템플릿 클래스는, 독립적인 static 멤버변수를 가진다. 
+				static 멤버변수의 초기화도 특수화가 가능하다
+					template<>
+					long SimpleStaticMem<long>::mem=5;
+
 		템플릿의 파일분리(선언(헤더)와 정의(소스))
 			템플릿 클래스, 템플릿 함수는 컴파일 타임에 생성이 된다.
 			 즉, 컴파일시 템플릿의 선언 뿐 아니라 정의도 필요하다는 것이다.
@@ -774,8 +810,6 @@ namespace mystd{
 						소스파일의 경우에는 컴파일러가 지원하는 것을 써야하는 것 같다.
 							GCC의 경우에는 .c, .cc, .cpp, .c++, .cp, .cxx 등등을 지원한다고 한다. 자세한것은 컴파일러에 대한 공부 필요.
 						
-						
-
 */
 /*
 	형 변환
