@@ -1136,3 +1136,13 @@ void Question13_1(void){
 	double arr[10] = {1.1,2.2,3.3,4.4,5.5,6.6,7.7,8.8,9.9,11.1};
 	cout<<SumArray<double>(arr,10)<<endl;
 }
+void Question13_2(void){
+	SmartPtrT<PointOL> sptr1(new PointOL(1,2));
+	SmartPtrT<PointOL> sptr2(new PointOL(3,4));
+	sptr1->ShowPosition();
+	sptr2->ShowPosition();
+	sptr1->SetPointOL(10,20);
+	sptr2->SetPointOL(30,40);
+	cout<<*sptr1<<endl;
+	cout<<*sptr2<<endl;
+}

@@ -382,6 +382,16 @@ public:
 	}
 };
 
+template <class T>
+class SmartPtrT{
+	T* ptr;
+public:
+	SmartPtrT(T* ptr)
+		:ptr(ptr){}
+	T& operator*() const{return *ptr;}
+	T* operator->() const{return ptr;}
+	~SmartPtrT(){delete ptr;}
+};
 // typedef PointOL* POINT_PTR;
 // class BoundCheckPointPtrArray{
 // 	POINT_PTR* arr;
@@ -428,6 +438,7 @@ void Question11_2(void);
 void matrixProblem(void);
 void StringClass(void);
 void Question13_1(void);
+void Question13_2(void);
 
 #endif // !__QUESTIONSOL_H__
 
