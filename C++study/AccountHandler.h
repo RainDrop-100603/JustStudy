@@ -12,11 +12,12 @@
 #include "BankAccount.h"
 #include "NormalAccount.h"
 #include "HighCreditAccount.h"
-#include "AccountArray.h"
+// #include "AccountArray.h"
+#include "BoundCheckArray.h"
 
 class AccountHandler{
 	// BankAccount* accountArr[MAXACCOUNT];
-	AccountArray accountArr;	//
+	BoundCheckArray<BankAccount*> accountArr;	//
 	int accountNum;
 public:
 	AccountHandler();
