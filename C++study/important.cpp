@@ -22,6 +22,8 @@ using namespace std;
 		동적 할당 - new
 	Class
 	연산자 오버로딩
+	Template
+	입력방식에 따른 속도차이
 */
 
 
@@ -823,6 +825,47 @@ namespace mystd{
 */
 // 매개변수에서 arr[] 과 *arr은 완전히 같은 표현인듯 하다. 단지 배열임을 알려주기 위해 []표현을 쓰는듯
 // 따라서 전달인자로 전달할 때, arr[10]과 같이 전달할 필요 없이, arr(포인터형식)으로 전달하면 된다.
+
+/*
+	입력방식에 따른 속도차이
+		scanf, getchar(*), cin 등은 모두 입력 속도가 다르다.
+			단순하게 생각해도, 대상이 하나인 getchar, 대상을 지정하는 scanf, 대상에 따라 알아서 오버로딩된 cin을 비교하면 cin이 제일 느리다.
+				입력이나 출력이 많아지면 "cin.tie(NULL)과 ios::sync_with_stdio(false)"을 쓰거나 scanf, printf 를 쓰는게 좋다.
+			"\n"이 endl보다 훨씬 빠르다 
+	cin.tie(NULL)과 sync_with_stdio(false)	
+		sync_with_stdio
+			ios::sync_with_stdio 와 cin.sync_with_stdio의 차이? 같은거같은데
+			c의 stdio와 c++의 iostream을 동기화 시켜주는 역할을 한다.
+				false를 통해 해제하면, stdio와 iostream의 버퍼를 모두 사용하는 것이 아닌, c++만의 독립적인 버퍼를 사용하게 된다.
+					c의 버퍼들과 병행하여 사용할 수 업게 되며(stdio 입출력 사용 불가라는 소린듯), 대신 사용하는 버퍼들이 줄어들어 속도가 빨라진다.
+		cin.tie
+			cout과 cin은 기본적으로 tie되어 있다.
+				cout을 하면 기본적으로 바로 출력(flush)를 하게 된다. 그로인해 출력또한 cin과 cout 순서대로 보인다
+					cin.tie(NULL)을 통해 untie하면, cout buffer는 출력(flush) 혹은 버퍼가 모두 찼을때만 비워지게 된다(출력장치에 출력). 그로인해 cin과 cout이 순서대로 보이지 않을 수 있다.
+					버퍼를 필요시만 비우기 때문에 속도가 빠르다. 
+	
+		
+
+https://codecollector.tistory.com/381
+
+알고스팟 - 언어별 input method 비교
+https://algospot.com/forum/read/2496/
+백준저지 -  1920번 문제 질문
+https://www.acmicpc.net/board/view/9022
+cpp reference - sync_with_stdio
+http://en.cppreference.com/w/cpp/io/ios_base/sync_with_stdio
+stackoverflow - sync_with_stdio, cout.tie등에 대한 질문에 대한 답변
+https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-stdiofalse-cin-tienull
+출처: https://eine.tistory.com/entry/CC-입출력-방법에-따른-속도-정리 [아인스트라세의 SW 블로그]
+*/
+
+
+/*
+	입력의 개수를 알 수 없는 경우(미리 정해지지 않은 경우)
+	cin.eof()
+	https://takeknowledge.tistory.com/20
+*/
+
 
 //vector
 
