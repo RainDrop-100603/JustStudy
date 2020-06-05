@@ -77,9 +77,15 @@ using namespace std;
 				특수문자, 서식문자 등을 출력하려면 앞에 \을 붙여준다.
 				cout<<"\\n";	은 \n 이 출력된다
 			실수 자료형 출력범위
-				기본적으로는 소수점 아래 다섯번째 자리까지만 출력한다.
+				기본적으로는 소수표현이 필요할경우 6자리만 출력한다.-> 50.0 등으로 나누어 떨어지는 경우 50만 출력한다.
 				cout.precision(len) 
-					len-1 만큼 소수점 아래를 출력한다.
+					len만큼의 길이를 출력한다. '.' 은 제외하고 카운팅
+					한번 선언하면 이후로 계속 적용 
+					기본은 6 인듯 
+				cout<<fixed;
+					cout.precision()이 소수점 아래 범위에 대해서만 설정한다.
+				cout.unsetf(ios::fixed);
+					cout<<fixed를 해제하고 cout.precision을 다시 전체 출력범위 설정으로 바꾼다.
 	const 키워드
 		const 변수
 			const 변수에 대한 포인터나 참조자 또한 const하게 선언되어야 한다.
