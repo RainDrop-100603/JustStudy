@@ -874,6 +874,72 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 
 
 //vector
+/*
+	vector
+		vector container
+			스택과 비슷한 구조
+			push.back, pop.back가 일어난다.
+				맨 뒤쪽에서 삽입과 삭제를 한다.
+		#include <vector>
+		선언
+			vector<자료형> var;
+				template기반임을 알 수 있다.
+			여러 생성자
+				vector<int> v;
+					비어있는 벡터 생성
+				vector<int> v(5);
+					기본값(int의 경우 0)으로 초기화된 5개의 원소를 가지는 벡터
+				vector<int> v(5,2);
+					2로 초기화된 5개의 원소를 가지는 벡터
+				vector<int> v2(v1);
+					v2는 복사생성자를 통해 v1을 복사해 생성
+			연산자
+				vector 자체끼리의 대소비교 가능? 기준은?
+		멤버함수
+			v.assign(5,2)
+				2의 값으로 5개의 원소 할당
+			v.at[idx]
+				idx번의 원소를 참조하며, v[idx]보다 속도는 느리지만, 범위를 점검하므로 안전하다.
+			v.front()
+				첫번째 원소 참조
+			v.back()
+				마지막 원소 참조
+			v.clear()
+				모든 원소를 제거
+				메모리는 그대로다
+				즉, size는 줄어들지만 capacity는 그대로다.
+			v.push_back(7)
+				마지막 원소 뒤에 원소 7을 삽입한다.
+			v.pop_back()
+				마지막 원소를 제거한다.
+			v.reserve(n)
+				n개의 원소를 저장할 위치를 예약합니다(미리 동적할당)
+					capacity를 늘린다는 의미인가?
+			v.resize(n)
+				컨테이너의 크기를 n으로 변경한다.
+				더 커졌을 경우, 새로운범위? 는 default 값으로 초기화한다(int만 0?, 객체의 경우는?)
+			v.resize(n,3)
+				컨테이너의 크기를 n으로 변경한다.
+				더 커졌을 경우, 새로운범위? 는 3으로 초기화한다.
+				객체를 넣을 경우, 인자를 전달해 객체의 생성자를 호출하는가? 벡터 생성시에도 확인 필요 
+			v.size()
+				원소의 개수를 반환
+			v.capacity()
+				할당된 공간(메모리)의 크기를 반환
+			v2.swap(v1)
+				v1과 v2의 원소와 capacity를 모두 바꿔준다.
+				v1의 capacity를 없애고 싶을때(즉 할당해제하고 싶을때), v2를 capacity가 0인 임시객체로 만들어 스왑을 해주면 된다.
+					vector<int>().swap(v1);
+			iterator
+				공부필요
+				v.begin()
+					첫번째 원소를 가리킴
+				v.end()
+					마지막 원소의 다음을 가리킴
+				v.rbegin()
+					reverse begin(거꾸로 해서 첫번째 원소, 즉 마지막 원소? 를 가리킴)
+				
+*/
 
 //assert : 에러시 종료
 
