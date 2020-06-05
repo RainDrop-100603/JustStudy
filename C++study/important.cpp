@@ -840,7 +840,7 @@ namespace mystd{
 			"\n"이 endl보다 훨씬 빠르다 
 	cin.tie(NULL)과 sync_with_stdio(false)	
 		sync_with_stdio
-			ios::sync_with_stdio 와 cin.sync_with_stdio의 차이? 같은거같은데
+			ios::sync_with_stdio 와 cin.sync_with_stdio의 차이? -> 같은거같은데
 			c의 stdio와 c++의 iostream을 동기화 시켜주는 역할을 한다.
 				false를 통해 해제하면, stdio와 iostream의 버퍼를 모두 사용하는 것이 아닌, c++만의 독립적인 버퍼를 사용하게 된다.
 					c의 버퍼들과 병행하여 사용할 수 업게 되며(stdio 입출력 사용 불가라는 소린듯), 대신 사용하는 버퍼들이 줄어들어 속도가 빨라진다.
@@ -969,6 +969,13 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 			size_type - 원소의 개수의 형식 
 				반복문에서 int i=0; 을 사용하는 것처럼, vector는 size_type i = 0; 을 사용한다.
 					int를 사용해도 결과에 차이는 없는 듯 하다.
+*/
+
+/*
+	ASCII CODE를 int로 바꾸는 법
+		ASCII code에서 숫자는 형적으로 증가한다
+		'0'=x 라면, '7' = x+7이다
+		따라서 '(char형 숫자)'-'0'=(int 형 숫자) 와 같이 int형으로 바꿀 수 있다.
 */
 
 //c++ string class
