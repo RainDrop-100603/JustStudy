@@ -898,7 +898,7 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 		멤버함수
 			v.assign(5,2)
 				2의 값으로 5개의 원소 할당
-			v.at[idx]
+			v.at(idx)
 				idx번의 원소를 참조하며, v[idx]보다 속도는 느리지만, 범위를 점검하므로 안전하다.
 			v.front()
 				첫번째 원소 참조
@@ -910,6 +910,8 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 				즉, size는 줄어들지만 capacity는 그대로다.
 			v.push_back(7)
 				마지막 원소 뒤에 원소 7을 삽입한다.
+				capacity가 부족하면 자동으로 확장한다.
+					이때 선형으로 확장되는 것이 아니고, 기존메모리 크기의 2배만큼 확장된다.
 			v.pop_back()
 				마지막 원소를 제거한다.
 			v.reserve(n)
@@ -930,16 +932,46 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 				v1과 v2의 원소와 capacity를 모두 바꿔준다.
 				v1의 capacity를 없애고 싶을때(즉 할당해제하고 싶을때), v2를 capacity가 0인 임시객체로 만들어 스왑을 해주면 된다.
 					vector<int>().swap(v1);
+			v.insert(2,3,4)
+				2번째 위치에 3개의 4값을 삽입합니다.
+					뒤에 있는것들은 3만큼 위치가 밀리게된다.
+			v.insert(2,3)
+				2번째 위치에 3값을 삽입합니다.
+				삽입한곳(2)의 iterator을 반환합니다.
+			v.erase(iter)
+				iter가 가리키는 원소를 제거합니다.
+				size만 줄어들고 capacity는 그대로입니다.
+			v.erase(start, end)
+				[start,end) 범위의 인자를 삭제한다.
+					[2,5)면 2~4의 원소를 삭제한다는 것이다
+				size만 줄어들고 capacity는 그대로입니다.
+			v.empty()
+				vector의 size가 0이면 true를 반환한다.
+				capacity와는 관계가 없다.
 			iterator
-				공부필요
 				v.begin()
 					첫번째 원소를 가리킴
 				v.end()
 					마지막 원소의 다음을 가리킴
 				v.rbegin()
 					reverse begin(거꾸로 해서 첫번째 원소, 즉 마지막 원소? 를 가리킴)
-				
+		공간 할당 (capacity)
+			capacity는 선형으로 커지지 않고, 기존 크기의 2배수로 증가한다.
+				즉 처음에 크기를 5로 초기화 시킨 vector는, 자동으로 확장될 시 capacity가 10이된다.
+			capacity를 증가시키면, 메모리를 이어서 할당하는 것이 아니고 새롭게 메모리를 할당하여 원소들을 전부 복사하는 형태이다
+				기존에는 복사비용이 컸지만, std::move 라는 것이 도입되며 메모리 증가에 대한 비용(복사비용)이 상당히 작아졌다.
+		멤버형식
+			iterator - 반복자형식
+				vector<int>::iterator iter;
+				vector에서의 포인터를 나타내는듯 하다.
+			reverse_iterator - 역 반복자 형식
+			value_type - 원소의 형식
+			size_type - 원소의 개수의 형식 
+				반복문에서 int i=0; 을 사용하는 것처럼, vector는 size_type i = 0; 을 사용한다.
+					int를 사용해도 결과에 차이는 없는 듯 하다.
 */
+
+//c++ string class
 
 //assert : 에러시 종료
 
