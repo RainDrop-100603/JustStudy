@@ -854,6 +854,10 @@ namespace mystd{
 
 https://codecollector.tistory.com/381
 
+백준-입출력속도비교
+https://www.acmicpc.net/blog/view/56
+https://www.acmicpc.net/blog/view/57
+
 알고스팟 - 언어별 input method 비교
 https://algospot.com/forum/read/2496/
 백준저지 -  1920번 문제 질문
