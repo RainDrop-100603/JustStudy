@@ -10,23 +10,27 @@ int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  int input,input2, sum,sqrtn;
-  bool arr[246913];
-  fill_n(arr,246912,true);
-
-  while(true){
-    cin>>input;
-    if(input==0){
-      break;
-    }
-    input2=2*input;
-    for(int i=2;i<input2;i++){    
-      if(arr[i]){
-        sqrtn=sqrt(input2);
-        for(int j=2;j<sqrtn+1;j++)
+  int T, N, lowPrime, primeCount;
+  vector<int> primeV = GetPrimeVector(10001);
+  bool primeArr[10001];
+  vector<int>::iterator iter;
+  for(iter=primeV.begin();iter!=primeV.end();iter++){
+    primeArr[*iter]=true;
+  }
+  primeCount=primeV.end()-primeV.begin();
+  cin>>T;
+  for(int i=0;i<T;i++){
+    cin>>N;
+    for(iter=primeV.begin();iter!=primeV.end();iter++){
+      if(*iter<=N/2){
+        if(primeArr[N-*iter]){
+          lowPrime=*iter;
+        }
       }
     }
+    cout<<lowPrime<<' '<<N-lowPrime<<"\n";
   }
+
 
   return 0;
 }
