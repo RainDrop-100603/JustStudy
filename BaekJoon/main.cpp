@@ -5,23 +5,28 @@
 
 using namespace std;
 
+void StarDot(int N){
+  if(N==1){
+    cout<<'*';
+  }
+  if(N==0){
+    cout<<' ';
+  }
+  if(N>=3){
+    StarDot(N/3);StarDot(N/3);StarDot(N/3);cout<<"\n";
+    StarDot(N/3);StarDot(0);StarDot(N/3);cout<<"\n";
+    StarDot(N/3);StarDot(N/3);StarDot(N/3);cout<<"\n";
+  }
+}
 
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  int M, N;
-  cin>>M>>N;
-
-  vector<int> primeV=GetPrimeVector(N);
-  vector<int>::iterator iter;
-  vector<int>::iterator iterS=primeV.begin();
-  vector<int>::iterator iterF=primeV.end();
-  for(iter=iterS;iter!=iterF;iter++){
-    if(*iter>=M){
-      cout<<*iter<<"\n";
-    }
-  }
+ int N;
+ 
+  cin>>N;
+  StarDot(N);
 
   return 0;
 }
