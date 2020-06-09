@@ -6,6 +6,7 @@
 using namespace std;
 
 void StarDot(int N){
+  static int N2=0;
   if(N==1){
     cout<<'*';
   }
@@ -13,9 +14,18 @@ void StarDot(int N){
     cout<<' ';
   }
   if(N>=3){
-    StarDot(N/3);StarDot(N/3);StarDot(N/3);cout<<"\n";
-    StarDot(N/3);StarDot(0);StarDot(N/3);cout<<"\n";
-    StarDot(N/3);StarDot(N/3);StarDot(N/3);cout<<"\n";
+    StarDot(N/3);StarDot(N/3);StarDot(N/3);
+    if(N==3){
+      cout<<"\n";
+    }
+    StarDot(N/3);StarDot(0);StarDot(N/3);
+    if(N==3){
+      cout<<"\n";
+    }
+    StarDot(N/3);StarDot(N/3);StarDot(N/3);
+    if(N==3){
+      cout<<"\n";
+    }
   }
 }
 
