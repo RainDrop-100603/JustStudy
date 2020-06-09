@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 #include "GoodFunction.h"
 
@@ -9,43 +10,23 @@ int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  vector<int> inputV;
-  int input;
-  int Maxinput=-1;
-  cin>>input;
-  while(input!=0){        //input을 벡터로 받았다.
-    if(input>Maxinput){
-      Maxinput=input;
-    }
-    inputV.push_back(input);
+  int input,input2, sum,sqrtn;
+  bool arr[246913];
+  fill_n(arr,246912,true);
+
+  while(true){
     cin>>input;
-  }
-  
-  vector<int> primeV= GetPrimeVector(Maxinput*2+1);   //[0,2n+1) 범위의 소수 벡터 반환
-
-  vector<int>::iterator iter;
-  vector<int>::iterator iterS=inputV.begin();
-  vector<int>::iterator iterF=inputV.end();
-  vector<int>::iterator iter2;
-  vector<int>::iterator iter2S=primeV.begin();
-  vector<int>::iterator iter2F=primeV.end();
-  for(iter=iterS;iter!=iterF;iter++){
-    int numS=*iter;
-    int numF=2*numS;
-    int count=0;;  //개수
-    for(iter2=iter2S;iter2!=iter2F;iter2++){
-      int num=*iter2;
-      if(num<=numS){
-        continue;
-      }else if(num>numF){
-        break;
-      }
-      count++;
+    if(input==0){
+      break;
     }
-    cout<<count<<"\n";
+    input2=2*input;
+    for(int i=2;i<input2;i++){    
+      if(arr[i]){
+        sqrtn=sqrt(input2);
+        for(int j=2;j<sqrtn+1;j++)
+      }
+    }
   }
-
-
 
   return 0;
 }

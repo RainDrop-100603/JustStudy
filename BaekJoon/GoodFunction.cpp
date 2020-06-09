@@ -71,3 +71,25 @@ vector<int> GetPrimeVector(int num){
   }
   return prime;
 }
+
+int HowManyPrime(int num1, int num2, vector<int> &prime){
+  
+  vector<int>::iterator iter;
+  vector<int>::iterator iterS=prime.begin();
+  vector<int>::iterator iterF=prime.end();
+  
+  for(int i=num1;i<num2;i++){
+    int count=0;;  //개수
+    for(iter=iterS;iter!=iterF;iter++){
+      int num=*iter;
+      if(num<num1){
+        continue;
+      }else if(num>=num2){
+        break;
+      }
+      count++;
+    }
+    cout<<count<<"\n";
+  }
+
+}
