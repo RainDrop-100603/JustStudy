@@ -20,6 +20,7 @@ bool IsPrime(int num){
   return true;
 }
 vector<int> GetPrimeVector(int num){
+  num++;
   vector<int> prime;
   vector<int>::iterator iter;
   vector<int>::iterator iterStart;

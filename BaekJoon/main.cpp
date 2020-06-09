@@ -10,27 +10,18 @@ int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  int T, N, lowPrime, primeCount;
-  vector<int> primeV = GetPrimeVector(10001);
-  bool primeArr[10001];
-  vector<int>::iterator iter;
-  for(iter=primeV.begin();iter!=primeV.end();iter++){
-    primeArr[*iter]=true;
-  }
-  primeCount=primeV.end()-primeV.begin();
-  cin>>T;
-  for(int i=0;i<T;i++){
-    cin>>N;
-    for(iter=primeV.begin();iter!=primeV.end();iter++){
-      if(*iter<=N/2){
-        if(primeArr[N-*iter]){
-          lowPrime=*iter;
-        }
-      }
-    }
-    cout<<lowPrime<<' '<<N-lowPrime<<"\n";
-  }
+  int M, N;
+  cin>>M>>N;
 
+  vector<int> primeV=GetPrimeVector(N);
+  vector<int>::iterator iter;
+  vector<int>::iterator iterS=primeV.begin();
+  vector<int>::iterator iterF=primeV.end();
+  for(iter=iterS;iter!=iterF;iter++){
+    if(*iter>=M){
+      cout<<*iter<<"\n";
+    }
+  }
 
   return 0;
 }
