@@ -968,6 +968,7 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 			iterator - 반복자형식
 				vector<int>::iterator iter;
 				vector에서의 포인터를 나타내는듯 하다.
+					for(iter=v.begin();iter!=v.end();iter++){...}
 			reverse_iterator - 역 반복자 형식
 			value_type - 원소의 형식
 			size_type - 원소의 개수의 형식 
