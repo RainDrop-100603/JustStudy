@@ -51,47 +51,71 @@ int main(){
   int minW;
   int sumW;
 
-  for(int i=0;i<8;i++){
-    for(int j=0;j<8;j++){
-      if(tableB[i][j]){
-        leftB++;
-      }
-      if(tableW[i][j]){
-        leftW++;
-      }
-    }
-  }
-  minB=leftB;
-  minW=leftW;
+  // for(int i=0;i<8;i++){
+  //   for(int j=0;j<8;j++){
+  //     if(tableB[i][j]){
+  //       leftB++;
+  //     }
+  //     if(tableW[i][j]){
+  //       leftW++;
+  //     }
+  //   }
+  // }
+  // minB=leftB;
+  // minW=leftW;
 
+  // for(int i=0;i<N-8;i++){
+  //   sumB=leftB;
+  //   sumW=leftW;
+  //   for(int j=1;j<M-8;j++){
+  //     for(int k=0;k<8;k++){
+  //       if(tableB[k][j+7]){
+  //         sumB--;
+  //       }
+  //       if(tableB[k][j+7]){
+  //         sumB++;
+  //       }
+  //       if(tableW[k][j+7]){
+  //         sumW--;
+  //       }
+  //       if(tableW[k][j+7]){
+  //         sumW++;
+  //       }
+  //     }
+  //     if(sumB<minB){
+  //       minB=sumB;
+  //     }
+  //     if(sumW<minW){
+  //       minW=sumW;
+  //     }
+  //   }
+  //   //leftB를 한칸 올려야한다.
+  // }
+  int min=64;
   for(int i=0;i<N-8;i++){
-    sumB=leftB;
-    sumW=leftW;
-    for(int j=1;j<M-8;j++){
+    for(int j=0;j<M-8;j++){
+      sumB=0;
+      sumW=0;
       for(int k=0;k<8;k++){
-        if(tableB[k][j+7]){
-          sumB--;
-        }
-        if(tableB[k][j+7]){
-          sumB++;
-        }
-        if(tableW[k][j+7]){
-          sumW--;
-        }
-        if(tableW[k][j+7]){
-          sumW++;
+        for(int z=0;z<8;z++){
+          if(tableW[i+k][j=z]){
+            sumW++;
+          }
+          if(tableB[i+k][j=z]){
+            sumB++;
+          }
+          
         }
       }
-      if(sumB<minB){
-        minB=sumB;
+      if(sumB<min){
+        min=sumB;
       }
-      if(sumW<minW){
-        minW=sumW;
+      if(sumW<min){
+        min=sumW;
       }
     }
-    //leftB를 한칸 올려야한다.
   }
-
+  cout<<min;
 
   for(int i=0;i<M;i++){
     delete[] tableW[i];
