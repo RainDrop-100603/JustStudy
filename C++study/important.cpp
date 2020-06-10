@@ -983,6 +983,13 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 		따라서 '(char형 숫자)'-'0'=(int 형 숫자) 와 같이 int형으로 바꿀 수 있다.
 */
 
+/*
+	전역변수, 지역변수로 선언할 수 있는 배열의 크기는 한계가 있다.
+	크기의 한계는 컴파일러, 하드웨어에 따라 최대 개수가 다르다.
+	필요한 크기가 크다면 동적할당을 이용하자.
+	꼭 큰 배열이 필요한 것이 아니라면 사용을 지양하자.
+*/
+
 //c++ string class
 
 //assert : 에러시 종료
