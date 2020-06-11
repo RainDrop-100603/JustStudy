@@ -7,124 +7,65 @@
 
 using namespace std;
 
+// vector<int>& Merge(vector<int> &v1, vector<int> &v2){  //v1에 v2 v1을 합친다.
+//   vector<int>::iterator iter1;
+//   vector<int>::iterator iter2;
+
+//   return v1;
+// }
+
+
+// vector<int> MergeSort(vector<int> arrayV){
+//   //divide
+
+
+//   //merge & conquer
+
+
+
+//   vector<int> mergedVector;
+
+//   return mergedVector;
+// }
 
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  int N, M;
-  char color;
-  cin>>N>>M;
-  //true가 새로 칠해야 하는 색
-  bool** tableW=new bool*[N];
-  for(int i=0;i<M;i++){
-    tableW[i]= new bool[M];
-  }
-  bool** tableB=new bool*[N];
-  for(int i=0;i<M;i++){
-    tableB[i]= new bool[M];
-  }
-
-  for(int i=0;i<N;i++){
-    for(int j=0;j<M;j++){
-      cin>>color;
-      if((i+j)%2==0){
-        if(color=='B'){
-          tableW[i][j]=true;
-        }else{
-          tableB[i][j]=true;
-        }
-      }else{
-        if(color=='B'){
-          tableB[i][j]=true;
-        }else{
-          tableW[i][j]=true;
-        }
-      }
-    }
-  }
-
-  int minB;  //B에서의 최솟값
-  int sumB;   //B에서 현재 체스판에서의 값
-  int leftB=0;    //B의 leftest의 값 
-  int leftW=0;
-  int minW;
-  int sumW;
-
-  // for(int i=0;i<8;i++){
-  //   for(int j=0;j<8;j++){
-  //     if(tableB[i][j]){
-  //       leftB++;
-  //     }
-  //     if(tableW[i][j]){
-  //       leftW++;
-  //     }
-  //   }
+  // //입력 받기 및 벡터 형성
+  // int vectorSize, num;
+  // cin>>vectorSize;
+  // vector<int> arrayV;
+  // for(int i=0;i<vectorSize;i++){
+  //   cin>>num;
+  //   arrayV.push_back(num);
   // }
-  // minB=leftB;
-  // minW=leftW;
-
-  // for(int i=0;i<N-8;i++){
-  //   sumB=leftB;
-  //   sumW=leftW;
-  //   for(int j=1;j<M-8;j++){
-  //     for(int k=0;k<8;k++){
-  //       if(tableB[k][j+7]){
-  //         sumB--;
-  //       }
-  //       if(tableB[k][j+7]){
-  //         sumB++;
-  //       }
-  //       if(tableW[k][j+7]){
-  //         sumW--;
-  //       }
-  //       if(tableW[k][j+7]){
-  //         sumW++;
-  //       }
-  //     }
-  //     if(sumB<minB){
-  //       minB=sumB;
-  //     }
-  //     if(sumW<minW){
-  //       minW=sumW;
-  //     }
-  //   }
-  //   //leftB를 한칸 올려야한다.
+  // //sorting
+  // arrayV=MergeSort(arrayV);
+  // //출력 
+  // vector<int>::iterator iter;
+  // for(iter=arrayV.begin();iter!=arrayV.end();iter++){
+  //   cout<<*iter<<"\n";
   // }
-  int min=64;
-  for(int i=0;i<N-8;i++){
-    for(int j=0;j<M-8;j++){
-      sumB=0;
-      sumW=0;
-      for(int k=0;k<8;k++){
-        for(int z=0;z<8;z++){
-          if(tableW[i+k][j=z]){
-            sumW++;
-          }
-          if(tableB[i+k][j=z]){
-            sumB++;
-          }
-          
-        }
-      }
-      if(sumB<min){
-        min=sumB;
-      }
-      if(sumW<min){
-        min=sumW;
-      }
-    }
-  }
-  cout<<min;
 
-  for(int i=0;i<M;i++){
-    delete[] tableW[i];
-  }
-  delete[] tableW;
-  for(int i=0;i<M;i++){
-    delete[] tableB[i];
-  }
-  delete[] tableB;
+  vector<int> v;
+  v.push_back(7);
+  vector<int>::iterator iter;
+  iter=v.begin();
+  cout<<*iter<<endl;
+
+  v.insert(iter,3);
+  iter=v.begin();
+  cout<<*iter<<endl;
+
+  iter=v.begin();
+  v.insert(iter+1,4);
+
+  v.insert(v.begin(),10);
+  iter=v.begin();
+
+  cout<<*iter<<' '<<*(iter+1)<<' '<<*(iter+2)<<' '<<*(iter+3);
+  
   return 0;
 }
 
