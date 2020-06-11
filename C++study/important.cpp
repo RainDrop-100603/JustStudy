@@ -969,6 +969,10 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 				vector<int>::iterator iter;
 				vector에서의 포인터를 나타내는듯 하다.
 					for(iter=v.begin();iter!=v.end();iter++){...}
+				iterator가 무효화 되는 경우(더 알아보자 )
+					vector의 capacity를 변경하는 모든 삽입 작업
+					push_back: 해당 vector를 가리키는 모든 반복자가 무효화된다.
+					erase: 삭제된 요소의 뒤에있는 요소를 가리키는 반복자들은 무효화된다.
 			reverse_iterator - 역 반복자 형식
 			value_type - 원소의 형식
 			size_type - 원소의 개수의 형식 
