@@ -14,14 +14,14 @@ vector<int>& Merge(vector<int> &v1, int start, int end){  //[start,end)
   vector<int>::iterator rotate1=iterS; //앞부분의 rotate
   vector<int>::iterator rotate2=iterM; //뒷부분의 rotate
   vector<int>::iterator mainRotate=iterS; // S까지 sorting이 된 것이다 
-  while(!(rotate1==iterM&&rotate2==iterF)){ //앞부분이 끝날때와 뒷부분이 끝날 때
-    if(rotate1==iterM){
-
-      continue;
-    }else if(rotate2==iterF){
-
-      continue;
-    }
+  while(rotate1==iterM||rotate2==iterF){ //앞부분이 끝날때와 뒷부분이 끝날 때
+    // if(rotate1==iterM){
+    //   mainRotate=iterF; //남은 부분은 이미 sorting이 되어있다.
+    //   continue;
+    // }else if(rotate2==iterF){
+    //   mainRotate=iterF;
+    //   continue;
+    // }
   }
   // while(!(v1.empty()&&v2.empty())){
   //   if(v1.empty()){
