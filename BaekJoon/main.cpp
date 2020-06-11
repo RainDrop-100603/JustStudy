@@ -7,24 +7,22 @@
 
 using namespace std;
 
-void Merge(int* &array, int start, int end){  //[start,end) sorting 
+void Merge(int* &array, const int start, const int end){  //[start,end) sorting 
   int middle=(end+start)/2; //두 vector 사이의 경계 idx
   int mainRotate=start;     //현재 sorting을 해야하는 곳. 이것 전까진 sorted
   int rotateFront=start;    //앞의 vector의 index
   int rotateBack=middle;//뒤의 vector의 index
-  vector<int> tempV;  //front를 저장해놓은 임시 배열. 반대로 sorting되어 있을경우, 배열내에서 요소를 계속 옮기는 것은 비용이 너무 크다. 
+  int tempArray[middle-start];  //front를 저장해놓은 임시 배열. 반대로 sorting되어 있을경우, 배열내에서 요소를 계속 옮기는 것은 비용이 너무 크다. 
   for(int i=start;i<middle;i++){
-    tempV.push_back(array[i]);
+    tempArray[i-start]=array[i];
   }
-  vector<int>::iterator iter=tempV.begin();
-  int temp=*iter;   //unsorted의 첫번째 원소가 임시로 저장되어 있다.
+  int temp=tempArray[0];
   while(!(rotateFront==middle)){ //앞부분이 끝날때와 뒷부분이 끝날 때
-    if(temp<array[rotateBack]){
-      array[mainRotate]=*(iter+rotateFront-start);
+    if(temp<array[rotateBack]||rotateBack==end){
+      array[mainRotate]=temp;
       rotateFront++;
-      iter++;
       mainRotate++;
-      temp=*iter;
+      temp=tempArray[rotateFront-start];
     }else{
       array[mainRotate]=array[rotateBack];
       rotateBack++;
@@ -35,7 +33,7 @@ void Merge(int* &array, int start, int end){  //[start,end) sorting
 }
 
 
-void MergeSort(int* &array,int start,int end){
+void MergeSort(int* &array,const int start,const int end){
   //divide
   int middle=(end+start)/2;
   if(end-start==1){
