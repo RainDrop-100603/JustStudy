@@ -20,19 +20,19 @@ int main(){
     cin>>num;
     arrayV.push_back(num);
   }
-  //산술평균
+  //산술평균 반올림식 수정 필요
   int sum=0;
   for(int nums:arrayV){
     sum+=nums;
   }
   
-  cout<<(sum)/inputN<<endl;
+  cout<<(sum)/inputN<<endl; 
   
   //중앙값
   MergeSort(arrayV,0,inputN);
   cout<<arrayV[inputN/2]<<endl;
 
-  //최빈값
+  //최빈값 뭔진 모르겠는데 예제 3에서 오류나므로 수정 필요 
   int count=0;
   int maxCount=0;
   int maxCountNum=arrayV[0];
@@ -49,7 +49,7 @@ int main(){
         maxCountNum=prevNum;
         over=0;
       }else if(maxCount==count&&over==0){
-        maxCountNum=nums;
+        maxCountNum=prevNum;
         over++;
       }
       prevNum=nums;
