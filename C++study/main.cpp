@@ -10,11 +10,11 @@ using namespace std;
 //workbench.action.tasks.test : 실행 
 /*
 {
-  "key": "ctrl+shift+b",
+  "key": "ctrl+alt+a",
   "command": "workbench.action.tasks.build"
 }
 {
-  "key": "ctrl+alt+r",
+  "key": "ctrl+shift+a",
   "command": "workbench.action.tasks.test"
 }
 

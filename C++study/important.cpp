@@ -880,6 +880,10 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 //vector
 /*
 	vector
+		vector는 배열과 동일하게 작동한다.
+			표준에 정의되어 있다.
+			배열처럼 원소의 값을 바꾸는 것등 모두 가능하다.
+			심지어 포인터도 반환이 가능하다고 한다. iterator를 쓸 뿐 
 		vector container
 			스택과 비슷한 구조
 			push.back, pop.back가 일어난다.
@@ -972,6 +976,7 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 				iterator가 무효화 되는 경우(더 알아보자 )
 					vector의 capacity를 변경하는 모든 삽입 작업
 					push_back: 해당 vector를 가리키는 모든 반복자가 무효화된다.
+						capacity가 변경될 때문 무효화 될 수는 있다. 그러나 조건부로 무효화 되는 것 자체가 코드에는 넣으면 안 된다는 뜻이다. 
 					erase: 삭제된 요소의 뒤에있는 요소를 가리키는 반복자들은 무효화된다.
 			reverse_iterator - 역 반복자 형식
 			value_type - 원소의 형식
