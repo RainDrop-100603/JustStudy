@@ -1000,6 +1000,126 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 */
 
 //c++ string class
+/*
+	String class: 문자열
+		헤더 및 선언방법
+			#include <string>
+			string str("BlockDMask");
+			string str1;
+				str1="BlockDMask";
+			string str2(str1);	
+		char*문자열과 달리 끝에 "\0"이 없다.
+		멤버함수
+			str.at(idx)
+				char& at(size_t index)
+					idx번째 문자를 반환한다(0부터 시작)
+					범위를 벗어나면 예외 반환
+			str[idx]
+				char& operator[](size_t index)
+					범위검사를 하지않아 at함수보다 빠르다.
+			str.front()
+				char& front()
+					==str.at(0)
+					str의 맨 앞 인자 반환
+			str.back()
+				char& back()
+					str의 맨 뒤 인자 반환
+			str.size()
+				size_t size() const
+					str가 사용하는 메모리 크기반환
+			str.length()
+				size_t length() const
+					str의 길이를 반환
+					size와 결과는 같지만 의미는 다르다 
+			str.capacity()
+				size_t capacity() const
+					str객체에 할당된 메모리 크기 반환
+					size,length보다 더 길 수도 있다.
+			str.max_size()
+				str이 가질 수 있는 최대 문자열의 길이를 반환한다.
+				max capacity라고 봐도 유사할듯? 
+			str.resize(...)
+				void resize(size_t n)
+				void resize(size_t n, char c)
+					str을 n만큼의 size로 만든다
+						원래 size보다 작다면, 남은 string을 버립니다
+						원래 size보다 크다면, 남은 공간은 빈 공간으로 채웁니다.
+						원래 size보다 크다면, 남은 공간은 'c'로 채웁니다.
+			str.shrink_to_fit()
+				void shrink_to_fit()
+					낭비되는 str의 capacity를 줄여준다.
+						size와 일치하게 줄여주는 것이 아닌, size에 정해진 capacity로 줄여준다. (ex_ size:16 -> capacity:31)
+			str.reserve(n)
+				void reserve(size_t n = 0)
+					n size의 string을 읽어올 예정이니, 미리 적합한 capacity를 할당해달라는 함수
+			str.clear()
+				void clear()
+					str에 들어있는 문자열을 지우는 함수
+						size와 length는 0이 된다.
+						capacity는 그대로이다.
+			str.empty()
+				bool empty() const
+					str이 비었으면 true, 아니면 false 반환 
+			str.c_str()
+				const char* c_str() const
+					c style string로 반환, const char* 형식
+						"style"->"style\0"
+			str.substr(...)
+				string substr(size_t index=0,size_t len = npos)
+					idx부터 len만큼 잘라서 반환한다.
+					npos는 -1을 의미하는데 size_t는 unsigned int형 이므로, -1은 언더플로우, 즉 가장 큰 unsigned int라는 의미가 된다.
+					idx부터 마지막 문자까지 반환한다.
+			str.replace(...)
+				string& replace(size_t index, size_t len, const string& str)
+					string의 index위치에서부터 len까지의 범위를 매개변수 str로 대체한다
+						ex)str1.replace(3,2,str2);
+							"flower"->"flasasasaser"
+			str.compare(...)
+				int compare(const string& str2) const;
+				int compare(size_t index, size_t len, const string& str2) const;
+				int compare(size_t index, size_t len, const string& str2, size_t index2, size_t len2) const;
+					str==str2 -> return 0
+					str>str2 -> return 1		(사전 순서로 느릴 때, 더 크다고 한다. 즉 사전에서 더 뒤에 idx에 있다면 더 큰 것이다.)	
+					str<str2 -> return -1
+					index와 len은 str의 index부터 len 길이를, index2와 len2는 str2의 그것을 의미한다.
+			str.copy(...)
+				size_t copy(char* arr, size_t len, size_t index= 0) const;
+					char* 형식(c style)문자열에 str문자열을 index부터 len만큼 복사한다.
+					char* 형식 arr 마지막에 \0을 추가해주면 완벽한 c style 문자열이 된다.
+			str.find(...)
+				size_t find(const string& str,size_t index=0) const;
+				size_t find(const char* arr, size_t index=0) const;
+					매개변수 문자열과 나의 문자열을 비교하여 일치하는 부분이 있으면, 해당위치의 첫번째 idx를 반환한다.
+					index 부터 찾기 시작한다.
+			str.push_back(c)
+				void push_back(char c);
+					str 맨뒤에 문자 'c'를 추가한다.
+			str.append(...)
+				string& append(const char* arr);
+					arr을 맨 끝에 추가한다
+				string& append(const char* arr, size_t index, size_t num);
+					arr의 index부터 num개수만큼만 맨 끝에 추가한다
+				string& append(size_t num, char c);
+					c를 맨 끝에 num개수만큼 추가한다
+			str.pop_back()
+				void pop_back();
+					str 맨뒤의 문자를 제거한다.
+			str.begin()
+				iterator begin();
+					str의 첫번째 문자를 가리키닌 iterator 반환
+			str.end()
+				iterator end();
+					str의 마지막 문자 다음을 가리키는 iterator 반환
+					마지막이 아닌 마지막 다음임을 주의하자
+			str.swap(str1, str2)
+				void swap(string& str1, string& str2);
+					str1과 str2를 바꾼다.
+					참조형식이기 때문에 성능 저하가 적다.
+			str.operator+(str2)
+				operator+ 오버로딩이다.
+				str뒤에 str2를 더해준다.
+*/
+
 
 //assert : 에러시 종료
 
