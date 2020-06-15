@@ -17,18 +17,17 @@ public:
     word=alp.word;
     return *this;
   }
-  // vector<char> operator[] (int idx) const{
-  //   if(idx==0){
-  //     return len;
-  //   }else{
-  //     return word;
-  //   }
+  int GetLen() const{
+    return len;
+  }
+  string GetWord() const{
+    return word;
   }
   friend ostream& operator<<(ostream& os,const Alphabet& pos); 
 };
 
 ostream& operator<<(ostream& os, const Alphabet& pos){
-  os<<pos.len<<' '<<pos.word;
+  os<<pos.word;
   return os;
 }
 
@@ -37,6 +36,8 @@ int main(){
   cin.sync_with_stdio(false);
   
   vector<Alphabet> pointV;
+  //template 특수화를 통해 해결해보자 
+
   int N;
   string words;
   Alphabet(4,words);
