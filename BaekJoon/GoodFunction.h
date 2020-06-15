@@ -20,8 +20,8 @@ void MergeSortT(vector<T>& array,const int idx,const int start,const int end){  
   if(end-start==1){
     return;
   }else{
-    MergeSort(array,idx,start,middle);
-    MergeSort(array,idx,middle,end);
+    MergeSortT(array,idx,start,middle);
+    MergeSortT(array,idx,middle,end);
   }
   //conquer : Merge
   int mainRotate=start;     //현재 sorting을 해야하는 곳. 이것 전까진 sorted

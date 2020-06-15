@@ -7,58 +7,48 @@
 
 using namespace std;
 
+class Point{
+  int xpos;
+  int ypos;
+public:
+  Point(int xpos=-100001, int ypos=100001):xpos(xpos), ypos(ypos){}
+  Point& operator= (const Point& pos){
+    xpos=pos.xpos;
+    ypos=pos.ypos;
+    return *this;
+  }
+  int operator[] (int idx) const{
+    if(idx==0){
+      return xpos;
+    }else{
+      return ypos;
+    }
+  }
+  friend ostream& operator<<(ostream& os,const Point& pos); 
+};
 
+ostream& operator<<(ostream& os, const Point& pos){
+  os<<pos.xpos<<' '<<pos.ypos;
+  return os;
+}
 
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  vector<int> arrayV;
-  int inputN,num;
-  cin>>inputN;
-  for(int i=0;i<inputN;i++){
-    cin>>num;
-    arrayV.push_back(num);
+  vector<Point> pointV;
+  int N,X,Y;
+  cin>>N;
+  for(int i=0;i<N;i++){
+    cin>>X>>Y;
+    pointV.push_back(Point(X,Y));
   }
-  //산술평균 반올림식 수정 필요
-  int sum=0;
-  for(int nums:arrayV){
-    sum+=nums;
-  }
-  
-  cout<<(sum)/inputN<<endl; 
-  
-  //중앙값
-  MergeSort(arrayV,0,inputN);
-  cout<<arrayV[inputN/2]<<endl;
 
-  //최빈값 뭔진 모르겠는데 예제 3에서 오류나므로 수정 필요 
-  int count=0;
-  int maxCount=0;
-  int maxCountNum=arrayV[0];
-  int over=0;//같은 사이즈의 개수
-  int prevNum=maxCountNum;//이전까지 같았던 수
-  int nums;
-  for(int i=1;i<inputN;i++){
-    nums=arrayV[i];
-    if(nums==prevNum){
-      count++;
-    }else{
-      if(maxCount<count){
-        maxCount=count;
-        maxCountNum=prevNum;
-        over=0;
-      }else if(maxCount==count&&over==0){
-        maxCountNum=prevNum;
-        over++;
-      }
-      prevNum=nums;
-      count=0;
-    }
+  MergeSortT(pointV,0,0,N);
+
+  for(int i=0;i<N;i++){
+    cout<<pointV[i]<<"\n";
   }
-  cout<<maxCountNum<<endl;
-  //범위
-  cout<<arrayV[inputN-1]-arrayV[0];
   return 0;
 }
 
