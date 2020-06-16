@@ -1120,6 +1120,15 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 				str뒤에 str2를 더해준다.
 */
 
+/*
+	람다함수
+	[변수 캡쳐](받을 인자)->리턴타입{함수}(넘길 인자) 
+		변수 캡쳐: 외부 변수를 받아들이는 방식
+			= : 함수에 사용되는 모든 변수를 
+
+
+*/
+
 
 //assert : 에러시 종료
 

@@ -11,7 +11,7 @@ class Alphabet{
   int len;
   string word;
 public:
-  Alphabet(int len=0,string word=NULL):len(len), word(word){}
+  Alphabet(string word,int len):len(len), word(word){}
   Alphabet& operator= (const Alphabet& alp){
     len=alp.len;
     word=alp.word;
@@ -22,6 +22,13 @@ public:
   }
   string GetWord() const{
     return word;
+  }
+  int operator[](const int idx){
+    if(idx>0){
+      cout<<"out of int idx";
+      exit(1);
+    }
+    return len;
   }
   friend ostream& operator<<(ostream& os,const Alphabet& pos); 
 };
@@ -35,41 +42,39 @@ int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  vector<Alphabet> pointV;
+  vector<Alphabet> alpV;
   //template 특수화를 통해 해결해보자 
 
   int N;
   string words;
-  Alphabet(4,words);
-  Alphabet[0];
   cin>>N;
   for(int i=0;i<N;i++){
-    cin>>X>>Y;
-    pointV.push_back(Alphabet(X,Y));
+    cin>>words;
+    alpV.push_back(Alphabet(words,words.length()));
   }
 
-  MergeSortT(pointV,0,0,N);
+  MergeSortT<0>(alpV,0,N);
 
-  int count=1;
-  int prevNum=-100001;
-  int i;
-  for(i=0;i<N;i++){
-    if(pointV[i][0]==prevNum){
-      count++;
-    }else{
-      if(count>1){
-        MergeSortT(pointV,1,i-count,i);
-      }
-      prevNum=pointV[i][0];
-      count=1;
-    }
-  }
-  if(count>1){
-    MergeSortT(pointV,1,i-count,i);
-  }
+  // int count=1;
+  // int prevNum=-100001;
+  // int i;
+  // for(i=0;i<N;i++){
+  //   if(pointV[i][0]==prevNum){
+  //     count++;
+  //   }else{
+  //     if(count>1){
+  //       MergeSortT(pointV,1,i-count,i);
+  //     }
+  //     prevNum=pointV[i][0];
+  //     count=1;
+  //   }
+  // }
+  // if(count>1){
+  //   MergeSortT(pointV,1,i-count,i);
+  // }
 
   for(int i=0;i<N;i++){
-    cout<<pointV[i]<<"\n";
+    cout<<alpV[i]<<"\n";
   }
   
   return 0;
