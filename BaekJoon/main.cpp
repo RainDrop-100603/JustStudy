@@ -1,6 +1,6 @@
 #include <iostream>
-#include <cmath>
 #include <vector>
+#include <cmath>
 #include <string>
 
 #include "GoodFunction.h"
@@ -9,21 +9,18 @@ using namespace std;
 
 class Alphabet{
   int len;
-  string word;
+  string* word;
 public:
-  Alphabet(string& word,int len):len(len), word(word){}
-  Alphabet(){
-    len=0;
-    word=string("NULL");
-  }
-  Alphabet& operator= (const Alphabet& alp){
-    len=alp.len;
-    word=alp.word;
-    return *this;
-  }
+  Alphabet(string* word=NULL,int len=0):word(word),len(len){}
   string GetString() const{
-    return word;
+    return *word;
   }
+  // Alphabet& operator=(const Alphabet& alp){
+  //   len=alp.len;
+  //   word=new string(*(alp.word));
+  //   return *this;
+  // }
+  
   int operator[](const int idx){
     if(idx!=0){
       cout<<"out of int idx";
@@ -35,7 +32,7 @@ public:
 };
 
 ostream& operator<<(ostream& os, const Alphabet& pos){
-  os<<pos.word;
+  os<<*pos.word;
   return os;
 }
 
@@ -45,17 +42,18 @@ int main(){
   cin.sync_with_stdio(false);
   
   vector<Alphabet> alpV;
-  //template 특수화를 통해 해결해보자 
 
   int N;
-  string words;
+  string wordInput;
   cin>>N;
   for(int i=0;i<N;i++){
-    cin>>words;
-    alpV.push_back(Alphabet(words,words.length()));
+    cin>>wordInput;
+    string* word=new string(wordInput);
+    alpV.push_back(Alphabet(word,word->length()));
   }
 
-  MergeSortT<0,Alphabet>(alpV,0,N);
+  // MergeSortT(alpV,0,0,N);
+  MergeSortString(alpV,0,N);
 
   // int count=1;
   // int prevNum=-100001;
@@ -74,7 +72,7 @@ int main(){
   // if(count>1){
   //   MergeSortT(pointV,1,i-count,i);
   // }
-
+  cout<<endl;
   for(int i=0;i<N;i++){
     cout<<alpV[i]<<"\n";
   }

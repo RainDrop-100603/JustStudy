@@ -1118,6 +1118,10 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 			str.operator+(str2)
 				operator+ 오버로딩이다.
 				str뒤에 str2를 더해준다.
+		유의점
+			클래스의 멤버변수로 사용하면 안될 것 같다.
+				크기가 엄청나게 크게 늘어나는데, 이를 미리 모두 할당해 버려서 에러가 난다.
+			포인터 형식으로 받고, 동적할당하자.
 */
 
 /*
@@ -1129,7 +1133,7 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 
 */
 
-
+//포인터를 여러번 선언할 때	int *ptr1, *ptr2, *ptr3; 와 같이 선언한다.
 //assert : 에러시 종료
 
 //dev에 있던 것들 정리 
