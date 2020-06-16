@@ -47,14 +47,14 @@ void MergeSortT(vector<T>& array,const int idx,const int start,const int end){  
   }
 }
 template <class T>
-void MergeSortString(vector<T>& array,const int start,const int end){   //T라는 자료형의 idx번째 수에대한 merge sort
+void MergeSortStrlen(vector<T>& array,const int start,const int end){   //T라는 자료형의 idx번째 수에대한 merge sort
   //divide
   int middle=(end+start)/2; //두 vector사이의 경계 idx;
   if(end-start==1){
     return;
   }else{
-    MergeSortString(array,start,middle);
-    MergeSortString(array,middle,end);
+    MergeSortStrlen(array,start,middle);
+    MergeSortStrlen(array,middle,end);
   }
   //conquer : Merge
   int mainRotate=start;     //현재 sorting을 해야하는 곳. 이것 전까진 sorted
@@ -65,24 +65,65 @@ void MergeSortString(vector<T>& array,const int start,const int end){   //T라�
     tempArray[i-start]=array[i];
   }
   T temp=tempArray[0];
-  string str1,str2;
   while(!(rotateFront==middle)){ //앞부분이 끝날때와 뒷부분이 끝날 때
-    str1=temp.GetString();
-    if(rotateBack!=end){
-      str2=array[rotateBack].GetString();
-    }
-    if(str1.compare(str2)==-1||rotateBack==end){
+    if(rotateBack==end){
       array[mainRotate]=temp;
       rotateFront++;
       mainRotate++;
       temp=tempArray[rotateFront-start];
     }else{
-      array[mainRotate]=array[rotateBack];
-      rotateBack++;
-      mainRotate++; //하나 더 sorted 됐으므로
+      if(temp.length()<array[rotateBack].length()){
+        array[mainRotate]=temp;
+        rotateFront++;
+        mainRotate++;
+        temp=tempArray[rotateFront-start];
+      }else{
+        array[mainRotate]=array[rotateBack];
+       rotateBack++;
+        mainRotate++; //하나 더 sorted 됐으므로
     }
+    }
+    
   }
 }
+
+// template <class T>
+// void MergeSortString(vector<T>& array,const int start,const int end){   //T라는 자료형의 idx번째 수에대한 merge sort
+//   //divide
+//   int middle=(end+start)/2; //두 vector사이의 경계 idx;
+//   if(end-start==1){
+//     return;
+//   }else{
+//     MergeSortString(array,start,middle);
+//     MergeSortString(array,middle,end);
+//   }
+//   //conquer : Merge
+//   int mainRotate=start;     //현재 sorting을 해야하는 곳. 이것 전까진 sorted
+//   int rotateFront=start;    //앞의 vector의 index
+//   int rotateBack=middle;//뒤의 vector의 index
+//   T tempArray[middle-start];  //front를 저장해놓은 임시 배열. 반대로 sorting되어 있을경우, 배열내에서 요소를 계속 옮기는 것은 비용이 너무 크다. 
+//   for(int i=start;i<middle;i++){
+//     tempArray[i-start]=array[i];
+//   }
+//   T temp=tempArray[0];
+//   string str1,str2;
+//   while(!(rotateFront==middle)){ //앞부분이 끝날때와 뒷부분이 끝날 때
+//     str1=temp.GetString();
+//     if(rotateBack!=end){
+//       str2=array[rotateBack].GetString();
+//     }
+//     if(str1.compare(str2)==-1||rotateBack==end){
+//       array[mainRotate]=temp;
+//       rotateFront++;
+//       mainRotate++;
+//       temp=tempArray[rotateFront-start];
+//     }else{
+//       array[mainRotate]=array[rotateBack];
+//       rotateBack++;
+//       mainRotate++; //하나 더 sorted 됐으므로
+//     }
+//   }
+// }
 
 
 
