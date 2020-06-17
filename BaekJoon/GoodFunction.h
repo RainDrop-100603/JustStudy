@@ -52,9 +52,12 @@ void MergeSortT(vector<T>& array,const int idx,const int start,const int end){  
     }
   }
 }
-
-
-
-
+int Combi_nCr(int n, int r);
+bool ChkDuplicate(int x, int depth, int* num);  //num의 depth-1번째 까지 수에서, x와 겹치는 것이 있는지 확인
+void PrintAllCombi(int n, int r, int depth, int* num);//nCr 조합, depth번째 수, 수를 저장하는 num, digit=0: 가장 앞에 수(167:digit 0 -> 1);
+void PrintAllCombi2(int n, int r, int depth, int* num, int start);//N과 M(2) 문제 
+void PrintAllCombi3(int n, int r, int depth, int* num);//N과 M(3) 문제 
+void PrintAllCombi4(int n, int r, int depth, int* num, int start);//N과 M(4) 문제
+int N_Queen(int N,int** table,int row, int count);  //N_Queen문제, count는 N번째 Queen을 말함 
 
 #endif

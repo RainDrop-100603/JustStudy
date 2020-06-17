@@ -119,3 +119,122 @@ void MergeSort(vector<int>& array,const int start,const int end){
     }
   }
 }
+int Combi_nCr(int n, int r){
+  int sum=1;
+  for(int i=n;i>n-r;i--){
+    sum*=i;
+  }
+  for(int i=1;i<=r;i++){
+    sum/=i;
+  }
+  return sum;
+}
+bool ChkDuplicate(int x, int depth, int* num){
+  for(int i=0;i<depth;i++){
+    if(num[i]==x){
+      return true;
+    }
+  }
+  return false;
+}
+void PrintAllCombi(int n, int r, int depth, int* num){
+  if(depth==r){   //출력
+    int count=0;
+    while(count<r){
+      cout<<num[count]<<' ';
+      count++;
+    }
+    cout<<"\n";
+    return;
+  }
+
+  for(int i=1;i<=n;i++){
+    if(!ChkDuplicate(i,depth,num)){
+      num[depth]=i;
+      PrintAllCombi(n,r,depth+1,num);
+    }
+  }
+}
+void PrintAllCombi2(int n, int r, int depth, int* num, int start){
+  if(depth==r){   //출력
+    int count=0;
+    while(count<r){
+      cout<<num[count]<<' ';
+      count++;
+    }
+    cout<<"\n";
+    return;
+  }
+  if(start>n){
+    return;
+  }
+  for(int i=start;i<=n;i++){
+    num[depth]=i;
+    PrintAllCombi2(n,r,depth+1,num,i+1);
+  }
+}
+void PrintAllCombi3(int n, int r, int depth, int* num){
+  if(depth==r){   //출력
+    int count=0;
+    while(count<r){
+      cout<<num[count]<<' ';
+      count++;
+    }
+    cout<<"\n";
+    return;
+  }
+
+  for(int i=1;i<=n;i++){
+    num[depth]=i;
+    PrintAllCombi3(n,r,depth+1,num);
+  }
+}
+void PrintAllCombi4(int n, int r, int depth, int* num, int start){
+  if(depth==r){   //출력
+    int count=0;
+    while(count<r){
+      cout<<num[count]<<' ';
+      count++;
+    }
+    cout<<"\n";
+    return;
+  }
+  if(start>n){
+    return;
+  }
+  for(int i=start;i<=n;i++){
+    num[depth]=i;
+    PrintAllCombi4(n,r,depth+1,num,i);
+  }
+}
+int N_Queen(int N,int** table,int row, int count){
+  int sum=0;
+  if(count==N){
+    return 1; //N개가 모두 놓아야 하나의 case 이므로 
+  }
+  for(int i=row;i<N;i++){
+    for(int j=0;j<N;j++){
+      if(table[i][j]==0){ //0이 아니면 막히는게 있다는 뜻
+        for(int k=0;k<N;k++){ //table 정리 ++
+          table[i][k]++;   //세로
+          table[k][j]++;   //가로
+          if(i-k>=0&&j-k>=0){table[i-k][j-k]++;} //왼아래   
+          if(i-k>=0&&j+k<N){table[i-k][j+k]++;}//왼위
+          if(i+k<N&&j-k>=0){table[i+k][j-k]++;}//오른아래
+          if(i+k<N&&j+k<N){table[i+k][j+k]++;}//오른위
+        } 
+        sum+=N_Queen(N,table,i+1,count+1);
+        for(int k=0;k<N;k++){ //table 정리 --
+          table[i][k]--;   //세로
+          table[k][j]--;   //가로
+          if(i-k>=0&&j-k>=0){table[i-k][j-k]--;} //왼아래   
+          if(i-k>=0&&j+k<N){table[i-k][j+k]--;}//왼위
+          if(i+k<N&&j-k>=0){table[i+k][j-k]--;}//오른아래
+          if(i+k<N&&j+k<N){table[i+k][j+k]--;}//오른위
+        } 
+      }
+    }
+  }
+  
+  return sum;
+}

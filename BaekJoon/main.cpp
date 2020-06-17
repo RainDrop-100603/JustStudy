@@ -2,52 +2,32 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <algorithm>
 
 #include "GoodFunction.h"
 
 using namespace std;
 
+//느려서 틀림, 시간초과 
 
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  vector<string> stringV;
-
   int N;
-  string wordInput;
   cin>>N;
+
+  int** table=new int*[N];  //NN 
   for(int i=0;i<N;i++){
-    cin>>wordInput;
-    stringV.push_back(wordInput);
+    table[i]=new int[N];
   }
 
-  MergeSortStrlen(stringV,0,N);
-  // MergeSortString(stringV,0,N);
+  cout<<N_Queen(N,table,0,0);
 
-  // int count=1;
-  // int prevNum=-100001;
-  // int i;
-  // for(i=0;i<N;i++){
-  //   if(pointV[i][0]==prevNum){
-  //     count++;
-  //   }else{
-  //     if(count>1){
-  //       MergeSortT(pointV,1,i-count,i);
-  //     }
-  //     prevNum=pointV[i][0];
-  //     count=1;
-  //   }
-  // }
-  // if(count>1){
-  //   MergeSortT(pointV,1,i-count,i);
-  // }
-  cout<<endl;
   for(int i=0;i<N;i++){
-    cout<<stringV[i]<<"\n";
+    delete[] table[i];
   }
-  
-
+  delete[] table;
 
   return 0;
 }
