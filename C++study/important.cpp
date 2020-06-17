@@ -1078,6 +1078,10 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 				int compare(const string& str2) const;
 				int compare(size_t index, size_t len, const string& str2) const;
 				int compare(size_t index, size_t len, const string& str2, size_t index2, size_t len2) const;
+				길이와 원소 모두 관여한다.
+					첫번째 원소부터 비교해서 작은 순서(사전에서 앞쪽)면 -1
+					모두 비교해서 같다면 길이가 짧은 쪽이 -1
+					더 확인은 해보자 
 					str==str2 -> return 0
 					str>str2 -> return 1		(사전 순서로 느릴 때, 더 크다고 한다. 즉 사전에서 더 뒤에 idx에 있다면 더 큰 것이다.)	
 					str<str2 -> return -1

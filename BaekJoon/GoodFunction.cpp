@@ -101,15 +101,21 @@ void MergeSort(vector<int>& array,const int start,const int end){
   }
   int temp=tempArray[0];
   while(!(rotateFront==middle)){ //앞부분이 끝날때와 뒷부분이 끝날 때
-    if(temp<array[rotateBack]||rotateBack==end){
+    temp=tempArray[rotateFront-start];
+    if(rotateBack==end){
       array[mainRotate]=temp;
       rotateFront++;
       mainRotate++;
-      temp=tempArray[rotateFront-start];
     }else{
+      if(temp<array[rotateBack]){
+        array[mainRotate]=temp;
+        rotateFront++;
+        mainRotate++;
+      }else{
       array[mainRotate]=array[rotateBack];
       rotateBack++;
       mainRotate++; //하나 더 sorted 됐으므로
+      }
     }
   }
 }
