@@ -6,6 +6,8 @@
 #include <cmath>
 #include <string>
 
+#include "tempClass.cpp"
+
 using namespace std;
 
 bool IsPrime(int num);  //소수(Prime Number) 판별
@@ -58,47 +60,6 @@ void PrintAllCombi(int n, int r, int depth, int* num);//nCr 조합, depth번째 
 void PrintAllCombi2(int n, int r, int depth, int* num, int start);//N과 M(2) 문제 
 void PrintAllCombi3(int n, int r, int depth, int* num);//N과 M(3) 문제 
 void PrintAllCombi4(int n, int r, int depth, int* num, int start);//N과 M(4) 문제
-int N_Queen(int N,int** table,int row, int count);  //N_Queen문제, count는 N번째 Queen을 말함 
-
-// void MergeSortString(vector<string>& array,const int start,const int end){   //갈이가 같은 string vector를 [start,end) 까지 sorting
-//   //divide
-//   int middle=(end+start)/2; // [start,middle),[middle,end)로 divide
-//   if(end-start==1){         //  크기가 1일 때까지 divide
-//     return;
-//   }else{
-//     MergeSortString(array,start,middle);
-//     MergeSortString(array,middle,end);
-//   }
-
-//   //conquer : Merge
-//   int mainRotate=start;     // [start,mainRotate) 까지 sorted, mainRotate==end가 되면 sorting [start,end)까지 sorting 완료
-//   int rotateFront=start;    //앞의 vector: [start,middle)의 index
-//   int rotateBack=middle;    //뒤의 vector: [middle,end) 의 index
-//   vector<string> stringV;  //앞의 vector를 저장한 임시 배열,
-//   for(int i=start;i<middle;i++){
-//     stringV.push_back(array[i]);
-//   }
-//   string front=stringV[0];    //앞 vector의 원소 front와 뒤 vector의 원소 back을 비교하여 merge
-//   string back;
-//   while(!(rotateFront==middle)){ //앞 vector의 merge가 끝나면 merge finish 
-//     front=stringV[rotateFront-start];
-//     if(rotateBack==end){         //뒤 vector가 merge가 끝나면 남은 앞 vector 모두 merge 
-//       array[mainRotate]=front;
-//       rotateFront++;
-//       mainRotate++;
-//     }else{
-//       back=array[rotateBack];
-//       if(front.compare(back)!=1){   //길이가 같을 때 기준, 작거나 같다(사전에서 앞쪽)
-//         array[mainRotate]=front;
-//         rotateFront++;
-//         mainRotate++;
-//       }else{
-//       array[mainRotate]=back;
-//       rotateBack++;
-//       mainRotate++; 
-//       }
-//     }
-//   }
-// }
+int N_Queen(int N,vector<bool>& rowQueen,vector<bool>& colQueen,vector<Queen>& currentQ, int row, int count);  //N_Queen문제, count는 N번째 Queen을 말함 
 
 #endif

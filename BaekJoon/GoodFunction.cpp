@@ -207,34 +207,71 @@ void PrintAllCombi4(int n, int r, int depth, int* num, int start){
     PrintAllCombi4(n,r,depth+1,num,i);
   }
 }
-int N_Queen(int N,int** table,int row, int count){
+
+int N_Queen(int N,vector<bool>& rowQueen,vector<bool>& colQueen,vector<Queen>& currentQ, int row, int count){
   int sum=0;
   if(count==N){
     return 1; //N개가 모두 놓아야 하나의 case 이므로 
   }
+
+  int count2=0;
   for(int i=row;i<N;i++){
-    for(int j=0;j<N;j++){
-      if(table[i][j]==0){ //0이 아니면 막히는게 있다는 뜻
-        for(int k=0;k<N;k++){ //table 정리 ++
-          table[i][k]++;   //세로
-          table[k][j]++;   //가로
-          if(i-k>=0&&j-k>=0){table[i-k][j-k]++;} //왼아래   
-          if(i-k>=0&&j+k<N){table[i-k][j+k]++;}//왼위
-          if(i+k<N&&j-k>=0){table[i+k][j-k]++;}//오른아래
-          if(i+k<N&&j+k<N){table[i+k][j+k]++;}//오른위
-        } 
-        sum+=N_Queen(N,table,i+1,count+1);
-        for(int k=0;k<N;k++){ //table 정리 --
-          table[i][k]--;   //세로
-          table[k][j]--;   //가로
-          if(i-k>=0&&j-k>=0){table[i-k][j-k]--;} //왼아래   
-          if(i-k>=0&&j+k<N){table[i-k][j+k]--;}//왼위
-          if(i+k<N&&j-k>=0){table[i+k][j-k]--;}//오른아래
-          if(i+k<N&&j+k<N){table[i+k][j+k]--;}//오른위
-        } 
+    if(!rowQueen[i]){
+      for(int j=0;j<N;j++){
+        if(!colQueen[j]){
+          count2=0;
+          for(const auto& ele: currentQ){
+            if(!ele.QueenOK(i,j)){
+              break;
+            }
+            count2++;
+          }
+          if(count!=count2){
+            continue;
+          }
+          rowQueen[i]=true;
+          colQueen[j]=true;
+          currentQ.push_back(Queen(i,j));
+          sum+=N_Queen(N,rowQueen,colQueen,currentQ,i+1,count+1);
+          rowQueen[i]=false;
+          colQueen[j]=false;
+          currentQ.pop_back();
+        }
       }
     }
   }
   
   return sum;
 }
+
+// int N_Queen(int N, table,int row, int count){
+//   int sum=0;
+//   if(count==N){
+//     return 1; //N개가 모두 놓아야 하나의 case 이므로 
+//   }
+//   for(int i=row;i<N;i++){
+//     for(int j=0;j<N;j++){
+//       if(table[i][j]==0){ //0이 아니면 막히는게 있다는 뜻
+//         for(int k=0;k<N;k++){ //table 정리 ++
+//           table[i][k]++;   //세로
+//           table[k][j]++;   //가로
+//           if(i-k>=0&&j-k>=0){table[i-k][j-k]++;} //왼아래   
+//           if(i-k>=0&&j+k<N){table[i-k][j+k]++;}//왼위
+//           if(i+k<N&&j-k>=0){table[i+k][j-k]++;}//오른아래
+//           if(i+k<N&&j+k<N){table[i+k][j+k]++;}//오른위
+//         } 
+//         sum+=N_Queen(N,table,i+1,count+1);
+//         for(int k=0;k<N;k++){ //table 정리 --
+//           table[i][k]--;   //세로
+//           table[k][j]--;   //가로
+//           if(i-k>=0&&j-k>=0){table[i-k][j-k]--;} //왼아래   
+//           if(i-k>=0&&j+k<N){table[i-k][j+k]--;}//왼위
+//           if(i+k<N&&j-k>=0){table[i+k][j-k]--;}//오른아래
+//           if(i+k<N&&j+k<N){table[i+k][j+k]--;}//오른위
+//         } 
+//       }
+//     }
+//   }
+  
+//   return sum;
+// }

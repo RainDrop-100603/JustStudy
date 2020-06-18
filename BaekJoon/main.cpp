@@ -19,6 +19,7 @@ using namespace std;
 //  ㄴ  대각선은 똑같이 움직인다. 값의 차의 절대값이 같다면 대각선 관계에 있는 것이다.
 //    ㄴ  |x-x1|==|y-y1|, table의 모든 값과 비교해야하는데, 이걸 굳이 N^2 table로 만들 필요가 없을 것 같다.
 
+
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
@@ -26,17 +27,13 @@ int main(){
   int N;
   cin>>N;
 
-  int** table=new int*[N];  //NN 
-  for(int i=0;i<N;i++){
-    table[i]=new int[N];
-  }
+  vector<bool> rowQueen(N);
+  vector<bool> colQueen(N);
+  vector<Queen> currentQ;
 
-  cout<<N_Queen(N,table,0,0);
+  cout<<N_Queen(N,rowQueen,colQueen,currentQ,0,0);
 
-  for(int i=0;i<N;i++){
-    delete[] table[i];
-  }
-  delete[] table;
+  
 
   return 0;
 }
