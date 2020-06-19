@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <string>
+#include <utility>
 
 #include "tempClass.cpp"
 
@@ -61,6 +62,6 @@ void PrintAllCombi2(int n, int r, int depth, int* num, int start);//N과 M(2) �
 void PrintAllCombi3(int n, int r, int depth, int* num);//N과 M(3) 문제 
 void PrintAllCombi4(int n, int r, int depth, int* num, int start);//N과 M(4) 문제
 int N_Queen(int N,vector<bool>& colQueen,vector<bool>& lineRDQueen,vector<bool>& lineLDQueen, int row);  //N_Queen문제, count는 N번째 Queen을 말함 
-void Sdoku(int sdoku[9][9]);
+bool Sdoku(int sdoku[9][9],vector<pair<int,int>>& empty,int filledNum,int emptySize); //filledNum은 채워진 개수, emptySize까지 가면 true, 아니면 false 반환 
 
 #endif
