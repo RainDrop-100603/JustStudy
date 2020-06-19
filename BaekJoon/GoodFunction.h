@@ -60,6 +60,6 @@ void PrintAllCombi(int n, int r, int depth, int* num);//nCr 조합, depth번째 
 void PrintAllCombi2(int n, int r, int depth, int* num, int start);//N과 M(2) 문제 
 void PrintAllCombi3(int n, int r, int depth, int* num);//N과 M(3) 문제 
 void PrintAllCombi4(int n, int r, int depth, int* num, int start);//N과 M(4) 문제
-int N_Queen(int N,vector<bool>& rowQueen,vector<bool>& colQueen,vector<Queen>& currentQ, int row, int count);  //N_Queen문제, count는 N번째 Queen을 말함 
+int N_Queen(int N,vector<bool>& rowQueen,vector<bool>& colQueen,vector<bool>& lineRDQueen,vector<bool>& lineLDQueen, int row, int count);  //N_Queen문제, count는 N번째 Queen을 말함 
 
 #endif

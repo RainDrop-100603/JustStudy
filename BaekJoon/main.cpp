@@ -27,11 +27,13 @@ int main(){
   int N;
   cin>>N;
 
-  vector<bool> rowQueen(N);
-  vector<bool> colQueen(N);
-  vector<Queen> currentQ;
+  vector<bool> rowQueen(N);         //행
+  vector<bool> colQueen(N);         //열
+  vector<bool> lineRDQueen(2*N-1);  //오른쪽 아래로 가는 대각선, F(n)=F(y-x+N);
+  vector<bool> lineLDQueen(2*N-1);  //왼쪽 아래로 가는 대각선, F(n)=F(x+y)
+  // vector<Queen> currentQ;
 
-  cout<<N_Queen(N,rowQueen,colQueen,currentQ,0,0);
+  cout<<N_Queen(N,rowQueen,colQueen,lineRDQueen,lineLDQueen,0,0);
 
   
 
