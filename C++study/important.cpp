@@ -212,6 +212,7 @@ void enumTest(void) {
 					num1 = num2;
 					num2 = temp;
 				}
+	배열은 Call by Reference 형식으로만 작동한다.
 */
 void PtrRefTest(void) {
 	int num = 10;
