@@ -234,7 +234,7 @@ bool Sdoku(int sdoku[9][9],vector<pair<int,int>>& empty,int filledNum,int emptyS
   }
 
   //table 채우기
-  bool chkInputOk[10];  //각각의 row, column, box에서 삽입 가능한 숫자, true만 삽입이 가능하다.
+  bool chkInputOk[10];  //각각의 row, column, box에서 삽입 가능한 숫자,1~9만 사용하며 true일때 삽입 가능하단 뜻 
   fill_n(chkInputOk,10,true);
   int x,y,box;//array[x][y], (0,1,2) "\n" (3,4,5) "\n" (6,7,8) Box
   x=empty[filledNum].first;
@@ -253,6 +253,7 @@ bool Sdoku(int sdoku[9][9],vector<pair<int,int>>& empty,int filledNum,int emptyS
       if(Sdoku(sdoku,empty,filledNum+1,emptySize)){
         return true;
       }
+      sdoku[x][y]=0;
     }
   }
 
