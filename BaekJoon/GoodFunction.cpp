@@ -233,19 +233,19 @@ void Sdoku(int sdoku[9][9]){
   for(int i=0;i<9;i++){
     for(int j=0;j<9;j++){
       if(sdoku[i][j]==0){
-        empty.push_back(pair(i,j));
+        empty.push_back(pair<int,int>(i,j));
       }
     }
   }
 
   // check를 위한 것들
-  int tmpArray[9];  //각각의 row, column, box에서 삽입 가능한 숫자에 1 더한다. 3이면 모든 경우에 삽입이 가능하다는 뜻이므로 input 후보
+  int tmpArray[10];  //각각의 row, column, box에서 삽입 가능한 숫자에 1 더한다. 3이면 모든 경우에 삽입이 가능하다는 뜻이므로 input 후보
   int count;        //input후보의 개수. 1이면 확정이므로 넣으면 된다. 2 이상이면 나중에 다시
   int num;          //input후보의 숫자. input이 1일 경우에 이것을 넣어주면된다.
   
   int x,y,box;//array[x][y], (0,1,2) "\n" (3,4,5) "\n" (6,7,8) Box
   int emptyNum=empty.size();//최초의 빈 공간의 개수
-  while(emptyNum!=0){
+  while(emptyNum>0){
     for(int i=0;i<emptyNum;i++){  //empty의 모든 원소에 대해
       x=empty[i].first;
       y=empty[i].second;
@@ -253,10 +253,21 @@ void Sdoku(int sdoku[9][9]){
       for(int j=0;j<9;j++){       //중복 체크
         tmpArray[sdoku[x][j]]++;  //row check
         tmpArray[sdoku[j][y]]++;  //column check
-        tmpArray[sdoku[box/3*3+j/3][box%3*3+j%3]];  //Box  check
+        tmpArray[sdoku[box/3*3+j/3][box%3*3+j%3]]++;  //Box  check
       }
-
-      for(int k=0;k<9;k++)
+      //3 체크
+      count=0;num=0;
+      for(int k=1;k<=9;k++){
+        if(tmpArray[k]==3){
+          count++;
+          num=k;
+        }
+      }
+      if(count==1){ //remove하거나 옮기기 보다는 swap으로 코스트 절약 
+        sdoku[x][y]=num;
+        swap(empty[i],empty[emptyNum-1]);
+        emptyNum--;
+      }
     }
   }
 }
