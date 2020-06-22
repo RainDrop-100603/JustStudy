@@ -14,24 +14,60 @@ int main(){
   cin.sync_with_stdio(false);
   
   //입력
-  //변수
   int caseNum;
   cin>>caseNum;
-  int input;
-  for(int i=0;i<caseNum;i++){
-    long long array[6]={3,1,1,1,2,2};
-    cin>>input;
-    int j=6;
-    while(j<=input){
-      array[j%6]=array[(j+1)%6]+array[(j+5)%6];
-      j++;
-    }
-    cout<<array[input%6]<<"\n";
+  //변수
+  int cost[3]={0};
+  int sum[3]={0};
+  char color[3]={'R','G','B'};  //RGB 색상 
+  for(int j=0;j<3;j++){         //초기값 지정 
+      cin>>sum[j];
   }
-  
-  
 
-  
+  for(int i=0;i<caseNum-1;i++){
+    for(int j=0;j<3;j++){
+      cin>>cost[j];
+    }
+    for(int j=0;j<3;j++){
+      switch(color[j]){
+        case 'R':
+          if(cost[1]>cost[2]){
+            sum[j]+=cost[2];
+            color[j]='B';
+          }else{
+            sum[j]+=cost[1];
+            color[j]='G';
+          }
+          break;
+        case 'G':
+          if(cost[0]>cost[2]){
+            sum[j]+=cost[2];
+            color[j]='B';
+          }else{
+            sum[j]+=cost[0];
+            color[j]='R';
+          }
+          break;
+        case 'B':
+          if(cost[0]>cost[1]){
+            sum[j]+=cost[1];
+            color[j]='G';
+          }else{
+            sum[j]+=cost[0];
+            color[j]='R';
+          }
+          break;
+      }
+    }
+  }
+  int lowest=sum[0];
+    if(lowest>sum[1]){
+      lowest=sum[1];
+    }
+    if(lowest>sum[2]){
+      lowest=sum[2];
+    }
+    cout<<lowest;
 
   return 0;
 }
