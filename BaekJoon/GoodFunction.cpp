@@ -260,3 +260,51 @@ bool Sdoku(int sdoku[9][9],vector<pair<int,int>>& empty,int filledNum,int emptyS
   return false;
   
 }
+void GetMaxMin(vector<int>& arrayV,int* AddSubMulDiv,int& max,int& min,int idx,int sum){
+  if(idx+1==arrayV.size()){ //모든 계산 완료
+    if(sum>max){
+      max=sum;
+    }
+    if(sum<min){
+      min=sum;
+    }
+    return;
+  }
+
+  for(int i=0;i<4;i++){ //ADD, SUB, MUL, DIV
+    if(AddSubMulDiv[i]==0){
+      continue;
+    }
+    switch(i){
+      case 0:
+        sum+=arrayV[idx+1];
+        break;
+      case 1:
+        sum-=arrayV[idx+1];
+        break;
+      case 2:
+        sum*=arrayV[idx+1];
+        break;
+      case 3:
+        sum/=arrayV[idx+1];
+        break;
+    }
+    AddSubMulDiv[i]--;
+    GetMaxMin(arrayV, AddSubMulDiv, max, min, idx+1, sum);
+    AddSubMulDiv[i]++;
+    switch(i){
+      case 0:
+        sum-=arrayV[idx+1];
+        break;
+      case 1:
+        sum+=arrayV[idx+1];
+        break;
+      case 2:
+        sum/=arrayV[idx+1];
+        break;
+      case 3:
+        sum*=arrayV[idx+1];
+        break;
+    }
+  }
+}

@@ -13,33 +13,24 @@ int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  int sdoku[9][9];
-
-  for(int i=0;i<9;i++){
-    for(int j=0;j<9;j++){
-      cin>>sdoku[i][j];
-    }
+  int inputNum;
+  cin>>inputNum;
+  vector<int> arrayV(inputNum);
+  for(auto& ele:arrayV){
+    cin>>ele;
+  }
+  int AddSubMulDiv[4];  
+  for(auto& ele:AddSubMulDiv){
+    cin>>ele;
   }
 
-  //빈 공간의 위치를 저장하는 vector
-  vector<pair<int,int>> empty;          
-  for(int i=0;i<9;i++){
-    for(int j=0;j<9;j++){
-      if(sdoku[i][j]==0){
-        empty.push_back(pair<int,int>(i,j));
-      }
-    }
-  }
+  int max=-1000000001;
+  int min=1000000001;
 
-  Sdoku(sdoku,empty,0,empty.size());
+  GetMaxMin(arrayV,AddSubMulDiv,max,min,0,arrayV[0]); //idx번째까지의 결과(sum)와 idx+1번째 수를 계산. idx=arrayV.len()이면 max min 체크
 
-  cout<<endl;
- for(int i=0;i<9;i++){
-    for(int j=0;j<9;j++){
-      cout<<sdoku[i][j]<<' ';
-    }
-    cout<<"\n";
-  }
+  cout<<max<<"\n"<<min;
+
 
   return 0;
 }
