@@ -13,6 +13,8 @@ int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
+  //다른색의 코스트가 같을때를 정해줘야 한다. RG->A RB->B GB->C RGB->D
+
   //입력
   int caseNum;
   cin>>caseNum;
