@@ -309,13 +309,13 @@ void GetMaxMin(vector<int>& arrayV,int* AddSubMulDiv,int& max,int& min,int idx,i
   }
 }
 void GetLowGap(int& gap,vector<vector<int>>& table,vector<int>& startTeam,vector<int>& linkTeam,int idx){
-  int len=table.size(); //N/2, 각 팀의 인원수
+  int len=table.size(); //N: 전체 인원수, len/2: 각 팀의 인원수
   //인원 배분이 완료 된 후, 각 팀의 능력치 계산 
-  if(idx==len*2){
+  if(idx==len){
     int sum1=0;
     int sum2=0;
-    for(int i=0;i<len;i++){
-      for(int j=i+1;j<len;j++){
+    for(int i=1;i<=len/2;i++){
+      for(int j=i+1;j<=len/2;j++){
         sum1+=table[startTeam[i]][startTeam[j]]+table[startTeam[j]][startTeam[i]];
         sum2+=table[linkTeam[i]][linkTeam[j]]+table[linkTeam[j]][linkTeam[i]];
       }
@@ -324,7 +324,21 @@ void GetLowGap(int& gap,vector<vector<int>>& table,vector<int>& startTeam,vector
     if(tempGap<gap){
       gap=tempGap;
     }
+    return;
   }
   //인원 배분
-  
+  for(int i=0;i<2;i++){
+    if(i==0&&startTeam[0]!=len/2){
+      startTeam[startTeam[0]+1]=idx;
+      startTeam[0]++;
+      GetLowGap(gap,table,startTeam,linkTeam,idx+1);
+      startTeam[0]--;
+    }else if(i==1&&linkTeam[0]!=len/2){
+      linkTeam[linkTeam[0]+1]=idx;
+      linkTeam[0]++;
+      GetLowGap(gap,table,startTeam,linkTeam,idx+1);
+      linkTeam[0]--;
+    }
+  }
+
 }
