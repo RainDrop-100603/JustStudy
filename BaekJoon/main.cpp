@@ -13,23 +13,21 @@ int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  int inputNum;
-  cin>>inputNum;
-  vector<int> arrayV(inputNum);
-  for(auto& ele:arrayV){
-    cin>>ele;
+  //입력
+  int peopleNum;
+  cin>>peopleNum;
+  vector<vector<int>> table(peopleNum,vector<int>(peopleNum));
+  for(auto& ele1: table){
+    for(auto& ele2:ele1){
+      cin>>ele2;
+    }
   }
-  int AddSubMulDiv[4];  
-  for(auto& ele:AddSubMulDiv){
-    cin>>ele;
-  }
-
-  int max=-1000000001;
-  int min=1000000001;
-
-  GetMaxMin(arrayV,AddSubMulDiv,max,min,0,arrayV[0]); //idx번째까지의 결과(sum)와 idx+1번째 수를 계산. idx=arrayV.len()이면 max min 체크
-
-  cout<<max<<"\n"<<min;
+  //요소 선언
+  vector<int> startTeam(peopleNum/2);
+  vector<int> linkTeam(peopleNum/2);
+  int gap=INT32_MAX;
+  //함수 실행
+  GetLowGap(gap,table,startTeam,linkTeam,0);  //idx번째 선수를 각 팀에 배분. 배분이 끝나면 gap 을 계산하고 기존 gap보다 낮을시 갱신 
 
 
   return 0;

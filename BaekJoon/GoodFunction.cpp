@@ -308,3 +308,23 @@ void GetMaxMin(vector<int>& arrayV,int* AddSubMulDiv,int& max,int& min,int idx,i
     }
   }
 }
+void GetLowGap(int& gap,vector<vector<int>>& table,vector<int>& startTeam,vector<int>& linkTeam,int idx){
+  int len=table.size(); //N/2, 각 팀의 인원수
+  //인원 배분이 완료 된 후, 각 팀의 능력치 계산 
+  if(idx==len*2){
+    int sum1=0;
+    int sum2=0;
+    for(int i=0;i<len;i++){
+      for(int j=i+1;j<len;j++){
+        sum1+=table[startTeam[i]][startTeam[j]]+table[startTeam[j]][startTeam[i]];
+        sum2+=table[linkTeam[i]][linkTeam[j]]+table[linkTeam[j]][linkTeam[i]];
+      }
+    }
+    int tempGap=abs(sum1-sum2);
+    if(tempGap<gap){
+      gap=tempGap;
+    }
+  }
+  //인원 배분
+  
+}
