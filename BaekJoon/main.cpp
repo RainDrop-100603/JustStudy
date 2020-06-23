@@ -16,24 +16,32 @@ int main(){
   //DynmaicPrograming
 
   //입력
-  int height;
-  cin>>height;
-  //변수
-  int cost;
-  pair<int,int> sum(0,0);       //X의 값 , first= X and X-1's second(==without X-2), second = X and X-2
-  pair<int,int> sumPrev(0,0);   //X-1
-  pair<int,int> sumPPrev(0,0);  //X-2
+  int num;
+  cin>>num;
+  //변수 
+  vector<int> arr(num+1);
+  int num3=INT32_MAX; //3으로 나눈거
+  int num2=INT32_MAX; //2으로 나눈거
+  int num1=INT32_MAX; //1뺀거
   
-  for(int i=0;i<height;i++){
-    cin>>cost;
-    sumPPrev=sumPrev;
-    sumPrev=sum;
-
-    sum.first=cost+sumPrev.second;
-    sum.second=cost+max(sumPPrev.first,sumPPrev.second);
+  
+  for(int i=num-1;i>0;i--){
+    num3=INT32_MAX;
+    num2=INT32_MAX;
+    num1=INT32_MAX;
+    if(i*3<=num){
+      num3=arr[i*3]+1;
+    }
+    if(i*2<=num){
+      num2=arr[i*2]+1;
+    }
+    if(i+1<=num){
+      num1=arr[i+1]+1;
+    }
+    arr[i]=min(min(num3,num2),num1);
   }
-  
-  cout<<max(sum.first,sum.second);
+  cout<<arr[1];
+ 
 
   return 0;
 }
