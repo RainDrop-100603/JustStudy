@@ -16,33 +16,31 @@ int main(){
   //DynmaicPrograming
 
   //입력
-  int digit;
-  cin>>digit;
+  int num;  //포도주 잔의 개수
+  cin>>num;
+  int wine; //와인의 양
   //변수 
-  unsigned long long arr[10]={0,1,1,1,1,1,1,1,1,1};  //digit=0일때의 계단수. arr[x]는 x로 끝나는 계단수 의미
-  unsigned long long prevArr[10];
-  unsigned long long count=0;  //합
+  pair<int,int> temp(0,0);
+  pair<int,pair<int,int>> num1(0,temp);// num번째 합계
+  pair<int,pair<int,int>> numM1(0,temp);// num-1번째 합계 
+  pair<int,pair<int,int>> numM2(0,temp);// num-2번째 합계
+  pair<int,pair<int,int>> numM3(0,temp);// num-3번째 합계
 
-  for(int i=1;i<digit;i++){ //1~digit-1 까지
-    //prev에 복사
-    for(int j=0;j<10;j++){
-      prevArr[j]=arr[j];
-    }
-    //현재
-    arr[0]=prevArr[1];
-    arr[9]=prevArr[8];
-    for(int k=1;k<=8;k++){
-      arr[k]=(prevArr[k-1]+prevArr[k+1])%1000000000;
-    }
+  for(int i=0;i<num;i++){
+    cin>>wine;
+    numM3=numM2;
+    numM2=numM1;
+    numM1=num1;
+    num1.first=wine+max(numM1.second.first,numM1.second.second);
+    num1.second.first=wine+max(numM2.first,max(numM2.second.first,numM2.second.second));
+    num1.second.second=wine+numM3.first;
   }
+  int maxs=max(num1.first,num1.second.first);
+  maxs=max(maxs,num1.second.second);
+  maxs=max(maxs,numM1.first);
 
-  for(int i=0;i<10;i++){
-    count+=arr[i];
-  }
+  cout<<maxs;
 
-  cout<<count%1000000000;
-
-  
 
   return 0;
 }
