@@ -18,54 +18,39 @@ int main(){
   //입력
   int number;
   cin>>number;
-  int input;
+  int input1,input2;
 
   //변수
-  vector<int> inputNum(number); //입력을 저장하는 곳
-  vector<int> count(number);    //count 저장 
-  vector<int> reverseCount(number); //뒤에서부터 시작해서 LIS
-  vector<int> bitonicCount(number); // X 기준으로 앞부분은 count, 뒷부분은 reverse의 max를 구하여 합치면 bitonic 
+  int array[501]={0}; //array[i]=j, i전깃줄에 j전깃줄이 연결되어 있다.
+  int count[501]={0};    //LIS를 위한 count
   int tmpcount=0; //비교를 위함 
 
-  //입력 - 수열
+  //입력
   for(int i=0;i<number;i++){
-    cin>>input;
-    inputNum[i]=input;
-    for(int j=0;j<i;j++){
-      if(inputNum[j]<input){
-        tmpcount=max(tmpcount,count[j]);
-      }
-    }
-    count[i]=tmpcount+1;
-    tmpcount=0;
+    cin>>input1>>input2;
+    array[input1]=input2;
   }
 
-  //reverse
-  for(int i=number-1;i>=0;i--){
-    for(int j=number-1;j>i;j--){
-      if(inputNum[j]<inputNum[i]){
-        tmpcount=max(tmpcount,reverseCount[j]);
+  //array
+  for(int i=1;i<501;i++){
+    if(array[i]!=0){
+      for(int j=1;j<i;j++){
+        if(array[j]<array[i]){
+          tmpcount=max(tmpcount,count[j]);
+        }
       }
+      count[i]=tmpcount+1;
+      tmpcount=0;
     }
-    reverseCount[i]=tmpcount+1;
-    tmpcount=0;
+    
   }
-
-  //bitonic
-
-for(int i=0;i<number;i++){
-  bitonicCount[i]=count[i]+reverseCount[i]-1;
-}
 
   //출력
-  for(int i=0;i<number;i++){
-    tmpcount=max(tmpcount,bitonicCount[i]);
+  for(int i=0;i<501;i++){
+    tmpcount=max(tmpcount,count[i]);
   }
 
-  cout<<tmpcount<<"\n";
-
-  
-
+  cout<<number-tmpcount<<"\n";
 
   return 0;
 }
