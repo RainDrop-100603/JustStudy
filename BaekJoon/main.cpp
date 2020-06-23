@@ -16,36 +16,24 @@ int main(){
   //DynmaicPrograming
 
   //입력
-  int size;
-  cin>>size;
+  int height;
+  cin>>height;
   //변수
-  vector<int> cost(size);
-  vector<int> sum(size);
-  vector<int> sumPrev(size);
-  int depth=1;  //깊이 1부터 시작
+  int cost;
+  pair<int,int> sum(0,0);       //X의 값 , first= X and X-1's second(==without X-2), second = X and X-2
+  pair<int,int> sumPrev(0,0);   //X-1
+  pair<int,int> sumPPrev(0,0);  //X-2
+  
+  for(int i=0;i<height;i++){
+    cin>>cost;
+    sumPPrev=sumPrev;
+    sumPrev=sum;
 
-  for(int i=0;i<size;i++){
-    for(int j=0;j<depth;j++){
-      cin>>cost[j];           //입력 RGB
-      sumPrev[j]=sum[j];      //이전 R, G, B까지의 최소값
-    }
-    
-    for(int j=0;j<depth;j++){
-      if(j==0){
-        sum[j]=cost[j]+sumPrev[j];
-      }else if(j==depth-1){
-        sum[j]=cost[j]+sumPrev[j-1];
-      }else{
-        sum[j]=cost[j]+max(sumPrev[j-1],sumPrev[j]);
-      }
-    }
-    depth++;
+    sum.first=cost+sumPrev.second;
+    sum.second=cost+max(sumPPrev.first,sumPPrev.second);
   }
   
-  for(int i=1;i<size;i++){
-    sum[0]=max(sum[0],sum[i]);
-  }
-  cout<<sum[0];
+  cout<<max(sum.first,sum.second);
 
   return 0;
 }
