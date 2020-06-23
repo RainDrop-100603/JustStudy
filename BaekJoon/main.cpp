@@ -16,30 +16,36 @@ int main(){
   //DynmaicPrograming
 
   //입력
-  int num;  //포도주 잔의 개수
-  cin>>num;
-  int wine; //와인의 양
-  //변수 
-  pair<int,int> temp(0,0);
-  pair<int,pair<int,int>> num1(0,temp);// num번째 합계
-  pair<int,pair<int,int>> numM1(0,temp);// num-1번째 합계 
-  pair<int,pair<int,int>> numM2(0,temp);// num-2번째 합계
-  pair<int,pair<int,int>> numM3(0,temp);// num-3번째 합계
+  int number;
+  cin>>number;
+  int input;
 
-  for(int i=0;i<num;i++){
-    cin>>wine;
-    numM3=numM2;
-    numM2=numM1;
-    numM1=num1;
-    num1.first=wine+max(numM1.second.first,numM1.second.second);
-    num1.second.first=wine+max(numM2.first,max(numM2.second.first,numM2.second.second));
-    num1.second.second=wine+numM3.first;
+  //변수
+  vector<int> inputNum(number); //입력을 저장하는 곳
+  vector<int> count(number);    //count 저장 
+  int tmpcount=0; //비교를 위함 
+
+  //입력 
+  for(int i=0;i<number;i++){
+    cin>>input;
+    inputNum[i]=input;
+    for(int j=0;j<i;j++){
+      if(inputNum[j]<input){
+        tmpcount=max(tmpcount,count[j]);
+      }
+    }
+    count[i]=tmpcount+1;
+    tmpcount=0;
   }
-  int maxs=max(num1.first,num1.second.first);
-  maxs=max(maxs,num1.second.second);
-  maxs=max(maxs,numM1.first);
 
-  cout<<maxs;
+  //출력
+  for(int i=0;i<number;i++){
+    tmpcount=max(tmpcount,count[i]);
+  }
+
+  cout<<tmpcount<<"\n";
+
+  
 
 
   return 0;
