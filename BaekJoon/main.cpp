@@ -16,43 +16,36 @@ int main(){
   //DynmaicPrograming
 
   //입력
-  int caseNum;
-  cin>>caseNum;
+  int size;
+  cin>>size;
   //변수
-  int cost[3]={0};
-  int sum[3]={0};
-  int sumPrev[3]={0};
+  vector<int> cost(size);
+  vector<int> sum(size);
+  vector<int> sumPrev(size);
+  int depth=1;  //깊이 1부터 시작
 
-  for(int i=0;i<caseNum;i++){
-    for(int j=0;j<3;j++){
+  for(int i=0;i<size;i++){
+    for(int j=0;j<depth;j++){
       cin>>cost[j];           //입력 RGB
       sumPrev[j]=sum[j];      //이전 R, G, B까지의 최소값
     }
     
-    if(sumPrev[1]<sumPrev[2]){
-      sum[0]=cost[0]+sumPrev[1];
-    }else{
-      sum[0]=cost[0]+sumPrev[2];
+    for(int j=0;j<depth;j++){
+      if(j==0){
+        sum[j]=cost[j]+sumPrev[j];
+      }else if(j==depth-1){
+        sum[j]=cost[j]+sumPrev[j-1];
+      }else{
+        sum[j]=cost[j]+max(sumPrev[j-1],sumPrev[j]);
+      }
     }
-    if(sumPrev[0]<sumPrev[2]){
-      sum[1]=cost[1]+sumPrev[0];
-    }else{
-      sum[1]=cost[1]+sumPrev[2];
-    }
-    if(sumPrev[0]<sumPrev[1]){
-      sum[2]=cost[2]+sumPrev[0];
-    }else{
-      sum[2]=cost[2]+sumPrev[1];
-    }
+    depth++;
   }
-  int lowest=sum[0];
-    if(lowest>sum[1]){
-      lowest=sum[1];
-    }
-    if(lowest>sum[2]){
-      lowest=sum[2];
-    }
-    cout<<lowest;
+  
+  for(int i=1;i<size;i++){
+    sum[0]=max(sum[0],sum[i]);
+  }
+  cout<<sum[0];
 
   return 0;
 }
