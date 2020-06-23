@@ -16,32 +16,33 @@ int main(){
   //DynmaicPrograming
 
   //입력
-  int num;
-  cin>>num;
+  int digit;
+  cin>>digit;
   //변수 
-  vector<int> arr(num+1);
-  int num3=INT32_MAX; //3으로 나눈거
-  int num2=INT32_MAX; //2으로 나눈거
-  int num1=INT32_MAX; //1뺀거
-  
-  
-  for(int i=num-1;i>0;i--){
-    num3=INT32_MAX;
-    num2=INT32_MAX;
-    num1=INT32_MAX;
-    if(i*3<=num){
-      num3=arr[i*3]+1;
+  unsigned long long arr[10]={0,1,1,1,1,1,1,1,1,1};  //digit=0일때의 계단수. arr[x]는 x로 끝나는 계단수 의미
+  unsigned long long prevArr[10];
+  unsigned long long count=0;  //합
+
+  for(int i=1;i<digit;i++){ //1~digit-1 까지
+    //prev에 복사
+    for(int j=0;j<10;j++){
+      prevArr[j]=arr[j];
     }
-    if(i*2<=num){
-      num2=arr[i*2]+1;
+    //현재
+    arr[0]=prevArr[1];
+    arr[9]=prevArr[8];
+    for(int k=1;k<=8;k++){
+      arr[k]=(prevArr[k-1]+prevArr[k+1])%1000000000;
     }
-    if(i+1<=num){
-      num1=arr[i+1]+1;
-    }
-    arr[i]=min(min(num3,num2),num1);
   }
-  cout<<arr[1];
- 
+
+  for(int i=0;i<10;i++){
+    count+=arr[i];
+  }
+
+  cout<<count%1000000000;
+
+  
 
   return 0;
 }
