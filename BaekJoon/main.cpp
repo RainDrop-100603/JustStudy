@@ -9,6 +9,40 @@
 
 using namespace std;
 
+void DivideAndConquer(vector<vector<int>>& table, int start, int end){
+  //divide
+  int middle=(end+start)/2;
+  if(end-start==1){
+    return;
+  }else{
+    DivideAndConquer(table,start,middle);
+    DivideAndConquer(table,middle,end);
+  }
+
+  //conquer
+  int leftOpti=table[0][start];
+  int leftLT=table[1][start];
+  int leftRT=table[1][middle-1];
+  int rightOpti=table[0][middle];
+  int rightLT=table[1][middle];
+  int rightRT=table[1][end-1];
+
+  int newOpti=max(leftRT+rightLT,max(leftOpti,rightOpti));
+  if(newOpti==leftOpti){
+    // table[0][start]=leftOpti;
+    // table[1][start]=leftLT;
+    table[1][end-1]=leftRT+rightLT+rightRT-rightOpti;
+  }else if(newOpti==rightOpti){
+    table[0][start]=rightOpti;
+    table[1][start]=leftLT+leftRT-leftOpti+rightLT;
+    table[1][end-1]=rightRT;
+  }else{
+    table[0][start]=newOpti;
+    table[1][start]=newOpti+leftLT-leftOpti;
+    table[1][end-1]=newOpti+rightRT-rightOpti;
+  }
+}
+
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
@@ -16,47 +50,21 @@ int main(){
   //DynmaicPrograming
 
   //입력
-  string str1;
-  string str2;
-  cin>>str1>>str2;
+  int num;
+  cin>>num;
+  vector<int> number(num);
 
-  //변수
-  int len1=str1.length();
-  int len2=str2.length();
-  vector<vector<int>> table(len1,vector<int>(len2));
-
-  //table 초기값 
-  if(str1[0]==str2[0]){
-    table[0][0]=1;
-  }else{
-    table[0][0]=0;
-  }
-  for(int i=1;i<len1;i++){
-    if(str1[i]==str2[0]){
-      table[i][0]=1;
-    }else{
-      table[i][0]=table[i-1][0];
-    }
-  }
-  for(int i=1;i<len2;i++){
-    if(str2[i]==str1[0]){
-      table[0][i]=1;
-    }else{
-      table[0][i]=table[0][i-1];
-    }
+  for(int i=0;i<num;i++){
+    cin>>number[i];
   }
 
-  //table 채우기
-  for(int i=1;i<len1;i++){
-    for(int j=1;j<len2;j++){
-      if(str1[i]==str2[j]){
-        table[i][j]=table[i-1][j-1]+1;
-      }else{
-        table[i][j]=max(table[i][j-1],table[i-1][j]);
-      }
-    }
-  }
-  cout<<table[len1-1][len2-1];
+  //변수 
+  vector<vector<int>> table(2,number); //0은 opti, 1은 leftest 2는 rightest
+
+  DivideAndConquer(table,0,num);  //[0,num)까지 정렬  
+  
+  cout<<table[0][0];
+
   return 0;
 }
 
