@@ -16,25 +16,28 @@ int main(){
   //Math3
 
   //입력
-  int num1,num2;
-  
-  //변수  
+  int num;
+  cin>>num;
+
+  //변수
+  bool* primes=GetPrimeArray(num);  
+  int num2=num;
 
   //계산
-  cin>>num1>>num2;
-  while(num1!=0||num2!=0){
-    if(num1%num2==0){
-      cout<<"multiple"<<"\n";
-    }else if(num2%num1==0){
-      cout<<"factor"<<"\n";
-    }else{
-      cout<<"neither"<<"\n";
+  for(int i=0;i<num+1;i++){
+    if(num2==1){
+      break;
     }
-    cin>>num1>>num2;
+    if(primes[i]){
+      if(num2%i==0){
+        num2/=i;
+        cout<<i<<"\n";
+        i--;
+      }
+    }
   }
 
   //출력
- 
 
   return 0;
 }
