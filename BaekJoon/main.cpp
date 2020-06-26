@@ -10,34 +10,42 @@
 using namespace std;
 
 int main(){
-  cin.tie(NULL);
-  cin.sync_with_stdio(false);
+  // cin.tie(NULL);
+  // cin.sync_with_stdio(false);
 
   //Greedy
 
   //입력
-  int num;
-  cin>>num;
-  vector<pair<int,int>> schedule(num);
-  for(auto& ele: schedule){
-    cin>>ele.second>>ele.first; //second=시작시간, first=끝나는시간
-  }
-
-  //변수 
-  int count=0;  //회의의 개수
-  int confEnd=0;  //마지막에 회의가 끝난 시간 
+  string str1;
+  cin>>str1;
+  
+  //변수  
+  bool minusCount=false;  //minus가 한번이라도 나오면 그 뒤는 전부 마이너스로 치환 가능 
+  string::size_type idxFrom=0;  // 숫자가 문자열로 변환되어 있기 때문에 범위를 알아야한다.
+  char tmp;
+  int sum=0;
+  char prevtmp='+';
 
   //계산
-  sort(schedule.begin(),schedule.end());//끝나는 시간 순으로 정렬 
-  for(auto& ele:schedule){
-    if(ele.second>=confEnd){
-      confEnd=ele.first;
-      count++;
+  for(int i=0;i<str1.length();i++){
+    tmp=str1[i];
+    if(tmp=='-'||tmp=='+'){
+      if(minusCount){
+        sum-=stoi(str1.substr(idxFrom),&idxFrom);
+      }else if(prevtmp=='-'){
+        minusCount=true;
+        sum-=stoi(str1.substr(idxFrom),&idxFrom);
+      }else{
+        sum+=stoi(str1.substr(idxFrom),&idxFrom);
+      }
+      idxFrom=i;
+      prevtmp=tmp;
+      
     }
   }
-  
-  //출력
-  cout<<count;
+
+  // //출력
+  cout<<sum;
 
   return 0;
 }
