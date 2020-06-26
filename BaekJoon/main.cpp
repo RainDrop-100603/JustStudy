@@ -13,7 +13,7 @@ int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
 
-  //DynmaicPrograming
+  //Greedy
 
   //입력
   int coinNum, targetAmount;
@@ -25,25 +25,19 @@ int main(){
 
   //변수 
   int difference=targetAmount;  //차액
-  int idx=0;  //coinValue[idx]<=targetAmount<coinValue[idx+1]
   int count=0;  //사용한 동전 개수
+  int idx=coinNum-1;
 
   //계산
-  while(idx+1<coinNum){                      //target보다는 작은 coin 이어야 한다.
-    if(targetAmount<coinValue[idx+1]){
-      break;
-    }
-    idx++;
-  }
   while(difference!=0){
-    if(coinValue[idx]>difference){
-      idx--;
-      continue;
+    if(coinValue[idx]<=difference){
+      difference-=coinValue[idx];
+      idx++;
+      count++;
     }
-    difference-=coinValue[idx];
-    count++;
+    idx--;
   }
-
+  
   //출력
   cout<<count;
 
