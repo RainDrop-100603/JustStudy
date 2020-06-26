@@ -16,30 +16,24 @@ int main(){
   //Greedy
 
   //입력
-  int coinNum, targetAmount;
-  cin>>coinNum>>targetAmount;
-  vector<int> coinValue(coinNum);
-  for(auto& ele: coinValue){
+  int num;
+  cin>>num;
+  vector<int> schedule(num);
+  for(auto& ele: schedule){
     cin>>ele;
   }
 
   //변수 
-  int difference=targetAmount;  //차액
-  int count=0;  //사용한 동전 개수
-  int idx=coinNum-1;
-
+  int totalTime=0;
   //계산
-  while(difference!=0){
-    if(coinValue[idx]<=difference){
-      difference-=coinValue[idx];
-      idx++;
-      count++;
-    }
-    idx--;
+  sort(schedule.begin(),schedule.end());//끝나는 시간 순으로 정렬 
+  for(auto& ele:schedule){
+    totalTime=totalTime+num*ele;
+    num--;
   }
   
   //출력
-  cout<<count;
+  cout<<totalTime;
 
   return 0;
 }
