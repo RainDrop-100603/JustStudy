@@ -44,6 +44,7 @@ vector<int> GetPrimeVector(int num){
       prime.push_back(i);
     }
   }
+  delete[] array;
   return prime;
 }
 void Merge(int* &array, const int start, const int end){  //[start,end) sorting 
