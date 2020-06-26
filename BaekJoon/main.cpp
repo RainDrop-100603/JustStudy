@@ -18,22 +18,26 @@ int main(){
   //입력
   int num;
   cin>>num;
-  vector<int> schedule(num);
+  vector<pair<int,int>> schedule(num);
   for(auto& ele: schedule){
-    cin>>ele;
+    cin>>ele.second>>ele.first; //second=시작시간, first=끝나는시간
   }
 
   //변수 
-  int totalTime=0;
+  int count=0;  //회의의 개수
+  int confEnd=0;  //마지막에 회의가 끝난 시간 
+
   //계산
   sort(schedule.begin(),schedule.end());//끝나는 시간 순으로 정렬 
   for(auto& ele:schedule){
-    totalTime=totalTime+num*ele;
-    num--;
+    if(ele.second>=confEnd){
+      confEnd=ele.first;
+      count++;
+    }
   }
   
   //출력
-  cout<<totalTime;
+  cout<<count;
 
   return 0;
 }
