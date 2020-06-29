@@ -9,14 +9,8 @@
 
 using namespace std;
 
-void chkM(int tmpM,vector<int>& numbers){
-  int A0=numbers[0];
-  for(int i=2;i<numbers.size();i++){
-    if(numbers[i]%tmpM!=A0%tmpM){
-      return;
-    }
-  }
-  cout<<tmpM<<"\n";
+int Gcd(int big,int small){ 
+  return big%small ? Gcd(small,big%small) : small;
 }
 
 int main(){
@@ -35,23 +29,29 @@ int main(){
 
   //변수
   sort(numbers.begin(),numbers.end());    //A0 ~ AN-1
-  int min0=numbers[0];   //A0
-  int min1=numbers[1];   //A1
-  int tmpM; //A0과 A1에서 M으로 인정되는 수
+  int gcd;//최대공약수
+  int num0=numbers[0];
 
   //계산
-  //[2,A0]
-    for(int i=2;i<=min0;i++){
-      if(min0%i==min1%i){
-        chkM(i,numbers);
-      }
-    }
-  //(A0,A1) 1개, M=A1-A0  
-    tmpM=min1-min0;
-    chkM(tmpM,numbers);
-  //[A1,00] 없다
-  
+  gcd=numbers[1]-num0;
+  for(int i=2;i<num;i++){
+    gcd=Gcd(numbers[i]-num0,gcd);
+  }
+
   //출력
+  vector<int> resultV;
+  for(int i=1;i*i<=gcd;i++){
+    if(gcd%i==0){
+      resultV.push_back(i);
+      resultV.push_back(gcd/i);
+    }
+  }
+  sort(resultV.begin(),resultV.end());
+  resultV.erase(unique(resultV.begin(),resultV.end()),resultV.end());
+  for(int i=1;i<resultV.size();i++){
+    cout<<resultV[i]<<' ';
+  }
+  
 
   return 0;
 }
