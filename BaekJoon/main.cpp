@@ -9,8 +9,18 @@
 
 using namespace std;
 
-int Gcd(int big,int small){ 
-  return big%small ? Gcd(small,big%small) : small;
+int dp[1001][1001];
+void solution(int n, int k){
+  for(int i = 1; i <= n; i++){
+        for(int j = 0; j <= n; j++){
+            if(i == j || j == 0){
+                dp[i][j] = 1;
+            }
+            else
+            	dp[i][j] = (dp[i-1][j] + dp[i-1][j-1]) % 10007;
+        }
+    }
+    cout << dp[n][k];
 }
 
 int main(){
@@ -20,25 +30,29 @@ int main(){
   //Math3
 
   //입력
-  int num;
-  cin>>num;
-  vector<int> numbers(num);
-  for(auto& ele:numbers){
-    cin>>ele;
-  }
+  int N,K;
+  cin>>N>>K;
 
   //변수
-  int gcd;
-  int ring1=numbers[0];
+  vector<bool> isDivided(K);
+  int result=1; //결과값
 
   //계산
-  
-
-  //출력
-  for(int i=1;i<numbers.size();i++){
-    gcd=Gcd(ring1,numbers[i]);
-    cout<<ring1/gcd<<'/'<<numbers[i]/gcd<<"\n";
+  for(int i=0;i<K;i++){
+    result*=(N-i);
+    for(int j=0;j<K;j++){
+      if(!isDivided[j]){
+        if(result%(j+1)==0){
+          isDivided[j]=true;
+          result/=j+1;
+        }
+      }
+    }
+    result%=10007;
   }
+  //출력
+  cout<<result<<endl;
+  solution(N,K);
 
   return 0;
 }
