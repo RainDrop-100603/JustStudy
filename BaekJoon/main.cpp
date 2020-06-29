@@ -28,30 +28,17 @@ int main(){
   }
 
   //변수
-  sort(numbers.begin(),numbers.end());    //A0 ~ AN-1
-  int gcd;//최대공약수
-  int num0=numbers[0];
+  int gcd;
+  int ring1=numbers[0];
 
   //계산
-  gcd=numbers[1]-num0;
-  for(int i=2;i<num;i++){
-    gcd=Gcd(numbers[i]-num0,gcd);
-  }
+  
 
   //출력
-  vector<int> resultV;
-  for(int i=1;i*i<=gcd;i++){
-    if(gcd%i==0){
-      resultV.push_back(i);
-      resultV.push_back(gcd/i);
-    }
+  for(int i=1;i<numbers.size();i++){
+    gcd=Gcd(ring1,numbers[i]);
+    cout<<ring1/gcd<<'/'<<numbers[i]/gcd<<"\n";
   }
-  sort(resultV.begin(),resultV.end());
-  resultV.erase(unique(resultV.begin(),resultV.end()),resultV.end());
-  for(int i=1;i<resultV.size();i++){
-    cout<<resultV[i]<<' ';
-  }
-  
 
   return 0;
 }
