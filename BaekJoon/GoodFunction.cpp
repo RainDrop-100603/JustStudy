@@ -130,6 +130,17 @@ int Combi_nCr(int n, int r){
   }
   return sum;
 }
+vector<vector<int>> Remainder_nCr(int n, int M){
+  vector<vector<int>> pascalTriangle(n+1,vector<int>(n+1));
+  for(int i=0;i<=n;i++){    //n
+    pascalTriangle[i][0]=1; //nC0
+    pascalTriangle[i][i]=1; //nCn
+    for(int j=1;j<i;j++){  //r
+      pascalTriangle[i][j]=(pascalTriangle[i-1][j-1]+pascalTriangle[i-1][j])%M;
+    }
+  }
+  return pascalTriangle;
+}
 bool ChkDuplicate(int x, int depth, int* num){
   for(int i=0;i<depth;i++){
     if(num[i]==x){
