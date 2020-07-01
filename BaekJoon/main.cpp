@@ -18,17 +18,15 @@ int main(){
   //입력
   int testCase;
   cin>>testCase;
-  int clothesNum;   //옷의 개수
-  string clothesType;  //vector에 저장
-  string clothesName;  //버린다
-
-  bool newClothes;
   while(testCase--){
+    int clothesNum;   //옷의 개수
+    string clothesType;  //vector에 저장
+    string clothesName;  //버린다
+    bool newClothes=true;
 
     vector<pair<string,int>> clothesV;  // 옷의 종류, 개수
-    newClothes=true;
+   
     cin>>clothesNum;
-
 
     for(int j=0;j<clothesNum;j++){
       cin>>clothesName>>clothesType;
