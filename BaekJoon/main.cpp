@@ -16,46 +16,27 @@ int main(){
   //Math3
 
   //입력
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    int clothesNum;   //옷의 개수
-    string clothesType;  //vector에 저장
-    string clothesName;  //버린다
-    bool newClothes=true;
-
-    vector<pair<string,int>> clothesV;  // 옷의 종류, 개수
-   
-    cin>>clothesNum;
-
-    for(int j=0;j<clothesNum;j++){
-      cin>>clothesName>>clothesType;
-      for(auto& ele: clothesV){
-        if(ele.first==clothesType){
-          ele.second++;
-          newClothes=false;
-          break;
-        }
-      }
-      if(newClothes){
-        clothesV.push_back(make_pair(clothesType,1));
-      }
-    }
-
-  //계산
-    int numOfCases=1;
-    for(auto& ele:clothesV){
-    numOfCases*=ele.second+1;
-    }
-    cout<<numOfCases-1<<"\n";
-
-  }
-
-  //변수
-
-  //계산
+  int n,m;
+  cin>>n>>m;
   
+  //변수
+  int numOf2(0),numOf5(0);  //2의 개수, 5의 개수
+  int from=n-m; //from+1에서 n까지 팩토리얼
+
+  //계산
+  for(long long i=2;i<2000000000;i*=2){
+    numOf2+=n/i;
+    numOf2-=from/i+m/i;
+  }
+  for(long long i=5;i<2000000000;i*=5){
+    numOf5+=n/i;
+    numOf5-=from/i+m/i;
+  }
+  
+  
+
   //출력
+  cout<<min(numOf2,numOf5);
  
   
   return 0;
