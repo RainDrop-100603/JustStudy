@@ -917,10 +917,19 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 				모든 원소를 제거
 				메모리는 그대로다
 				즉, size는 줄어들지만 capacity는 그대로다.
-			v.push_back(7)
-				마지막 원소 뒤에 원소 7을 삽입한다.
+			v.push_back(object or var)
+				마지막 원소 뒤에 원소 obejct 또는 var을 삽입한다.
+					object를 원소로 가지는 vector일 경우 임시객체를 넣어주어야한다.
+				
 				capacity가 부족하면 자동으로 확장한다.
 					이때 선형으로 확장되는 것이 아니고, 기존메모리 크기의 2배만큼 확장된다.
+			v.emplace_back(ele of object's constructor)
+				생성자의 원소만 넣어주면 알아서 임시객체를 생성하여 vector에 추가한다.
+			emplace_back vs push_back
+				emplace_back은 모든 유형의 생성자를 호출한다
+					기본 생성자, 암시적(묵시적) 생성자, 명시적 생성자
+				push_back은 암시적인 생성자만 호출한다.
+
 			v.pop_back()
 				마지막 원소를 제거한다.
 			v.reserve(n)
