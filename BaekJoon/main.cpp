@@ -16,28 +16,60 @@ int main(){
   //Math3
 
   //입력
-  int n,m;
-  cin>>n>>m;
   
-  //변수
-  int numOf2(0),numOf5(0);  //2의 개수, 5의 개수
-  int from=n-m; //from+1에서 n까지 팩토리얼
 
-  //계산
-  for(long long i=2;i<2000000000;i*=2){
-    numOf2+=n/i;
-    numOf2-=from/i+m/i;
-  }
-  for(long long i=5;i<2000000000;i*=5){
-    numOf5+=n/i;
-    numOf5-=from/i+m/i;
-  }
+  //변수
+  string s;
+  s.reserve(100);
+  vector<bool> v; 
+  v.reserve(100);
+  bool isOK=true;
+  char tmp;
   
+  //계산
+
+  getline(cin,s,'.');
+  while(!s.empty()){
+    v.clear();
+    isOK=true;
+    int len=s.size();
+    for(int i=0;i<len;i++){
+      tmp=s[i];
+      if(tmp=='('){
+        v.push_back(true);
+      }else if(tmp==')'){
+        if(v.back()){
+          v.pop_back();
+        }else{
+          isOK=false;
+          break;
+        }
+      }else if(tmp=='['){
+        v.push_back(false);
+      }else if(tmp==']'){
+        if(!v.back()){
+          v.pop_back();
+        }else{
+          isOK=false;
+          break;
+        }
+      }
+    }
+    if(isOK){
+      cout<<"yes"<<"\n";
+    }else{
+      cout<<"no"<<"\n";
+    }
+    s.clear();
+    getline(cin,s,'.');
+    if(s[0]=='\n'){
+      s=s.substr(1);
+    }
+  }
   
 
   //출력
-  cout<<min(numOf2,numOf5);
- 
+
   
   return 0;
 }
