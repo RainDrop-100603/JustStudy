@@ -927,8 +927,10 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 				생성자의 원소만 넣어주면 알아서 임시객체를 생성하여 vector에 추가한다.
 			emplace_back vs push_back
 				emplace_back은 모든 유형의 생성자를 호출한다
-					기본 생성자, 암시적(묵시적) 생성자, 명시적 생성자
-				push_back은 암시적인 생성자만 호출한다.
+					기본(암시적) 생성자, 명시적 생성자
+				push_back은 기본 생성자만 호출한다.
+				https://openmynotepad.tistory.com/10
+					이것 외 여러가지 공부하는게 좋을듯
 
 			v.pop_back()
 				마지막 원소를 제거한다.
