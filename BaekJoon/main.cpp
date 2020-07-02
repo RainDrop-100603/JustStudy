@@ -16,64 +16,55 @@ int main(){
   //Math3
 
   //입력
-  
+  int num;  //숫자의 개수
+  cin>>num;
 
   //변수
-  string s;
-  s.reserve(100);
-  vector<bool> v; 
-  v.reserve(100);
-  bool isOK=true;
-  char tmp;
+  vector<int> stackV; //스택
+  vector<bool> operV; //push=true, pop=false
+  stackV.reserve(num);operV.reserve(num);
+  int input,push(1);  //input= 입력, 다음에 push할 수
+  bool isOK(true);   //수열을 스택으로 출력 가능한지 여부 
+  
   //계산
-
-  while(true){
-    getline(cin,s,'.');
-    if(s[0]=='\n'){
-      s=s.substr(1);
-    }
-    if(s.empty()){
-      break;
-    }
-    v.clear();
-    isOK=true;
-    for(int i=0;i<s.size();i++){
-      tmp=s[i];
-      if(tmp=='('){
-        v.push_back(true);
-      }else if(tmp==')'){
-        if(v.empty()){
-          isOK=false;
+  while(num--){
+    cin>>input;
+    while(true){
+      if(input>push){
+        stackV.push_back(push);
+        operV.push_back(true);
+        push++;
+      }else if(input==push){
+        operV.push_back(true);
+        operV.push_back(false);
+        push++;
+        break;
+      }else{
+        if(input==stackV.back()){
+          stackV.pop_back();
+          operV.push_back(false);
           break;
-        }else if(v.back()){
-          v.pop_back();
-        }else{
-          isOK=false;
-          break;
-        }
-      }else if(tmp=='['){
-        v.push_back(false);
-      }else if(tmp==']'){
-        if(v.empty()){
-          isOK=false;
-          break;
-        }else if(!v.back()){
-          v.pop_back();
         }else{
           isOK=false;
           break;
         }
       }
     }
-    if(!isOK||!v.empty()){
-      cout<<"no"<<"\n";
-    }else{
-      cout<<"yes"<<"\n";
+    if(!isOK){
+      cout<<"NO";
+      break;
     }
   }
-  
-
   //출력
+  if(isOK){
+    for(auto ele:operV){
+      if(ele){
+        cout<<'+'<<"\n";
+      }else{
+        cout<<'-'<<"\n";
+      }
+    }
+  }
 
   
   return 0;
