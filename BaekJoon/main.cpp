@@ -29,26 +29,16 @@ int main(){
   //계산
   while(num--){
     cin>>input;
-    while(true){
-      if(input>push){
-        stackV.push_back(push);
-        operV.push_back(true);
-        push++;
-      }else if(input==push){
-        operV.push_back(true);
-        operV.push_back(false);
-        push++;
-        break;
-      }else{
-        if(input==stackV.back()){
-          stackV.pop_back();
-          operV.push_back(false);
-          break;
-        }else{
-          isOK=false;
-          break;
-        }
-      }
+    while(input>=push){
+      stackV.push_back(push);
+      operV.push_back(true);
+      push++;
+    } 
+    if(input==stackV.back()){
+      stackV.pop_back();
+      operV.push_back(false);
+    }else{
+      isOK=false;
     }
     if(!isOK){
       cout<<"NO";
