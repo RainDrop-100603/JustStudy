@@ -9,6 +9,47 @@
 
 using namespace std;
 
+class PriorityQueue{
+  vector<pair<int,int>> q;    //first= value, second=priority
+  int idx=0;
+public:
+  PriorityQueue& push(pair<int,int>& p){
+    q.push_back(p);
+    return *this;
+  }
+  int size(){
+    return q.size()-idx;
+  }
+  bool empty(){
+    if(this->size()<1){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  pair<int,int> pop(){
+    if(this->empty()){
+      return make_pair(-1,-1);
+    }else{
+      return q[idx++];
+    }
+  }
+  pair<int,int> front(){
+    if(this->empty()){
+      return make_pair(-1,-1);
+    }else{
+      return q[idx];
+    }
+  }
+  pair<int,int> back(){
+    if(this->empty()){
+      return make_pair(-1,-1);
+    }else{
+      return q.back();
+    }
+  }
+};
+
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
@@ -16,47 +57,29 @@ int main(){
   //Math3
 
   //입력
-  int num;  //숫자의 개수
-  cin>>num;
+  int n,k;
+  cin>>n>>k;
 
   //변수
-  vector<int> stackV; //스택
-  vector<bool> operV; //push=true, pop=false
-  stackV.reserve(num);operV.reserve(num);
-  int input,push(1);  //input= 입력, 다음에 push할 수
-  bool isOK(true);   //수열을 스택으로 출력 가능한지 여부 
-  
-  //계산
-  while(num--){
-    cin>>input;
-    while(input>=push){
-      stackV.push_back(push);
-      operV.push_back(true);
-      push++;
-    } 
-    if(input==stackV.back()){
-      stackV.pop_back();
-      operV.push_back(false);
-    }else{
-      isOK=false;
-    }
-    if(!isOK){
-      cout<<"NO";
-      break;
-    }
-  }
-  //출력
-  if(isOK){
-    for(auto ele:operV){
-      if(ele){
-        cout<<'+'<<"\n";
-      }else{
-        cout<<'-'<<"\n";
-      }
-    }
+  Queue q;
+  for(int i=1;i<=n;i++){
+    q.push(i);
   }
 
+
+  //계산
+  cout<<'<';
+  while(--n){
+    for(int i=1;i<k;i++){
+      q.push(q.pop());
+    }
+    cout<<q.pop()<<", ";
+  }
+  cout<<q.pop()<<'>';
+
   
+  //출력
+ 
   return 0;
 }
 

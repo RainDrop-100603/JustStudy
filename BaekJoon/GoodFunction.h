@@ -66,5 +66,45 @@ int N_Queen(int N,vector<bool>& colQueen,vector<bool>& lineRDQueen,vector<bool>&
 bool Sdoku(int sdoku[9][9],vector<pair<int,int>>& empty,int filledNum,int emptySize); //filledNum은 채워진 개수, emptySize까지 가면 true, 아니면 false 반환 
 void GetMaxMin(vector<int>& arrayV,int* AddSubMulDiv,int& max,int& min,int idx,int sum); //idx번째까지의 결과(sum)와 idx+1번째 수를 계산. idx=arrayV.len()이면 max min 체크
 void GetLowGap(int& gap,vector<vector<int>>& table,vector<int>& startTeam,vector<int>& linkTeam,int idx);  //idx번째 선수를 각 팀에 배분. 배분이 끝나면 gap 을 계산하고 기존 gap보다 낮을시 갱신 
+class Queue{
+  vector<int> q;
+  int idx=0;
+public:
+  Queue& push(int num){
+    q.push_back(num);
+    return *this;
+  }
+  int pop(){
+    if(this->empty()){
+      return -1;
+    }else{
+      return q[idx++];
+    }
+  }
+  int size(){
+    return q.size()-idx;
+  }
+  bool empty(){
+    if(this->size()<1){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  int front(){
+    if(this->empty()){
+      return -1;
+    }else{
+      return q[idx];
+    }
+  }
+  int back(){
+    if(this->empty()){
+      return -1;
+    }else{
+      return q.back();
+    }
+  }
+};
 
 #endif
