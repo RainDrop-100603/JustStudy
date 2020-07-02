@@ -934,6 +934,8 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 
 			v.pop_back()
 				마지막 원소를 제거한다.
+				벡터가 비어있다면 undefined behavior이 발생한다.
+					백준 4949에서는 메모리 초과가 일어났었다.
 			v.reserve(n)
 				n개의 원소를 저장할 위치를 예약합니다(미리 동적할당)
 					capacity를 늘린다는 의미인가?

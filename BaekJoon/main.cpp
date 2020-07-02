@@ -25,20 +25,27 @@ int main(){
   v.reserve(100);
   bool isOK=true;
   char tmp;
-  
   //계산
 
-  getline(cin,s,'.');
-  while(!s.empty()){
+  while(true){
+    getline(cin,s,'.');
+    if(s[0]=='\n'){
+      s=s.substr(1);
+    }
+    if(s.empty()){
+      break;
+    }
     v.clear();
     isOK=true;
-    int len=s.size();
-    for(int i=0;i<len;i++){
+    for(int i=0;i<s.size();i++){
       tmp=s[i];
       if(tmp=='('){
         v.push_back(true);
       }else if(tmp==')'){
-        if(v.back()){
+        if(v.empty()){
+          isOK=false;
+          break;
+        }else if(v.back()){
           v.pop_back();
         }else{
           isOK=false;
@@ -47,7 +54,10 @@ int main(){
       }else if(tmp=='['){
         v.push_back(false);
       }else if(tmp==']'){
-        if(!v.back()){
+        if(v.empty()){
+          isOK=false;
+          break;
+        }else if(!v.back()){
           v.pop_back();
         }else{
           isOK=false;
@@ -55,15 +65,10 @@ int main(){
         }
       }
     }
-    if(isOK){
-      cout<<"yes"<<"\n";
-    }else{
+    if(!isOK||!v.empty()){
       cout<<"no"<<"\n";
-    }
-    s.clear();
-    getline(cin,s,'.');
-    if(s[0]=='\n'){
-      s=s.substr(1);
+    }else{
+      cout<<"yes"<<"\n";
     }
   }
   
