@@ -180,37 +180,63 @@ public:
   }
   
 };
-class LinkedList{ //Linked List, 기본 위치는 헤더이며 나머지 리스트는 함수를 통해 접근이 가능하다.
+class LinkedList{ //Linked List Controlloer, Controller-list1-list2... -lastlist와 같은 형식으로 이루어져 있다.
   int key;
   LinkedList* next;
-public:
-  LinkedList(int key=0, LinkedList* next=nullptr):key(key),next(next){}
-  LinkedList* Last(){ //마지막 List의 주소를 출력한다.
-    LinkedList* tmp=this; //현재 list의 주소 
-    while(tmp->NextLink()!=nullptr){  //list의 next가 nullptr이라면, 해당 list가 마지막 list이다.
-      tmp=tmp->NextLink();
+  LinkedList(int key,LinkedList* next):key(key),next(next){}  //list, list추가는 직접할 수 없고 멤버함수를 통해야만한다.
+  LinkedList* GetList(int num){ //num번째 link의 포인터 반환, 0은 controller 
+    LinkedList* returnValue=this;;
+    while(num--){
+      returnValue=returnValue->next;
     }
-    return tmp;
+    return returnValue;
   }
-  LinkedList* AddLink(int key, LinkedList* next=nullptr){
-    this->next=new LinkedList(key,next);
+public:
+  LinkedList():key(0),next(nullptr){} //controller, key 초기화 불가능
+  LinkedList* AddLink(int key, LinkedList* next=nullptr){ //linked list의 마지막에 list를 추가한다.
+    LinkedList* last=GetList((GetLength()));
+    last->next=new LinkedList(key,next);
     return this;
   }
-  int GetKey() const{
-    return key;
+  int Pop_list(int idx){  //idx번째 list를 pop한다
+    int listLen=GetLength();
+    if(listLen<idx){
+      cout<<"Pop_list: out of index"<<"\n";
+      return -1;
+    }else if(idx<1){
+      cout<<"Pop_list: should be idx >= 1"<<"\n";
+      return -1;
+    }
+    LinkedList* toBePop=GetList(idx);
+    LinkedList* toBePopM1=GetList(idx-1);
+    toBePopM1->next=toBePop->next;
+    int returnValue=toBePop->key;
+    delete toBePop;
+    return returnValue;
+
   }
-  LinkedList* NextLink() const{
-    return next;
+  int Get_Key(int idx){
+    int listLen=GetLength();
+    if(listLen<idx){
+      cout<<"Get_Key: out of index"<<"\n";
+      return -1;
+    }else if(idx<1){
+      cout<<"Get_Key: should be idx >= 1"<<"\n";
+      return -1;
+    }
+    return GetList(idx)->key;
+  }
+  int GetLength() const{
+    int len=0;
+    const LinkedList* tmpNext=this; //constant pointer, 가리키는 위치의 값을 바꾸지 않는다.
+    while(tmpNext->next!=nullptr){
+      tmpNext=tmpNext->next;
+      len++;
+    }
+    return len;
+  }
+  ~LinkedList(){
+    cout<<"called Destructor"<<"\n";
   }
 };
-// class LinkedList{
-//   List* head;  //LinkedList의 선두
-// public:
-//   LinkedList(int key=0,List* next=nullptr){
-//     head=new List(key,next);
-//   }
-//   LinkedList& AddLink(int key=0, List* next=nullptr){
-//     head->NextLink()=
-//   }
-// };
 #endif
