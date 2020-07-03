@@ -191,20 +191,28 @@ class LinkedList{ //Linked List Controlloer, Controller-list1-list2... -lastlist
     }
     return returnValue;
   }
+  bool idxError(int idx){
+    int listLen=GetLength();
+    if(listLen<idx||idx<1){
+      return true;
+    }
+    return false;
+  }
 public:
   LinkedList():key(0),next(nullptr){} //controller, key 초기화 불가능
-  LinkedList* AddLink(int key, LinkedList* next=nullptr){ //linked list의 마지막에 list를 추가한다.
-    LinkedList* last=GetList((GetLength()));
-    last->next=new LinkedList(key,next);
+  LinkedList* Push_list(int idx, int key, LinkedList* next=nullptr){ //linked list의 마지막에 list를 추가한다.
+    if(idxError(idx)){
+      cout<<"Pop_list: idx error"<<"\n";
+      return this;
+    }
+    LinkedList* idxM1=GetList(idx-1);
+    LinkedList* idxP1=GetList(idx);
+    idxM1->next=new LinkedList(key,idxP1);
     return this;
   }
   int Pop_list(int idx){  //idx번째 list를 pop한다
-    int listLen=GetLength();
-    if(listLen<idx){
-      cout<<"Pop_list: out of index"<<"\n";
-      return -1;
-    }else if(idx<1){
-      cout<<"Pop_list: should be idx >= 1"<<"\n";
+    if(idxError(idx)){
+      cout<<"Pop_list: idx error"<<"\n";
       return -1;
     }
     LinkedList* toBePop=GetList(idx);
@@ -216,12 +224,8 @@ public:
 
   }
   int Get_Key(int idx){
-    int listLen=GetLength();
-    if(listLen<idx){
-      cout<<"Get_Key: out of index"<<"\n";
-      return -1;
-    }else if(idx<1){
-      cout<<"Get_Key: should be idx >= 1"<<"\n";
+    if(idxError(idx)){
+      cout<<"Get_Key: idx error"<<"\n";
       return -1;
     }
     return GetList(idx)->key;
