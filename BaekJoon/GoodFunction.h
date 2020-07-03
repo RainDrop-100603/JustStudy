@@ -180,5 +180,37 @@ public:
   }
   
 };
-
+class LinkedList{ //Linked List, 기본 위치는 헤더이며 나머지 리스트는 함수를 통해 접근이 가능하다.
+  int key;
+  LinkedList* next;
+public:
+  LinkedList(int key=0, LinkedList* next=nullptr):key(key),next(next){}
+  LinkedList* Last(){ //마지막 List의 주소를 출력한다.
+    LinkedList* tmp=this; //현재 list의 주소 
+    while(tmp->NextLink()!=nullptr){  //list의 next가 nullptr이라면, 해당 list가 마지막 list이다.
+      tmp=tmp->NextLink();
+    }
+    return tmp;
+  }
+  LinkedList* AddLink(int key, LinkedList* next=nullptr){
+    this->next=new LinkedList(key,next);
+    return this;
+  }
+  int GetKey() const{
+    return key;
+  }
+  LinkedList* NextLink() const{
+    return next;
+  }
+};
+// class LinkedList{
+//   List* head;  //LinkedList의 선두
+// public:
+//   LinkedList(int key=0,List* next=nullptr){
+//     head=new List(key,next);
+//   }
+//   LinkedList& AddLink(int key=0, List* next=nullptr){
+//     head->NextLink()=
+//   }
+// };
 #endif
