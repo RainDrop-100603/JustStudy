@@ -106,5 +106,79 @@ public:
     }
   }
 };
+class PriorityQueue{
+  vector<pair<int,int>> q;    //first= value, second=priority
+  int from=0;                  //queue는 from부터 시작한다.
+  vector<int> priority; //prioirty 개수 저장, 0~priority
+public:
+  PriorityQueue(int maxpriority){
+    priority=vector<int>(maxpriority+1);
+  }
+  PriorityQueue& push(pair<int,int> p){
+    q.push_back(p);
+    priority[p.second]++;
+    return *this;
+  }
+  int size(){
+    return q.size()-from;
+  }
+  bool empty(){
+    if(this->size()<1){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  pair<int,int> pop(){
+    if(this->empty()){
+      return make_pair(-1,-1);
+    }else{
+      priority[q[from].second]--;
+      return q[from++];
+    }
+  }
+  int maxPriority(){
+    int len=priority.size()-1;
+    for(int i=len;i>=0;i--){
+      if(priority[i]){
+        return i;
+      }
+    }
+    return 0;
+  }
+  pair<int,int> prioirtyPop(){
+    if(this->empty()){
+      return make_pair(-1,-1);
+    }else{
+      int maxP=maxPriority();
+      while(this->front().second!=maxP){
+        this->push(this->pop());
+      }
+      return this->pop();
+    }
+  }
+  pair<int,int> front(){
+    if(this->empty()){
+      return make_pair(-1,-1);
+    }else{
+      return q[from];
+    }
+  }
+  pair<int,int> back(){
+    if(this->empty()){
+      return make_pair(-1,-1);
+    }else{
+      return q.back();
+    }
+  }
+  void clear(){
+    q.clear();
+    for(auto& ele:priority){
+      ele=0;
+    }
+    from=0;
+  }
+  
+};
 
 #endif
