@@ -33,15 +33,12 @@ public:
 class Queue2{
   int num;              //Queue의 크기
   LinkedList2* first;    //Queue의 가장 앞부분
+  LinkedList2* last;   //Queue의 마지막 부분
   const int NULLVALUE=-1; //배열이 비어있을 경우의 pop
 public:
   Queue2():num(0),first(nullptr){}   //Queue의 컨트롤러, 시작과 동시에 원소를 넣지는 못하게 하였다.
   LinkedList2* Back() const{
-    LinkedList2* temp=first;
-    for(int i=0;i<num-1;i++){
-      temp=temp->Get_Next();
-    }
-    return temp;
+    return last;
   }
   LinkedList2* Front() const{
     return first;
@@ -50,8 +47,10 @@ public:
     LinkedList2* temp=new LinkedList2(key);
     if(num==0){
       first=temp;
+      last=temp;
     }else{
-      Back()->AddLink(temp);
+      last->AddLink(temp);
+      last=temp;
     }
     num++;
     return *this;
@@ -64,7 +63,7 @@ public:
     num--;
     int popKey=temp->Get_Key();
     first=temp->Get_Next();
-    delete temp;                //마지막링크 삭제
+    delete temp;                
     return popKey;
   }
   int Size() const{
