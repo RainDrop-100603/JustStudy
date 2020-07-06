@@ -190,6 +190,94 @@ public:
   }
 };
 
+class RoundQueue_LL{
+  int num;  //원소의 개수
+  D_LinkedList* start;  //round queue의 시작지점
+  D_LinkedList* last;   //round queue의 마지막 지점, 시작과 마지막을 연결해야 하기 때문에 필요하다
+  const int NULLVALUE=-1; //배열이 비어있을 경우의 pop
+private:
+  RoundQueue_LL():num(0),start(nullptr),last(nullptr){}
+  RoundQueue_LL& Push(int key){
+    D_LinkedList* temp=new D_LinkedList(key);
+    num++;
+    if(num==0){
+      start=temp;
+      last=temp;
+      return *this;
+    }
+    last->AddLink(temp);
+    temp->AddLink(start);
+    last=temp;
+  }
+  int Pop(){    //start를 pop
+    D_LinkedList* temp=start;
+    int popKey=start->Get_Key();
+    if(num==0){
+      return NULLVALUE;
+    }else if(num==1){
+      start=nullptr;
+      last=nullptr;
+    }else{
+      start=start->Get_Next();
+      last->AddLink(start);
+    }
+    num--;
+    delete temp;
+    return popKey;
+  }
+  int Find_Key_idx(int key){
+    D_LinkedList* temp=start;
+    int count;
+    for(count=0;count<num;count++){
+      if(key==start->Get_Key()){
+        break;
+      }else{
+        temp=temp->Get_Next();
+      }
+    }
+    if(count==num){
+      return -1;
+    }else{
+      return count;
+    }
+  }
+  D_LinkedList* Find_Key_ptr(int key){
+    D_LinkedList* temp=start;
+    int count;
+    for(count=0;count<num;count++){
+      if(key==temp->Get_Key()){
+        break;
+      }else{
+        temp=temp->Get_Next();
+      }
+    }
+    if(count==num){
+      return nullptr;
+    }else{
+      return temp;
+    }
+  }
+  RoundQueue_LL& TurnR(int idx){
+    D_LinkedList* temp=start;
+    while(idx--){
+      temp=temp->Get_Next();
+    }
+    start=temp;
+    last=temp->Get_Previous();
+    return *this;
+  }
+  RoundQueue_LL& TurnL(int idx){
+    D_LinkedList* temp=start;
+    while(idx--){
+      temp=temp->Get_Previous();
+    }
+    start=temp;
+    last=temp->Get_Previous();
+    return *this;
+  }
+  
+
+};
 
 int main(){
   cin.tie(NULL);
