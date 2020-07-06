@@ -195,19 +195,20 @@ class RoundQueue_LL{
   D_LinkedList* start;  //round queue의 시작지점
   D_LinkedList* last;   //round queue의 마지막 지점, 시작과 마지막을 연결해야 하기 때문에 필요하다
   const int NULLVALUE=-1; //배열이 비어있을 경우의 pop
-private:
+public:
   RoundQueue_LL():num(0),start(nullptr),last(nullptr){}
   RoundQueue_LL& Push(int key){
     D_LinkedList* temp=new D_LinkedList(key);
-    num++;
     if(num==0){
       start=temp;
       last=temp;
       return *this;
     }
+    num++;
     last->AddLink(temp);
     temp->AddLink(start);
     last=temp;
+    return *this;
   }
   int Pop(){    //start를 pop
     D_LinkedList* temp=start;
@@ -241,22 +242,22 @@ private:
       return count;
     }
   }
-  D_LinkedList* Find_Key_ptr(int key){
-    D_LinkedList* temp=start;
-    int count;
-    for(count=0;count<num;count++){
-      if(key==temp->Get_Key()){
-        break;
-      }else{
-        temp=temp->Get_Next();
-      }
-    }
-    if(count==num){
-      return nullptr;
-    }else{
-      return temp;
-    }
-  }
+  // D_LinkedList* Find_Key_ptr(int key){
+  //   D_LinkedList* temp=start;
+  //   int count;
+  //   for(count=0;count<num;count++){
+  //     if(key==temp->Get_Key()){
+  //       break;
+  //     }else{
+  //       temp=temp->Get_Next();
+  //     }
+  //   }
+  //   if(count==num){
+  //     return nullptr;
+  //   }else{
+  //     return temp;
+  //   }
+  // }
   RoundQueue_LL& TurnR(int idx){
     D_LinkedList* temp=start;
     while(idx--){
@@ -275,7 +276,9 @@ private:
     last=temp->Get_Previous();
     return *this;
   }
-  
+  int Size(){
+    return num;
+  }
 
 };
 
@@ -287,48 +290,33 @@ int main(){
   
 
   //입력
-  string oper;
-  int temp,num;
-  cin>>num;
+  int N,M;
+  cin>>N>>M;
+  int num;  //뽑아내려는 수
   
   //변수
-  DequeLinkedList q;
+  RoundQueue_LL rq;
+  int idx;
+  int count=0;
+  for(int i=1;i<=N;i++){
+    rq.Push(i);
+  }
 
   //계산
-  while(num--){
-    cin>>oper;
-    if(oper=="push_front"){
-      cin>>temp;
-      q.Push_front(temp);
-    }else if(oper=="push_back"){
-      cin>>temp;
-      q.Push_back(temp);
-    }else if(oper=="pop_front"){
-      cout<<q.Pop_front()<<"\n";
-    }else if(oper=="pop_back"){
-      cout<<q.Pop_back()<<"\n";
-    }else if(oper=="size"){
-      cout<<q.Size()<<"\n";
-    }else if(oper=="empty"){
-      if(q.Empty()){
-        cout<<1<<"\n";
-      }else{
-        cout<<0<<"\n";
-      }
-    }else if(oper=="front"){
-      if(q.Front()==nullptr){
-        cout<<-1<<"\n";
-      }else{
-        cout<<q.Front()->Get_Key()<<"\n";
-      }
-    }else if(oper=="back"){
-      if(q.Back()==nullptr){
-        cout<<-1<<"\n";
-      }else{
-        cout<<q.Back()->Get_Key()<<"\n";
-      }
+  while(M--){
+    cin>>num;
+    idx=rq.Find_Key_idx(num);
+    if(idx<num/2){
+      rq.TurnR(idx);
+    }else{
+      idx=num-idx;
+      rq.TurnL(idx);
     }
+    rq.Pop();
+    count+=idx;
   }
+  cout<<count;
+  
   
   //출력
   
