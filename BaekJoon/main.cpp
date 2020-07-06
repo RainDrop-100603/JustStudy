@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <utility>
 
-#include "GoodFunction.h"
+// #include "GoodFunction.h"
 
 using namespace std;
 
@@ -115,9 +115,17 @@ int main(){
         cout<<0<<"\n";
       }
     }else if(oper=="front"){
-      cout<<q.Front()->Get_Key()<<"\n";
+      if(q.Front()==nullptr){
+        cout<<-1<<"\n";
+      }else{
+        cout<<q.Front()->Get_Key()<<"\n";
+      }
     }else if(oper=="back"){
-      cout<<q.Back()->Get_Key()<<"\n";
+      if(q.Back()==nullptr){
+        cout<<-1<<"\n";
+      }else{
+        cout<<q.Back()->Get_Key()<<"\n";
+      }
     }
   }
   
