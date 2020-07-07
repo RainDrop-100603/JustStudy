@@ -190,6 +190,132 @@ public:
   }
 };
 
+class DequeLL2{
+  int num;              //Queue의 크기
+  D_LinkedList* first;    //Queue의 가장 앞부분
+  D_LinkedList* last;   //Queue의 마지막 부분
+  const int NULLVALUE=-1; //배열이 비어있을 경우의 pop
+  bool signal; // true면 정방향, false면 역방향
+  bool chk;    // true면 signal 작동, false면 작동 안함. 무한루프 방지 
+public:
+  DequeLL2():num(0),first(nullptr),last(nullptr),signal(true),chk(true){}   //Queue의 컨트롤러, 시작과 동시에 원소를 넣지는 못하게 하였다.
+  D_LinkedList* Back() const{
+    if(signal){
+      return last;
+    }else{
+      return first;
+    }
+  }
+  D_LinkedList* Front() const{
+    if(signal){
+      return first;
+    }else{
+      return last;
+    }
+  }
+  DequeLL2& Push_front(int key){
+    //역방향 체크
+    if(!signal&&chk){
+      chk=false;
+      return Push_back(key);
+    }
+    chk=true;
+
+    D_LinkedList* temp=new D_LinkedList(key);
+    if(num==0){
+      first=temp;
+      last=temp;
+    }else{
+      temp->AddLink(first);
+      first=temp;
+    }
+    num++;
+    return *this;
+  }
+  DequeLL2& Push_back(int key){
+    //역방향 체크
+    if(!signal&&chk){
+      chk=false;
+      return Push_front(key);
+    }
+    chk=true;
+
+    D_LinkedList* temp=new D_LinkedList(key);
+    if(num==0){
+      first=temp;
+      last=temp;
+    }else{
+      last->AddLink(temp);
+      last=temp;
+    }
+    num++;
+    return *this;
+  }
+  int Pop_front(){
+    if(!signal&&chk){
+      chk=false;
+      return Pop_back();
+    }
+    chk=true;
+
+    D_LinkedList* temp=first;  //delete 하기 위해
+    if(first==nullptr){
+      return NULLVALUE;
+    }
+    num--;
+    if(num==0){
+      last=nullptr;
+    }
+    int popKey=temp->Get_Key();
+    first=temp->Get_Next();
+    temp->DeleteLink();
+    delete temp;                
+    return popKey;
+  }
+  int Pop_back(){
+    //역방향 체크
+    if(!signal&&chk){
+      chk=false;
+      return Pop_front();
+    }
+    chk=true;
+
+    D_LinkedList* temp=last;  //delete 하기 위해
+    if(first==nullptr){
+      return NULLVALUE;
+    }
+    num--;
+    if(num==0){
+      first=nullptr;
+    }
+    int popKey=temp->Get_Key();
+    last=temp->Get_Previous();
+    if(last!=nullptr){
+      last->DeleteLink();
+    }
+    delete temp;                
+    return popKey;
+  }
+  int Size() const{
+    return num;
+  }
+  bool Empty() const{
+    if(num==0){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  DequeLL2& changeSignal(){
+    if(signal){
+      signal=false;
+    }else{
+      signal=true;
+    }
+    return *this;
+  }
+};
+
 class RoundQueue_LL{
   int num;  //원소의 개수
   D_LinkedList* start;  //round queue의 시작지점
@@ -242,22 +368,6 @@ public:
       return count;
     }
   }
-  // D_LinkedList* Find_Key_ptr(int key){
-  //   D_LinkedList* temp=start;
-  //   int count;
-  //   for(count=0;count<num;count++){
-  //     if(key==temp->Get_Key()){
-  //       break;
-  //     }else{
-  //       temp=temp->Get_Next();
-  //     }
-  //   }
-  //   if(count==num){
-  //     return nullptr;
-  //   }else{
-  //     return temp;
-  //   }
-  // }
   RoundQueue_LL& TurnR(int idx){
     D_LinkedList* temp=start;
     while(idx--){
@@ -290,32 +400,17 @@ int main(){
   
 
   //입력
-  int N,M;
-  cin>>N>>M;
-  int num;  //뽑아내려는 수
+  int testCase,num; 
+  string oper,element;
+  cin>>testCase;
   
   //변수
-  RoundQueue_LL rq;
-  int idx;
-  int count=0;
-  for(int i=1;i<=N;i++){
-    rq.Push(i);
-  }
+  DequeLL2 deque;
 
   //계산
-  while(M--){
-    cin>>num;
-    idx=rq.Find_Key_idx(num);
-    if(idx<=rq.Size()/2){
-      rq.TurnR(idx);
-    }else{
-      idx=rq.Size()-idx;
-      rq.TurnL(idx);
-    }
-    rq.Pop();
-    count+=idx;
+  while(testCase--){
+    cin>>oper>>num>>element;
   }
-  cout<<count;
   
   
   //출력
