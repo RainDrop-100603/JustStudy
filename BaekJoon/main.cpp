@@ -199,12 +199,12 @@ public:
   RoundQueue_LL():num(0),start(nullptr),last(nullptr){}
   RoundQueue_LL& Push(int key){
     D_LinkedList* temp=new D_LinkedList(key);
-    if(num==0){
+    num++;
+    if(num==1){
       start=temp;
       last=temp;
       return *this;
     }
-    num++;
     last->AddLink(temp);
     temp->AddLink(start);
     last=temp;
@@ -212,7 +212,6 @@ public:
   }
   int Pop(){    //start를 pop
     D_LinkedList* temp=start;
-    int popKey=start->Get_Key();
     if(num==0){
       return NULLVALUE;
     }else if(num==1){
@@ -222,6 +221,7 @@ public:
       start=start->Get_Next();
       last->AddLink(start);
     }
+    int popKey=temp->Get_Key();
     num--;
     delete temp;
     return popKey;
@@ -230,7 +230,7 @@ public:
     D_LinkedList* temp=start;
     int count;
     for(count=0;count<num;count++){
-      if(key==start->Get_Key()){
+      if(key==temp->Get_Key()){
         break;
       }else{
         temp=temp->Get_Next();
@@ -306,10 +306,10 @@ int main(){
   while(M--){
     cin>>num;
     idx=rq.Find_Key_idx(num);
-    if(idx<num/2){
+    if(idx<=rq.Size()/2){
       rq.TurnR(idx);
     }else{
-      idx=num-idx;
+      idx=rq.Size()-idx;
       rq.TurnL(idx);
     }
     rq.Pop();
