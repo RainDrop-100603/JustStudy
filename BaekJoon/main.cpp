@@ -314,6 +314,15 @@ public:
     }
     return *this;
   }
+  void clear(){
+    signal=true;
+    int len=num;
+    for(int i=0;i<len;i++){
+      Pop_back();
+    }
+  }
+  ~DequeLL2(){
+    clear();
 };
 
 class RoundQueue_LL{
@@ -406,10 +415,46 @@ int main(){
   
   //변수
   DequeLL2 deque;
+  int operlen;
+  bool error;
+  int dequelen;
 
   //계산
   while(testCase--){
     cin>>oper>>num>>element;
+    int operNum=oper.size();
+    
+    deque.clear();
+    for(int i=0;i<num;i++){
+      deque.Push_back(element[2*i+1]);
+    }
+
+    error=false;
+    operlen=oper.size();
+    for(int i=0;i<operlen;i++){
+      if(oper[i]=='R'){
+        deque.changeSignal();
+      }else{
+        if(deque.Pop_front()==-1){
+          cout<<"error"<<"\n";
+          error=true;
+          break;
+        }
+      }
+    }
+    if(error){
+      continue;
+    }else{
+      dequelen=deque.Size();
+      cout<<'[';
+      if(dequelen>0){
+        cout<<deque.Pop_front();
+        for(int i=0;i<dequelen-1;i++){
+          cout<<','<<deque.Pop_front();
+        }
+      }
+      cout<<']'<<"\n";
+    }
   }
   
   
