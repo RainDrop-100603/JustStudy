@@ -191,11 +191,11 @@ public:
 };
 
 class DequeLL2{
-  int num;              //Queue의 크기
-  D_LinkedList* first;    //Queue의 가장 앞부분
-  D_LinkedList* last;   //Queue의 마지막 부분
+  int num;              //Deque의 크기
+  D_LinkedList* first;    //Deque의 가장 앞부분
+  D_LinkedList* last;   //Deque의 마지막 부분
   const int NULLVALUE=-1; //배열이 비어있을 경우의 pop
-  bool signal; // true면 정방향, false면 역방향
+  bool signal; // true면 정방향(fisrt-lats), false면 역방향(last-first)
   bool chk;    // true면 signal 작동, false면 작동 안함. 무한루프 방지 
 public:
   DequeLL2():num(0),first(nullptr),last(nullptr),signal(true),chk(true){}   //Queue의 컨트롤러, 시작과 동시에 원소를 넣지는 못하게 하였다.
@@ -323,6 +323,7 @@ public:
   }
   ~DequeLL2(){
     clear();
+  }
 };
 
 class RoundQueue_LL{
@@ -418,17 +419,18 @@ int main(){
   int operlen;
   bool error;
   int dequelen;
-
+  
   //계산
   while(testCase--){
     cin>>oper>>num>>element;
-    int operNum=oper.size();
     
+    //입력부
     deque.clear();
     for(int i=0;i<num;i++){
       deque.Push_back(element[2*i+1]);
     }
 
+    //연산부
     error=false;
     operlen=oper.size();
     for(int i=0;i<operlen;i++){
@@ -436,27 +438,29 @@ int main(){
         deque.changeSignal();
       }else{
         if(deque.Pop_front()==-1){
-          cout<<"error"<<"\n";
           error=true;
           break;
         }
       }
     }
+
+    //츌력부
     if(error){
+      cout<<"error"<<"\n";
       continue;
     }else{
       dequelen=deque.Size();
       cout<<'[';
       if(dequelen>0){
-        cout<<deque.Pop_front();
+        cout<<deque.Pop_front()-'0';
         for(int i=0;i<dequelen-1;i++){
-          cout<<','<<deque.Pop_front();
+          cout<<','<<deque.Pop_front()-'0';
         }
       }
       cout<<']'<<"\n";
     }
   }
-  
+
   
   //출력
   
