@@ -419,6 +419,8 @@ int main(){
   int operlen;
   bool error;
   int dequelen;
+  string::size_type sz;
+  int idx=1;
   
   //계산
   while(testCase--){
@@ -426,8 +428,10 @@ int main(){
     
     //입력부
     deque.clear();
+    idx=1;
     for(int i=0;i<num;i++){
-      deque.Push_back(element[2*i+1]);
+      deque.Push_back(stoi(element.substr(idx),&sz));
+      idx=idx+1+sz;
     }
 
     //연산부
@@ -452,9 +456,9 @@ int main(){
       dequelen=deque.Size();
       cout<<'[';
       if(dequelen>0){
-        cout<<deque.Pop_front()-'0';
+        cout<<deque.Pop_front();
         for(int i=0;i<dequelen-1;i++){
-          cout<<','<<deque.Pop_front()-'0';
+          cout<<','<<deque.Pop_front();
         }
       }
       cout<<']'<<"\n";
