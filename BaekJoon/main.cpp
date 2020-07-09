@@ -418,7 +418,7 @@ int main(){
 
   //입력
   int testCase,num; 
-  string oper,element;
+  string oper;
   cin>>testCase;
   
   //변수
@@ -427,20 +427,20 @@ int main(){
   int operlen;
   bool error;
   int dequelen;
-  string::size_type sz;
-  int idx=1;
+  int tmp;
+  char tmp2;
   
   //계산
   while(testCase--){
-    cin>>oper>>num>>element;
+    cin>>oper>>num;
     
     //입력부
     deque.clear();
-    idx=1;
     for(int i=0;i<num;i++){
-      deque.push_back(stoi(element.substr(idx),&sz));
-      idx=idx+1+sz;
+      cin>>tmp2>>tmp;
+      deque.push_back(tmp);
     }
+    cin>>tmp2;
 
     //연산부
     reverse=false;
@@ -448,11 +448,7 @@ int main(){
     operlen=oper.size();
     for(int i=0;i<operlen;i++){
       if(oper[i]=='R'){
-        if(reverse){
-          reverse=false;
-        }else{
-          reverse=true;
-        }
+        reverse=!reverse;
       }else{
         if(deque.empty()){
           error=true;
