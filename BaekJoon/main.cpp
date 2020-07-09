@@ -4,7 +4,6 @@
 #include <string>
 #include <algorithm>
 #include <utility>
-#include <deque>
 
 // #include "GoodFunction.h"
 
@@ -187,12 +186,6 @@ public:
       return true;
     }else{
       return false;
-    }
-  }
-  void clear(){
-    int len=num;
-    for(int i=0;i<len;i++){
-      Pop_front();
     }
   }
 };
@@ -418,64 +411,51 @@ int main(){
 
   //입력
   int testCase,num; 
-  string oper,arr;
+  string oper,element;
   cin>>testCase;
   
   //변수
-  deque<int> deque;
-  bool reverse; //true면 reverse
+  DequeLL2 deque;
   int operlen;
   bool error;
   int dequelen;
-  string::size_type sz;
-  int idx=1;
+  // string::size_type sz;
+  int toBePop=0;
   
   //계산
   while(testCase--){
-    cin>>oper>>num>>arr;
+    cin>>oper>>num>>element;
     
     //입력부
     deque.clear();
-    arr = arr.substr(1, arr.size() - 2);
-    int num2=0;
-
-		for (int i = 0; i < arr.size(); ++i) {
-			if (atoi(arr.substr(i, 1).c_str()) != 0 || arr.substr(i, 1).compare("0") == 0) {
-				num2 *= 10;
-				num2 += stoi(arr.substr(i, 1));
-			}
-			else {
-				deque.push_back(num2);
-				num2 = 0;
-			}
-		}
- 
-		if (num2 != 0) {
-			deque.push_back(num2);
-		}
-
+    // sz=0;
+    // for(int i=0;i<num;i++){
+    //   element=element.substr(sz+1);
+    //   deque.Push_back(stoi(element,&sz));
+    // }
+    if(element.size()>2){
+      for(int i=1;i<element.size();i++){
+        if(element[i]>='0'&&element[i]<='9'){
+          toBePop*=10;
+          toBePop+=element[i]-'0';
+        }else{
+          deque.Push_back(toBePop);
+          toBePop=0;
+        }
+      }
+    }
+    
     //연산부
-    reverse=false;
     error=false;
     operlen=oper.size();
     for(int i=0;i<operlen;i++){
       if(oper[i]=='R'){
-        if(reverse){
-          reverse=false;
-        }else{
-          reverse=true;
-        }
+        deque.changeSignal();
       }else{
-        if(deque.empty()){
+        if(deque.Pop_front()==-1){
           error=true;
           break;
         }
-        if(!reverse){
-          deque.pop_front();
-        }else{
-          deque.pop_back();
-        }
-        
       }
     }
 
@@ -484,25 +464,12 @@ int main(){
       cout<<"error"<<"\n";
       continue;
     }else{
-      dequelen=deque.size();
+      dequelen=deque.Size();
       cout<<'[';
-      if(!reverse){
-        if(dequelen>0){
-          cout<<deque.front();
-          deque.pop_front();
-          for(int i=0;i<dequelen-1;i++){
-            cout<<','<<deque.front();
-            deque.pop_front();
-          }
-        }
-      }else{
-        if(dequelen>0){
-          cout<<deque.back();
-          deque.pop_back();
-          for(int i=0;i<dequelen-1;i++){
-            cout<<','<<deque.back();
-            deque.pop_back();
-          }
+      if(dequelen>0){
+        cout<<deque.Pop_front();
+        for(int i=0;i<dequelen-1;i++){
+          cout<<','<<deque.Pop_front();
         }
       }
       cout<<']'<<"\n";
