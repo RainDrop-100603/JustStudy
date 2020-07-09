@@ -188,6 +188,12 @@ public:
       return false;
     }
   }
+  void clear(){
+    int len=num;
+    for(int i=0;i<len;i++){
+      Pop_front();
+    }
+  }
 };
 
 class DequeLL2{
@@ -415,7 +421,8 @@ int main(){
   cin>>testCase;
   
   //변수
-  DequeLL2 deque;
+  DequeLinkedList deque;
+  bool reverse; //true면 reverse
   int operlen;
   bool error;
   int dequelen;
@@ -435,16 +442,29 @@ int main(){
     }
 
     //연산부
+    reverse=false;
     error=false;
     operlen=oper.size();
     for(int i=0;i<operlen;i++){
       if(oper[i]=='R'){
-        deque.changeSignal();
-      }else{
-        if(deque.Pop_front()==-1){
-          error=true;
-          break;
+        if(reverse){
+          reverse=false;
+        }else{
+          reverse=true;
         }
+      }else{
+        if(!reverse){
+          if(deque.Pop_front()==-1){
+            error=true;
+            break;
+          }
+        }else{
+          if(deque.Pop_back()==-1){
+            error=true;
+            break;
+          }
+        }
+        
       }
     }
 
@@ -455,10 +475,19 @@ int main(){
     }else{
       dequelen=deque.Size();
       cout<<'[';
-      if(dequelen>0){
-        cout<<deque.Pop_front();
-        for(int i=0;i<dequelen-1;i++){
-          cout<<','<<deque.Pop_front();
+      if(!reverse){
+        if(dequelen>0){
+          cout<<deque.Pop_front();
+          for(int i=0;i<dequelen-1;i++){
+            cout<<','<<deque.Pop_front();
+          }
+        }
+      }else{
+        if(dequelen>0){
+          cout<<deque.Pop_back();
+          for(int i=0;i<dequelen-1;i++){
+            cout<<','<<deque.Pop_back();
+          }
         }
       }
       cout<<']'<<"\n";
