@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <utility>
+#include <deque>
 
 // #include "GoodFunction.h"
 
@@ -421,7 +422,7 @@ int main(){
   cin>>testCase;
   
   //변수
-  DequeLinkedList deque;
+  deque<int> deque;
   bool reverse; //true면 reverse
   int operlen;
   bool error;
@@ -437,7 +438,7 @@ int main(){
     deque.clear();
     idx=1;
     for(int i=0;i<num;i++){
-      deque.Push_back(stoi(element.substr(idx),&sz));
+      deque.push_back(stoi(element.substr(idx),&sz));
       idx=idx+1+sz;
     }
 
@@ -453,16 +454,14 @@ int main(){
           reverse=true;
         }
       }else{
+        if(deque.empty()){
+          error=true;
+          break;
+        }
         if(!reverse){
-          if(deque.Pop_front()==-1){
-            error=true;
-            break;
-          }
+          deque.pop_front();
         }else{
-          if(deque.Pop_back()==-1){
-            error=true;
-            break;
-          }
+          deque.pop_back();
         }
         
       }
@@ -473,20 +472,24 @@ int main(){
       cout<<"error"<<"\n";
       continue;
     }else{
-      dequelen=deque.Size();
+      dequelen=deque.size();
       cout<<'[';
       if(!reverse){
         if(dequelen>0){
-          cout<<deque.Pop_front();
+          cout<<deque.front();
+          deque.pop_front();
           for(int i=0;i<dequelen-1;i++){
-            cout<<','<<deque.Pop_front();
+            cout<<','<<deque.front();
+            deque.pop_front();
           }
         }
       }else{
         if(dequelen>0){
-          cout<<deque.Pop_back();
+          cout<<deque.back();
+          deque.pop_back();
           for(int i=0;i<dequelen-1;i++){
-            cout<<','<<deque.Pop_back();
+            cout<<','<<deque.back();
+            deque.pop_back();
           }
         }
       }
