@@ -9,7 +9,32 @@
 
 using namespace std;
 
-
+void Divide(vector<vector<int>>& table, pair<int,int> p, int size, int& white, int& blue){
+  int x(p.first),y(p.second);
+  bool oneColor=true; //모두 색이 같은 색종이인가
+  int color=table[x][y]; //1=blue, 0=white
+  for(int i=0;i<size;i++){
+    for(int j=0;j<size;j++){
+      if(table[x+i][y+j]!=color){
+        oneColor=false;
+        i=size; //바깥 루프조건 탈출
+        break;  //안쪽 루프 탈출 
+      }
+    }
+  }
+  if(oneColor){
+    if(color){
+      blue++;
+    }else{
+      white++;
+    }
+    return;
+  }
+  Divide(table,make_pair(x,y),size/2,white,blue);
+  Divide(table,make_pair(x+size/2,y),size/2,white,blue);
+  Divide(table,make_pair(x,y+size/2),size/2,white,blue);
+  Divide(table,make_pair(x+size/2,y+size/2),size/2,white,blue);
+}
 
 int main(){
   cin.tie(NULL);
@@ -19,74 +44,23 @@ int main(){
   
 
   //입력
-  int testCase,num; 
-  string oper,element;
-  cin>>testCase;
-  
-  //변수
-  DequeLL2 deque;
-  int operlen;
-  bool error;
-  int dequelen;
-  // string::size_type sz;
-  int toBePop=0;
-  
-  //계산
-  while(testCase--){
-    cin>>oper>>num>>element;
-    
-    //입력부
-    deque.clear();
-    // sz=0;
-    // for(int i=0;i<num;i++){
-    //   element=element.substr(sz+1);
-    //   deque.Push_back(stoi(element,&sz));
-    // }
-    if(element.size()>2){
-      for(int i=1;i<element.size();i++){
-        if(element[i]>='0'&&element[i]<='9'){
-          toBePop*=10;
-          toBePop+=element[i]-'0';
-        }else{
-          deque.Push_back(toBePop);
-          toBePop=0;
-        }
-      }
-    }
-    
-    //연산부
-    error=false;
-    operlen=oper.size();
-    for(int i=0;i<operlen;i++){
-      if(oper[i]=='R'){
-        deque.changeSignal();
-      }else{
-        if(deque.Pop_front()==-1){
-          error=true;
-          break;
-        }
-      }
-    }
-
-    //츌력부
-    if(error){
-      cout<<"error"<<"\n";
-      continue;
-    }else{
-      dequelen=deque.Size();
-      cout<<'[';
-      if(dequelen>0){
-        cout<<deque.Pop_front();
-        for(int i=0;i<dequelen-1;i++){
-          cout<<','<<deque.Pop_front();
-        }
-      }
-      cout<<']'<<"\n";
+  int N;
+  cin>>N;
+  vector<vector<int>> table(N,vector<int>(N)); //N*N 배열
+  for(auto& ele:table){
+    for(auto& ele2:ele){
+      cin>>ele2;
     }
   }
-
+  
+  //변수
+  int blue(0),white(0);
+  
+  //계산
+  Divide(table,make_pair(0,0),N,white,blue);
   
   //출력
+  cout<<white<<endl<<blue;
   
  
   return 0;
