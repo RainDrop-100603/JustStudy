@@ -9,37 +9,32 @@
 
 using namespace std;
 
-void Divide2(vector<vector<char>>& table, pair<int,int> p, int size){
-
+void Divide(vector<vector<int>>& table, pair<int,int> p, int size, int& one, int& zero, int& mOne){
   int x(p.first),y(p.second);
-  bool oneBit=true; //모두 색이 같은 색인가
-  int bit=table[x][y]; //1=blue, 0=white
+  bool oneValue=true; //모두 색이 같은 색종이인가
+  int value=table[x][y]; //1=blue, 0=white
   for(int i=0;i<size;i++){
     for(int j=0;j<size;j++){
-      if(table[x+i][y+j]!=bit){
-        oneBit=false;
+      if(table[x+i][y+j]!=value){
+        oneValue=false;
         i=size; //바깥 루프조건 탈출
         break;  //안쪽 루프 탈출 
       }
     }
   }
-  if(oneBit){
-    if(bit=='1'){
-      cout<<1;
+  if(oneValue){
+    if(value==1){
+      one++;
+    }else if(value==0){
+      zero++;
     }else{
-      cout<<0;
+      mOne++;
     }
     return;
-  }else{
-    cout<<'(';  //새로운 divide가 생길때 마다 괄호가 추가된다.
-    Divide2(table,make_pair(x,y),size/2);
-    Divide2(table,make_pair(x,y+size/2),size/2);
-    Divide2(table,make_pair(x+size/2,y),size/2);
-    Divide2(table,make_pair(x+size/2,y+size/2),size/2);
   }
-
-
-  cout<<')';  //divide 완료 시 닫기
+  Divide(table,make_pair(x,y),size/3,one,zero,mOne);Divide(table,make_pair(x,y+size/3),size/3,one,zero,mOne);Divide(table,make_pair(x,y+size*2/3),size/3,one,zero,mOne);
+  Divide(table,make_pair(x+size/3,y),size/3,one,zero,mOne);Divide(table,make_pair(x+size/3,y+size/3),size/3,one,zero,mOne);Divide(table,make_pair(x+size/3,y+size*2/3),size/3,one,zero,mOne);
+  Divide(table,make_pair(x+size*2/3,y),size/3,one,zero,mOne);Divide(table,make_pair(x+size*2/3,y+size/3),size/3,one,zero,mOne);Divide(table,make_pair(x+size*2/3,y+size*2/3),size/3,one,zero,mOne);
 }
 
 int main(){
@@ -52,7 +47,7 @@ int main(){
   //입력
   int N;
   cin>>N;
-  vector<vector<char>> table(N,vector<char>(N)); //N*N 배열
+  vector<vector<int>> table(N,vector<int>(N)); //N*N 배열
   for(auto& ele:table){
     for(auto& ele2:ele){
       cin>>ele2;
@@ -60,11 +55,14 @@ int main(){
   }
   
   //변수
+  int one(0),zero(0),mOne(0);
   
   //계산
-  Divide2(table,make_pair(0,0),N);
+  Divide(table,make_pair(0,0),N,one,zero,mOne);
   
   //출력
+  cout<<mOne<<endl<<zero<<endl<<one;
+  
  
   return 0;
 }
