@@ -1154,4 +1154,20 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 //포인터를 여러번 선언할 때	int *ptr1, *ptr2, *ptr3; 와 같이 선언한다.
 //assert : 에러시 종료
 
+//double은 오차범위가 10^-15 이다. 거듭제곱을 쓸 경우 pow보다는 long long을 이용하는 것이 정확하다 
+//stoi등 함수는 str이 길 경우 시간이 오래 걸린다. stoi로 모든것을 해결하려 하자 말자
+/*
+예시
+if(element.size()>2){
+      for(int i=1;i<element.size();i++){
+        if(element[i]>='0'&&element[i]<='9'){
+          toBePop*=10;
+          toBePop+=element[i]-'0';
+        }else{
+          deque.Push_back(toBePop);
+          toBePop=0;
+        }
+
+*/
+
 //dev에 있던 것들 정리 
