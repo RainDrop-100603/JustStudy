@@ -47,45 +47,21 @@ int main(){
   
 
   //입력
-  long long N,B;
-  cin>>N>>B;
-  vector<vector<int>> matrix(N,vector<int>(N));
-  for(auto& ele: matrix){
-    for(auto& ele2: ele){
-      cin>>ele2;
-    }
-  }
-  int modValue=1000;
+  long long N;
+  cin>>N;
+  int modValue=1000000;
 
   //변수
   vector<vector<int>> matrix2(N,vector<int>(N));  //임시저장소
   vector<vector<int>> result(N,vector<int>(N));   //결과
 
   //계산
-  //초기값
-  for(int i=0;i<N;i++){
-    result[i][i]=1;
-  }
 
-  while(B!=0){
-    if(B%2==1){
-      MatrixMulMod(matrix2,result,matrix,modValue);
-      MatrixCopy(result,matrix2);
-      MatrixClear(matrix2);
-    }
-    MatrixMulMod(matrix2,matrix,matrix,modValue);
-    MatrixCopy(matrix,matrix2);
-    MatrixClear(matrix2);
-    B/=2;
-  }
+  //초기값
+  
   
   //출력
-  for(auto& ele: result){
-    for(auto& ele2: ele){
-      cout<<ele2<<' ';
-    }
-    cout<<'\n';
-  }
+  
   
  
   return 0;
