@@ -61,37 +61,33 @@ int main(){
   vector<vector<int>> matrix2(N,vector<int>(N));  //임시저장소
   vector<vector<int>> result(N,vector<int>(N));   //결과
   vector<int> flag; //B=2^x1+2^x2+ ... 의 합이다. x1, x2, x3 ... 순서로 저장된 스택. x1>x2
-  int tmp,tmp2;
+  int tmp;
   while(B!=0){
     tmp=log2(B);
     flag.push_back(tmp);
     B-=pow(2,tmp);   //10^-15만큼 오차범위라 사용 가능. B의 범위가 더 커지면 바꾸자           
   }
-  tmp=flag.front(); //계산할 때 사용 
-  tmp2=flag.back();
+  tmp=0;
 
   //계산
   //초기값
-  for(int i=1;i<=tmp2;i++){
-    MatrixMulMod(matrix2,matrix,matrix,modValue);
-    MatrixCopy(matrix,matrix2);
-    MatrixClear(matrix2);
+  for(int i=0;i<N;i++){
+    result[i][i]=1;
   }
-  flag.pop_back();
-  MatrixCopy(result,matrix);
-  tmp2++;
 
-  for(int i=tmp2;i<=tmp;i++){
-    MatrixMulMod(matrix2,matrix,matrix,modValue);
-    MatrixCopy(matrix,matrix2);
-    MatrixClear(matrix2);
-    if(i==flag.back()){
+  while(!flag.empty()){
+    if(tmp==flag.back()){
       MatrixMulMod(matrix2,matrix,result,modValue);
       MatrixCopy(result,matrix2);
       MatrixClear(matrix2);     
+      flag.pop_back();
     }
+    tmp++;
+    MatrixMulMod(matrix2,matrix,matrix,modValue);
+    MatrixCopy(matrix,matrix2);
+    MatrixClear(matrix2);
   }
-
+  
   //출력
   for(auto& ele: result){
     for(auto& ele2: ele){
