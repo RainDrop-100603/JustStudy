@@ -22,8 +22,8 @@ int main(){
   int modValue=1000000007;
   
   //변수
-  int A(1),B(1);
-  int Breverse;
+  long long A(1),B(1);
+  long long Breverse;
   long long result; //int 형 곱셈이므로 long long으로 커버 
 
   //계산
@@ -32,13 +32,11 @@ int main(){
     B=B*(i+1)%modValue;
   }
   Breverse=EuclidAlgo(modValue,B).second;
-  if(Breverse<0){
-    Breverse=Breverse%modValue+modValue;
-  }
   result=A*Breverse%modValue;
-  
+  if(result<0){
+    result+=modValue;
+  }
   //출력
-  cout<<Breverse<<endl;
   cout<<result;
   
  

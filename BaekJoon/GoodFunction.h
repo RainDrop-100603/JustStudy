@@ -51,7 +51,7 @@ void MergeSortT(vector<T>& array,const int idx,const int start,const int end){  
 }
 int Combi_nCr(int n, int r);  
 int getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
-pair<int,int> EuclidAlgo(int A,int B);  //A>B, Ax+By=d, d=gcd(A,B). 유클리드 알고리즘의 해(x,y)
+pair<long long,long long> EuclidAlgo(long long A,long long B);  //A>B, Ax+By=d, d=gcd(A,B). 유클리드 알고리즘의 해(x,y)
 
 //useful에서 쓰는 함수 
 bool* GetPrimeArray(int num); //[0,num] 범위의 소수여부를 저장하는 array(동적할당) 반환
