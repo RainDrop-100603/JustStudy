@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void MatrixCopy(vector<vector<long long>>& m1,vector<vector<long long>>& m2){
+void MatrixCopy(vector<vector<int>>& m1,vector<vector<int>>& m2){
   int x=m1.size();
   for(int i=0;i<x;i++){
     for(int j=0;j<x;j++){
@@ -18,7 +18,7 @@ void MatrixCopy(vector<vector<long long>>& m1,vector<vector<long long>>& m2){
   }
 }
 
-void MatrixClear(vector<vector<long long>>& m1){
+void MatrixClear(vector<vector<int>>& m1){
   int x=m1.size();
   for(int i=0;i<x;i++){
     for(int j=0;j<x;j++){
@@ -27,7 +27,7 @@ void MatrixClear(vector<vector<long long>>& m1){
   }
 }
 
-void MatrixMulMod(vector<vector<long long>>& m1,vector<vector<long long>>& m2,vector<vector<long long>>& m3, int modValue){
+void MatrixMulMod(vector<vector<int>>& m1,vector<vector<int>>& m2,vector<vector<int>>& m3, int modValue){
   int x=m1.size();
   for(int i=0;i<x;i++){
     for(int j=0;j<x;j++){
@@ -49,26 +49,26 @@ int main(){
   //입력
   long long N,B;
   cin>>N>>B;
-  vector<vector<long long>> matrix(N,vector<long long>(N));
+  vector<vector<int>> matrix(N,vector<int>(N));
   for(auto& ele: matrix){
     for(auto& ele2: ele){
       cin>>ele2;
     }
   }
-  
-  //변수
-  vector<vector<long long>> matrix2(N,vector<long long>(N));  //임시저장소
-  vector<vector<long long>> result(N,vector<long long>(N));   //결과
-  vector<int> flag; //B=2^x1+2^x2+ ... 의 합이다. x1, x2, x3 ... 순서로 저장된 스택. x1>x2
-  int tmp;
   int modValue=1000;
+
+  //변수
+  vector<vector<int>> matrix2(N,vector<int>(N));  //임시저장소
+  vector<vector<int>> result(N,vector<int>(N));   //결과
+  vector<int> flag; //B=2^x1+2^x2+ ... 의 합이다. x1, x2, x3 ... 순서로 저장된 스택. x1>x2
+  int tmp,tmp2;
   while(B!=0){
     tmp=log2(B);
     flag.push_back(tmp);
     B-=pow(2,tmp);   //10^-15만큼 오차범위라 사용 가능. B의 범위가 더 커지면 바꾸자           
   }
   tmp=flag.front(); //계산할 때 사용 
-  int tmp2=flag.back();
+  tmp2=flag.back();
 
   //계산
   //초기값
