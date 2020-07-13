@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <utility>
 
-#include "GoodFunction.h"
+// #include "GoodFunction.h"
 
 using namespace std;
 
@@ -17,27 +17,41 @@ int main(){
   
 
   //입력
-  int K,N;
-  cin>>N>>K;
-  int modValue=1000000007;
+  int N,M,K;
+  cin>>N>>M;
+  vector<vector<int>> matrix1(N,vector<int>(M));
+  for(auto& ele: matrix1){
+    for(auto& ele2: ele){
+      cin>>ele2;
+    }
+  }
+  cin>>M>>K;
+  vector<vector<int>> matrix2(M,vector<int>(K));
+  for(auto& ele: matrix2){
+    for(auto& ele2: ele){
+      cin>>ele2;
+    }
+  }
   
   //변수
-  long long A(1),B(1);
-  long long Breverse;
-  long long result; //int 형 곱셈이므로 long long으로 커버 
+  vector<vector<int>> matrix3(N,vector<int>(K));
 
   //계산
-  for(int i=0;i<K;i++){
-    A=A*(N-i)%modValue;
-    B=B*(i+1)%modValue;
+  for(int i=0;i<N;i++){
+    for(int j=0;j<K;j++){
+      for(int k=0;k<M;k++){
+        matrix3[i][j]+=matrix1[i][k]*matrix2[k][j];
+      }
+    }
   }
-  Breverse=EuclidAlgo(modValue,B).second;
-  result=A*Breverse%modValue;
-  if(result<0){
-    result+=modValue;
-  }
+
   //출력
-  cout<<result;
+  for(auto& ele: matrix3){
+    for(auto& ele2: ele){
+      cout<<ele2<<' ';
+    }
+    cout<<'\n';
+  }
   
  
   return 0;
