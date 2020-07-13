@@ -354,3 +354,14 @@ void GetLowGap(int& gap,vector<vector<int>>& table,vector<int>& startTeam,vector
   }
 
 }
+int getGCD(int A, int B){     //유클리드 호제법을 이용한 A와 B의 GCD
+  return A%B ? getGCD(B,A%B) : B; //A=qB+r, r=A%B, GCD(A,B)=GCD(B,r)=GCD(B,A%B), r==0이면 B가 최대공약수 
+}
+pair<int,int> EuclidAlgo(int A,int B){      //조건: A>B  ____  Ax+By=d, d=gcd(A,B). 유클리드 알고리즘의 해(x,y)
+  if(B!=0){ //B=r==0이면 A가 최대공약수
+    pair<int,int> temp=EuclidAlgo(B,A%B);
+    return make_pair(temp.second,temp.first-(A/B)*temp.second);
+  }else{
+    return make_pair(1,0);  // GCD(d,0) = dx+0y=d: 
+  }
+} 

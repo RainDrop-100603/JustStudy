@@ -7,16 +7,10 @@
 #include <string>
 #include <utility>
 
-#include "tempClass.cpp"
-
 using namespace std;
-
+//useful
 bool IsPrime(int num);  //소수(Prime Number) 판별
-bool* GetPrimeArray(int num); //[0,num] 범위의 소수여부를 저장하는 array(동적할당) 반환
 vector<int> GetPrimeVector(int num);  //[0,num] 범위의 소수를 저장하는 vector<int>를 반환
-void Merge(int* &array, const int start, const int end);  //Merge를 담당, vector가 배열임을 이용해 변경할 수도 있다.
-void MergeSort(int* &array,const int start,const int end);  //MergeSort main 함수 . Merge를 합칠수도 있지만 divide&conquer을 보여주기 위해 남겨둠
-void MergeSort(vector<int>& array,const int start,const int end); //vector이용, Merge 통합 버전 
 template <class T>
 void MergeSortT(vector<T>& array,const int idx,const int start,const int end){   //T라는 자료형의 idx번째 수에대한 merge sort
   //divide
@@ -56,6 +50,16 @@ void MergeSortT(vector<T>& array,const int idx,const int start,const int end){  
   }
 }
 int Combi_nCr(int n, int r);  
+int getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
+pair<int,int> EuclidAlgo(int A,int B);  //A>B, Ax+By=d, d=gcd(A,B). 유클리드 알고리즘의 해(x,y)
+
+//useful에서 쓰는 함수 
+bool* GetPrimeArray(int num); //[0,num] 범위의 소수여부를 저장하는 array(동적할당) 반환
+void Merge(int* &array, const int start, const int end);  //Merge를 담당, vector가 배열임을 이용해 변경할 수도 있다.
+void MergeSort(int* &array,const int start,const int end);  //MergeSort main 함수 . Merge를 합칠수도 있지만 divide&conquer을 보여주기 위해 남겨둠
+void MergeSort(vector<int>& array,const int start,const int end); //vector이용, Merge 통합 버전 
+
+//just Sol
 vector<vector<int>> Remainder_nCr(int n, int M); //nCn까지 구할 수 있는 파스칼 삼각형, 각 원소에 mod_M(%M)을 취했다. nCr이 엄청나게 커질경우, mod는 파스칼 삼각형으로 구해야 한다. 나눗셈이 있을경우 mod에 대한 결합법칙은 성립하지 않기때문.
 bool ChkDuplicate(int x, int depth, int* num);  //num의 depth-1번째 까지 수에서, x와 겹치는 것이 있는지 확인
 void PrintAllCombi(int n, int r, int depth, int* num);//nCr 조합, depth번째 수, 수를 저장하는 num, digit=0: 가장 앞에 수(167:digit 0 -> 1);
@@ -631,5 +635,7 @@ public:
   }
 
 };
+
+
 
 #endif
