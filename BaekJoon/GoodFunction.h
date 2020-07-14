@@ -52,7 +52,7 @@ void MergeSortT(vector<T>& array,const int idx,const int start,const int end){  
 int Combi_nCr(int n, int r);  
 int getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
 pair<long long,long long> EuclidAlgo(long long A,long long B);  //A>B, Ax+By=d, d=gcd(A,B). 유클리드 알고리즘의 해(x,y)
-vector<vector<long long>> FibonacciMatrix(long long m); //Fibonacci identity: 도가뉴 항등식, d'Ocagne's identity, f_m matrix의 두배에 해당하는 f_2m matrix 반환, important 참고 
+vector<vector<long long>> FibonacciMatrix(long long m); //Fibonacci identity: 도가뉴 항등식, d'Ocagne's identity, f_m matrix 반환, important 참고
 
 //useful에서 쓰는 함수 
 bool* GetPrimeArray(int num); //[0,num] 범위의 소수여부를 저장하는 array(동적할당) 반환

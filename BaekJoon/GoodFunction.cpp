@@ -365,42 +365,39 @@ pair<long long,long long> EuclidAlgo(long long A,long long B){      //조건: A>
     return make_pair(1,0);  // GCD(d,0) = dx+0y=d: 
   }
 } 
-vector<vector<long long>> FibonacciMatrix(long long m){ //Fibonacci identity: 도가뉴 항등식, d'Ocagne's identity, f_m matrix의 두배에 해당하는 f_2m matrix 반환, important 참고 
-  vector<vector<long long>> matrix_2m(2,vector<long long>(2));
-  //m==0일 경우, f0, f1, f1, f2 반환, 즉 f_1 matrix 반환 
-  if(m==0){
-    matrix_2m[0][0]=0;
-    matrix_2m[0][1]=1;
-    matrix_2m[1][0]=1;
-    matrix_2m[1][1]=1;
-    return matrix_2m;
-  }else if(m==1){
-    matrix_2m[0][0]=1;
-    matrix_2m[0][1]=1;
-    matrix_2m[1][0]=1;
-    matrix_2m[1][1]=2;
-    return matrix_2m;
+vector<vector<long long>> FibonacciMatrix(long long m){ //Fibonacci identity: 도가뉴 항등식, d'Ocagne's identity, f_m matrix 반환, important 참고 
+  vector<vector<long long>> matrix_m(2,vector<long long>(2));
+  //m==1일 경우, f0, f1, f1, f2 반환, 즉 f_1 matrix 반환 
+  if(m==1){
+    matrix_m[0][0]=0;
+    matrix_m[0][1]=1;
+    matrix_m[1][0]=1;
+    matrix_m[1][1]=1;
+    return matrix_m;
   }
-  //m>0일 경우 f_2m matrix 반환 : f_m matrix == f_(m-1), f_m, f_m, f_(m+1)
-  vector<vector<long long>> matrix_m=FibonacciMatrix(m/2);
-  long long a=matrix_m[0][0];
-  long long b=matrix_m[0][1];
-  long long c=matrix_m[1][0];
-  long long d=matrix_m[1][1];
+  //m>0일 경우 f_m matrix 반환 : f_m matrix == f_(m-1), f_m, f_m, f_(m+1)
+  vector<vector<long long>> matrix_m2=FibonacciMatrix(m/2);
+  long long a=matrix_m2[0][0];
+  long long b=matrix_m2[0][1];
+  long long c=matrix_m2[1][0];
+  long long d=matrix_m2[1][1];
+  
   if(m%2==0){
-    matrix_2m[0][0]=a*a+b*c;
-    matrix_2m[0][1]=b*(a+d);
-    matrix_2m[1][0]=c*(a+d);
-    matrix_2m[1][1]=d*d+b*c;
+    matrix_m[0][0]=a*a+b*c;
+    matrix_m[0][1]=b*(a+d);
+    matrix_m[1][0]=c*(a+d);
+    matrix_m[1][1]=d*d+b*c;
   }else{
-    matrix_2m[0][0]=b*(a+d);
-    matrix_2m[0][1]=d*d+b*c;
-    matrix_2m[1][0]=d*d+b*c;
-    matrix_2m[1][1]=a*a+b*c+b*(a+d);
+    matrix_m[0][0]=b*(a+d);
+    matrix_m[0][1]=d*d+b*c;
+    matrix_m[1][0]=d*d+b*c;
+    matrix_m[1][1]=d*d+b*c+b*(a+d);
   }
-  matrix_2m[0][0]%=1000000;
-  matrix_2m[0][1]%=1000000;
-  matrix_2m[1][0]%=1000000;
-  matrix_2m[1][1]%=1000000;
-  return matrix_2m;
+  
+  matrix_m[0][0]%=1000000;
+  matrix_m[0][1]%=1000000;
+  matrix_m[1][0]%=1000000;
+  matrix_m[1][1]%=1000000;
+  
+  return matrix_m;
 } 
