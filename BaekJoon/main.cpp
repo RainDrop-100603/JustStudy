@@ -29,7 +29,7 @@ void BK6549(vector<vector<long long>>& v, int start, int end){  //[start,end)
   bool flagL=false;
   bool flagR=false;
   if(left_H>right_H){ //오른쪽에서 왼족으로 밀고감
-    if(right_M==v[2][end-1]){
+    if(v[3][middle]==3){
       flagR=true;
     }
     cnt=middle-1;
@@ -43,7 +43,7 @@ void BK6549(vector<vector<long long>>& v, int start, int end){  //[start,end)
       cnt--;
     }
   }else{
-    if(left_M==v[2][middle-1]){
+    if(v[3][start]==3){
       flagL=true;
     }
     cnt=middle;
@@ -57,12 +57,20 @@ void BK6549(vector<vector<long long>>& v, int start, int end){  //[start,end)
       cnt++;
     }
   }
-  if(flagR){
+  if(flagR&&flagL){
+    v[3][start]=3;
     v[2][end-1]=max(v[1][end-1],newMax);
-  }
-  if(flagL){
     v[2][start]=max(v[1][start],newMax);
+  }else if(flagR){
+    v[3][start]=2;
+    v[2][end-1]=max(v[1][end-1],newMax);
+  }else if(flagL){
+    v[3][start]=1;
+    v[2][start]=max(v[1][start],newMax);
+  }else{
+    v[3][start]=0;
   }
+  
   v[1][start]=max(currentMax,newMax);
 }
 
@@ -84,13 +92,15 @@ int main(){
     cin>>testcase;
     if(testcase==0){break;}
 
-    vector<vector<long long>> table(3, vector<long long>(testcase)); //0행은 height, 1행의 leftest는 max, 2행의 leftest(rightest)는 lmax(rmax)
+    vector<vector<long long>> table(4, vector<long long>(testcase)); 
+    //0행은 height, 1행의 leftest는 max, 2행의 leftest(rightest)는 lmax(rmax), 3행은 max 상태, 0은 연결없음, 1은 왼쪽연결 ,2는 오른쪽 연결, 3은 양쪽연결 
 
     for(int i=0;i<testcase;i++){
       cin>>height;
       table[0][i]=height;
       table[1][i]=height;
       table[2][i]=height;
+      table[3][i]=3;
     }
     
     BK6549(table,0,testcase);
