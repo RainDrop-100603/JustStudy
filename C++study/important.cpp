@@ -1170,4 +1170,21 @@ if(element.size()>2){
 
 */
 
+//Fibonacci, 피보나치 수의 특성
+/*
+	도가뉴 항등식, d'Ocagne's identity
+		F_m+n=F_(m-1)*F_n+F_m*F_(n+1)
+		유도식
+			F_2m=F_m(F_(m+1)+F_(m-1))
+			F_2m+1=(F_m)^2+(F_m+1)^2
+			F_2m-1=(F_m)^2+(F_m-1)^2
+		matrix, 행렬로의 구현
+			f_m-1	f_m				
+			f_m		f_m+1
+			위 행렬의 제곱의 결과값은 아래와 같다.
+			f_2m-1	f_2m
+			f_2m		f_2m+1
+
+*/
+
 //dev에 있던 것들 정리 
