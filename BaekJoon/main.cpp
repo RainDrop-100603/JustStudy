@@ -74,30 +74,31 @@ void BK6549(vector<vector<long long>>& v, int start, int end){  //[start,end)
   v[1][start]=max(currentMax,newMax);
 }
 
-long long popFunc(vector<int>& v, int key){
+long long popFunc(vector<int>& v, int key){ //key보다 큰 값을 key로 다듬으며, tmpMax 반환 
   long long max1(v.back()),tmpMax(0),tmpKey,prev(v.back());
-  while(tmpKey=v.back()>key){
+  vector<int>::iterator iter=v.end()-1;
+  while(tmpKey=*iter>key){
     tmpMax=tmpMax+tmpKey*2-prev;
     prev=tmpKey;
-    v.pop_back();
+    *iter=key;
     max1=max(max1,tmpMax);
   }
   return max1;
 }
-void BK6549_Stack(){
+void BK6549_Stack(int times){
   vector<int> v;
-  int times,input,prev(-1);
-  cin>>times;
+  int input,prev(-1);
   long long max1(0);
   while(times--){
     cin>>input;
-    if(input>prev){
+    if(input>=prev){
       v.push_back(input);
     }else{
       max1=max(max1,popFunc(v,input));
-      v.
+      v.push_back(input); //그냥 push 후에 체크하게 바꾸자 popFunc 변환 필여
     }
   }
+  cout<<max1<<"\n";
 }
 
 int main(){
@@ -118,23 +119,7 @@ int main(){
     cin>>testcase;
     if(testcase==0){break;}
 
-    vector<vector<long long>> table(4, vector<long long>(testcase)); 
-    //0행은 height, 1행의 leftest는 max, 2행의 leftest(rightest)는 lmax(rmax), 3행은 max 상태, 0은 연결없음, 1은 왼쪽연결 ,2는 오른쪽 연결, 3은 양쪽연결 
-
-    for(int i=0;i<testcase;i++){
-      cin>>height;
-      table[0][i]=height;
-      table[1][i]=height;
-      table[2][i]=height;
-      table[3][i]=3;
-    }
-    
-    BK6549(table,0,testcase);
-
-    cout<<table[1][0]<<"\n";
-
-
-
+    BK6549_Stack(testcase);
 
   }
   //초기값
