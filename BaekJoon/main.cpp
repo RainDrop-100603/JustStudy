@@ -74,6 +74,32 @@ void BK6549(vector<vector<long long>>& v, int start, int end){  //[start,end)
   v[1][start]=max(currentMax,newMax);
 }
 
+long long popFunc(vector<int>& v, int key){
+  long long max1(v.back()),tmpMax(0),tmpKey,prev(v.back());
+  while(tmpKey=v.back()>key){
+    tmpMax=tmpMax+tmpKey*2-prev;
+    prev=tmpKey;
+    v.pop_back();
+    max1=max(max1,tmpMax);
+  }
+  return max1;
+}
+void BK6549_Stack(){
+  vector<int> v;
+  int times,input,prev(-1);
+  cin>>times;
+  long long max1(0);
+  while(times--){
+    cin>>input;
+    if(input>prev){
+      v.push_back(input);
+    }else{
+      max1=max(max1,popFunc(v,input));
+      v.
+    }
+  }
+}
+
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
