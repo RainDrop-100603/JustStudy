@@ -74,31 +74,32 @@ void BK6549(vector<vector<long long>>& v, int start, int end){  //[start,end)
   v[1][start]=max(currentMax,newMax);
 }
 
-long long popFunc(vector<int>& v, int key){ //key보다 큰 값을 key로 다듬으며, tmpMax 반환 
-  long long max1(v.back()),tmpMax(0),tmpKey,prev(v.back());
-  vector<int>::iterator iter=v.end()-1;
-  while(tmpKey=*iter>key){
+long long popFunc(vector<int>& v){ //key보다 큰 값을 key로 다듬으며, tmpMax 반환 
+  int key=v.back();
+  vector<int>::iterator iter=v.end()-2;
+  long long realMax(*iter),tmpMax(0),tmpKey,prev(*iter);
+  while((tmpKey=*iter)>key&&iter>=v.begin()){
     tmpMax=tmpMax+tmpKey*2-prev;
     prev=tmpKey;
     *iter=key;
-    max1=max(max1,tmpMax);
+    iter--;
+    realMax=max(realMax,tmpMax);
   }
-  return max1;
+  return realMax;
 }
 void BK6549_Stack(int times){
   vector<int> v;
   int input,prev(-1);
-  long long max1(0);
+  long long realMax(0);
   while(times--){
     cin>>input;
-    if(input>=prev){
-      v.push_back(input);
-    }else{
-      max1=max(max1,popFunc(v,input));
-      v.push_back(input); //그냥 push 후에 체크하게 바꾸자 popFunc 변환 필여
+    v.push_back(input);
+    if(input<prev){
+      realMax=max(realMax,popFunc(v));
     }
+    prev=input;
   }
-  cout<<max1<<"\n";
+  cout<<realMax<<"\n";
 }
 
 int main(){
@@ -110,7 +111,6 @@ int main(){
 
   //입력
   int testcase;
-  long long height;
 
   //변수
 
