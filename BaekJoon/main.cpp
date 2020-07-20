@@ -75,25 +75,19 @@ void BK6549(vector<vector<long long>>& v, int start, int end){  //[start,end)
 }
 
 long long popFunc(vector<int>& v){ //key보다 큰 값을 key로 다듬으며, tmpMax 반환 
-  int key,count;
-  long long realMax,tmpKey;
+  int key;
+  long long realMax(0),count(1);
   vector<int>::iterator iter=v.end()-2;
   if(*iter>v.back()){
     key=v.back();
-    realMax=*iter;
-    tmpKey=*iter;
-    count=1;
-    iter--;
   }else{
     key=-1;
-    realMax=v.back();
-    tmpKey=realMax;
-    count=1;
+    iter++;
   }
-  while((tmpKey=*iter)>key&&iter>=v.begin()){
+  while(*iter>key&&iter>=v.begin()){
+    realMax=max(realMax,(*iter)*count);
     iter--;
     count++;
-    realMax=max(realMax,count*tmpKey);
   }
   return realMax;
 }
