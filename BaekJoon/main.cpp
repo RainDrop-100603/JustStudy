@@ -8,7 +8,7 @@
 //#include "GoodFunction.h"
 
 using namespace std;
-
+//정답오류, 원인?
 void BK6549(vector<vector<long long>>& v, int start, int end){  //[start,end)
   //divide
   int middle=(end+start)/2; //두 vector사이의 경계 idx;
@@ -73,7 +73,7 @@ void BK6549(vector<vector<long long>>& v, int start, int end){  //[start,end)
   
   v[1][start]=max(currentMax,newMax);
 }
-
+//정답은 맞다, 그러나 pop이 너무 자주 사용되어서 시간초과, 정답과 유사하나 구현 방법의 차이 
 long long popFunc(vector<int>& v){ //key보다 큰 값을 key로 다듬으며, tmpMax 반환 
   int key;
   long long realMax(0),count(1);
@@ -108,6 +108,47 @@ void BK6549_Stack(int times){
   cout<<realMax<<"\n";
 }
 
+long long PopFunc2(vector<int>& v,vector<int>& stack, int idx){
+  long long realMax(0),tmpKey;
+  int key(v[idx]);
+  while(!stack.empty()){
+    tmpKey=stack.back();
+    if(v[tmpKey]<=key){
+      break;
+    }
+    realMax=max(realMax,v[tmpKey]*(idx-tmpKey));
+    stack.pop_back();
+  }
+  return realMax;
+}
+void BK6549_Stack2(long long times){
+  vector<int> v,stack;
+  int input;
+  long long realMax(0);
+  int prev(-1);
+
+  for(int i=0;i<times;i++){
+  //입력
+    cin>>input;
+    v.push_back(input);
+  //계산
+    if(input<prev){
+      realMax=max(realMax,PopFunc2(v,stack,i));
+    }
+    stack.push_back(i);
+    prev=input;
+  }
+
+  long long tmpKey;
+  while(!stack.empty()){
+    tmpKey=stack.back();
+    realMax=max(realMax,v[tmpKey]*(times-tmpKey));
+    stack.pop_back();
+  }
+  
+  cout<<realMax<<"\n";
+}
+
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
@@ -125,7 +166,7 @@ int main(){
     cin>>testcase;
     if(testcase==0){break;}
 
-    BK6549_Stack(testcase);
+    BK6549_Stack2(testcase);
 
   }
   //초기값
