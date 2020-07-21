@@ -109,14 +109,20 @@ void BK6549_Stack(int times){
 }
 
 long long PopFunc2(vector<int>& v,vector<int>& stack, int idx){
-  long long realMax(0),tmpKey;
-  int key(v[idx]);
+  long long realMax(0),tmpKey,tmpKeyM1;
+  int value(v[idx]);
   while(!stack.empty()){
     tmpKey=stack.back();
-    if(v[tmpKey]<=key){
+    vector<int>::iterator iter=stack.end()-2;
+    if(iter<stack.begin()){
+      tmpKeyM1=-1;
+    }else{
+      tmpKeyM1=*iter;
+    }
+    if(v[tmpKey]<=value){
       break;
     }
-    realMax=max(realMax,v[tmpKey]*(idx-tmpKey));
+    realMax=max(realMax,v[tmpKey]*(idx-tmpKeyM1-1));
     stack.pop_back();
   }
   return realMax;
@@ -139,10 +145,16 @@ void BK6549_Stack2(long long times){
     prev=input;
   }
 
-  long long tmpKey;
+  long long tmpKey,tmpKeyM1;
   while(!stack.empty()){
     tmpKey=stack.back();
-    realMax=max(realMax,v[tmpKey]*(times-tmpKey));
+    vector<int>::iterator iter=stack.end()-2;
+    if(iter<stack.begin()){
+      tmpKeyM1=-1;
+    }else{
+      tmpKeyM1=*iter;
+    }
+    realMax=max(realMax,v[tmpKey]*(times-tmpKeyM1-1));
     stack.pop_back();
   }
   
