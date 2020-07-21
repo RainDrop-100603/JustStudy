@@ -73,7 +73,7 @@ void BK6549(vector<vector<long long>>& v, int start, int end){  //[start,end)
   
   v[1][start]=max(currentMax,newMax);
 }
-//정답은 맞다, 그러나 pop이 너무 자주 사용되어서 시간초과, 정답과 유사하나 구현 방법의 차이 
+//정답은 맞다, 원본 데이터를 건드리면서 길이도 매번 측정했기 때문에 시간이 오래 걸린다.
 long long popFunc(vector<int>& v){ //key보다 큰 값을 key로 다듬으며, tmpMax 반환 
   int key;
   long long realMax(0),count(1);
@@ -107,13 +107,13 @@ void BK6549_Stack(int times){
   realMax=max(realMax,popFunc(v));
   cout<<realMax<<"\n";
 }
-
+//정답. 원본데이터는 그대로 두고, 추가된 stack에 간략하게 정보를 저장한다.
 long long PopFunc2(vector<int>& v,vector<int>& stack, int idx){
-  long long realMax(0),tmpKey,tmpKeyM1;
-  int value(v[idx]);
-  while(!stack.empty()){
-    tmpKey=stack.back();
-    vector<int>::iterator iter=stack.end()-2;
+  long long realMax(0),tmpKey,tmpKeyM1; // Max, stack의 마지막 key, stack의 마지막 -1 key
+  int value(v[idx]);                    // tmpKeyM1과 tmpKey 사이에는 "빈 공간"이 존재할 수 있다. 
+  while(!stack.empty()){                // 이 빈 공간은, tmpKey번째 Value가 입력되면서, 해당 value보다 큰 값을 가진 value의 key를 pop 해서 생긴 공간이다.
+    tmpKey=stack.back();                // 간단히 말해서, 이 "빈 공간" 은 v[tmpKey]보다 큰 value들이 있었던 공간이다. 
+    vector<int>::iterator iter=stack.end()-2;   // 따라서, Max를 계산한 때는 이 빈 공간의 크기도 포함해서 해야 정확한 계산이 가능하다.
     if(iter<stack.begin()){
       tmpKeyM1=-1;
     }else{
