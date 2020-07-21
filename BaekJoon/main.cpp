@@ -86,6 +86,7 @@ long long popFunc(vector<int>& v){ //key보다 큰 값을 key로 다듬으며, t
   }
   while(*iter>key&&iter>=v.begin()){
     realMax=max(realMax,(*iter)*count);
+    *iter=key;
     iter--;
     count++;
   }
