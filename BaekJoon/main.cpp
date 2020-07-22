@@ -161,6 +161,25 @@ void BK6549_Stack2(long long times){
   cout<<realMax<<"\n";
 }
 
+//SegmentTree, 각 node는 범위 내의 min 값을 저장 
+int BK6549_ST_init(vector<int>& a, vector<int>& tree, int node, int start, int end){ //[start,end] 범위 
+  if(start==end){
+    return tree[node] = a[start];
+  }else{
+    return tree[node]=min(BK6549_ST_init(a,tree,node*2,start,(start+end)/2),BK6549_ST_init(a,tree,node*2+1,(start+end)/2+1,end));
+  }
+}
+vector<int> BK6549_SegmentTree(vector<int>& a){
+  long long len=a.size();
+  long long N(1);
+  while(N<len){
+    N*=2;
+  }
+  vector<int> tree(N*2,-1);  //원래는 N^2-1 이다. 그러나 node는 0이 아닌 1부터 시작하기 때문에 크기를 1 키웠다. 0이상의 정수만을 사용하는 segment tree
+  BK6549_ST_init(a,tree,1,0,len-1);
+  return tree;
+}
+
 
 int main(){
   cin.tie(NULL);
@@ -175,15 +194,6 @@ int main(){
   //변수
 
   //계산
-  vector<int> a;
-  for(int i=0;i<16;i++){
-    a.push_back(i);
-  }
-  vector<int> tree=SegmentTree(a);
-  while(!tree.empty()){
-    cout<<tree.back()<<"\n";
-    tree.pop_back();
-  }
 
   
   //초기값
