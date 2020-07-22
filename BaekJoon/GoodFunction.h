@@ -54,6 +54,38 @@ int getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
 pair<long long,long long> EuclidAlgo(long long A,long long B);  //A>B, Ax+By=d, d=gcd(A,B). 유클리드 알고리즘의 해(x,y)
 vector<vector<long long>> FibonacciMatrix(long long m); //Fibonacci identity: 도가뉴 항등식, d'Ocagne's identity, f_m matrix 반환, important 참고
 
+  //Segment Tree
+template <class T>
+T ST_init(vector<T>& a, vector<T>& tree, int node, int start, int end){ //[start,end] 범위 정렬
+  if(start==end){
+    return tree[node] = a[start];
+  }else{
+    return tree[node]=ST_init(a,tree,node*2,start,(start+end)/2)+ST_init(a,tree,node*2+1,(start+end)/2+1,end);
+  }
+}
+template <class T>
+vector<T> SegmentTree(vector<T>& a){
+  long long len=a.size();
+  long long N(1);
+  while(N<len){
+    N*=2;
+  }
+  vector<T> tree(N*2);  //원래는 N^2-1 이다. 그러나 node는 0이 아닌 1부터 시작하기 때문에 크기를 1 키웠다.
+  ST_init(a,tree,1,0,len-1);
+  return tree;
+}
+template <class T>
+T ST_sum(vector<T>& tree, int node, int start, int end, int left, int right){
+  if(left>end||right<start){
+    return 0;
+  }else if(left<=start && end<=right){
+    return tree[node];
+  }else{
+    return ST_sum(tree, node*2, start, (start+end)/2,left, right)+ST_sum(tree, node*2+1, (start+end)/2+1, end, left, right);
+  }
+}
+
+
 //useful에서 쓰는 함수 
 bool* GetPrimeArray(int num); //[0,num] 범위의 소수여부를 저장하는 array(동적할당) 반환
 void Merge(int* &array, const int start, const int end);  //Merge를 담당, vector가 배열임을 이용해 변경할 수도 있다.

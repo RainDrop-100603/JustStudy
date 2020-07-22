@@ -161,6 +161,7 @@ void BK6549_Stack2(long long times){
   cout<<realMax<<"\n";
 }
 
+
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
@@ -174,13 +175,17 @@ int main(){
   //변수
 
   //계산
-  while(true){
-    cin>>testcase;
-    if(testcase==0){break;}
-
-    BK6549_Stack2(testcase);
-
+  vector<int> a;
+  for(int i=0;i<16;i++){
+    a.push_back(i);
   }
+  vector<int> tree=SegmentTree(a);
+  while(!tree.empty()){
+    cout<<tree.back()<<"\n";
+    tree.pop_back();
+  }
+
+  
   //초기값
   
   
