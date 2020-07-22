@@ -70,7 +70,7 @@ vector<T> SegmentTree(vector<T>& a){
   while(N<len){
     N*=2;
   }
-  vector<T> tree(N*2);  //원래는 N^2-1 이다. 그러나 node는 0이 아닌 1부터 시작하기 때문에 크기를 1 키웠다.
+  vector<T> tree(N*2,-1);  //원래는 N^2-1 이다. 그러나 node는 0이 아닌 1부터 시작하기 때문에 크기를 1 키웠다. 0이상의 정수만을 사용하는 segment tree
   ST_init(a,tree,1,0,len-1);
   return tree;
 }
@@ -84,7 +84,10 @@ T ST_sum(vector<T>& tree, int node, int start, int end, int left, int right){
     return ST_sum(tree, node*2, start, (start+end)/2,left, right)+ST_sum(tree, node*2+1, (start+end)/2+1, end, left, right);
   }
 }
+template <class T>
+T query(vector<T> &a, vector<T> &tree,int node, int start, int i, int j){
 
+}
 
 //useful에서 쓰는 함수 
 bool* GetPrimeArray(int num); //[0,num] 범위의 소수여부를 저장하는 array(동적할당) 반환
