@@ -181,7 +181,7 @@ vector<int> BK6549_SegmentTree(vector<int>& a){ //arr a를 segment Tree로
   while(N<len){
     N*=2;
   }
-  vector<int> tree(N*2,-1);  //원래는 N^2-1 이다. 그러나 node는 0이 아닌 1부터 시작하기 때문에 크기를 1 키웠다. 0이상의 정수만을 사용하는 segment tree
+  vector<int> tree(N*2,-1);  //원래는 N*2-1 이다. 그러나 node는 0이 아닌 1부터 시작하기 때문에 크기를 1 키웠다. 0이상의 정수만을 사용하는 segment tree
   BK6549_ST_init(a,tree,1,0,len-1);
   return tree;
 }
@@ -191,8 +191,8 @@ int BK6549_ST_min(vector<int> &a, vector<int> &tree, int node, int start, int en
   }else if(left<=start&&end<=right){
     return tree[node];
   }else{
-    int keyL=BK6549_ST_init(a,tree,node*2,start,(start+end)/2);
-    int keyR=BK6549_ST_init(a,tree,node*2+1,(start+end)/2+1,end);
+    int keyL=BK6549_ST_min(a,tree,node*2,start,(start+end)/2,left,right);
+    int keyR=BK6549_ST_min(a,tree,node*2+1,(start+end)/2+1,end,left,right);
     if(a[keyL]<=a[keyR]){
       return keyL;
     }else{
@@ -200,13 +200,15 @@ int BK6549_ST_min(vector<int> &a, vector<int> &tree, int node, int start, int en
     }
   }
 }
-long long BK6549_ST_MaxSum(vector<int> &a, vector<int> &tree, int node, int start, int end, int left, int right){
-  if(right==left){
-    return a[right];
+long long BK6549_ST_MaxSum(vector<int> &a, vector<int> &tree, int start, int end, int left, int right){ //[left,right]의 max
+  if(left==right){
+    return a[left];
+  }else if(right<left){
+    return 0;
   }
-  long long key=BK6549_ST_min(a,tree,node,start,end,left,right);
-  long long leftMax=BK6549_ST_MaxSum(a,tree,node)
-  long long rightMax=a[BK6549_ST_min(a,tree,node,start,end,key+1,right)]*(right-key-1);
+  long long key=BK6549_ST_min(a,tree,1,start,end,left,right);
+  long long leftMax=BK6549_ST_MaxSum(a,tree,start,end,left,key-1);
+  long long rightMax=BK6549_ST_MaxSum(a,tree,start,end,key+1,right);
   long long midMax=a[key]*(right-left);
   return max(midMax,max(leftMax,rightMax));
 }
@@ -216,8 +218,21 @@ void BK6549_ST(long long times){
     cin>>a[i];
   }
   vector<int> tree=BK6549_SegmentTree(a);
+  cout<<BK6549_ST_MaxSum(a,tree,0,times-1,0,times-1)<<"\n";
 }
-
+void printTree(vector<int> &tree){
+  int len=tree.size();
+  int cnt=2;
+  int flag=2;
+  for(int i=1;i<len;i++){
+    cout<<tree[i]<<"  ";
+    if(cnt==flag){
+      cout<<"\n";
+      flag*=2;
+    }
+    cnt++;
+  }
+}
 
 int main(){
   cin.tie(NULL);
@@ -230,6 +245,15 @@ int main(){
   int testcase;
 
   //변수
+  
+  cin>>testcase;
+  BK6549_ST(testcase);
+  // vector<int> a(testcase);
+  // for(int i=0;i<testcase;i++){
+  //   cin>>a[i];
+  // }
+  // vector<int> tree=BK6549_SegmentTree(a);
+  // printTree(tree);
 
   //계산
 
