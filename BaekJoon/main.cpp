@@ -162,14 +162,20 @@ void BK6549_Stack2(long long times){
 }
 
 //SegmentTree, 각 node는 범위 내의 min 값을 저장 
-int BK6549_ST_init(vector<int>& a, vector<int>& tree, int node, int start, int end){ //[start,end] 범위 
+int BK6549_ST_init(vector<int>& a, vector<int>& tree, int node, int start, int end){ //[start,end] 범위 ST,node는 min값의 key 
   if(start==end){
-    return tree[node] = a[start];
+    return tree[node] = start;
   }else{
-    return tree[node]=min(BK6549_ST_init(a,tree,node*2,start,(start+end)/2),BK6549_ST_init(a,tree,node*2+1,(start+end)/2+1,end));
+    int keyL=BK6549_ST_init(a,tree,node*2,start,(start+end)/2);
+    int keyR=BK6549_ST_init(a,tree,node*2+1,(start+end)/2+1,end);
+    if(a[keyL]<=a[keyR]){
+      return tree[node] = keyL;
+    }else{
+      return tree[node] = keyR;
+    }
   }
 }
-vector<int> BK6549_SegmentTree(vector<int>& a){
+vector<int> BK6549_SegmentTree(vector<int>& a){ //arr a를 segment Tree로 
   long long len=a.size();
   long long N(1);
   while(N<len){
@@ -178,6 +184,38 @@ vector<int> BK6549_SegmentTree(vector<int>& a){
   vector<int> tree(N*2,-1);  //원래는 N^2-1 이다. 그러나 node는 0이 아닌 1부터 시작하기 때문에 크기를 1 키웠다. 0이상의 정수만을 사용하는 segment tree
   BK6549_ST_init(a,tree,1,0,len-1);
   return tree;
+}
+int BK6549_ST_min(vector<int> &a, vector<int> &tree, int node, int start, int end, int left, int right){  //[left,right]의 min
+  if(right<start||end<left){
+    return 0;
+  }else if(left<=start&&end<=right){
+    return tree[node];
+  }else{
+    int keyL=BK6549_ST_init(a,tree,node*2,start,(start+end)/2);
+    int keyR=BK6549_ST_init(a,tree,node*2+1,(start+end)/2+1,end);
+    if(a[keyL]<=a[keyR]){
+      return keyL;
+    }else{
+      return keyR;
+    }
+  }
+}
+long long BK6549_ST_MaxSum(vector<int> &a, vector<int> &tree, int node, int start, int end, int left, int right){
+  if(right==left){
+    return a[right];
+  }
+  long long key=BK6549_ST_min(a,tree,node,start,end,left,right);
+  long long leftMax=BK6549_ST_MaxSum(a,tree,node)
+  long long rightMax=a[BK6549_ST_min(a,tree,node,start,end,key+1,right)]*(right-key-1);
+  long long midMax=a[key]*(right-left);
+  return max(midMax,max(leftMax,rightMax));
+}
+void BK6549_ST(long long times){
+  vector<int> a(times);
+  for(int i=0;i<times;i++){
+    cin>>a[i];
+  }
+  vector<int> tree=BK6549_SegmentTree(a);
 }
 
 

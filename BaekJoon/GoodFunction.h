@@ -56,7 +56,7 @@ vector<vector<long long>> FibonacciMatrix(long long m); //Fibonacci identity: �
 
   //Segment Tree
 template <class T>
-T ST_init(vector<T>& a, vector<T>& tree, int node, int start, int end){ //[start,end] 범위 정렬
+T ST_init(vector<T>& a, vector<T>& tree, int node, int start, int end){ //[start,end] 범위 
   if(start==end){
     return tree[node] = a[start];
   }else{
@@ -85,9 +85,7 @@ T ST_sum(vector<T>& tree, int node, int start, int end, int left, int right){
   }
 }
 template <class T>
-T query(vector<T> &a, vector<T> &tree,int node, int start, int i, int j){
-
-}
+//query
 
 //useful에서 쓰는 함수 
 bool* GetPrimeArray(int num); //[0,num] 범위의 소수여부를 저장하는 array(동적할당) 반환
