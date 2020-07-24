@@ -107,7 +107,7 @@ void BK6549_Stack(int times){
   realMax=max(realMax,popFunc(v));
   cout<<realMax<<"\n";
 }
-//정답. 원본데이터는 그대로 두고, 추가된 stack에 간략하게 정보를 저장한다.
+//정답. Stack, 원본데이터는 그대로 두고, 추가된 stack에 간략하게 정보를 저장한다.
 long long PopFunc2(vector<int>& v,vector<int>& stack, int idx){
   long long realMax(0),tmpKey,tmpKeyM1; // Max, stack의 마지막 key, stack의 마지막 -1 key
   int value(v[idx]);                    // tmpKeyM1과 tmpKey 사이에는 "빈 공간"이 존재할 수 있다. 
@@ -161,7 +161,7 @@ void BK6549_Stack2(long long times){
   cout<<realMax<<"\n";
 }
 
-//SegmentTree, 각 node는 범위 내의 min 값을 저장 
+//정답. SegmentTree, 각 node는 범위 내의 min 값을 저장 
 int BK6549_ST_init(vector<int>& a, vector<int>& tree, int node, int start, int end){ //[start,end] 범위 ST,node는 min값의 key 
   if(start==end){
     return tree[node] = start;
@@ -185,42 +185,44 @@ vector<int> BK6549_SegmentTree(vector<int>& a){ //arr a를 segment Tree로
   BK6549_ST_init(a,tree,1,0,len-1);
   return tree;
 }
-int BK6549_ST_min(vector<int> &a, vector<int> &tree, int node, int start, int end, int left, int right){  //[left,right]의 min
+int BK6549_ST_min(vector<int> &a, vector<int> &tree, int node, int start, int end, int left, int right){  //[left,right]의 min 의 key
   if(right<start||end<left){
-    return 0;
+    return -1;
   }else if(left<=start&&end<=right){
     return tree[node];
   }else{
     int keyL=BK6549_ST_min(a,tree,node*2,start,(start+end)/2,left,right);
     int keyR=BK6549_ST_min(a,tree,node*2+1,(start+end)/2+1,end,left,right);
-    if(a[keyL]<=a[keyR]){
-      return keyL;
+    if(keyL==-1||keyR==-1){
+      if(keyL==-1&&keyR==-1){
+        return -1;
+      }else if(keyL==-1){
+        return keyR;
+      }else{
+        return keyL;
+      }
     }else{
-      return keyR;
+      if(a[keyL]<=a[keyR]){
+        return keyL;
+      }else{
+        return keyR;
+      }
     }
   }
 }
-long long BK6549_ST_MaxSum(vector<int> &a, vector<int> &tree, int start, int end, int left, int right){ //[left,right]의 max
+long long BK6549_ST_MaxSum(vector<int> &a, vector<int> &tree, int start, int end, int left, int right){ //[left,right]의 max value
   if(left==right){
     return a[left];
   }else if(right<left){
     return 0;
   }
   long long key=BK6549_ST_min(a,tree,1,start,end,left,right);
+  long long midMax=static_cast<long>(a[key])*(right-left+1);
   long long leftMax=BK6549_ST_MaxSum(a,tree,start,end,left,key-1);
   long long rightMax=BK6549_ST_MaxSum(a,tree,start,end,key+1,right);
-  long long midMax=a[key]*(right-left);
   return max(midMax,max(leftMax,rightMax));
 }
-void BK6549_ST(long long times){
-  vector<int> a(times);
-  for(int i=0;i<times;i++){
-    cin>>a[i];
-  }
-  vector<int> tree=BK6549_SegmentTree(a);
-  cout<<BK6549_ST_MaxSum(a,tree,0,times-1,0,times-1)<<"\n";
-}
-void printTree(vector<int> &tree){
+void printTree(vector<int> &tree){// Tree 인쇄, 디버그용  
   int len=tree.size();
   int cnt=2;
   int flag=2;
@@ -233,6 +235,15 @@ void printTree(vector<int> &tree){
     cnt++;
   }
 }
+void BK6549_ST(long long times){
+  vector<int> a(times);
+  for(int i=0;i<times;i++){
+    cin>>a[i];
+  }
+  vector<int> tree=BK6549_SegmentTree(a);
+  cout<<BK6549_ST_MaxSum(a,tree,0,times-1,0,times-1)<<"\n";
+}
+
 
 int main(){
   cin.tie(NULL);
@@ -246,14 +257,15 @@ int main(){
 
   //변수
   
-  cin>>testcase;
-  BK6549_ST(testcase);
-  // vector<int> a(testcase);
-  // for(int i=0;i<testcase;i++){
-  //   cin>>a[i];
-  // }
-  // vector<int> tree=BK6549_SegmentTree(a);
-  // printTree(tree);
+  while(true){
+    cin>>testcase;
+    if(testcase==0){
+      break;
+    }
+    BK6549_ST(testcase);
+  }
+  
+  
 
   //계산
 
