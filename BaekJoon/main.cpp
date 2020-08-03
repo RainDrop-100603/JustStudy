@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <utility>
 #include <map>
+#include <set>
 
 //#include "GoodFunction.h"
 
@@ -59,26 +60,19 @@ void BK2261_2(){
   long long xDiff=v[0].first-v[1].first;
   long long yDiff=v[0].second-v[1].second;
   long long minLen=xDiff*xDiff+yDiff*yDiff;
-  // xValue Tree
-  int prev=-1;
-  map<int,int> xTree;
+  // x-tree map: key=x, value=y-tree
+  int prev=v[0].first;
+  map<int,set<int>> xTree;
+  set<int> yTree;
   for(int i=0;i<v.size();i++){
-    if(v[i].first!=prev){
-      prev=v[i].first;
-      xTree.insert(make_pair(prev,i));
+    if(prev==v[i].first){
+      yTree.insert(v[i].second);
+    }else{
+      xTree.insert(prev,yTree);
     }
   }
 //계산
-  map<int,int>::iterator iter;
-  map<int,int>::iterator upperbound;
-  while(true){
-    int minLen2=sqrt(minLen);
-    int minLen3=minLen;
-    upperbound=xTree.upper_bound(minLen2+1);
-    for(iter=xTree.lower_bound(minLen2);*iter;iter++){
-      vector<int> yValueArr;
-    }
-  }
+  
 //출력
   cout<<minLen; 
 }
