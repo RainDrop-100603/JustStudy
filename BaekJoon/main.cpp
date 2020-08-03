@@ -45,7 +45,7 @@ void BK2261(){
 //출력
   cout<<minLen;
 }
-void BK2261_2(){
+void BK2261_2_giveUp(){
 //입력
   int pointNum,x,y;
   cin>>pointNum;
@@ -76,9 +76,65 @@ void BK2261_2(){
 //출력
   cout<<minLen; 
 }
+struct Point{
+  int x,y;
+  bool operator< (const Point& p) const{
+    if(y==p.y){
+      return x<p.x;
+    }else{
+      return y<p.y;
+    }
+  }
+};
+bool cmpX(const Point& p1, const Point& p2){
+  return p1.x<p2.x;
+}
+int dist2(const Point& p1, const Point& p2){
+  return (p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y);
+}
+void BK2261_3_H_LineSweeping(){ //scanf를 사용하므로 유의 
+//input and sort
+  int n;  // #input 
+  scanf("%d",&n);
+  Point p;  //point
+  vector<Point> a;  //point arr
+  for(int i=0;i<n;i++){
+    scanf("%d %d",&p.x,&p.y);
+    a.push_back(p);
+  }
+  sort(a.begin(),a.end(),cmpX);
+
+//line sweeping
+  set<Point> tree = {a[0],a[1]};
+  int ans=dist2(a[0],a[1]);
+  int start=0;
+  for(int i=2;i<n;i++){
+    Point now=a[i];
+  //x값 비교
+    while(start<i){     
+      Point p=a[start];
+      if(ans<(p.x-now.x)*(p.x-now.x)){
+        tree.erase(p);
+        start++;
+      }else{
+        break;
+      }
+    //y값 비교
+    int lowerBound=now.y-sqrt(ans)-1;
+    int upperBound=now.y+sqrt(ans)+1;
+    set<Point>::iterator LBiter=tree.lower_bound(lowerBound);
+    //입력
+    tree.insert(now);
+    }
+
+  
+
+  }
+}
 int main(){
-  cin.tie(NULL);
-  cin.sync_with_stdio(false);
+  // cin.tie(NULL);
+  // cin.sync_with_stdio(false);
+
 
   //Math3
   
