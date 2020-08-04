@@ -10,24 +10,35 @@
 
 using namespace std;
 
-void BK10816(){
-  int n,num,m;
+void BK10816_1(){
+  int t=10000000;
+    vector<int> v(2*t+1);
+    
+    int n,m,num;
+    scanf("%d",&n);
+    for(int i=0;i<n;i++){
+        scanf("%d",&num);
+        v[num+t]++;
+    }
+    scanf("%d",&m);
+    for(int i=0;i<m;i++){
+        scanf("%d",&num);
+        printf("%d ",v[num+t]);
+    }
+}
+void BK10816_2(){
+  int n,num,m,d;
   scanf("%d",&n);
-  multiset<int> tree;
+  vector<int> v(n);
   for(int i=0;i<n;i++){
-    scanf("%d",&num);
-    tree.insert(num);
+    scanf("%d",&v[i]);
   }
+  sort(v.begin(),v.end());
   scanf("%d",&m);
   for(int i=0;i<m;i++){
     scanf("%d",&num);
-    multiset<int>::iterator from=tree.find(num);
-    if(from==tree.end()){
-      cout<<"0 ";
-      continue;
-    }
-    multiset<int>::iterator to=tree.upper_bound(num);
-    cout<<distance(from,to)<<' ';
+    d=upper_bound(v.begin(),v.end(),num)-lower_bound(v.begin(),v.end(),num);
+    printf("%d ",d);
   }
 }
 
