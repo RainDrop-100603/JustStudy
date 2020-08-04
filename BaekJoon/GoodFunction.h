@@ -6,6 +6,8 @@
 #include <cmath>
 #include <string>
 #include <utility>
+#include <algorithm>
+#include <set>
 
 using namespace std;
 //useful
@@ -903,7 +905,69 @@ void BK6549_ST(long long times){
   vector<int> tree=BK6549_SegmentTree(a);
   cout<<BK6549_ST_MaxSum(a,tree,0,times-1,0,times-1)<<"\n";
 }
+//Line Sweep
+struct Point{
+  int x,y;
+  Point(){}
+  Point(int x, int y):x(x),y(y){}
+  bool operator< (const Point& p) const{
+    if(y==p.y){
+      return x<p.x;
+    }else{
+      return y<p.y;
+    }
+  }
+};
+bool cmpX(const Point& p1, const Point& p2){
+  return p1.x<p2.x;
+}
+int dist2(const Point& p1, const Point& p2){
+  return (p1.x-p2.x)*(p1.x-p2.x)+(p1.y-p2.y)*(p1.y-p2.y);
+}
+void BK2261_3_H_LineSweeping(){ //scanf를 사용하므로 유의 
+//input and sort
+  int n;  // #input 
+  scanf("%d",&n);
+  Point p;  //point
+  vector<Point> a;  //point arr
+  for(int i=0;i<n;i++){
+    scanf("%d %d",&p.x,&p.y);
+    a.push_back(p);
+  }
+  sort(a.begin(),a.end(),cmpX);
 
-
+//line sweeping
+  set<Point> tree = {a[0],a[1]};
+  int ans=dist2(a[0],a[1]);
+  int start=0;
+  for(int i=2;i<n;i++){
+    Point now=a[i];
+  //x값 비교
+    while(start<i){     
+      Point p=a[start];
+      if(ans<(p.x-now.x)*(p.x-now.x)){
+        tree.erase(p);
+        start++;
+      }else{
+        break;
+      }
+    }
+  //y값 비교
+    int d=sqrt(ans)+1;
+    Point lowerP(-100000,now.y-d);
+    Point upperP(100000,now.y+d); 
+    set<Point>::iterator LBiter=tree.lower_bound(lowerP);
+    set<Point>::iterator UBiter=tree.upper_bound(upperP);
+    for(LBiter;LBiter!=UBiter;LBiter++){
+      p=*LBiter;
+      if(dist2(p,now)<ans){
+        ans=dist2(p,now);
+      }
+    }
+  //입력
+    tree.insert(now);
+  }
+  cout<<ans;
+}
 
 #endif
