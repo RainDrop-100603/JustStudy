@@ -969,5 +969,25 @@ void BK2261_3_H_LineSweeping(){ //scanf를 사용하므로 유의
   }
   cout<<ans;
 }
-
+void BK1920(){
+//input
+  set<int> tree;
+  int n,m,num;
+  cin>>n;
+  for(int i=0;i<n;i++){
+    cin>>num;
+    tree.insert(num);
+  }
+//calc
+  cin>>m;
+  set<int>::iterator end(tree.end());
+  for(int i=0;i<m;i++){
+    cin>>num;
+    if(tree.find(num)==end){
+      cout<<0<<'\n';
+    }else{
+      cout<<1<<'\n';
+    }
+  }
+}
 #endif

@@ -10,37 +10,36 @@
 
 using namespace std;
 
-void BK1920(){
-//input
-  set<int> tree;
-  int n,m,num;
-  cin>>n;
+void BK10816(){
+  int n,num,m;
+  scanf("%d",&n);
+  multiset<int> tree;
   for(int i=0;i<n;i++){
-    cin>>num;
+    scanf("%d",&num);
     tree.insert(num);
   }
-//calc
-  cin>>m;
-  set<int>::iterator end(tree.end());
+  scanf("%d",&m);
   for(int i=0;i<m;i++){
-    cin>>num;
-    if(tree.find(num)==end){
-      cout<<0<<'\n';
-    }else{
-      cout<<1<<'\n';
+    scanf("%d",&num);
+    multiset<int>::iterator from=tree.find(num);
+    if(from==tree.end()){
+      cout<<"0 ";
+      continue;
     }
+    multiset<int>::iterator to=tree.upper_bound(num);
+    cout<<distance(from,to)<<' ';
   }
 }
 
 int main(){
-  cin.tie(NULL);
-  cin.sync_with_stdio(false);
+  //cin.tie(NULL);
+  //cin.sync_with_stdio(false);
   
   //입력
   //변수
   //계산
   //출력
-  BK1920();
+  BK10816();
   
   return 0;
 }
