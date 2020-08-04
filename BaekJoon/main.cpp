@@ -10,38 +10,38 @@
 
 using namespace std;
 
-void BK10816_1(){
-  int t=10000000;
-    vector<int> v(2*t+1);
-    
-    int n,m,num;
-    scanf("%d",&n);
-    for(int i=0;i<n;i++){
-        scanf("%d",&num);
-        v[num+t]++;
-    }
-    scanf("%d",&m);
-    for(int i=0;i<m;i++){
-        scanf("%d",&num);
-        printf("%d ",v[num+t]);
-    }
-}
-void BK10816_2(){
-  int n,num,m,d;
-  scanf("%d",&n);
+void BK1654(){
+//input
+  int n,m;
+  scanf("%d %d",&n,&m);
   vector<int> v(n);
   for(int i=0;i<n;i++){
     scanf("%d",&v[i]);
   }
+//calc  
   sort(v.begin(),v.end());
-  scanf("%d",&m);
-  for(int i=0;i<m;i++){
-    scanf("%d",&num);
-    d=upper_bound(v.begin(),v.end(),num)-lower_bound(v.begin(),v.end(),num);
-    printf("%d ",d);
+  int left(1),right,mid,sum,ans;
+  right=v[n-1];
+  while(true){
+    sum=0;
+    mid=(left+right)/2;
+    for(auto& ele: v){
+        sum+=ele/mid;
+    }
+    if(sum<m){
+        right=mid-1;
+    }else{
+        left=mid+1;
+        ans=mid;
+    }
+    if(left>right){
+        break;
+    }
   }
+  
+  printf("%d",ans);
+  
 }
-
 int main(){
   //cin.tie(NULL);
   //cin.sync_with_stdio(false);
@@ -50,7 +50,7 @@ int main(){
   //변수
   //계산
   //출력
-  BK10816();
+  BK1654();
   
   return 0;
 }
