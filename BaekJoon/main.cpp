@@ -68,7 +68,7 @@ void BK2261_2_giveUp(){
     if(prev==v[i].first){
       yTree.insert(v[i].second);
     }else{
-      xTree.insert(prev,yTree);
+      //xTree.insert(prev,yTree);
     }
   }
 //계산
@@ -78,6 +78,8 @@ void BK2261_2_giveUp(){
 }
 struct Point{
   int x,y;
+  Point(){}
+  Point(int x, int y):x(x),y(y){}
   bool operator< (const Point& p) const{
     if(y==p.y){
       return x<p.x;
@@ -119,17 +121,23 @@ void BK2261_3_H_LineSweeping(){ //scanf를 사용하므로 유의
       }else{
         break;
       }
-    //y값 비교
-    int lowerBound=now.y-sqrt(ans)-1;
-    int upperBound=now.y+sqrt(ans)+1;
-    set<Point>::iterator LBiter=tree.lower_bound(lowerBound);
-    //입력
-    tree.insert(now);
     }
-
-  
-
+  //y값 비교
+    int d=sqrt(ans)+1;
+    Point lowerP(-100000,now.y-d);
+    Point upperP(100000,now.y+d); 
+    set<Point>::iterator LBiter=tree.lower_bound(lowerP);
+    set<Point>::iterator UBiter=tree.upper_bound(upperP);
+    for(LBiter;LBiter!=UBiter;LBiter++){
+      p=*LBiter;
+      if(dist2(p,now)<ans){
+        ans=dist2(p,now);
+      }
+    }
+  //입력
+    tree.insert(now);
   }
+  cout<<ans;
 }
 int main(){
   // cin.tie(NULL);
@@ -150,7 +158,7 @@ int main(){
 
   
   //출력
-  BK2261();
+  BK2261_3_H_LineSweeping();
   
  
   return 0;
