@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void BK1654(){  //unsigned int가 왜 사용되었는지 chk
+void BK2805(){ 
 //input
   int n,m;
   scanf("%d %d",&n,&m);
@@ -20,13 +20,15 @@ void BK1654(){  //unsigned int가 왜 사용되었는지 chk
   }
 //calc  
   sort(v.begin(),v.end());
-  unsigned int left(1),right,mid,sum;     ///중요. 범위가 1~2^31-1 까지, 즉 int 범위이지만, mid+1을 할 때 overflow가 발생할 수 있다. 이를 방지하기 위해 unsigned int를 사용했다.
+  long long left(1),right,mid,sum;    //m의 범위가 int_max의 근접해서, sum이 int 범위를 초과할 수 있기 때문에 long long 사용 
   right=v[n-1];
   while(true){
     sum=0;
     mid=(left+right)/2;
     for(const auto& ele: v){
-        sum+=ele/mid;
+      if(ele>mid){
+        sum+=ele-mid;
+      } 
     }
     if(sum<m){
         right=mid-1;
@@ -48,7 +50,7 @@ int main(){
   //변수
   //계산
   //출력
-  BK1654();
+  BK2805();
   
   return 0;
 }
