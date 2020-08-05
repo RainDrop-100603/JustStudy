@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void BK2805(){ 
+void BK2110(){ 
 //input
   int n,m;
   scanf("%d %d",&n,&m);
@@ -18,29 +18,44 @@ void BK2805(){
   for(int i=0;i<n;i++){
     scanf("%d",&v[i]);
   }
-//calc  
+//prepare  
   sort(v.begin(),v.end());
-  long long left(1),right,mid,sum;    //m의 범위가 int_max의 근접해서, sum이 int 범위를 초과할 수 있기 때문에 long long 사용 
-  right=v[n-1];
+  int prev=v[0];
+  int now;
+  vector<int> d(n-1);     //이웃 집과의 거리를 저장한 배열 
+  for(int i=0;i<n-1;i++){
+    now=v[i+1];
+    d[i]=now-prev;
+    prev=now;
+  }
+  sort(d.begin(),d.end());  
+//calc
+  int dist,left,right,mid;
+  left=0;right=n-1;
+  vector<int>::iterator iterFirst=v.begin();
+  vector<int>::iterator iterEnd=v.end();
+  vector<int>::iterator iterNow;
   while(true){
-    sum=0;
-    mid=(left+right)/2;
-    for(const auto& ele: v){
-      if(ele>mid){
-        sum+=ele-mid;
-      } 
+    dist=d[(left+right)/2];
+    iterNow=iterFirst;
+    int i=0;
+    for(i=0;i<m;i++){
+      if(iterNow==iterEnd){
+        break;
+      }
+      iterNow=lower_bound(v.begin(),v.end(),*iterNow+dist);
     }
-    if(sum<m){
-        right=mid-1;
+    if(iterNow==iterEnd){ //End여서는 안된다/
+      right=(left+right)/2-1;
     }else{
-        left=mid+1;
+      left=(left+right)/2+1;
     }
     if(left>right){
-        break;
+      break;
     }
   }
 
-  printf("%d",left-1);
+  printf("%d",d[left-1]);
 }
 int main(){
   //cin.tie(NULL);
@@ -50,7 +65,7 @@ int main(){
   //변수
   //계산
   //출력
-  BK2805();
+  BK2110();
   
   return 0;
 }

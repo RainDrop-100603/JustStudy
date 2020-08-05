@@ -1039,7 +1039,7 @@ void BK6549_ST(long long times){
   vector<int> tree=BK6549_SegmentTree(a);
   cout<<BK6549_ST_MaxSum(a,tree,0,times-1,0,times-1)<<"\n";
 }
-//Line Sweep
+  //Line Sweep
 struct Point{
   int x,y;
   Point(){}
@@ -1103,6 +1103,7 @@ void BK2261_3_H_LineSweeping(){ //scanf를 사용하므로 유의
   }
   cout<<ans;
 }
+//이분탐색
 void BK1920(){
 //input
   set<int> tree;
@@ -1185,5 +1186,39 @@ void BK1654(){  //unsigned int가 왜 사용되었는지 chk
 
   printf("%d",left-1);
 }
+void BK2805(){ 
+//input
+  int n,m;
+  scanf("%d %d",&n,&m);
+  vector<int> v(n);
+  for(int i=0;i<n;i++){
+    scanf("%d",&v[i]);
+  }
+//calc  
+  sort(v.begin(),v.end());
+  long long left(1),right,mid,sum;    //m의 범위가 int_max의 근접해서, sum이 int 범위를 초과할 수 있기 때문에 long long 사용 
+  right=v[n-1];
+  while(true){
+    sum=0;
+    mid=(left+right)/2;
+    for(const auto& ele: v){
+      if(ele>mid){
+        sum+=ele-mid;
+      } 
+    }
+    if(sum<m){
+        right=mid-1;
+    }else{
+        left=mid+1;
+    }
+    if(left>right){
+        break;
+    }
+  }
+
+  printf("%d",left-1);
+}
+
+
 
 #endif
