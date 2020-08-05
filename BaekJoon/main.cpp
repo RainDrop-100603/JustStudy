@@ -19,7 +19,7 @@ void BK1300_H(){ //기저에 깔린 법칙
         즉 아래와 같은 식이 도출된다
           A(i,j)<=A(i,j)보다 작거나 같은 수의 개수
         다시 말하면
-          A(i,j)번째 수 <= A(i,j) , 단 등호는 i==j==N일 경우에만 성립
+          A(i,j)번째 수 <= A(i,j) , (등호는 i==j==N일 경우에만 성립하는건 아니다. 1번째 1 2번째2, 더 있을수도?)
           K번째 수는 K보다 작거나 같다.
   min(K/i,N)은, i행에서 K보다 작은 수의 개수이다.
     어떤 수 K를 행 i로 나눈다고 생각하자.
@@ -33,40 +33,28 @@ void BK1300_H(){ //기저에 깔린 법칙
   K-a에 대하여, 이분탐색을 통하여 a=0일때 sum+1을 만족하는 K를 찾는다.
     K-3이 여전히 sum+1번째 숫자보다 크거나 같다면, K-3은 K보다 sum+1에 더 가까워진 것이다.
     K는 조건을 만족하는데 K-1을 만족하지 못한다면, 그때의 K가 sum+1번째 수라고 할 수 있다. 
-
-
+  sum+1=K가 되도록 해서 구하자
 */
 //input
   int N,K;
   scanf("%d %d",&N,&K);
 //prepare  
-  sort(v.begin(),v.end());
 //calc
-  int left,right,mid;  
-  left=1;right=v[n-1];
-  vector<int>::iterator iterFirst=v.begin();
-  vector<int>::iterator iterEnd=v.end();
-  vector<int>::iterator iterNow;
-  while(true){
+  int left(1),right(K),mid,sum;  
+  while(left<=right){
     mid=(left+right)/2;
-    iterNow=iterFirst;
-    for(int i=0;i<m-1;i++){   //first = 1, add m-1
-      if(iterNow==iterEnd){
-        break;
-      }
-      iterNow=lower_bound(v.begin(),v.end(),*iterNow+mid);
+    sum=0;
+    for(int i=1;i<=N;i++){
+      sum+=min(mid/i,N);
     }
-    if(iterNow==iterEnd){ //End여서는 안된다/
-      right=mid-1;
-    }else{
+    if(sum<K){ 
       left=mid+1;
-    }
-    if(left>right){
-      break;
+    }else{
+      right=mid-1;
     }
   }
   
-  printf("%d",left-1);
+  printf("%d",right+1);
 }
 int main(){
   //cin.tie(NULL);
@@ -76,20 +64,7 @@ int main(){
   //변수
   //계산
   //출력
-  //BK1300();
-  int ans;
-  for(int i=1;i<11;i++){
-    for(int j=1;j<11;j++){
-      ans=i*j;
-      cout<<ans;
-      if(ans<10){
-        cout<<"  ";
-      }else if(ans<100){
-        cout<<" ";
-      }
-    }
-    cout<<"\n";
-  }
-  
+  BK1300_H();
+
   return 0;
 }
