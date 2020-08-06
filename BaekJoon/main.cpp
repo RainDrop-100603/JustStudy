@@ -11,7 +11,7 @@
 
 using namespace std;
 
-void BK11279(){
+void BK1927(){
 //input
   int N;
   scanf("%d",&N);
@@ -25,8 +25,8 @@ void BK11279(){
       if(tree.size()==0){
         printf("%d\n",0);
       }else{
-        int first=tree.rbegin()->first;
-        int second=tree.rbegin()->second;
+        int first=tree.begin()->first;
+        int second=tree.begin()->second;
         printf("%d\n",first);
         tree.erase(first);
         if(second>1){
@@ -55,7 +55,7 @@ int main(){
   //변수
   //계산
   //출력
-  BK11279();
+  BK1927();
   
   return 0;
 }
