@@ -10,7 +10,9 @@
 //#include "GoodFunction.h"
 
 using namespace std;
-
+bool cmpPairX(const pair<int,int>& p1,const pair<int,int>& p2){
+  return p1.first<p2.first;
+}
 void BK2293_Memover(){
 //input
   int N,K;
@@ -39,7 +41,7 @@ void BK2293_Memover(){
   }
   printf("%d",table[K][N-1]);
 }
-void BK2293_2(){  //table에 유효한 값만 저장하자 
+void BK2293_Memover2(){  //table에 유효한 값만 저장하자 
 //input
   int N,K;
   scanf("%d %d",&N,&K);
@@ -49,10 +51,10 @@ void BK2293_2(){  //table에 유효한 값만 저장하자
   }
 //prepare  
   sort(arr.begin(),arr.end());
-  vector<vector<pair<int,int>>> table(N,vector<pair<int,int>>(0));  // i행은 arr[i]의 유효한 값: pair<num,count>를 저장
-  for(int i=0;i<N;i++){                                             // i 행의 pair<num,count> : num 에서 최댓값이 i인 경우의 수는 count
-    table[i].push_back(make_pair(0,1));                             // 기존의 A(i,j)는 table[j].find(lowerbound[i]);
-  }                                                                 //lower bound는 pair.first 값이다. 이걸 어떻게 찾을 것이냐? map?직접 만들기? 
+  vector<vector<pair<int,int>>> table(N,vector<pair<int,int>>(1,make_pair(0,1)));  // i행은 arr[i]의 유효한 값: pair<num,count>를 저장
+  //for(int i=0;i<N;i++){                                             // i 행의 pair<num,count> : num 에서 최댓값이 i인 경우의 수는 count
+  //   table[i].push_back(make_pair(0,1));                             // 기존의 A(i,j)는 lowerbound(table[j].begin(),table[j].end(),i)->second;
+  // }                                                                 
   int dist,prev;
 //calc
   for(int i=1;i<K+1;i++){
@@ -60,12 +62,16 @@ void BK2293_2(){  //table에 유효한 값만 저장하자
     for(int j=0;j<N;j++){
       dist=i-arr[j];
       if(dist>=0){
-        prev+=table[dist][j];
+        prev+=lower_bound(table[j].begin(),table[j].end(),make_pair(dist,0),cmpPairX)->second;
       }
-      table[i][j]=prev;
+      if(table[j].back().second==prev){
+        table[j].back().first++;
+      }else{
+        table[j].push_back(make_pair(i,prev));
+      }
     }
   }
-  printf("%d",table[K][N-1]);
+  printf("%d",table[N-1].back().second);
 }
 
 int main(){
@@ -76,7 +82,7 @@ int main(){
   //변수
   //계산
   //출력
-  BK2293();
+  BK2293_2();
   
   return 0;
 }
