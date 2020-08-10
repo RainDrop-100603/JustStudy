@@ -73,6 +73,49 @@ void BK2293_Memover2(){  //table에 유효한 값만 저장하자
   }
   printf("%d",table[N-1].back().second);
 }
+void BK2293_3(){
+//input
+  int N,K;
+  scanf("%d %d",&N,&K);
+  vector<int> arr(N);
+  for(auto& ele: arr){
+    scanf("%d",&ele);
+  }
+//prepare  
+  sort(arr.begin(),arr.end());
+  vector<vector<int>> table(2,vector<int>(K+1));  //A(ij)==최댓값이 arr[i]인 j의 경우의 수, 0열에는 1저장
+  for(int i=0;i<2;i++){
+    table[i][0]=1;
+  } 
+  int from,prev;
+  bool first(true); //배열을 절약해 두개만 사용한다. ture면 1행을 이용해 0행에 저장
+//calc
+  for(int i=0;i<N;i++){
+    for(int j=1;j<K+1;j++){ //A(ij)=A(i-1,j)+A(i,j-arr[i]); ,prev=A(i-1,j);
+      from=j-arr[i];
+      if(first){
+        prev=table[1][j];
+        if(from>=0){
+          prev+=table[0][from];
+        }
+        table[0][j]=prev;
+      }else{
+        prev=table[0][j];
+        if(from>=0){
+          prev+=table[1][from];
+        }
+        table[1][j]=prev;
+      }
+    }
+    !first;
+  }
+  if(!first){
+    printf("%d",table[0][K]);
+  }else{
+    printf("%d",table[1][K]);
+  }
+  
+}
 
 int main(){
   //cin.tie(NULL);
@@ -82,7 +125,7 @@ int main(){
   //변수
   //계산
   //출력
-  BK2293_2();
+  BK2293_3();
   
   return 0;
 }
