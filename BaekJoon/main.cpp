@@ -107,7 +107,7 @@ void BK2293_3(){
         table[1][j]=prev;
       }
     }
-    !first;
+    first=!first;
   }
   if(!first){
     printf("%d",table[0][K]);
