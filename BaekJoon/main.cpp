@@ -10,30 +10,26 @@
 //#include "GoodFunction.h"
 
 using namespace std;
-void BK11066(){
+void BK11049(){
 //input
   int N;
   scanf("%d",&N);
-  vector<int> arr(N); //input value
+  vector<pair<int,int>> arr(N); //input value
   for(int i=0;i<N;i++){
-    scanf("%d",&arr[i]);
+    scanf("%d %d",&arr[i].first,&arr[i].second);
   }
 //prepare
   vector<vector<int>> table(N,vector<int>(N));  //A(ij)==[i,i+j+1) 범위의 value를 만드는데 필요한 cost의 최소값
-  int prevMin,newMin,tmpSum;
+  int prevMin,newMin,mul;
 //calc
-  //A(ij)=min(A(ik)+A(i+k+1,j-k-1))+sum(ij),k=0~j-1,sum(ij)=sum(arr[i]~arr[j])
+  //A(ij)=min(A(ik)+A(i+k+1,j-k-1)+mul(ikj))+sum(ij),k=0~j-1,mul(ikj)=a[i].first*a[i+k].second*a[i+j].second;
   for(int j=1;j<N;j++){
     for(int i=0;i<N-j;i++){
       prevMin=INT32_MAX;
-      tmpSum=0;
-      for(int k=i;k<=i+j;k++){
-        tmpSum+=arr[k];
-      }
       for(int k=0;k<j;k++){
-        prevMin=min(prevMin,table[i][k]+table[i+k+1][j-k-1]);
+        prevMin=min(prevMin,table[i][k]+table[i+k+1][j-k-1]+arr[i].first*arr[i+k].second*arr[i+j].second);
       }
-      table[i][j]=prevMin+tmpSum; 
+      table[i][j]=prevMin;
     }
   }
 //output
@@ -55,11 +51,11 @@ int main(){
   //변수
   //계산
   //출력
-  int N;
-  scanf("%d",&N);
-  while(N--){
-    BK11066();
-  }
+//   int N;
+//   scanf("%d",&N);
+//   while(N--){
+    BK11049();
+//  }
   
   return 0;
 }
