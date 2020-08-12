@@ -130,6 +130,117 @@ void BK1520_Memover(){
 //output
   printf("%d\n",sum);
 }
+void RightChk2(int current,int right,int& cp,int& rp){
+  if(current>right){
+    rp+=1000;
+  }else if(current<right){
+    cp+=10;
+  }
+}
+void DownChk2(int current,int down,int& cp,int& dp){
+  if(current>down){
+    dp+=1;
+  }else if(current<down){
+    cp+=100;
+  }
+}
+int lookAround2(vector<vector<int>>& table,int i, int j){
+  int sum=0;
+  int obj=table[i][j];
+  if(i+j==0){
+    return 1;
+  }else if(obj==0){
+    return 0;
+  }
+  if((obj/10)%10){
+    sum+=lookAround2(table,i,j+1);
+  }
+  if(obj/1000){
+    sum+=lookAround2(table,i,j-1);
+  }
+  if(obj%10){
+    sum+=lookAround2(table,i-1,j);
+  }
+  if((obj/100)%10){
+    sum+=lookAround2(table,i+1,j);
+  }
+  return sum;
+}
+void BK1520_Timeover(){
+//input
+  int row,col;
+  scanf("%d %d",&row,&col);
+  vector<vector<int>> table(row,vector<int>(col)); //input value
+  for(int i=0;i<row;i++){
+    for(int j=0;j<col;j++){
+      scanf("%d",&table[i][j]);
+    }
+  }
+//prepare
+  vector<vector<int>> movTable(row,vector<int>(col)); // A(ij)의 값이 1101이면, 3시방향 빼고 이동 가능하다는 뜻(9630)
+  int current,right,down;
+  int cSig;  //current Signal
+  //1차 정렬
+  for(int i=0;i<row;i++){   //끝부분은 경계를 벗어나기 때문에 따로 해준다.
+    right=table[i][0];
+    for(int j=0;j<col;j++){
+      current=right;
+      if(i==row-1&&j==col-1){
+        continue;
+      }else if(i==row-1){
+        right=table[i][j+1];
+        RightChk2(current,right,movTable[i][j],movTable[i][j+1]);
+      }else if(j==col-1){
+        down=table[i+1][j];
+        DownChk2(current,down,movTable[i][j],movTable[i+1][j]);
+      }else{
+        right=table[i][j+1];
+        down=table[i+1][j];
+        RightChk2(current,right,movTable[i][j],movTable[i][j+1]);
+        DownChk2(current,down,movTable[i][j],movTable[i+1][j]);
+      }
+    }
+  }
+  //2차 정렬
+  for(int i=0;i<row;i++){   //끝부분은 경계를 벗어나기 때문에 따로 해준다.
+    for(int j=0;j<col;j++){
+      cSig=movTable[i][j];
+      if(i+j==0){
+        if((cSig/10)%10){
+          movTable[0][1]=0;
+        }
+        if((cSig/100)%10){
+          movTable[1][0]=0;
+        }
+      }else if(i==row-1&&j==col-1){
+        continue;
+      }else if(i==row-1){
+        if(cSig==0){
+          movTable[i][j+1]%=1000;
+          //movTable[i][j+1].left=false;
+        }
+      }else if(j==col-1){
+        if(cSig==0){
+          movTable[i+1][j]=(movTable[i+1][j]/10)*10;
+          //movTable[i+1][j].up=false;
+        }
+      }else{
+        if(cSig==0){
+          movTable[i][j+1]%=1000;
+          movTable[i+1][j]=(movTable[i+1][j]/10)*10;
+          // movTable[i][j+1].left=false;
+          // movTable[i+1][j].up=false;
+        }
+      }
+    }
+  }
+  //목적지가 막혀있으면 막다른 지점
+//calc
+  int sum;
+  sum=lookAround2(movTable,row-1,col-1);
+//output
+  printf("%d\n",sum);
+}
 
 int main(){
   //cin.tie(NULL);
@@ -142,7 +253,7 @@ int main(){
 //   int N;
 //   scanf("%d",&N);
 //   while(N--){
-    BK1520_Memover();
+    BK1520();
 //  }
   
   return 0;
