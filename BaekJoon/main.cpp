@@ -239,9 +239,74 @@ void BK1520_Timeover(){
   int sum;
   sum=lookAround2(movTable,row-1,col-1);
 //output
-  printf("%d\n",sum);
+  for(auto& ele:movTable){
+    for(auto& ele2:ele){
+      printf("%d ",ele2);
+    }
+    printf("\n");
+  }
+  //printf("%d\n",sum);
 }
+int DFS(vector<vector<int>>& table, vector<vector<int>>& movTable, int i, int j,int row,int col){
+  int now=movTable[i][j];
+  if(now>-1){  //0이상이면 이미 탐색을 마친 것
+    return now;
+  }
+  int sum=0;
+  int value=table[i][j];
+  if(i+1<row){
+    if(table[i+1][j]<value){
+      sum+=DFS(table,movTable,i+1,j,row,col);
+    }
+  }
+  if(i-1>=0){
+    if(table[i-1][j]<value){
+      sum+=DFS(table,movTable,i-1,j,row,col);
+    }
+  }
+  if(j+1<col){
+    if(table[i][j+1]<value){
+      sum+=DFS(table,movTable,i,j+1,row,col);
+    }
+  }
+  if(j-1>=0){
+    if(table[i][j-1]<value){
+      sum+=DFS(table,movTable,i,j-1,row,col);
+    }
+  }
+  movTable[i][j]=sum;
+  return sum;
+}
+void BK1520_H_DFS(){
+//input
+  int row,col;
+  scanf("%d %d",&row,&col);
+  vector<vector<int>> table(row,vector<int>(col)); //input value
+  for(int i=0;i<row;i++){
+    for(int j=0;j<col;j++){
+      scanf("%d",&table[i][j]);
+    }
+  }
+//prepare
+  vector<vector<int>> movTable(row,vector<int>(col)); // -1은 미방문, 양수일 경우 방문횟수
+  for(auto& ele:movTable){
+    for(auto& ele2:ele){
+      ele2=-1;
+    }
+  }
+  movTable[row-1][col-1]=1;
+//calc
+  DFS(table,movTable,0,0,row,col);
+//output
+  // for(auto& ele:movTable){
+  //   for(auto& ele2:ele){
+  //     printf("%d ",ele2);
+  //   }
+  //   printf("\n");
+  // }
+  printf("%d\n",movTable[0][0]);
 
+}
 int main(){
   //cin.tie(NULL);
   //cin.sync_with_stdio(false);
@@ -253,7 +318,7 @@ int main(){
 //   int N;
 //   scanf("%d",&N);
 //   while(N--){
-    BK1520();
+    BK1520_H_DFS();
 //  }
   
   return 0;
