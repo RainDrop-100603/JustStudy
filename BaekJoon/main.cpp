@@ -23,55 +23,38 @@ void BK7579(){
   }
 //prepare
   sort(arr.begin(),arr.end());
-  map<int,int> costMap1;  //map[i]= i번째 원소까지 input한 tree
-  map<int,int> costMap2;  //key : cost의 값, //value : 해제되는 memory 값
-  costMap1.insert(make_pair(0,0));
-  costMap2.insert({0,0});
-  bool first; //first면 costMap1==Map[i], costMap2==Map[i-1]
+  map<int,int> costMap;  //map[i]= i번째 원소까지 input한 tree
+  vector<pair<int,int>> tmpStack; //map[i+1]로 넘어가기 전에 잠시 저장하는 곳
+  costMap.insert(make_pair(0,0)); //key=cost, value=memSize
   int ans;
   int cost,memSize;
 //calc
   //map 정렬
   for(int i=0;i<N;i++){
-    auto nowMap=&costMap1;
-    auto prevMap=&costMap2;
-    if(!first){
-        auto* tmp=nowMap;
-        nowMap=prevMap;
-        prevMap=tmp;
+    for(auto iter=costMap.begin();iter!=costMap.end();iter++){
+      cost=iter->first+arr[i].first;
+      memSize=iter->second+arr[i].second;
+      tmpStack.push_back({cost,memSize});
     }
-    for(auto iter=prevMap->begin();iter!=prevMap->end();iter++){
-        cost=iter->first+arr[i].first;
-        memSize=iter->second+arr[i].second;
-        auto prevIter=prevMap->find(cost);
-        if(prevIter!=prevMap->end()){
-            if(prevIter->second>memSize){
-                memSize=prevIter->second;
-            }
+    for(auto& ele:tmpStack){
+      auto ret=costMap.insert(ele);
+      if(!ret.second){
+        if(ret.first->second<ele.second){
+          ret.first->second=ele.second;
         }
-        auto ret=nowMap->insert({cost,memSize});   //ret.first==해당하는 위치의 iter, ret.second==성공여부
-        if(!ret.second){
-            ret.first->second=memSize;
-        }
-    }
+      }
+    }  
   }
   // value 검색
-  auto nowMap=&costMap2;
-  if(!first){
-    nowMap=&costMap2;
-  }
-  for(auto& ele: *nowMap){
+  for(auto& ele: costMap){
     if(ele.second>=M){
-        ans=ele.first;
-        break;
+      ans=ele.first;
+      break;
     }
   }
 //output
-  // for(auto& ele:movTable){
-  //   for(auto& ele2:ele){
-  //     printf("%d ",ele2);
-  //   }
-  //   printf("\n");
+  // for(auto& ele:costMap){
+  //   printf("%d %d\n",ele.first,ele.second);
   // }
   printf("%d\n",ans);
 
