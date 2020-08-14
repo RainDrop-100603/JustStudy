@@ -10,7 +10,7 @@
 //#include "GoodFunction.h"
 
 using namespace std;
-void BK7579(){
+void BK7579_v2(){
 //input
   int N,M;
   scanf("%d %d",&N,&M); //N== # program, M==need size;
@@ -24,26 +24,22 @@ void BK7579(){
 //prepare
   sort(arr.begin(),arr.end());
   map<int,int> costMap;  //map[i]= i번째 원소까지 input한 tree
-  vector<pair<int,int>> tmpStack; //map[i+1]로 넘어가기 전에 잠시 저장하는 곳
   costMap.insert(make_pair(0,0)); //key=cost, value=memSize
   int ans;
   int cost,memSize;
 //calc
   //map 정렬
   for(int i=0;i<N;i++){
-    for(auto iter=costMap.begin();iter!=costMap.end();iter++){
+    for(auto iter=costMap.rbegin();iter!=costMap.rend();iter++){
       cost=iter->first+arr[i].first;
       memSize=iter->second+arr[i].second;
-      tmpStack.push_back({cost,memSize});
-    }
-    for(auto& ele:tmpStack){
-      auto ret=costMap.insert(ele);
+      auto ret=costMap.insert({cost,memSize});
       if(!ret.second){
-        if(ret.first->second<ele.second){
-          ret.first->second=ele.second;
+        if(ret.first->second<memSize){
+          ret.first->second=memSize;
         }
       }
-    }  
+    } 
   }
   // value 검색
   for(auto& ele: costMap){
@@ -70,7 +66,7 @@ int main(){
 //   int N;
 //   scanf("%d",&N);
 //   while(N--){
-    BK7579();
+    BK7579_v2();
 //  }
   
   return 0;
