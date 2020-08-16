@@ -98,14 +98,13 @@ void BK10942_2(){
   int from,to,ans,d;  //(from-1)~(to-1)
   vector<pair<int,bool>> p(N);  //palindrome, p(n).first=d: n으로부터 d길이까지 펜릴드롬, second=true라면 -d~d+1까지 펜릴드롬
   vector<pair<int,bool>> stack; //palindrome을 저장하는 stack. 더 이상 palindrom이 아니게 되면 해당 ele를 pop, 뒤에서부터 chk
+  stack.reserve(N);
   if(arr[0]==arr[1]){           //p(n)의 default는 (0,false), 즉 자기자신만 펜릴드롬인 수
     stack.push_back({0,true});  //true는 짝수펠린드롬. stack을 이용하면 시작부는 긴 p, back으로 갈수록 짧은 p가 저장되게 된다.
-  }                             //뒤에서부터 체크하면, 한번 pop이 일어나며 이 이후로는 전부 pop
-  bool isPop;
+  }                             
 //calc
   //팬릴드롬 행렬 생성
   for(int i=2;i<N;i++){
-    isPop=false;
     for(auto iter=stack.rbegin();iter!=stack.rend();iter++){
       from=i-iter->first*2-2;
       if(iter->second){
@@ -114,8 +113,11 @@ void BK10942_2(){
       if(arr[i]==arr[from]){
         iter->first++;
       }else{
-        isPop=true;
+        p[i-1-iter->first]=*iter;s
       }
+    }
+    for(auto& ele:stack){
+      
     }
 
     if(arr[i]==arr[i-2]){
