@@ -6,6 +6,7 @@
 #include <utility>
 #include <set>
 #include <map>
+#include <list>
 
 //#include "GoodFunction.h"
 
@@ -21,29 +22,74 @@ void BK10942(){
   scanf("%d",&Q); //N== #Question
 //prepare
   int from,to,ans;  //(from-1)~(to-1)
-  vector<int> p(N);  //palindrome, p(n) == k의 의미는, n부터 좌우 k길이만큼까지가 펜릴 그램이란 의미다. 
-                    //n=(from+to)/2 일 때, n-p(n)<=from<to<=n+p(n) 이라면 from~to 는 펜릴그램 구간이다. (from+to)%2==1이라면 p(n+1)==k인지 체크, 우변은 n+1+p(n+1)로 변경
+  vector<int> pO(N);  //palindrome, p(n) == k: n-k ~ n+K . odd range
+  vector<int> pE(N);  //palindrome, p(n) == k: n-k ~ n+k-1 . even range
+  list<int> listO;  //odd range을 임시저장하는 list: ex 0 1 2 3 4
+  list<int> listE;  //even range를 임시저장하는 list: ex 0 1 2 3 4 5
 //calc
   //팬릴드롬 행렬 생성
-
-//output
-  // for(auto& ele:costMap){
-  //   printf("%d %d\n",ele.first,ele.second);
-  // }
-  for(int i=0;i<Q;i++){
-    scanf("%d %d",&from,&to);
-    ans=0;
-    if((from+to)%2==0){
-      if(p[from+to]/2==1){
-        ans=1;
-      }
-    }else{
-      if(p[from+to]/2==2){
-        ans=1;
+  if(arr[1]==arr[0]){
+    listE.push_back(1);
+  }
+  for(int i=2;i<N;i++){
+    //odd range chk
+    for(auto iter=listO.begin();iter!=listO.end();iter++){
+      int d=*iter;
+      int from=i-d*2-2;
+      if(from>-1&&arr[from]==arr[i]){
+        (*iter)++;
+      }else{
+        pO[i-d-1]=d;
+        iter=listO.erase(iter);
       }
     }
-    printf("%d\n",ans);
+    if(arr[i]==arr[i-2]){
+      listO.push_back(1);
+    }
+    //even range chk
+    for(auto iter=listE.begin();iter!=listE.end();iter++){
+      int d=*iter;
+      int from=i-d*2-1;
+      if(from>-1&&arr[from]==arr[i]){
+        (*iter)++;
+      }else{
+        pE[i-d]=d;
+        iter=listE.erase(iter);
+      }
+    }
+    if(arr[i]==arr[i-1]){
+      listE.push_back(1);
+    }
   }
+  //list를 비우는 작업 
+  for(auto iter=listO.begin();iter!=listO.end();iter++){
+    pO[N-*iter-1]=*iter;
+  }
+  for(auto iter=listE.begin();iter!=listE.end();iter++){
+    pE[N-*iter]=*iter;
+  }
+
+//output
+  for(auto& ele:pO){
+    printf("%d ",ele);
+  }printf("\n");
+  for(auto& ele:pE){
+    printf("%d ",ele);
+  }printf("\n");
+  // for(int i=0;i<Q;i++){
+  //   scanf("%d %d",&from,&to);
+  //   ans=0;
+  //   if((from+to)%2==0){
+  //     if(p[from+to]/2==1){
+  //       ans=1;
+  //     }
+  //   }else{
+  //     if(p[from+to]/2==2){
+  //       ans=1;
+  //     }
+  //   }
+  //   printf("%d\n",ans);
+  // }
 
 }
 int main(){
