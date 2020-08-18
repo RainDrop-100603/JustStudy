@@ -11,67 +11,62 @@
 //#include "GoodFunction.h"
 
 using namespace std;
-void BK10942(){
+void DFS(map<int,vector<int>>& graph, map<int,bool>& chk, int from){ 
+  auto iter=chk.find(from);
+  if(iter->second){
+    return;
+  }
+  printf("%d ",from);
+  iter->second=true;
+  for(auto& ele:graph.find(from)->second){
+    DFS(graph,chk,ele);
+  }
+  // while(!graph.fin.empty()){
+  //   DFS(graph,chk,graph[from].front());
+  //   graph[from].pop_front();
+  // }
+}
+void BFS(map<int,vector<int>>& graph, map<int,bool>& chk, int from){
+  list<int> deque;
+  deque.push_back(from);
+  chk.find(from)->second=true;
+  while(!deque.empty()){
+    from=deque.front();
+    deque.pop_front();
+    printf("%d ",from);
+    for(auto& ele2:graph.find(from)->second){
+      if(!chk.find(ele2)->second){
+        deque.push_back(ele2);
+        chk[ele2]=true;
+      }
+    }
+  }
+}
+void BK1260(){
 //input
-  int N,Q;  //팰린드롬: 앞뒤를 뒤집어도 똑같은 문자열 
-  scanf("%d",&N); //N== size of arr
-  vector<int> arr(N);  
-  for(auto& ele:arr){
-    scanf("%d",&ele);
+  int N,M,V,key,value;  //팰린드롬: 앞뒤를 뒤집어도 똑같은 문자열 
+  scanf("%d %d %d",&N,&M,&V); //N: #node,M: #edge, V: start node
+  map<int,vector<int>> graph;   //graph[i] 의 ele: i node와 연결된 node의 list
+  map<int,bool> chk;  //chklist
+  for(int i=0;i<M;i++){
+    scanf("%d %d",&key,&value);
+    auto ans=graph.insert(make_pair(key,vector<int>()));
+    ans.first->second.push_back(value);
+    if(ans.second){
+      chk.insert(make_pair(key,false));
+    }
   }
-  scanf("%d",&Q); //N== #Question
 //prepare
-  int from,to,ans;  //(from-1)~(to-1)
-  vector<int> pO(N);  //palindrome, p(n) == k: n-k ~ n+K . odd range
-  vector<int> pE(N);  //palindrome, p(n) == k: n-k ~ n+k-1 . even range
-  list<int> listO;  //odd range을 임시저장하는 list: ex 0 1 2 3 4
-  list<int> listE;  //even range를 임시저장하는 list: ex 0 1 2 3 4 5
+  for(auto& ele:graph){
+    sort(ele.second.begin(),ele.second.end());
+  }
 //calc
-  //팬릴드롬 행렬 생성
-  if(arr[1]==arr[0]){
-    listE.push_back(1);
+  DFS(graph,chk,V);
+  printf("\n");
+  for(auto& ele:chk){
+    ele.second=false;
   }
-  for(int i=2;i<N;i++){
-    //odd range chk
-    auto iter=listO.begin();
-    while(iter!=listO.end()){
-      int d=*iter;
-      int from=i-d*2-2;
-      if(from>-1&&arr[from]==arr[i]){
-        (*iter)++;
-        iter++;
-      }else{
-        pO[i-d-1]=d;
-        iter=listO.erase(iter);
-      }
-    }
-    if(arr[i]==arr[i-2]){
-      listO.push_back(1);
-    }
-    //even range chk
-    iter=listE.begin();
-    while(iter!=listE.end()){
-      int d=*iter;
-      int from=i-d*2-1;
-      if(from>-1&&arr[from]==arr[i]){
-        (*iter)++;
-        iter++;
-      }else{
-        pE[i-d]=d;
-        iter=listE.erase(iter);
-      }
-    }
-    if(arr[i]==arr[i-1]){
-      listE.push_back(1);
-    }
-  }
-  //list를 비우는 작업 
-  for(auto iter=listO.begin();iter!=listO.end();iter++){
-    pO[N-*iter-1]=*iter;
-  }
-  for(auto iter=listE.begin();iter!=listE.end();iter++){
-    pE[N-*iter]=*iter;
-  }
+  BFS(graph,chk,V);
 
 //output
   // for(auto& ele:pO){
@@ -80,22 +75,6 @@ void BK10942(){
   // for(auto& ele:pE){
   //   printf("%d ",ele);
   // }printf("\n");
-  for(int i=0;i<Q;i++){
-     scanf("%d %d",&from,&to);
-     ans=0;
-     from--;to--;
-     int d=(to-from)/2;
-     if((from+to)%2==0){
-       if(pO[(from+to)/2]>=d){
-         ans=1;
-       }
-     }else{
-       if(pE[(from+to)/2+1]>=d+1){
-         ans=1;
-       }
-     }
-     printf("%d\n",ans);
-   }
 
 }
 int main(){
@@ -109,7 +88,7 @@ int main(){
 //   int N;
 //   scanf("%d",&N);
 //   while(N--){
-    BK10942();
+    BK1260();
 //  }
   
   return 0;
