@@ -33,11 +33,13 @@ void BK10942(){
   }
   for(int i=2;i<N;i++){
     //odd range chk
-    for(auto iter=listO.begin();iter!=listO.end();iter++){
+    auto iter=listO.begin();
+    while(iter!=listO.end()){
       int d=*iter;
       int from=i-d*2-2;
       if(from>-1&&arr[from]==arr[i]){
         (*iter)++;
+        iter++;
       }else{
         pO[i-d-1]=d;
         iter=listO.erase(iter);
@@ -47,11 +49,13 @@ void BK10942(){
       listO.push_back(1);
     }
     //even range chk
-    for(auto iter=listE.begin();iter!=listE.end();iter++){
+    iter=listE.begin();
+    while(iter!=listE.end()){
       int d=*iter;
       int from=i-d*2-1;
       if(from>-1&&arr[from]==arr[i]){
         (*iter)++;
+        iter++;
       }else{
         pE[i-d]=d;
         iter=listE.erase(iter);
@@ -70,26 +74,28 @@ void BK10942(){
   }
 
 //output
-  for(auto& ele:pO){
-    printf("%d ",ele);
-  }printf("\n");
-  for(auto& ele:pE){
-    printf("%d ",ele);
-  }printf("\n");
-  // for(int i=0;i<Q;i++){
-  //   scanf("%d %d",&from,&to);
-  //   ans=0;
-  //   if((from+to)%2==0){
-  //     if(p[from+to]/2==1){
-  //       ans=1;
-  //     }
-  //   }else{
-  //     if(p[from+to]/2==2){
-  //       ans=1;
-  //     }
-  //   }
-  //   printf("%d\n",ans);
-  // }
+  // for(auto& ele:pO){
+  //   printf("%d ",ele);
+  // }printf("\n");
+  // for(auto& ele:pE){
+  //   printf("%d ",ele);
+  // }printf("\n");
+  for(int i=0;i<Q;i++){
+     scanf("%d %d",&from,&to);
+     ans=0;
+     from--;to--;
+     int d=(to-from)/2;
+     if((from+to)%2==0){
+       if(pO[(from+to)/2]>=d){
+         ans=1;
+       }
+     }else{
+       if(pE[(from+to)/2+1]>=d+1){
+         ans=1;
+       }
+     }
+     printf("%d\n",ans);
+   }
 
 }
 int main(){
