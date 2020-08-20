@@ -6,19 +6,25 @@
 #include <utility>
 #include <set>
 #include <map>
+#include <list>
 
 //#include "GoodFunction.h"
 
 using namespace std;
 void BK10942_timeover(){
 //input
-  int N,Q;  //팰린드롬: 앞뒤를 뒤집어도 똑같은 문자열 
-  scanf("%d",&N); //N== size of arr
-  vector<int> arr(N);  
-  for(auto& ele:arr){
-    scanf("%d",&ele);
+  int N,M,V,key,value;  //팰린드롬: 앞뒤를 뒤집어도 똑같은 문자열 
+  scanf("%d %d %d",&N,&M,&V); //N: #node,M: #edge, V: start node
+  map<int,vector<int>> graph;   //graph[i] 의 ele: i node와 연결된 node의 list
+  map<int,bool> chk;  //chklist
+  for(int i=0;i<M;i++){
+    scanf("%d %d",&key,&value);
+    auto ans=graph.insert(make_pair(key,vector<int>()));
+    ans.first->second.push_back(value);
+    if(ans.second){
+      chk.insert(make_pair(key,false));
+    }
   }
-  scanf("%d",&Q); //N== #Question
 //prepare
   int from,to,ans;  //(from-1)~(to-1)
   vector<vector<pair<int,bool>>> p(N);  //palindrome, p(n)의 원소는, 펠린드롬까지의 거리와 짝/홀을 나타낸다.
@@ -178,7 +184,11 @@ int main(){
 //   int N;
 //   scanf("%d",&N);
 //   while(N--){
+<<<<<<< HEAD
     BK10942_timeover();
+=======
+    BK1260();
+>>>>>>> ecaadc27347d966802049b6022b045ea399ee0e0
 //  }
   
   return 0;
