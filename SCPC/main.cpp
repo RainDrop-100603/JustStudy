@@ -69,15 +69,31 @@ int main(int argc, char** argv)
     }
     //prepare
     vector<vector<pair<bool,int>>> DPtable(N+1,vector<pair<bool,int>>(N+1));  //first: true-승리 ,A(ij)=deck1 1 i개, deck2 j개
-    DPtable[0][0]={true,K};  //second: 더 가져갈 수 있는 숫자 (3이면 1장 혹은 합이 3 이하인 카드 n장)
-    int tmp,idx;
+    DPtable[0][0]={true,0}; //second: 더 가져갈 수 있는 숫자 (3이면 1장 혹은 합이 3 이하인 카드 n장)
+    int tmp;
     for(int i=0;i<N;i++){
       tmp=DPtable[i][0].second-deck1[i];
-      if(tmp<0){
-        DPtable[i+1][0]={!DPtable[i][0].first,K};
-      }else{
+      if(tmp>0){
         DPtable[i+1][0]={DPtable[i][0].first,tmp};
+      }else{
+        DPtable[i+1][0]={!DPtable[i][0].first,K}; 
       }
+    }
+    for(int i=0;i<N+1;i++){
+      for(int j=0;j<N;j++){
+        tmp=DPtable[i][j].second-deck2[j];
+        if(tmp>0){
+          DPtable[i][j+1]={DPtable[i][j].first,tmp};
+        }else{
+          DPtable[i][j+1]={!DPtable[i][j].first,K};
+        }
+      }
+    }
+    for(auto& ele:DPtable){
+      for(auto& ele2:ele){
+        cout<<"("<<ele2.first<<" "<<ele2.second<<")";
+      }
+      cout<<endl;
     }
 
     //calculate
@@ -86,7 +102,7 @@ int main(int argc, char** argv)
 		
 		// Print the answer to standard output(screen).
 		cout << "Case #" << test_case+1 << endl;
-		cout << Answer << endl;
+		cout << Answer << " " << (N+1)*(N+1)-Answer << endl;
 	}
 
 	return 0;//Your program should return 0 on normal termination.
