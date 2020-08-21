@@ -25,9 +25,9 @@ using namespace std;
 */
 
 int Answer;
-pair<bool,int> table[3001][3001];
-int deck1[3000];
-int deck2[3000];
+pair<int,int> line[2000]; //줄의 시작과 끝 점
+int table1[1500][2000]; //A(ji)=i에서 j개 줄을 타서 도착하는 위치
+int table2[1500][2000]; //B(ji)=i에서 j번째 줄부터 타서 도착하는 위치
 
 
 int main(int argc, char** argv)
@@ -42,92 +42,42 @@ int main(int argc, char** argv)
 		Answer = 0;
 		/////////////////////////////////////////////////////////////////////////////////////////////
     //input
-    int K,N;
-    cin>>N>>K;  //N:카드의 수, K: 최대 숫자
-    for(int i=0;i<N;i++){
-      cin>>deck1[i];
-    }
-    for(int i=0;i<N;i++){
-      cin>>deck2[i];
+    int K,N,m,from,to;
+    cin>>N>>K>>m;  //N:세로선 , K: 가로이음줄-line
+    for(int i=0;i<K;i++){
+      cin>>from>>to;
+      line[i]=make_pair(from,to);
     }
     //prepare
-    table[0][0]={true,0}; Answer++;//0: 남은 값 0
-    table[1][0]={false,-1};
-    table[0][1]={false,-1};
-    int tmp,tmp2;
-    for(int i=1;i<N;i++){
-      tmp=table[i][0].second;
-      tmp2=deck1[i];
-      if(tmp==-1){
-        table[i+1][0]={true,K-tmp2};
-        Answer++;
-      }else if(tmp==0){
-        table[i+1][0]={false,-1};
-      }else{
-        if(tmp<tmp2){
-          table[i+1][0]={false,-1};
-        }else{
-          table[i+1][0]={true,tmp-tmp2};
-          Answer++;
-        }
-      }
+      //table1
+    for(int i=0;i<N;i++){
+      table1[0][i]=i;
     }
-    for(int i=1;i<N;i++){
-      tmp=table[0][i].second;
-      tmp2=deck2[i];
-      if(tmp==-1){
-        table[0][i+1]={true,K-tmp2};
-        Answer++;
-      }else if(tmp==0){
-        table[0][i+1]={false,-1};
-      }else{
-        if(tmp<tmp2){
-          table[0][i+1]={false,-1};
-        }else{
-          table[0][i+1]={true,tmp-tmp2};
-          Answer++;
-        }
-      }
-    }
-    for(int i=1;i<N+1;i++){
+    table1[0][line[0].first]=line[0].second;  //first : from, second: to
+    for(int i=1;i<K;i++){
+      from=line[i].first;
+      to=line[i].second;
       for(int j=0;j<N;j++){
-        tmp=table[i][j].second;
-        tmp2=deck2[j];
-        if(tmp==-1){
-          table[i][j+1]={true,K-tmp2};
-          Answer++;
-        }else if(tmp==0){
-          table[i][j+1]={false,-1};
+        if(table1[i-1][j]==from){
+          table1[i][j]=to;
         }else{
-          if(tmp<tmp2){
-            table[i][j+1]={false,-1};
-          }else{
-            table[i][j+1]={true,tmp-tmp2};
-            Answer++;
-          }
+          table1[i][j]=table1[i-1][j];
         }
       }
-      
-      
     }
-    
-    // for(int i=0;i<N+1;i++){
-    //   for(int j=0;j<N;j++){
-    //     tmp=DPtable[i][j].second-deck2[j];
-    //     if(tmp>0){
-    //       DPtable[i][j+1]={DPtable[i][j].first,tmp};
-    //     }else{
-    //       DPtable[i][j+1]={!DPtable[i][j].first,K+tmp};
-    //     }
-    //   }
-    // }
-    for(int i=0;i<N+1;i++){
-      for(int j=0;j<N+1;j++){
-        cout<<"("<<table[i][j].first<<","<<table[i][j].second<<")";
+      //table2
+    for(int i=0;i<N;i++){
+      table2[K-1][i]=i;
+    }
+    table2[K-1][line[K-1].first]=line[K-1].second;
+    for(int i=K-2;i>=0;i--){
+      from=line[i].first;
+      to=line[i].second;
+      for(int j=0;j<N;j++){
+        table2[i][j]=table2[i+1][j];
       }
-      cout<<"\n";
+      table2[i][from]=table2[i+1][to];
     }
-
     //calculate
     
 		/////////////////////////////////////////////////////////////////////////////////////////////
