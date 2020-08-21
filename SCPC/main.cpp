@@ -14,6 +14,26 @@ Please be very careful.
 
 using namespace std;
 
+/*Question_01
+    //input
+    int K,N;
+    cin>>N>>K;  //N:음식의 수, K: 날짜
+    vector<int> arr1(N),arr2(N);
+    for(auto& ele:arr1){
+      cin>>ele;
+    }
+    for(auto& ele:arr2){
+      cin>>ele;
+    }
+    //prepare
+    sort(arr1.begin(),arr1.end());
+    sort(arr2.begin(),arr2.end());
+    //calculate
+    for(int i=0;i<K;i++){
+      Answer=max(Answer,arr1[i]+arr2[K-i-1]);
+    }
+*/
+
 int Answer;
 
 int main(int argc, char** argv)
@@ -39,21 +59,29 @@ int main(int argc, char** argv)
 		/////////////////////////////////////////////////////////////////////////////////////////////
     //input
     int K,N;
-    cin>>N>>K;  //N:음식의 수, K: 날짜
-    vector<int> arr1(N),arr2(N);
-    for(auto& ele:arr1){
+    cin>>N>>K;  //N:카드의 수, K: 최대 숫자
+    vector<int> deck1(N),deck2(N);
+    for(auto& ele:deck1){
       cin>>ele;
     }
-    for(auto& ele:arr2){
+    for(auto& ele:deck2){
       cin>>ele;
     }
     //prepare
-    sort(arr1.begin(),arr1.end());
-    sort(arr2.begin(),arr2.end());
-    //calculate
-    for(int i=0;i<K;i++){
-      Answer=max(Answer,arr1[i]+arr2[K-i-1]);
+    vector<vector<pair<bool,int>>> DPtable(N+1,vector<pair<bool,int>>(N+1));  //first: true-승리 ,A(ij)=deck1 1 i개, deck2 j개
+    DPtable[0][0]={true,K};  //second: 더 가져갈 수 있는 숫자 (3이면 1장 혹은 합이 3 이하인 카드 n장)
+    int tmp,idx;
+    for(int i=0;i<N;i++){
+      tmp=DPtable[i][0].second-deck1[i];
+      if(tmp<0){
+        DPtable[i+1][0]={!DPtable[i][0].first,K};
+      }else{
+        DPtable[i+1][0]={DPtable[i][0].first,tmp};
+      }
     }
+
+    //calculate
+    
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		
 		// Print the answer to standard output(screen).
