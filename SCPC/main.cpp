@@ -52,7 +52,7 @@ int main(int argc, char** argv)
     sort(arr2.begin(),arr2.end());
     //calculate
     for(int i=0;i<K;i++){
-      Answer=max(Answer,arr1[i]+arr2[N-K-i]);
+      Answer=max(Answer,arr1[i]+arr2[K-i-1]);
     }
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		
