@@ -50,7 +50,7 @@ int main(int argc, char** argv)
     }
     //prepare
     table[0][0]={true,0}; Answer++;//0: 남은 값 0
-    int extra,newCard,row(0);
+    int newCard,row(0);
     //calculate
     for(int i=0;i<N+1;i++){
       for(int j=0;j<N;j++){
