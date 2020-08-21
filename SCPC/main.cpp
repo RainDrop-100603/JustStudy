@@ -25,10 +25,9 @@ using namespace std;
 */
 
 int Answer;
-pair<int,int> line[2000]; //라인
-int table1[2001][1501]; //A(ji)=i에서 j개 라인을 타서 도착하는 위치     /i=0 : 아무 라인도 안탐
-int table2[2001][1501]; //B(ji)=i에서 j번째 라인부터 타서 도착하는 위치/ i=K: 아무 라인도 안탐
 
+pair<int,int> graph[1501][2000];  //graph[0]은 버린다.
+int graphidx[1501];   //각 node의 원소가 몇 개 있는지 알 수 있다.
 
 int main(int argc, char** argv)
 {
@@ -44,8 +43,7 @@ int main(int argc, char** argv)
     int K,N,m,from,to;
     cin>>N>>K>>m;  //N:세로선 , K: 가로이음줄-line
     for(int i=0;i<K;i++){
-      cin>>from>>to;
-      line[i]=make_pair(from,to);
+      graph[from][graphidx[from]++];
     }
     //prepare
       //table1
