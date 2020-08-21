@@ -35,9 +35,13 @@ using namespace std;
 */
 
 int Answer;
+pair<bool,int> table[3001][3001];
+
 
 int main(int argc, char** argv)
 {
+  cin.tie(NULL);
+  cin.sync_with_stdio(false);
 	int T, test_case;
 	/*
 	   The freopen function below opens input.txt file in read only mode, and afterward,
@@ -68,32 +72,38 @@ int main(int argc, char** argv)
       cin>>ele;
     }
     //prepare
-    vector<vector<pair<bool,int>>> DPtable(N+1,vector<pair<bool,int>>(N+1));  //first: true-승리 ,A(ij)=deck1 1 i개, deck2 j개
-    DPtable[0][0]={true,0}; //second: 더 가져갈 수 있는 숫자 (3이면 1장 혹은 합이 3 이하인 카드 n장)
-    int tmp;
+    table[0][0]={true,0}; //0: 남은 값 0
+    int tmp,tmp2;
+    bool key;
     for(int i=0;i<N;i++){
-      tmp=DPtable[i][0].second-deck1[i];
-      if(tmp>0){
-        DPtable[i+1][0]={DPtable[i][0].first,tmp};
+      tmp=table[i][0].second;
+      tmp2=deck1[i];
+      if(tmp==0){
+        key=table[i][0].first;
+        table[i+1][0]={!key,K-tmp2};
       }else{
-        DPtable[i+1][0]={!DPtable[i][0].first,K}; 
-      }
-    }
-    for(int i=0;i<N+1;i++){
-      for(int j=0;j<N;j++){
-        tmp=DPtable[i][j].second-deck2[j];
-        if(tmp>0){
-          DPtable[i][j+1]={DPtable[i][j].first,tmp};
+        if(tmp<tmp2){
+          table[i+1][0]={!key,K-tmp2};
         }else{
-          DPtable[i][j+1]={!DPtable[i][j].first,K};
+          table[i+1][0]={key,tmp-tmp2};
         }
       }
     }
-    for(auto& ele:DPtable){
-      for(auto& ele2:ele){
-        cout<<"("<<ele2.first<<" "<<ele2.second<<")";
+    // for(int i=0;i<N+1;i++){
+    //   for(int j=0;j<N;j++){
+    //     tmp=DPtable[i][j].second-deck2[j];
+    //     if(tmp>0){
+    //       DPtable[i][j+1]={DPtable[i][j].first,tmp};
+    //     }else{
+    //       DPtable[i][j+1]={!DPtable[i][j].first,K+tmp};
+    //     }
+    //   }
+    // }
+    for(int i=0;i<N+1;i++){
+      for(int j=0;j<N+1;j++){
+        cout<<"("<<table[i][j].first<<","<<table[i][j].second<<")";
       }
-      cout<<endl;
+      cout<<"\n";
     }
 
     //calculate
@@ -101,7 +111,7 @@ int main(int argc, char** argv)
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		
 		// Print the answer to standard output(screen).
-		cout << "Case #" << test_case+1 << endl;
+		cout << "Case #" << test_case+1 << "\n";
 		cout << Answer << " " << (N+1)*(N+1)-Answer << endl;
 	}
 
