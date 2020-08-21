@@ -25,8 +25,7 @@ using namespace std;
 */
 
 int Answer;
-pair<bool,int> table1[3001];
-pair<bool,int> table2[3001];
+pair<bool,int> table[3001][3001];
 int deck1[3000];
 int deck2[3000];
 
@@ -52,28 +51,21 @@ int main(int argc, char** argv)
       cin>>deck2[i];
     }
     //prepare
-    table1[0]={true,-1}; Answer++;//0: 남은 값 0
-    bool first(true);
+    table[0][0]={true,0}; Answer++;//0: 남은 값 0
+    table[1][0]={false,-1};
+    table[0][1]={false,-1};
     int tmp,tmp2;
-    for(int i=0;i<N+1;i++){
-      auto table=table1;
-      if(!first){
-        table=table2;
-      }
-      for(int j=0;j<N;j++){
-        tmp=table[i].second();
-        tmp2=
-      }
-    }
     for(int i=1;i<N;i++){
       tmp=table[i][0].second;
       tmp2=deck1[i];
-      if(tmp==0){
+      if(tmp==-1){
         table[i+1][0]={true,K-tmp2};
         Answer++;
+      }else if(tmp==0){
+        table[i+1][0]={false,-1};
       }else{
         if(tmp<tmp2){
-          table[i+1][0]={false,0};
+          table[i+1][0]={false,-1};
         }else{
           table[i+1][0]={true,tmp-tmp2};
           Answer++;
@@ -83,12 +75,14 @@ int main(int argc, char** argv)
     for(int i=1;i<N;i++){
       tmp=table[0][i].second;
       tmp2=deck2[i];
-      if(tmp==0){
+      if(tmp==-1){
         table[0][i+1]={true,K-tmp2};
         Answer++;
+      }else if(tmp==0){
+        table[0][i+1]={false,-1};
       }else{
         if(tmp<tmp2){
-          table[0][i+1]={false,0};
+          table[0][i+1]={false,-1};
         }else{
           table[0][i+1]={true,tmp-tmp2};
           Answer++;
@@ -99,12 +93,14 @@ int main(int argc, char** argv)
       for(int j=0;j<N;j++){
         tmp=table[i][j].second;
         tmp2=deck2[j];
-        if(tmp==0){
+        if(tmp==-1){
           table[i][j+1]={true,K-tmp2};
           Answer++;
+        }else if(tmp==0){
+          table[i][j+1]={false,-1};
         }else{
           if(tmp<tmp2){
-            table[i][j+1]={false,0};
+            table[i][j+1]={false,-1};
           }else{
             table[i][j+1]={true,tmp-tmp2};
             Answer++;
