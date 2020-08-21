@@ -25,8 +25,9 @@ using namespace std;
 */
 
 int Answer;
-pair<bool,int> table[2][3001];
-int deck[2][3000];
+pair<int,int> line[2000]; //라인
+int table1[2001][1501]; //A(ji)=i에서 j개 라인을 타서 도착하는 위치     /i=0 : 아무 라인도 안탐
+int table2[2001][1501]; //B(ji)=i에서 j번째 라인부터 타서 도착하는 위치/ i=K: 아무 라인도 안탐
 
 
 int main(int argc, char** argv)
@@ -36,56 +37,71 @@ int main(int argc, char** argv)
 	int T, test_case;
 	cin >> T;
 
-	for(test_case = 0; test_case  < T; test_case++)
+	for(test_case = 0; test_case < T; test_case++)
 	{
 		Answer = 0;
     //input
-    int K,N;
-    cin>>N>>K;  //N:카드의 수, K: 최대 숫자
-    for(int i=0;i<N;i++){
-      cin>>deck[0][i];
-    }
-    for(int i=0;i<N;i++){
-      cin>>deck[1][i];
+    int K,N,m,from,to;
+    cin>>N>>K>>m;  //N:세로선 , K: 가로이음줄-line
+    for(int i=0;i<K;i++){
+      cin>>from>>to;
+      line[i]=make_pair(from,to);
     }
     //prepare
-    table[0][0]={true,0}; Answer++;//0: 남은 값 0
-    int newCard,row(0);
-    //calculate
-    for(int i=0;i<N+1;i++){
-      for(int j=0;j<N;j++){
-        auto tmp=table[row][j]; 
-        newCard=deck[0][j];
-        if(tmp.first&&(tmp.second==0||tmp.second<newCard)){
-          table[row][j+1]={false,K};
-        }else{
-          table[row][j+1]={true,tmp.second-newCard};
-          Answer++;
-        }
-      }
-      int prevRow;
-      if(row){
-        row=0;
-        prevRow=1;
-      }else{
-        row=1;
-        prevRow=0;
-      }
-      if(i<N){
-        auto tmp=table[prevRow][0]; 
-        newCard=deck[1][i];
-        if(tmp.first&&(tmp.second==0||tmp.second<newCard)){
-          table[row][0]={false,K};
-        }else{
-          table[row][0]={true,tmp.second-newCard};
-          Answer++;
-        }
-      }
-      
+      //table1
+    for(int i=1;i<N+1;i++){
+      table1[0][i]=i;
     }
+    for(int i=1;i<K+1;i++){
+      from=line[i-1].first;
+      to=line[i-1].second;
+      for(int j=1;j<N+1;j++){
+        if(table1[i-1][j]==from){
+          table1[i][j]=to;
+        }else if(table1[i-1][j]==to){
+          table1[i][j]=from;
+        }else{
+          table1[i][j]=table1[i-1][j];
+        }
+      }
+    }
+      //table2
+    for(int i=1;i<N+1;i++){
+      table2[K][i]=i;
+    }
+    for(int i=K-1;i>=0;i--){
+      from=line[i].first;
+      to=line[i].second;
+      for(int j=1;j<N+1;j++){
+        table2[i][j]=table2[i+1][j];
+      }
+      table2[i][from]=table2[i+1][to];
+      table2[i][to]=table2[i+1][from];
+    }
+    //calculate
+    for(int i=0;i<m;i++){
+      cin>>from>>to;
+      int minAns=K+1;
+      for(int j=0;j<K+1;j++){
+        int from2=table1[j][from];
+        int cnt(0);
+        while(j+cnt<=K){
+          if(table2[j+cnt][from2]==to){
+            minAns=min(minAns,cnt);
+            break;
+            }
+          cnt++;
+        }
+      }
+      if(minAns==K+1){
+        minAns=-1;
+      }
+      Answer+=minAns;
+    }
+
 		// Print the answer to standard output(screen).
 		cout << "Case #" << test_case+1 << "\n";
-		cout << Answer << " " << (N+1)*(N+1)-Answer << endl;
+		cout << Answer << endl;
 	}
 
 	return 0;//Your program should return 0 on normal termination.
