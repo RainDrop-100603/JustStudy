@@ -83,12 +83,6 @@ int main(int argc, char** argv)
       }
       
     }
-    
-
-    //calculate
-    
-		/////////////////////////////////////////////////////////////////////////////////////////////
-		
 		// Print the answer to standard output(screen).
 		cout << "Case #" << test_case+1 << "\n";
 		cout << Answer << " " << (N+1)*(N+1)-Answer << endl;
