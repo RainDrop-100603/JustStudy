@@ -1,13 +1,3 @@
-/*
-You should use the standard input/output
-
-in order to receive a score properly.
-
-Do not use file input and output
-
-Please be very careful. 
-*/
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -36,6 +26,8 @@ using namespace std;
 
 int Answer;
 pair<bool,int> table[3001][3001];
+int deck1[3000];
+int deck2[3000];
 
 
 int main(int argc, char** argv)
@@ -43,52 +35,76 @@ int main(int argc, char** argv)
   cin.tie(NULL);
   cin.sync_with_stdio(false);
 	int T, test_case;
-	/*
-	   The freopen function below opens input.txt file in read only mode, and afterward,
-	   the program will read from input.txt file instead of standard(keyboard) input.
-	   To test your program, you may save input data in input.txt file,
-	   and use freopen function to read from the file when using cin function.
-	   You may remove the comment symbols(//) in the below statement and use it.
-	   Use #include<cstdio> or #include <stdio.h> to use the function in your program.
-	   But before submission, you must remove the freopen function or rewrite comment symbols(//).
-	 */	
-
-	// freopen("input.txt", "r", stdin);
-
 	cin >> T;
+
 	for(test_case = 0; test_case  < T; test_case++)
 	{
-
 		Answer = 0;
 		/////////////////////////////////////////////////////////////////////////////////////////////
     //input
     int K,N;
     cin>>N>>K;  //N:카드의 수, K: 최대 숫자
-    vector<int> deck1(N),deck2(N);
-    for(auto& ele:deck1){
-      cin>>ele;
+    for(int i=0;i<N;i++){
+      cin>>deck1[i];
     }
-    for(auto& ele:deck2){
-      cin>>ele;
+    for(int i=0;i<N;i++){
+      cin>>deck2[i];
     }
     //prepare
-    table[0][0]={true,0}; //0: 남은 값 0
+    table[0][0]={true,0}; Answer++;//0: 남은 값 0
+    table[1][0]={false,0};
+    table[1][0]={false,0};
     int tmp,tmp2;
-    bool key;
-    for(int i=0;i<N;i++){
+    for(int i=1;i<N;i++){
       tmp=table[i][0].second;
       tmp2=deck1[i];
       if(tmp==0){
-        key=table[i][0].first;
-        table[i+1][0]={!key,K-tmp2};
+        table[i+1][0]={true,K-tmp2};
+        Answer++;
       }else{
         if(tmp<tmp2){
-          table[i+1][0]={!key,K-tmp2};
+          table[i+1][0]={false,0};
         }else{
-          table[i+1][0]={key,tmp-tmp2};
+          table[i+1][0]={true,tmp-tmp2};
+          Answer++;
         }
       }
     }
+    for(int i=1;i<N;i++){
+      tmp=table[0][i].second;
+      tmp2=deck2[i];
+      if(tmp==0){
+        table[0][i+1]={true,K-tmp2};
+        Answer++;
+      }else{
+        if(tmp<tmp2){
+          table[0][i+1]={false,0};
+        }else{
+          table[0][i+1]={true,tmp-tmp2};
+          Answer++;
+        }
+      }
+    }
+    for(int i=1;i<N+1;i++){
+      for(int j=0;j<N;j++){
+        tmp=table[i][j].second;
+        tmp2=deck2[j];
+        if(tmp==0){
+          table[i][j+1]={true,K-tmp2};
+          Answer++;
+        }else{
+          if(tmp<tmp2){
+            table[i][j+1]={false,0};
+          }else{
+            table[i][j+1]={true,tmp-tmp2};
+            Answer++;
+          }
+        }
+      }
+      
+      
+    }
+    
     // for(int i=0;i<N+1;i++){
     //   for(int j=0;j<N;j++){
     //     tmp=DPtable[i][j].second-deck2[j];
