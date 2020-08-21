@@ -45,47 +45,45 @@ int main(int argc, char** argv)
     int K,N,m,from,to;
     cin>>N>>K>>m;  //N:세로선 , K: 가로이음줄-line
     vector<vector<pair<int,int>>> graph(N+1,vector<pair<int,int>>());
-    for(int i=1;i<N+1;i++){
-      graph[i].push_back({0,i});
-    }
-    for(int i=1;i<K+1;i++){
+    for(int i=0;i<K;i++){
       cin>>from>>to;
       graph[from].push_back(make_pair(i,to)); //first=depth(ith line)
       graph[to].push_back(make_pair(i,from));
     }
     //prepare
+    for(int i=1;i<N+1;i++){
+      graph[i].push_back({K,i});  //모든 라인을 스킵하고 내려가는 경우 추가
+    }
       
     //calculate
     for(int i=0;i<m;i++){
       cin>>from>>to;
-      int maxdepth(-1);
-      int cnt(0);
-      pair<int,int> tmpP;
-      deque<pair<int,int>> dq;
-      dq.push_back({-1,from});  //0~K-1 이므로 항상 -1보다 크다
+      deque<pair<int,pair<int,int>>> dq;
+      dq.push_back({0,{-1,from}});  //first: 스킵한 갯수, 0~K-1 이므로 항상 -1보다 크다.
       //BFS
-      //15개에서 13개가 걸렸다는것이 두개를 뺐다는 의미는 아니다. 1개만 빼서 그렇게 만들 수 있다.
+      int skipped(K+1);
       while(!dq.empty()){
         int sz=dq.size(); //get depth of BFS
         for(int i=0;i<sz;i++){
-          tmpP=dq.front();
+          auto tmpP=dq.front();
           dq.pop_front();
-          auto iter=upper_bound(graph[tmpP.second].begin(),graph[tmpP.second].end(),make_pair(tmpP.first,-1),comp);
-          auto iterEnd=graph[tmpP.second].end();
+          auto iter=upper_bound(graph[tmpP.second.second].begin(),graph[tmpP.second.second].end(),make_pair(tmpP.second.first,-1),comp);
+          auto iterEnd=graph[tmpP.second.second].end();
+          int cnt(0); // skip한 라인
           for(iter;iter!=iterEnd;iter++){
-            dq.push_back(*iter);
-            if(iter->second==to){
-              maxdepth=cnt;
+            dq.push_back({tmpP.first+cnt,*iter});
+            if(iter->second==to&&iter->first==K){
+              skipped=min(skipped,tmpP.first+cnt);
             }
+            cnt++;
           }
         }
-        cnt++;
+        
       }
-      if(maxdepth==-1){
-        Answer--;
-      }else{
-        Answer+=K-maxdepth+cnt;
+      if(skipped==K+1){
+        skipped=-1;
       }
+      Answer+=skipped;
       
     }
 
