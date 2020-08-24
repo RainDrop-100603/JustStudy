@@ -104,8 +104,9 @@ void BK2667();
 void BK1012();
 int BFS2(vector<vector<bool>>& graph, pair<int,int> p); //depth 체크 기능 추가
 void BK2178();
-int BFS3(vector<vector<int>>& graph);
+int BFS3(vector<vector<int>>& graph); //2차원
 void BK7576();
-
+int BFS4(vector<vector<vector<int>>>& graph); //3차원
+void BK7569();
 
 #endif

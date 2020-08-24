@@ -2145,3 +2145,98 @@ void BK7576(){
 //output
   cout<<result;
 }
+int BFS4(vector<vector<vector<int>>>& graph){
+  int cnt(-1);
+  int N=graph.size();
+  int M=graph[0].size();
+  int H=graph[0][0].size();
+  list<pair<int,pair<int,int>>> deque;
+  for(int k=0;k<H;k++){
+    for(int i=0;i<N;i++){
+      for(int j=0;j<M;j++){
+        if(graph[i][j][k]==1){
+          deque.push_back({i,{j,k}});
+        }
+      }
+    }
+  }
+  
+  while(!deque.empty()){
+    int sz=deque.size();
+    for(int k=0;k<sz;k++){
+      auto p=deque.front();
+      deque.pop_front();
+      int x(p.first),y(p.second.first),z(p.second.second);
+      // idx 체크
+      if(x+1<N){
+        if(!graph[x+1][y][z]){
+          deque.push_back({x+1,{y,z}});
+          graph[x+1][y][z]=1;
+        }
+      }
+      if(x>0){
+        if(!graph[x-1][y][z]){
+          deque.push_back({x-1,{y,z}});
+          graph[x-1][y][z]=1;
+        }
+      }
+      if(y+1<M){
+        if(!graph[x][y+1][z]){
+          deque.push_back({x,{y+1,z}});
+          graph[x][y+1][z]=1;
+        }
+      }
+      if(y>0){
+        if(!graph[x][y-1][z]){
+          deque.push_back({x,{y-1,z}});
+          graph[x][y-1][z]=1;
+        }
+      }
+      if(z>0){
+        if(!graph[x][y][z-1]){
+          deque.push_back({x,{y,z-1}});
+          graph[x][y][z-1]=1;
+        }
+      }
+      if(z+1<H){
+        if(!graph[x][y][z+1]){
+          deque.push_back({x,{y,z+1}});
+          graph[x][y][z+1]=1;
+        }
+      }
+    }
+    cnt++;
+  }
+  for(int k=0;k<H;k++){
+    for(int i=0;i<N;i++){
+      for(int j=0;j<M;j++){
+        if(!graph[i][j][k]){
+          cnt=-1;
+          i=N;
+          k=H;
+          break;
+        }
+      }
+    }
+  }
+  return cnt;
+}
+void BK7569(){
+//input
+  int N,M,H;
+  cin>>M>>N>>H; //M: 가로, N: 세로, H: 높이
+  cin.ignore();
+  vector<vector<vector<int>>> graph(N,vector<vector<int>>(M,vector<int>(H)));  //graph와 chklist 겸임. true는 갈 수 있음, false는 이미 방문 혹은 갈 수 없음 
+  for(int k=0;k<H;k++){
+    for(int i=0;i<N;i++){
+      for(int j=0;j<M;j++){
+        cin>>graph[i][j][k];
+      }
+    }
+  }
+//prepare
+//calc
+  int result=BFS4(graph);
+//output
+  cout<<result;
+}
