@@ -12,33 +12,7 @@
 //#include "GoodFunction.h"
 
 using namespace std;
-void visit(vector<vector<int>>& graph, deque<pair<bool,pair<int,int>>>& dq,int X,int Y,bool brk){
-  switch(graph[X][Y]){
-    case 1:
-      if(brk){
-        dq.push_back({false,{X,Y}});
-        graph[X][Y]=-3;
-      }
-      break;
-    case 0:
-      dq.push_back({brk,{X,Y}});
-      if(brk){
-        graph[X][Y]=-2;
-      }else{
-        graph[X][Y]=-1;
-      }
-      break;
-    case -1:
-      if(brk){
-        dq.push_back({true,{X,Y}});
-        graph[X][Y]=-2;
-      }
-      break;
-    default:
-      break;
-  }
-}
-int BFS6(vector<vector<int>>& graph){
+int DFS1753(vector<vector<pair<int,int>>>& graph,int from,int to){
   int N=graph.size(); 
   int M=graph[0].size();
   int cnt(1);
@@ -67,18 +41,14 @@ int BFS6(vector<vector<int>>& graph){
   }
   return cnt;
 }
-void BK2206(){
+void BK1753(){
 //input
-  int N,M;
-  cin>>N>>M; //M: 가로, N: 세로
-  vector<vector<int>> graph(N,vector<int>(M));
-  cin.ignore();
-  for(int i=0;i<N;i++){
-    string s;
-    getline(cin,s);
-    for(int j=0;j<M;j++){
-      graph[i][j]=s[j]-'0';
-    }
+  int V,E,K,u,v,w;
+  cin>>V>>E>>K; // V: #vortex, E: #edge, K: start V
+  vector<vector<pair<int,int>>> graph(V,vector<pair<int,int>>()); // V[i]'s element =pair : i에서 p.first 로가는 가중치 p.second의 edge
+  for(int i=0;i<E;i++){
+    cin>>u>>v>>w;
+    graph[u].push_back({v,w});
   }
 //prepare
 //calc
