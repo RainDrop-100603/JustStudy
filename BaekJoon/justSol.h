@@ -11,6 +11,7 @@
 #include <set>
 #include <map>
 #include <list>
+#include <deque>
 
 using namespace std;
 
@@ -110,5 +111,10 @@ int BFS4(vector<vector<vector<int>>>& graph); //3차원
 void BK7569();
 int BFS5(int from, int to); //BFS를 이용한 depth(최단거리)
 void BK1697(); 
+void visit(vector<vector<int>>& graph, deque<pair<bool,pair<int,int>>>& dq,int X,int Y,bool brk); 
+int BFS6(vector<vector<int>>& graph); //조건이 추가된 경우의 최단거리 
+void BK2206();
+
+//graph-최단경로
 
 #endif
