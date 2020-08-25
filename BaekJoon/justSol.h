@@ -108,5 +108,7 @@ int BFS3(vector<vector<int>>& graph); //2차원
 void BK7576();
 int BFS4(vector<vector<vector<int>>>& graph); //3차원
 void BK7569();
+int BFS5(int from, int to); //BFS를 이용한 depth(최단거리)
+void BK1697(); 
 
 #endif

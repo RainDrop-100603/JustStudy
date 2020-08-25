@@ -2240,3 +2240,50 @@ void BK7569(){
 //output
   cout<<result;
 }
+int BFS5(int from, int to){
+  bool chk[200001]; //시작 범위가 0~100000지만, 그 범위 밖으로 나가면 안된다고 하지는 않았다.
+  int cnt(0);
+  list<int> deque;
+  deque.push_back(from);
+  chk[from]=true;
+  while(!deque.empty()){
+    int sz=deque.size();
+    if(chk[to]){
+      break;
+    }
+    for(int k=0;k<sz;k++){
+      auto p=deque.front();
+      deque.pop_front();
+      if(p<100000){
+        if(!chk[p*2]){
+          deque.push_back(p*2);
+          chk[p*2]=true;
+        }
+      }
+      if(p<100000){
+        if(!chk[p+1]){
+          deque.push_back(p+1);
+          chk[p+1]=true;
+        }
+      }
+      if(p>0){
+        if(!chk[p-1]){
+          deque.push_back(p-1);
+          chk[p-1]=true;
+        }
+      }
+    }
+    cnt++;
+  }
+  return cnt;
+}
+void BK1697(){
+//input
+  int N,M;
+  cin>>N>>M; //M: 가로, N: 세로
+//prepare
+//calc
+  int result=BFS5(N,M);
+//output
+  cout<<result;
+}

@@ -13,21 +13,20 @@
 using namespace std;
 
 int BFS5(int from, int to){
-  bool chk[100001];
-  int cnt(-1);
+  bool chk[200001];
+  int cnt(0);
   list<int> deque;
   deque.push_back(from);
   chk[from]=true;
   while(!deque.empty()){
     int sz=deque.size();
+    if(chk[to]){
+      break;
+    }
     for(int k=0;k<sz;k++){
       auto p=deque.front();
       deque.pop_front();
-      if(p==to){
-        deque.clear();
-        break;
-      }
-      if(p*2<100001){
+      if(p<100000){
         if(!chk[p*2]){
           deque.push_back(p*2);
           chk[p*2]=true;
@@ -50,7 +49,7 @@ int BFS5(int from, int to){
   }
   return cnt;
 }
-void BK1697(){
+void BK2206(){
 //input
   int N,M;
   cin>>N>>M; //M: 가로, N: 세로
