@@ -12,33 +12,7 @@
 
 //#include "GoodFunction.h"
 
-struct Pair_Greater{
-  bool operator()(const pair<int,int>& p1, const pair<int,int>& p2){return p1.first>p2.first;}
-};
-
 using namespace std;
-int Dijkstra(vector<map<int,int>>& graph,int from,int to){
-  int V=graph.size()-1; // #vertex, graph.first=도착지,graph.second=가중치
-  vector<bool> chk(V);  // priority Queue에는 같은 vertex를 중복해서 넣을 수 있다. 이때 chk를 확인하여 이미 경로탐색을 했다면, 다시 경로탐색을 하지 않고 넘어간다.
-  priority_queue<pair<int,int>,vector<pair<int,int>>,Pair_Greater> pq; //first=cost, second=key
-  pq.push({0,from});
-  while(!pq.empty()){
-    auto tmp=pq.top();
-    pq.pop();
-    int cost(tmp.first),key(tmp.second);
-    if(chk[key]){
-      continue; //이미 했다면 넘어간다.
-    }
-    if(key==to){
-      return cost;  //key에서 분화한다면, 해당 key가 최소라는 뜻 
-    }
-    chk[key]=true;
-    for(auto& ele: graph[key]){
-      pq.push({cost+ele.second,ele.first});
-    }
-  }
-  return -1;
-}
 void BK1753(){
 //input
   int V,E,K,u,v,w;
@@ -54,16 +28,32 @@ void BK1753(){
     }
   }
 //prepare
+  vector<int> chk(V);  // priority Queue에는 같은 vertex를 중복해서 넣을 수 있다. 이때 chk를 확인하여 이미 경로탐색을 했다면, 다시 경로탐색을 하지 않고 넘어간다.
+  priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq; //first=cost, second=key
 //calc
-  for(int i=1;i<=V;i++){
-    int ans=Dijkstra(graph,V,i);
-    if(ans==-1){
-      cout<<"INF\n";
-    }else{
-      cout<<ans<<"\n";
+  pq.push({0,K});
+  while(!pq.empty()){
+    auto tmp=pq.top();
+    pq.pop();
+    int cost(tmp.first),key(tmp.second);
+    if(chk[key]){
+      continue; //이미 했다면 넘어간다.
+    }
+    chk[key]=cost;
+    for(auto& ele: graph[key]){
+      pq.push({cost+ele.second,ele.first});
     }
   }
 //output
+  for(int i=1;i<=V;i++){
+    if(i==K){
+      cout<<chk[i]<<"\n";
+    }else if(!chk[i]){
+      cout<<"INF\n";
+    }else{
+      cout<<chk[i]<<"\n";
+    }
+  }
 }
 int main(){
   cin.tie(NULL);
