@@ -28,7 +28,7 @@ void BK1753(){
     }
   }
 //prepare
-  vector<int> chk(V);  // priority Queue에는 같은 vertex를 중복해서 넣을 수 있다. 이때 chk를 확인하여 이미 경로탐색을 했다면, 다시 경로탐색을 하지 않고 넘어간다.
+  vector<int> chk(V+1,-1);  // priority Queue에는 같은 vertex를 중복해서 넣을 수 있다. 이때 chk를 확인하여 이미 경로탐색을 했다면, 다시 경로탐색을 하지 않고 넘어간다.
   priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq; //first=cost, second=key
 //calc
   pq.push({0,K});
@@ -36,19 +36,17 @@ void BK1753(){
     auto tmp=pq.top();
     pq.pop();
     int cost(tmp.first),key(tmp.second);
-    if(chk[key]){
+    if(chk[key]!=-1){
       continue; //이미 했다면 넘어간다.
     }
     chk[key]=cost;
     for(auto& ele: graph[key]){
-      pq.push({cost+ele.second,ele.first});
+      pq.push({cost+ele.second,ele.first});    
     }
   }
 //output
   for(int i=1;i<=V;i++){
-    if(i==K){
-      cout<<chk[i]<<"\n";
-    }else if(!chk[i]){
+    if(chk[i]==-1){
       cout<<"INF\n";
     }else{
       cout<<chk[i]<<"\n";

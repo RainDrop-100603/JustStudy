@@ -12,6 +12,7 @@
 #include <map>
 #include <list>
 #include <deque>
+#include <queue>
 
 using namespace std;
 
@@ -116,5 +117,6 @@ int BFS6(vector<vector<int>>& graph); //조건이 추가된 경우의 최단거�
 void BK2206();
 
 //graph-최단경로
+void BK1753();  //Dijkstra Algo : priority queue 이용 
 
 #endif
