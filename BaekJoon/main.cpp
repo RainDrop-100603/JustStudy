@@ -14,7 +14,7 @@
 
 using namespace std;
 
-void BK1504(){
+void BK1504(){  //Dijkstra, 1과 N이 거쳐야 하는 경로 두 경로중 하나일 때를 고려 
   /*
     시작 정점(1)에서 마지막 정점(V)으로 이동, 양방향 경로, 목표지점 두곳 반드시 통과
     각 vertex의 원소는 4개, 목표지점을 00개, 01개, 10개, 11개를 통과한 것을 원소로 하자 : level 이라 명명
@@ -48,12 +48,15 @@ void BK1504(){
     if(chk[key][level]!=-1){
       continue; //이미 했다면 넘어간다.
     }
+    if(key==obj1&&(level==0||level==2)){
+      level+=1;
+    }else if(key==obj2&&(level==0||level==1)){
+      level+=2;
+    }
     chk[key][level]=cost;
     if(chk[V][3]!=-1){break;}
     for(auto& ele: graph[key]){
-      if(ele.first==obj1&&(level==0||level==2)){pq.push({cost+ele.second,{ele.first,level+1}});}
-      else if(ele.first==obj2&&(level==0||level==1)){pq.push({cost+ele.second,{ele.first,level+2}});}
-      else{pq.push({cost+ele.second,{ele.first,level}});}
+      pq.push({cost+ele.second,{ele.first,level}});
     }
   }
   

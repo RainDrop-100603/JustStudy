@@ -118,5 +118,6 @@ void BK2206();
 
 //graph-최단경로
 void BK1753();  //Dijkstra Algo : priority queue 이용 
+void BK1504();  //Dijkstra, 1과 N이 거쳐야 하는 경로 두 경로중 하나일 때를 고려 
 
 #endif
