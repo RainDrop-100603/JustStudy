@@ -14,60 +14,76 @@
 
 using namespace std;
 
-void BK1504(){  //Dijkstra, 1과 N이 거쳐야 하는 경로 두 경로중 하나일 때를 고려 
+void BK9370(){  // 
   /*
-    시작 정점(1)에서 마지막 정점(V)으로 이동, 양방향 경로, 목표지점 두곳 반드시 통과
-    각 vertex의 원소는 4개, 목표지점을 00개, 01개, 10개, 11개를 통과한 것을 원소로 하자 : level 이라 명명
-    Dijkstra Algo 이용시, 각 3개에 대해 모두 적용 
+    1. s에서 출발해 모든 vertex까지의 최단경로를 찾는다.
+    2. 이때 g->h 혹은 h->g로 갈 때, pass를 true로
   */
 //input
-  int V,E,u,v,w,obj1,obj2;
-  cin>>V>>E; // V: #vortex, E: #edge
-  vector<map<int,int>> graph(V+1); // V[i]'s element =pair : i 와 p.first사이의 가중치 p.second의 양방향 경로, 중복 간선은 최저치 빼고 삭제
-  for(int i=0;i<E;i++){
-    cin>>u>>v>>w;
-    auto ans=graph[u].insert({v,w});
-    auto ans2=graph[v].insert({u,w}); //양방향
-    if(!ans.second){
-      if(ans.first->second>w){
-        ans.first->second=w;
-        ans2.first->second=w;
-      }
-    }
+  int n,m,t,s,g,h,a,b,d,x;
+  cin>>n>>m>>t>>s>>g>>h; // #교차로(vertex), #도로(edge), #목적지 후보, 출발지, g~h 사이의 도로 경유
+  vector<map<int,int>> graph(n+1); // V[i]'s element =pair : i 와 p.first사이의 가중치 p.second의 양방향 경로, 중복 간선은 최저치 빼고 삭제
+  set<int> dest; //목적지 후보를 저장한 vector
+  for(int i=0;i<m;i++){
+    cin>>a>>b>>d;
+    graph[a].insert({b,d});
+    graph[b].insert({a,d}); //양방향
   }
-  cin>>obj1>>obj2;  //목표지점
+  for(int i=0;i<t;i++){
+    cin>>x;
+    dest.insert(x);
+  }
 //prepare
-  vector<vector<int>> chk(V+1,vector<int>(4,-1));  // priority Queue에는 같은 vertex를 중복해서 넣을 수 있다. 이때 chk를 확인하여 이미 경로탐색을 했다면, 다시 경로탐색을 하지 않고 넘어간다.
-  priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>> pq; //first=cost, second.first=key, second.second= key's level(00 01 10 11)
+  vector<pair<int,bool>> chk(n+1,{-1,false});  // first== cost, second== 도로 경유 여부
+  priority_queue<pair<int,pair<int,bool>>,vector<pair<int,pair<int,bool>>>,greater<pair<int,pair<int,bool>>>> pq; //first=cost, second.first=key, second.second=도로경유 여부
 //calc
-  pq.push({0,{1,0}});
+  pq.push({0,{s,false}});
   while(!pq.empty()){
     auto tmp=pq.top();
     pq.pop();
-    int cost(tmp.first),key(tmp.second.first),level(tmp.second.second);
-    if(chk[key][level]!=-1){
+    int cost(tmp.first),key(tmp.second.first);
+    bool pass(tmp.second.second);
+    if(chk[key].first!=-1){
       continue; //이미 했다면 넘어간다.
     }
-    if(key==obj1&&(level==0||level==2)){
-      level+=1;
-    }else if(key==obj2&&(level==0||level==1)){
-      level+=2;
-    }
-    chk[key][level]=cost;
-    if(chk[V][3]!=-1){break;}
-    for(auto& ele: graph[key]){
-      pq.push({cost+ele.second,{ele.first,level}});
+    chk[key].first=cost;chk[key].second=pass;
+    if(key==g){
+      for(auto& ele: graph[key]){
+        if(ele.first==h){
+          pq.push({cost+ele.second,{ele.first,true}});
+        }else{
+          pq.push({cost+ele.second,{ele.first,pass}});
+        }
+      }
+    }else if(key==h){
+      for(auto& ele: graph[key]){
+        if(ele.first==g){
+          pq.push({cost+ele.second,{ele.first,true}});
+        }else{
+          pq.push({cost+ele.second,{ele.first,pass}});
+        }
+      }
+    }else{
+      for(auto& ele: graph[key]){
+        pq.push({cost+ele.second,{ele.first,pass}});
+      }
     }
   }
-  
 //output
-  cout<<chk[V][3];
+  for(auto& ele: dest){
+    if(chk[ele].second){
+      cout<<ele<<" ";
+    }
+  }
+  cout<<endl;
 }
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
-
-  BK1504();
-  
+  int T;
+  cin>>T;
+  while(T--){
+    BK9370();
+  }
   return 0;
 }
