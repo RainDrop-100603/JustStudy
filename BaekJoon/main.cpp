@@ -23,7 +23,7 @@ void BK1504(){
 //input
   int V,E,u,v,w,obj1,obj2;
   cin>>V>>E; // V: #vortex, E: #edge
-  vector<map<int,int>> graph(V+1,map<int,int>()); // V[i]'s element =pair : i 와 p.first사이의 가중치 p.second의 양방향 경로, 중복 간선은 최저치 빼고 삭제
+  vector<map<int,int>> graph(V+1); // V[i]'s element =pair : i 와 p.first사이의 가중치 p.second의 양방향 경로, 중복 간선은 최저치 빼고 삭제
   for(int i=0;i<E;i++){
     cin>>u>>v>>w;
     auto ans=graph[u].insert({v,w});
@@ -49,19 +49,16 @@ void BK1504(){
       continue; //이미 했다면 넘어간다.
     }
     chk[key][level]=cost;
+    if(chk[V][3]!=-1){break;}
     for(auto& ele: graph[key]){
-      if(ele.first==obj1&&(level==0||level==2)){level+=1;}
-      else if(ele.first==obj2&&(level==0||level==1)){level+=2;}
-      pq.push({cost+ele.second,{ele.first,level}});
+      if(ele.first==obj1&&(level==0||level==2)){pq.push({cost+ele.second,{ele.first,level+1}});}
+      else if(ele.first==obj2&&(level==0||level==1)){pq.push({cost+ele.second,{ele.first,level+2}});}
+      else{pq.push({cost+ele.second,{ele.first,level}});}
     }
   }
+  
 //output
-  for(auto& ele:chk){
-    for(auto& ele2:ele){
-      cout<<ele2<<" ";
-    }
-    cout<<endl;
-  }
+  cout<<chk[V][3];
 }
 int main(){
   cin.tie(NULL);
