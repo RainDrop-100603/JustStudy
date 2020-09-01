@@ -14,7 +14,7 @@
 
 using namespace std;
 
-void BK9370(){  // 
+void BK11657(){  // 
   /*
     1. s에서 출발해 모든 vertex까지의 최단경로를 찾는다.
     2. 이때 g->h 혹은 h->g로 갈 때, pass를 true로
@@ -83,7 +83,7 @@ int main(){
   int T;
   cin>>T;
   while(T--){
-    BK9370();
+    BK11657();
   }
   return 0;
 }
