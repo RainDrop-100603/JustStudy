@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <deque>
 
 using namespace std;
 
@@ -26,10 +25,9 @@ using namespace std;
 */
 
 int Answer;
+pair<bool,int> table[3001];
+int deck[2][3000];
 
-bool comp(const pair<int,int>& p1,const pair<int,int>& p2){
-  return p1.first<p2.first;
-}
 
 int main(int argc, char** argv)
 {
@@ -38,58 +36,66 @@ int main(int argc, char** argv)
 	int T, test_case;
 	cin >> T;
 
-	for(test_case = 0; test_case < T; test_case++)
+	for(test_case = 0; test_case  < T; test_case++)
 	{
 		Answer = 0;
     //input
-    int K,N,m,from,to;
-    cin>>N>>K>>m;  //N:세로선 , K: 가로이음줄-line
-    vector<vector<pair<int,int>>> graph(N+1,vector<pair<int,int>>());
-    for(int i=0;i<K;i++){
-      cin>>from>>to;
-      graph[from].push_back(make_pair(i,to)); //first=depth(ith line)
-      graph[to].push_back(make_pair(i,from));
+    int K,N;
+    cin>>N>>K;  //N:카드의 수, K: 최대 숫자
+    for(int i=0;i<N;i++){
+      cin>>deck[0][i];
+    }
+    for(int i=0;i<N;i++){
+      cin>>deck[1][i];
     }
     //prepare
-    for(int i=1;i<N+1;i++){
-      graph[i].push_back({K,i});  //모든 라인을 스킵하고 내려가는 경우 추가
-    }
-      
-    //calculate
-    for(int i=0;i<m;i++){
-      cin>>from>>to;
-      deque<pair<int,pair<int,int>>> dq;
-      dq.push_back({0,{-1,from}});  //first: 스킵한 갯수, 0~K-1 이므로 항상 -1보다 크다.
-      //BFS
-      int skipped(K+1);
-      while(!dq.empty()){
-        int sz=dq.size(); //get depth of BFS
-        for(int i=0;i<sz;i++){
-          auto tmpP=dq.front();
-          dq.pop_front();
-          auto iter=upper_bound(graph[tmpP.second.second].begin(),graph[tmpP.second.second].end(),make_pair(tmpP.second.first,-1),comp);
-          auto iterEnd=graph[tmpP.second.second].end();
-          int cnt(0); // skip한 라인
-          for(iter;iter!=iterEnd;iter++){
-            dq.push_back({tmpP.first+cnt,*iter});
-            if(iter->second==to&&iter->first==K){
-              skipped=min(skipped,tmpP.first+cnt);
-            }
-            cnt++;
-          }
+    table[0]={true,0}; Answer++;//0: 남은 값 0
+    int newCard;
+    for(int i=0;i<N;i++){
+      auto tmp=table[i]; 
+        newCard=deck[0][i];
+        if(!tmp.first){
+          table[i+1]={true,K-newCard};
+          Answer++;
+        }else if(tmp.first&&(tmp.second==0||tmp.second<newCard)){
+          table[i+1]={false,K-newCard};
+        }else{
+          table[i+1]={true,tmp.second-newCard};
+          Answer++;
         }
-        
-      }
-      if(skipped==K+1){
-        skipped=-1;
-      }
-      Answer+=skipped;
-      
     }
-
+    //calculate
+    for(int i=0;i<N;i++){
+      for(int j=0;j<=i;j++){
+        auto tmp=table[j]; 
+        newCard=deck[1][i];
+        if(!tmp.first){
+          table[j]={true,K-newCard};
+          Answer++;
+        }else if(tmp.first&&(tmp.second==0||tmp.second<newCard)){
+          table[j]={false,K};
+        }else{
+          table[j]={true,tmp.second-newCard};
+          Answer++;
+        }
+      }
+      
+      for(int j=i;j<N;j++){
+        auto tmp=table[j]; 
+        newCard=deck[0][j];
+        if(tmp.second<newCard){
+          table[j+1]={!tmp.first,K-newCard};
+        }else{
+          table[j+1]={tmp.first,tmp.second-newCard};
+        }
+        if(table[j+1].first){
+          Answer++;
+        }
+      }
+    }
 		// Print the answer to standard output(screen).
-		cout << "Case #" << test_case+1 << "\n";
-		cout << Answer << endl;
+		cout << "Case #" << test_case+1 << endl;
+		cout << Answer << ' ' << (N+1)*(N+1)-Answer << endl;
 	}
 
 	return 0;//Your program should return 0 on normal termination.

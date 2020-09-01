@@ -43,7 +43,9 @@ void BK9370(){  //
     pq.pop();
     int cost(tmp.first),key(tmp.second.first);
     bool pass(tmp.second.second);
-    if(chk[key].first!=-1){
+    if(chk[key].first==cost&&pass){
+      
+    }else if(chk[key].first!=-1){
       continue; //이미 했다면 넘어간다.
     }
     chk[key].first=cost;chk[key].second=pass;
