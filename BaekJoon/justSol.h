@@ -117,7 +117,8 @@ int BFS6(vector<vector<int>>& graph); //조건이 추가된 경우의 최단거�
 void BK2206();
 
 //graph-최단경로
-void BK1753();  //Dijkstra Algo : priority queue 이용 
+void BK1753();  //Dijkstra Algo : priority queue 이용, Vertex 중심
 void BK1504();  //Dijkstra, 1과 N이 거쳐야 하는 경로 두 경로중 하나일 때를 고려 
 void BK9370();  //Dijkstra, 여러개의 우선순위가 필요할 때, pq를 변형하여 해결
+
 #endif
