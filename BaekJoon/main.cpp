@@ -18,6 +18,7 @@ void BK9370(){  //
   /*
     1. s에서 출발해 모든 vertex까지의 최단경로를 찾는다.
     2. 이때 g->h 혹은 h->g로 갈 때, pass를 true로
+    #priority Queue에서 cost는 같은데 경로가 다른 경우가 있다. 이때 g~h을 pass한 경로를 우선한다.
   */
 //input
   int n,m,t,s,g,h,a,b,d,x;
@@ -35,39 +36,36 @@ void BK9370(){  //
   }
 //prepare
   vector<pair<int,bool>> chk(n+1,{-1,false});  // first== cost, second== 도로 경유 여부
-  priority_queue<pair<int,pair<int,bool>>,vector<pair<int,pair<int,bool>>>,greater<pair<int,pair<int,bool>>>> pq; //first=cost, second.first=key, second.second=도로경유 여부
+  priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>> pq; //first=cost, second.first=경유, second.second=key
 //calc
-  pq.push({0,{s,false}});
+  pq.push({0,{0,s}}); //second.first: 0은 미통과, -1은 통과
   while(!pq.empty()){
     auto tmp=pq.top();
     pq.pop();
-    int cost(tmp.first),key(tmp.second.first);
-    bool pass(tmp.second.second);
-    if(chk[key].first==cost&&pass){
-      
-    }else if(chk[key].first!=-1){
+    int cost(tmp.first),key(tmp.second.second),pass(tmp.second.first);
+    if(chk[key].first!=-1){
       continue; //이미 했다면 넘어간다.
     }
     chk[key].first=cost;chk[key].second=pass;
     if(key==g){
       for(auto& ele: graph[key]){
         if(ele.first==h){
-          pq.push({cost+ele.second,{ele.first,true}});
+          pq.push({cost+ele.second,{-1,ele.first}});
         }else{
-          pq.push({cost+ele.second,{ele.first,pass}});
+          pq.push({cost+ele.second,{pass,ele.first}});
         }
       }
     }else if(key==h){
       for(auto& ele: graph[key]){
         if(ele.first==g){
-          pq.push({cost+ele.second,{ele.first,true}});
+          pq.push({cost+ele.second,{-1,ele.first}});
         }else{
-          pq.push({cost+ele.second,{ele.first,pass}});
+          pq.push({cost+ele.second,{pass,ele.first}});
         }
       }
     }else{
       for(auto& ele: graph[key]){
-        pq.push({cost+ele.second,{ele.first,pass}});
+        pq.push({cost+ele.second,{pass,ele.first}});
       }
     }
   }
