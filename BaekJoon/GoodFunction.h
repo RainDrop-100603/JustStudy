@@ -8,6 +8,10 @@
 #include <utility>
 #include <algorithm>
 #include <set>
+#include <map>
+#include <list>
+#include <deque>
+#include <queue>
 
 using namespace std;
 //useful
@@ -56,6 +60,9 @@ int getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
 pair<long long,long long> EuclidAlgo(long long A,long long B);  //A>B, Ax+By=d, d=gcd(A,B). 유클리드 알고리즘의 해(x,y)
 vector<vector<long long>> FibonacciMatrix(long long m); //Fibonacci identity: 도가뉴 항등식, d'Ocagne's identity, f_m matrix 반환, important 참고
 
+//graph 
+void Dijkstra(const vector<map<int,int>>& graph, vector<int>& cost_V, int start);
+int BellmanFord(const vector<map<int,int>>& graph, vector<int>& cost_V, int start, int INF);  //0 return = Ok, 1 return = minus cycle
 
 //Segment Tree
 template <class T>

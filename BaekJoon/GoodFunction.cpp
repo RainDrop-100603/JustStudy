@@ -177,4 +177,89 @@ vector<vector<long long>> FibonacciMatrix(long long m){ //Fibonacci identity: �
   matrix_m[1][1]%=1000000;
   
   return matrix_m;
+}
+void Dijkstra(const vector<map<int,int>>& graph, vector<int>& cost_V, int start){
+  /*
+  Dijkstra Algorithm
+    음수 cost 경로 불가능
+    가장 cost가 낮은 vertex기준으로 다른 vertex를 갱신한다
+      priority queue를 이용 
+        cost뿐 아니라 다른 우선순위가 있을 경우에도 이용 가능{priority1,priority2,...priorityN,dest_vertex}
+      vertex의 기본값은 -1로하여, -1인 경우 갱신되지 않은 것으로 감안한다.
+    priority queue가 빌 때까지 실행하면 모든 vertex가 갱신된다.
+      start가 맨 처음 pq에 들어간다.
+      이후 가장 낮은 값의 vertex를 기준으로 갱신한다.
+        음의 경로가 존재하지 않으므로, 가장낮은 값은 절대 변하지 않기 때문 
+  */
+  int num_V=cost_V.size();  //even if range 1~N, its OK, because there is no edge from vertex 0
+  fill_n(cost_V,num_V,-1); //cost 초기화
+  priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;  //second==starting point vertex, first== vertex's cost
+  pq.push({0,start});
+  while(!pq.empty()){
+    auto tmp=pq.top();
+    pq.pop();
+    int cost(tmp.first),from_V(tmp.second);
+    if(cost_V[from_V]!=-1){ //there is minimum already
+      continue;
+    }
+    cost_V[from_V]=cost; //갱신
+    for(auto& ele:graph[from_V]){
+      pq.push({cost+ele.second,ele.first});
+    }
+  }
 } 
+int BellmanFord(const vector<map<int,int>>& graph, vector<int>& cost_V, int start, int INF){  //0 return = Ok, 1 return = minus cycle
+  /*
+  Bellman-Ford Algorithm
+    모든 edge를 chk하여 vertex를 갱신한다. 
+      갱신되지 않은 vertex에서 출발하는 edge는 감안하지 않는다.
+      vertex의 기본값은 INF로 하여, INF값인 경우 갱신되지 않은 것으로 감안한다.
+    #vertex -1 번 실행하면 최단거리를 찾을 수 있게 된다.
+      시작 vertex는 갱신되어 있다. 
+      edge chk 마다 최소 한개의 vertex가 갱신된다.
+      즉  #vertex-1 번이면 반드시 모든 vertex가 갱신된다.
+    #vertex 번째 실행에서 바뀌는 값이 있다면, 음의 사이클이 있는 것으로 간주한다.
+      양의 사이클이 존재할 경우에는, 기존값 보다 커지기 때문에 "갱신" 이 일어나지 않는다.
+    #vertex 번째 실행에서 갱신이 일어난 모든 vertex는 -INF로 간주한다.
+      이때 vertex에서는 cycle 내부가 아닌 바깥으로만 이동하며 갱신이 가능하다.
+        즉 cycle을 판별할 수 있어야 한다.
+    ***음의 cycle 판별 추가바람
+  */
+  int num_V=cost_V.size();  //even if range 1~N, its OK, because there is no edge from vertex 0
+  fill_n(cost_V,num_V,INF); //cost 초기화, INF==possible max Cost +1
+  cost_V[start]=0;          //start==0
+  vector<bool> active(num_V);//active vertex
+  active[start]=true;
+  for(int i=1;i<num_V;i++){ // #vertex -1 loop
+    for(int j=0;j<num_V;j++){
+      if(active[j]){
+        int cost=cost_V[j]; //starting point cost
+        for(auto& ele:graph[j]){  //first=dest, second= cost
+          if(cost+ele.second<cost_V[ele.first]){
+            cost_V[ele.first]=cost+ele.second;
+          }
+        }
+      }
+    }
+    for(int j=0;j<num_V;j++){
+      if(cost_V[j]<INF){
+        active[j]=true;
+      }
+    }
+  }
+  vector<int> copy(cost_V);
+  for(int j=0;j<num_V;j++){
+    int cost=copy[j]; //starting point cost
+    for(auto& ele:graph[j]){  //first=dest, second= cost
+      if(cost+ele.second<copy[ele.first]){
+        copy[ele.first]=cost+ele.second;
+      }
+    }  
+  }
+  for(int i=0;i<num_V;i++){
+    if(copy[i]!=cost_V[i]){
+      return 1;
+    }
+  }
+  return 0;
+}
