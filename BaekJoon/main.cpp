@@ -14,36 +14,6 @@
 
 using namespace std;
 
-void Dijkstra(const vector<map<int,int>>& graph, vector<int>& cost_V, int start){
-  /*
-  Dijkstra Algorithm
-    음수 cost 경로 불가능
-    가장 cost가 낮은 vertex기준으로 다른 vertex를 갱신한다
-      priority queue를 이용 
-        cost뿐 아니라 다른 우선순위가 있을 경우에도 이용 가능{priority1,priority2,...priorityN,dest_vertex}
-      vertex의 기본값은 -1로하여, -1인 경우 갱신되지 않은 것으로 감안한다.
-    priority queue가 빌 때까지 실행하면 모든 vertex가 갱신된다.
-      start가 맨 처음 pq에 들어간다.
-      이후 가장 낮은 값의 vertex를 기준으로 갱신한다.
-        음의 경로가 존재하지 않으므로, 가장낮은 값은 절대 변하지 않기 때문 
-  */
-  int num_V=cost_V.size();  //even if range 1~N, its OK, because there is no edge from vertex 0
-  fill_n(cost_V,num_V,-1); //cost 초기화
-  priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq;  //second==starting point vertex, first== vertex's cost
-  pq.push({0,start});
-  while(!pq.empty()){
-    auto tmp=pq.top();
-    pq.pop();
-    int cost(tmp.first),from_V(tmp.second);
-    if(cost_V[from_V]!=-1){ //there is minimum already
-      continue;
-    }
-    cost_V[from_V]=cost; //갱신
-    for(auto& ele:graph[from_V]){
-      pq.push({cost+ele.second,ele.first});
-    }
-  }
-}
 int BellmanFord(const vector<map<int,int>>& graph, vector<int>& cost_V, int start, int INF){  //0 return = Ok, 1 return = minus cycle
   /*
   Bellman-Ford Algorithm
@@ -63,7 +33,9 @@ int BellmanFord(const vector<map<int,int>>& graph, vector<int>& cost_V, int star
     ***음의 cycle 판별 추가바람
   */
   int num_V=cost_V.size();  //even if range 1~N, its OK, because there is no edge from vertex 0
-  fill_n(cost_V,num_V,INF); //cost 초기화, INF==possible max Cost +1
+  for(auto& ele:cost_V){  //cost 초기화, INF==possible max Cost +1
+    ele=INF;
+  } 
   cost_V[start]=0;          //start==0
   vector<bool> active(num_V);//active vertex
   active[start]=true;
@@ -104,23 +76,14 @@ int BellmanFord(const vector<map<int,int>>& graph, vector<int>& cost_V, int star
 void BK11657(){  // Bellman-Ford Algorithm, 음수 가중치도 허용한다, Edge 중심
   /*
   Bellman-Ford Algorithm
-    모든 edge를 chk하여 vertex를 갱신한다. 
-      갱신되지 않은 vertex에서 출발하는 edge는 감안하지 않는다.
-      vertex의 기본값은 INF로 하여, INF값인 경우 갱신되지 않은 것으로 감안한다.
-    #vertex -1 번 실행하면 최단거리를 찾을 수 있게 된다.
-      시작 vertex는 갱신되어 있다. 
-      edge chk 마다 최소 한개의 vertex가 갱신된다.
-      즉  #vertex-1 번이면 반드시 모든 vertex가 갱신된다.
-    #vertex 번째 실행에서 바뀌는 값이 있다면, 음의 사이클이 있는 것으로 간주한다.
-      양의 사이클이 존재할 경우에는, 기존값 보다 커지기 때문에 "갱신" 이 일어나지 않는다.
-    #vertex 번째 실행에서 갱신이 일어난 모든 vertex는 -INF로 간주한다.
-      이때 vertex에서는 cycle 내부가 아닌 바깥으로만 이동하며 갱신이 가능하다.
-        즉 cycle을 판별할 수 있어야 한다.
-    ***음의 cycle 판별 추가바람
 
-    문제에서는 음의 cycle이 발생할 경우 -1을 출력하므로 문제되지 않는다.
-    V-1번 bellman-Ford실행후, V번째 실행을 한번 더 하여 변화가 있으면 -1, 없으면 출력
-    출력시 INF는 -1로 출력
+  문제에서는 음의 cycle이 발생할 경우 -1을 출력하므로 문제되지 않는다.
+  V-1번 bellman-Ford실행후, V번째 실행을 한번 더 하여 변화가 있으면 -1, 없으면 출력
+  출력시 INF는 -1로 출력
+
+  지나온 경로를 다시 지나갈 수 있는가?
+    무한으로 시간을 돌리는 경로라 함은 지나온 경로를 다시 지나갈 수 있음을 의미한다.
+      중복 제거를 해도 된다.
 
   Dijkstra를 이용한 해법. 그러나 구현하지 않았다.
     graph문제 이지만, cost가 음수, 0이 가능하다.
@@ -151,56 +114,25 @@ void BK11657(){  // Bellman-Ford Algorithm, 음수 가중치도 허용한다, Ed
   }
 //prepare
   int INF=6000*10000+1;   // cost의 최댓값 +1
-  vector<int> chk(N+1,INF);  // first== cost
-  priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>> pq; //first=cost, second=key
-  
+  vector<int> cost_V(N+1);  // cost
 //calc
-  pq.push({0,1});
-  while(!pq.empty()){
-    auto tmp=pq.top();
-    pq.pop();
-    int cost(tmp.first),key(tmp.second);
-    if(chk[key]<cost){
-      continue; //이미 했다면 넘어간다.
-    }
-    chk[key].first=cost;chk[key].second=pass;
-    if(key==g){
-      for(auto& ele: graph[key]){
-        if(ele.first==h){
-          pq.push({cost+ele.second,{-1,ele.first}});
-        }else{
-          pq.push({cost+ele.second,{pass,ele.first}});
-        }
-      }
-    }else if(key==h){
-      for(auto& ele: graph[key]){
-        if(ele.first==g){
-          pq.push({cost+ele.second,{-1,ele.first}});
-        }else{
-          pq.push({cost+ele.second,{pass,ele.first}});
-        }
-      }
-    }else{
-      for(auto& ele: graph[key]){
-        pq.push({cost+ele.second,{pass,ele.first}});
-      }
-    }
-  }
+  int ans=BellmanFord(graph,cost_V,1,INF);
 //output
-  for(auto& ele: dest){
-    if(chk[ele].second){
-      cout<<ele<<" ";
+  if(ans){
+    cout<<-1<<"\n";
+  }else{
+    for(int i=2;i<=N;i++){
+      if(cost_V[i]==INF){
+        cout<<-1<<"\n";
+      }else{
+        cout<<cost_V[i]<<"\n";
+      }
     }
   }
-  cout<<endl;
 }
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
-  int T;
-  cin>>T;
-  while(T--){
-    BK11657();
-  }
+  BK11657();
   return 0;
 }
