@@ -62,7 +62,7 @@ vector<vector<long long>> FibonacciMatrix(long long m); //Fibonacci identity: Îè
 
 //graph 
 void Dijkstra(const vector<map<int,int>>& graph, vector<int>& cost_V, int start);
-//int BellmanFord(const vector<map<int,int>>& graph, vector<long long>& cost_V, int start, long long INF);  //0 return = Ok, 1 return = minus cycle
+int BellmanFord(const vector<map<int,int>>& graph, vector<long long>& cost_V, int start, int INF);  //0 return = Ok, 1 return = minus cycle
 
 //Segment Tree
 template <class T>
