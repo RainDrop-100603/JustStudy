@@ -61,8 +61,9 @@ pair<long long,long long> EuclidAlgo(long long A,long long B);  //A>B, Ax+By=d, 
 vector<vector<long long>> FibonacciMatrix(long long m); //Fibonacci identity: 도가뉴 항등식, d'Ocagne's identity, f_m matrix 반환, important 참고
 
 //graph 
-void Dijkstra(const vector<map<int,int>>& graph, vector<int>& cost_V, int start);
-int BellmanFord(const vector<map<int,int>>& graph, vector<long long>& cost_V, int start, int INF);  //0 return = Ok, 1 return = minus cycle
+void Dijkstra(const vector<map<int,int>>& graph, vector<int>& cost_V, int start); //음수 가중치 불가능. vertex 중심
+int BellmanFord(const vector<map<int,int>>& graph, vector<long long>& cost_V, int start, int INF);  //0 return = Ok, 1 return = minus cycle, 음수 가중치 불가능, edge 중심
+void FloydWarshall(const vector<map<int,int>>& graph, vector<vector<int>>& cost_V,vector<vector<int>>& prev_V); //음수 가중치도 허용한다, DP 이용
 
 //Segment Tree
 template <class T>
