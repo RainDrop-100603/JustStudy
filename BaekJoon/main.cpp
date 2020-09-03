@@ -13,49 +13,93 @@
 //#include "GoodFunction.h"
 
 using namespace std;
-
-void BK11404(){  // Floyd-Warshall Algorithm, 음수 가중치도 허용한다, DP 이용
+struct plan{
+  int time;
+  int money;
+  int dest;
+  bool operator>(const plan& a) const{
+    int minvalue=min(money,min(time,min(a.money,a.time)));
+    if(minvalue==a.time||minvalue==a.money){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  int cmpLess(const pair<const int,int>& a) const{ //1=less, -1=big, 0=not anyone
+    if(money<=a.second&&time<=a.first){
+      return 1;
+    }else if(money>a.second&&time>a.first){
+      return -1;
+    }else{
+      return 0;
+    }
+  }
+};
+void BK10217(){  // Dijkstra
   /*
-  Floyd-Warshall Algorithm
-    DP table 두개를 이용하는 Algorithm
-      1. Vertex간 최단거리를 저장하는 table
-      2. 최단거리일 때, 각 Vertex의 직전 Vertex를 저장하는 table
-      # table의 갱신: 경유하는 vertex가 0개 ~ #vertex-1 개 일때까지 차례로 DP
+  Dijkstra Algorithm
+    lowest time이 목표
+    lowest time dijkstra 
+      if timeover: backtracking?
+    DP table(cost_V)에 여러 data를 저장하자
+      갱신이 아닌 누적 저장을 이용
+        새로운 값이 들어오면 기존의 모든 값과 비교 
+          money와 time이 모두 기존값보다 낮거나 같다 -> 해당 기존값 삭제 후 저장
+          의외의 경우는 새로운 값도 저장 
+      새로운 자료형 정의
+        time과 money를 동시에 비교하여 가장 낮은 값을 priority queue에 저장
+
   */
 //input
-  int N,M,A,B,C;
-  cin>>N>>M; // #교차로(vertex), #도로(edge)
-  vector<map<int,int>> graph(N+1); // V[i]'s element =pair : i 와 p.first사이의 가중치 p.second의 경로, 중복 간선은 최저치 빼고 삭제
-  for(int i=0;i<M;i++){
-    cin>>A>>B>>C;
-    auto ans= graph[A].insert({B,C});
-    if(!ans.second){
-      if(ans.first->second>C){
-        ans.first->second=C;
+  int N,M,K,A,B,C,D;
+  cin>>N>>M>>K; // #vertex, max Cost, #edge
+  vector<vector<pair<int,pair<int,int>>>> graph(N+1); // dest, time, money
+  for(int i=0;i<K;i++){
+    cin>>A>>B>>C>>D; //from,to,money,time
+    graph[A].push_back({B,{D,C}});
+  }
+//prepare
+  vector<map<int,int>> cost_V(N+1);  //first==time, second==money
+  priority_queue<plan,vector<plan>,greater<plan>> pq; //time,money, dest
+//calc
+  pq.push({0,0,1});
+  while(!pq.empty()){
+    auto tmp=pq.top();
+    pq.pop();
+    bool isContinue(false);
+    for(auto& ele:cost_V[tmp.dest]){
+      int flag=tmp.cmpLess(ele);
+      if(flag==1){
+        cost_V[tmp.dest].erase(ele.first);
+      }else if(flag==-1){
+        isContinue=true;
+        break;
+      }
+    }
+    if(isContinue){
+      continue;
+    }
+    cost_V[tmp.dest].insert({tmp.time,tmp.money}); //갱신
+    for(auto& ele:graph[tmp.dest]){
+      if(tmp.money+ele.second.second<=M){
+        pq.push({tmp.time+ele.second.first,tmp.money+ele.second.second,ele.first});
       }
     }
   }
-//prepare
-  int INF=INT32_MAX;
-  vector<vector<int>> cost_V(N+1,vector<int>(N+1));  // cost
-  vector<vector<int>> prev_V(N+1,vector<int>(N+1));  // prev, prev[i][j]=k means the path is (i, ..., k, j) 
-//calc
-  FloydWarshall(graph,cost_V,prev_V);
 //output
-  for(int i=1;i<=N;i++){
-    for(int j=1;j<=N;j++){
-      if(cost_V[i][j]==INF){
-        cout<<0<<' ';
-      }else{
-        cout<<cost_V[i][j]<<' ';
-      }
-    }
-    cout<<endl;
+  if(!cost_V[N].empty()){
+    cout<<cost_V[N].begin()->first<<endl;
+  }else{
+    cout<<"Poor KCM"<<endl;
   }
 }
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
-  BK11404();
+  int T;
+  cin>>T;
+  while(T--){
+    BK10217();
+  }
   return 0;
 }
