@@ -14,31 +14,41 @@
 
 using namespace std;
 
-void BK11657(){  // Bellman-Ford Algorithm, 음수 가중치도 허용한다, Edge 중심
+void FloydWarshall(const vector<map<int,int>>& graph, vector<vector<int>>& cost_V,vector<vector<int>>& prev_V){
   /*
-  Bellman-Ford Algorithm
+  Floyd-Warshall Algorithm
+    DP table 두개를 이용하는 Algorithm
+      1. Vertex간 최단거리를 저장하는 table A
+      2. 최단거리일 때, 도착 Vertex의 직전 Vertex를 저장하는 table B
+      # table의 갱신: 경유하는 vertex가 0개 ~ #vertex 개 일때까지 차례로 DP
+        ==모든 vertex를 경유 가능하도록 추가할 때까지
+    A(i,j)=i에서 j로 가는 최단거리 cost
+    B(i,j)=i에서 j로 가는 최단거리일때, j의 직전 vertex
+    DP(x)->DP(x+1)에서 vertex k가 경유지로 추가될 경우, Edge(K,dest)
+      A(i,dest)=min(A(i,dest),A(i,k)+Edge(k,dest))
+      B(i,dest)=k, iff A(i,dest) is changed
+  */
+  int num_V(cost_V.size()),INF(INT32_MAX),NIL(-1);  //there is no vertex: -1, so NIL==-1  
+  for(int i=0;i<num_V;i++){ //initialize
+    for(int j=0;j<num_V;j++){ //default value
+      cost_V[i][j]=INF;
+      prev_V[i][j]=NIL;
+    }
+    cost_V[i][i]=0; //vertex i to i == 0
+    for(auto& ele: graph[i]){ //default Edge,first==dest, second==cost
+      cost_V[i][ele.first]=ele.second;
+      prev_V[i][ele.first]=i;
+    }
+  }
+}
 
-  문제에서는 음의 cycle이 발생할 경우 -1을 출력하므로 문제되지 않는다.
-  V-1번 bellman-Ford실행후, V번째 실행을 한번 더 하여 변화가 있으면 -1, 없으면 출력
-  출력시 INF는 -1로 출력
-
-  지나온 경로를 다시 지나갈 수 있는가?
-    무한으로 시간을 돌리는 경로라 함은 지나온 경로를 다시 지나갈 수 있음을 의미한다.
-      중복 제거를 해도 된다.
-
-  Dijkstra를 이용한 해법. 그러나 구현하지 않았다.
-    graph문제 이지만, cost가 음수, 0이 가능하다.
-    순환하는 고리
-      합이 양수: 순환하지 않는다.
-      합이 0 : 순환을 최대 한번 할 수 있다.
-      합이 음수: 무한히 순환한다. 
-        -> pq에 방문한 vertex를 표시하고, 재방문이 확인된다면 합이 음수인 순환하는 고리, 그 중에서도 -INF로 가는 수임을 알 수 있다.
-            재방문 cost가 기존 cost보다 크면 방문하지 않기 때문에 INF로 가지는 않는다.
-        -INF는 고리 밖에 있는 vertex로 갈 때, 해당 vertex도 -INF로 만든다
-        -INF는 고리 내부에 있는 vertex를 재방문 해서는 안된다.
-          -> 고리의 vertex를 확인하는 function을 이용해 재방문을 막자
-    pq.의 구성
-      cost, key, 방문한 vertex를 저장한 set,방문 불가능한 vertex를 저장한 set
+void BK11404(){  // Floyd-Warshall Algorithm, 음수 가중치도 허용한다, DP 이용
+  /*
+  Floyd-Warshall Algorithm
+    DP table 두개를 이용하는 Algorithm
+      1. Vertex간 최단거리를 저장하는 table
+      2. 최단거리일 때, 각 Vertex의 직전 Vertex를 저장하는 table
+      # table의 갱신: 경유하는 vertex가 0개 ~ #vertex-1 개 일때까지 차례로 DP
   */
 //input
   int N,M,A,B,C;
@@ -74,6 +84,6 @@ void BK11657(){  // Bellman-Ford Algorithm, 음수 가중치도 허용한다, Ed
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
-  BK11657();
+  BK11404();
   return 0;
 }
