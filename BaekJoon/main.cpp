@@ -56,6 +56,9 @@ void BK10217(){  // Dijkstra
           graph 원본, lowest time edge만을 저장한 행렬, 행렬이 몇개 저장되었는지 체크하는 cnt(cnt==0->break)
         초기화 되지 않고 누적되는 것
           cost_V행렬
+        구현에서 에러떠서 포기 
+    fourth
+
   */
 //input
   int N,M,K,A,B,C,D;
@@ -63,7 +66,7 @@ void BK10217(){  // Dijkstra
   vector<map<int,pair<int,int>>> graph(N+1); // time,dest,money
   for(int i=0;i<K;i++){
     cin>>A>>B>>C>>D; //from,dest,money,time
-    graph[A].insert({D,{B,C}});
+    graph[A].insert({D,{C,B}}); //first=time, second.first=money, second.second=dest
   }
 //prepare
   vector<map<int,int>> cost_V(N+1);  //first==time, second==money
@@ -72,7 +75,7 @@ void BK10217(){  // Dijkstra
   while(true){
     //prepare
     int cnt(0);
-    vector<pair<int,pair<int,int>>> tmpGraph(N+1);  //lowest edge를 저장한 행렬
+    vector<pair<int,pair<int,int>>> tmpGraph(N+1,{-1,{-1,-1}});  //lowest edge를 저장한 행렬,time,money,dest
     for(int i=1;i<=N;i++){
       if(!graph[i].empty()){
         tmpGraph[i]=*graph[i].begin();
@@ -107,8 +110,8 @@ void BK10217(){  // Dijkstra
         cout<<tmp.money<<endl;
         return;
       }
-      if(tmp.money+tmpGraph[tmp.dest].second.second<=M){
-        pq.push({tmp.time+tmpGraph[tmp.dest].second.first,tmp.money+tmpGraph[tmp.dest].second.second,tmpGraph[tmp.dest].first});
+      if(tmpGraph[tmp.dest].first!=-1&&tmp.money+tmpGraph[tmp.dest].second.first<=M){ //money
+        pq.push({tmp.time+tmpGraph[tmp.dest].first,tmp.money+tmpGraph[tmp.dest].second.first,tmpGraph[tmp.dest].second.second});  //time,money,dest
       }
     }
   }
