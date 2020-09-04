@@ -46,51 +46,71 @@ void BK10217(){  // Dijkstra
           time과 money를 동시에 비교하여 가장 낮은 값을 priority queue에 저장
     second_memOver: 여전히 많은 정보가 stack과 table에 저장된다.
       오직 time을 기준으로만 비교 -> 가장 먼저 목적지 도착하면 출력(cost는 stack 입력 전에 확인하므로)
+    third
+      graph를 time 기준으로 정렬
+        각 vertex에서 lowest time edge 만을 이용하여 dijkstra
+          이 dijkstra는 second에서 한 것과 동일한 dijkstra
+          lowest time edge만 넣은 행렬 하나 생성해서 이용
+        목적지(N)에 데이터가 갱신되었는지 확인후 다시 dijkstra
+        매번 초기화되는것
+          graph 원본, lowest time edge만을 저장한 행렬, 행렬이 몇개 저장되었는지 체크하는 cnt(cnt==0->break)
+        초기화 되지 않고 누적되는 것
+          cost_V행렬
   */
 //input
   int N,M,K,A,B,C,D;
   cin>>N>>M>>K; // #vertex, max Cost, #edge
-  vector<vector<pair<int,pair<int,int>>>> graph(N+1); // dest, time, money
+  vector<map<int,pair<int,int>>> graph(N+1); // time,dest,money
   for(int i=0;i<K;i++){
-    cin>>A>>B>>C>>D; //from,to,money,time
-    graph[A].push_back({B,{D,C}});
+    cin>>A>>B>>C>>D; //from,dest,money,time
+    graph[A].insert({D,{B,C}});
   }
 //prepare
   vector<map<int,int>> cost_V(N+1);  //first==time, second==money
   priority_queue<plan,vector<plan>,greater<plan>> pq; //time,money, dest
 //calc
-  pq.push({0,0,1});
-  while(!pq.empty()){
-    auto tmp=pq.top();
-    pq.pop();
-    bool isContinue(false);
-    for(auto& ele:cost_V[tmp.dest]){
-      int flag=tmp.cmpLess(ele);
-      if(flag==1){
-        cost_V[tmp.dest].erase(ele.first);
-      }else if(flag==-1){
-        isContinue=true;
-        break;
+  while(true){
+    //prepare
+    int cnt(0);
+    vector<pair<int,pair<int,int>>> tmpGraph(N+1);  //lowest edge를 저장한 행렬
+    for(int i=1;i<=N;i++){
+      if(!graph[i].empty()){
+        tmpGraph[i]=*graph[i].begin();
+        graph[i].erase(graph[i].begin());
+        cnt++;
       }
     }
-    if(isContinue){
-      continue;
+    if(cnt==0){ 
+      cout<<"Poor KCM"<<endl;
+      return;
     }
-    cost_V[tmp.dest].insert({tmp.time,tmp.money}); //갱신
-    if(tmp.dest==N){
-      break;
-    }
-    for(auto& ele:graph[tmp.dest]){
-      if(tmp.money+ele.second.second<=M){
-        pq.push({tmp.time+ele.second.first,tmp.money+ele.second.second,ele.first});
+    //calc
+    pq.push({0,0,1});
+    while(!pq.empty()){
+      auto tmp=pq.top();
+      pq.pop();
+      bool isContinue(false);
+      for(auto& ele:cost_V[tmp.dest]){
+        int flag=tmp.cmpLess(ele);
+        if(flag==1){
+          cost_V[tmp.dest].erase(ele.first);
+        }else if(flag==-1){
+          isContinue=true;
+          break;
+        }
+      }
+      if(isContinue){
+        continue;
+      }
+      cost_V[tmp.dest].insert({tmp.time,tmp.money}); //갱신
+      if(tmp.dest==N){
+        cout<<tmp.money<<endl;
+        return;
+      }
+      if(tmp.money+tmpGraph[tmp.dest].second.second<=M){
+        pq.push({tmp.time+tmpGraph[tmp.dest].second.first,tmp.money+tmpGraph[tmp.dest].second.second,tmpGraph[tmp.dest].first});
       }
     }
-  }
-//output
-  if(!cost_V[N].empty()){
-    cout<<cost_V[N].begin()->first<<endl;
-  }else{
-    cout<<"Poor KCM"<<endl;
   }
 }
 int main(){
