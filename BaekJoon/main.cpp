@@ -13,23 +13,7 @@
 //#include "GoodFunction.h"
 
 using namespace std;
-struct plan{
-  int time;
-  int money;
-  int dest;
-  bool operator>(const plan& a) const{
-    return time>a.time;
-  }
-  int cmpLess(const pair<const int,int>& a) const{ //1=less, -1=big, 0=not anyone
-    if(money<=a.second&&time<=a.first){
-      return 1;
-    }else if(money>a.second&&time>a.first){
-      return -1;
-    }else{
-      return 0;
-    }
-  }
-};
+
 void BK10217(){  // Dijkstra
   /*
   Dijkstra Algorithm
@@ -57,63 +41,45 @@ void BK10217(){  // Dijkstra
         초기화 되지 않고 누적되는 것
           cost_V행렬
         구현에서 에러떠서 포기 
-    fourth
+    fourth  - 인터넷 참고_memOver
+      DP table : A[i][j]=K  : i에 j cost로 도달하는데 걸린 시간 
 
   */
 //input
   int N,M,K,A,B,C,D;
   cin>>N>>M>>K; // #vertex, max Cost, #edge
-  vector<map<int,pair<int,int>>> graph(N+1); // time,dest,money
+  vector<vector<pair<int,pair<int,int>>>> graph(N+1); // dest, money, time
   for(int i=0;i<K;i++){
     cin>>A>>B>>C>>D; //from,dest,money,time
-    graph[A].insert({D,{C,B}}); //first=time, second.first=money, second.second=dest
+    graph[A].push_back({B,{C,D}}); //dest,money,time
   }
 //prepare
-  vector<map<int,int>> cost_V(N+1);  //first==time, second==money
-  priority_queue<plan,vector<plan>,greater<plan>> pq; //time,money, dest
+  int INF=10000*1000+1;  //current max time+1, #edge*time+1
+  vector<vector<int>> cost_V(N+1,vector<int>(M+1,INF));  //cost[i][j]=k : 1 to i with cost:j time:k
+  priority_queue<pair<pair<int,int>,int>,vector<pair<pair<int,int>,int>>,greater<pair<pair<int,int>,int>>> pq; //money,time,dest
 //calc
-  while(true){
-    //prepare
-    int cnt(0);
-    vector<pair<int,pair<int,int>>> tmpGraph(N+1,{-1,{-1,-1}});  //lowest edge를 저장한 행렬,time,money,dest
-    for(int i=1;i<=N;i++){
-      if(!graph[i].empty()){
-        tmpGraph[i]=*graph[i].begin();
-        graph[i].erase(graph[i].begin());
-        cnt++;
+  pq.push({{0,0},1});
+  while(!pq.empty()){
+    auto tmp=pq.top();
+    pq.pop();
+    int cost(tmp.first.first),time(tmp.first.second),from_V(tmp.second);
+    cost_V[from_V][cost]=time; //갱신
+    for(auto& ele:graph[from_V]){
+      int newCost(cost+ele.second.first),newDest(ele.first),newTime(time+ele.second.second);
+      if(newCost<=M&&cost_V[newDest][newCost]>newTime){
+        pq.push({{newCost,newTime},newDest});
       }
     }
-    if(cnt==0){ 
-      cout<<"Poor KCM"<<endl;
-      return;
-    }
-    //calc
-    pq.push({0,0,1});
-    while(!pq.empty()){
-      auto tmp=pq.top();
-      pq.pop();
-      bool isContinue(false);
-      for(auto& ele:cost_V[tmp.dest]){
-        int flag=tmp.cmpLess(ele);
-        if(flag==1){
-          cost_V[tmp.dest].erase(ele.first);
-        }else if(flag==-1){
-          isContinue=true;
-          break;
-        }
-      }
-      if(isContinue){
-        continue;
-      }
-      cost_V[tmp.dest].insert({tmp.time,tmp.money}); //갱신
-      if(tmp.dest==N){
-        cout<<tmp.money<<endl;
-        return;
-      }
-      if(tmpGraph[tmp.dest].first!=-1&&tmp.money+tmpGraph[tmp.dest].second.first<=M){ //money
-        pq.push({tmp.time+tmpGraph[tmp.dest].first,tmp.money+tmpGraph[tmp.dest].second.first,tmpGraph[tmp.dest].second.second});  //time,money,dest
-      }
-    }
+  }
+//output
+  int minTime(INF);
+  for(auto& ele:cost_V[N]){
+    minTime=min(minTime,ele);
+  }
+  if(minTime==INF){
+    cout<<"Poor KCM"<<endl;
+  }else{
+    cout<<minTime<<endl;
   }
 }
 int main(){
