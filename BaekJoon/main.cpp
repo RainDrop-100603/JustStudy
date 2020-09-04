@@ -54,8 +54,7 @@ void BK10217(){  // Dijkstra
     graph[A].push_back({B,{C,D}}); //dest,money,time
   }
 //prepare
-  int INF=10000*1000+1;  //current max time+1, #edge*time+1
-  vector<vector<int>> cost_V(N+1,vector<int>(M+1,INF));  //cost[i][j]=k : 1 to i with cost:j time:k
+  vector<map<int,int>> cost_V(N+1);  //cost[i][j]=k : 1 to i with time:j cost:k
   priority_queue<pair<pair<int,int>,int>,vector<pair<pair<int,int>,int>>,greater<pair<pair<int,int>,int>>> pq; //money,time,dest
 //calc
   pq.push({{0,0},1});
@@ -63,24 +62,33 @@ void BK10217(){  // Dijkstra
     auto tmp=pq.top();
     pq.pop();
     int cost(tmp.first.first),time(tmp.first.second),from_V(tmp.second);
-    cost_V[from_V][cost]=time; //갱신
+    auto ans=cost_V[from_V].insert({time,cost}); //갱신
+    if(!ans.second){
+      ans.first->second=cost;
+    }
     for(auto& ele:graph[from_V]){
       int newCost(cost+ele.second.first),newDest(ele.first),newTime(time+ele.second.second);
-      if(newCost<=M&&cost_V[newDest][newCost]>newTime){
-        pq.push({{newCost,newTime},newDest});
+      if(newCost<=M){
+        bool jmp(false);
+        for(auto& ele:cost_V[from_V]){
+          if(ele.first<=newTime&&ele.second<=newCost){
+            jmp=true;
+            break;
+          }
+        }
+        if(!jmp){
+          pq.push({{newTime,newCost},newDest});
+        }
       }
     }
   }
 //output
-  int minTime(INF);
-  for(auto& ele:cost_V[N]){
-    minTime=min(minTime,ele);
-  }
-  if(minTime==INF){
-    cout<<"Poor KCM"<<endl;
+  if(!cost_V[N].empty()){
+    cout<<cost_V[N].begin()->first<<endl;
   }else{
-    cout<<minTime<<endl;
+    cout<<"Poor KCM"<<endl;
   }
+  
 }
 int main(){
   cin.tie(NULL);
