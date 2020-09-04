@@ -18,12 +18,7 @@ struct plan{
   int money;
   int dest;
   bool operator>(const plan& a) const{
-    int minvalue=min(money,min(time,min(a.money,a.time)));
-    if(minvalue==a.time||minvalue==a.money){
-      return true;
-    }else{
-      return false;
-    }
+    return time>a.time;
   }
   int cmpLess(const pair<const int,int>& a) const{ //1=less, -1=big, 0=not anyone
     if(money<=a.second&&time<=a.first){
@@ -38,17 +33,19 @@ struct plan{
 void BK10217(){  // Dijkstra
   /*
   Dijkstra Algorithm
-    lowest time이 목표
-    lowest time dijkstra 
-      if timeover: backtracking?
-    DP table(cost_V)에 여러 data를 저장하자
-      갱신이 아닌 누적 저장을 이용
-        새로운 값이 들어오면 기존의 모든 값과 비교 
-          money와 time이 모두 기존값보다 낮거나 같다 -> 해당 기존값 삭제 후 저장
-          의외의 경우는 새로운 값도 저장 
-      새로운 자료형 정의
-        time과 money를 동시에 비교하여 가장 낮은 값을 priority queue에 저장
-
+    first_memOver: 대부분의 정보를 모두 저장해버렸기 때문 -> 일정수준 이전 정보는 삭제해버리는 DP 이용 필요
+      lowest time이 목표
+      lowest time dijkstra 
+        if timeover: backtracking?
+      DP table(cost_V)에 여러 data를 저장하자
+        갱신이 아닌 누적 저장을 이용
+          새로운 값이 들어오면 기존의 모든 값과 비교 
+            money와 time이 모두 기존값보다 낮거나 같다 -> 해당 기존값 삭제 후 저장
+            의외의 경우는 새로운 값도 저장 
+        새로운 자료형 정의
+          time과 money를 동시에 비교하여 가장 낮은 값을 priority queue에 저장
+    second_memOver: 여전히 많은 정보가 stack과 table에 저장된다.
+      오직 time을 기준으로만 비교 -> 가장 먼저 목적지 도착하면 출력(cost는 stack 입력 전에 확인하므로)
   */
 //input
   int N,M,K,A,B,C,D;
@@ -80,6 +77,9 @@ void BK10217(){  // Dijkstra
       continue;
     }
     cost_V[tmp.dest].insert({tmp.time,tmp.money}); //갱신
+    if(tmp.dest==N){
+      break;
+    }
     for(auto& ele:graph[tmp.dest]){
       if(tmp.money+ele.second.second<=M){
         pq.push({tmp.time+ele.second.first,tmp.money+ele.second.second,ele.first});
