@@ -1,33 +1,15 @@
 #include <iostream>
-#include <vector>
 #include <algorithm>
 
 using namespace std;
 
-/*Question_01
-    //input
-    int K,N;
-    cin>>N>>K;  //N:음식의 수, K: 날짜
-    vector<int> arr1(N),arr2(N);
-    for(auto& ele:arr1){
-      cin>>ele;
-    }
-    for(auto& ele:arr2){
-      cin>>ele;
-    }
-    //prepare
-    sort(arr1.begin(),arr1.end());
-    sort(arr2.begin(),arr2.end());
-    //calculate
-    for(int i=0;i<K;i++){
-      Answer=max(Answer,arr1[i]+arr2[K-i-1]);
-    }
-*/
 
 int Answer;
-pair<bool,int> table[3001];
-int deck[2][3000];
-
+int team1[200000];
+int team2[200000];
+int DP1[3][200000];  // i and i, M,F,B
+int DP2[3][199999];  // i and i+1, M,F,B, up
+int DP3[3][199999];  // i+1 and i, M,F,B, down
 
 int main(int argc, char** argv)
 {
@@ -35,68 +17,50 @@ int main(int argc, char** argv)
   cin.sync_with_stdio(false);
 	int T, test_case;
 	cin >> T;
-
 	for(test_case = 0; test_case  < T; test_case++)
 	{
-		Answer = 0;
+    Answer=0;
     //input
-    int K,N;
-    cin>>N>>K;  //N:카드의 수, K: 최대 숫자
-    for(int i=0;i<N;i++){
-      cin>>deck[0][i];
+    int n;
+    cin>>n;
+    for(int i=0;i<n;i++){
+      cin>>team1[i];
     }
-    for(int i=0;i<N;i++){
-      cin>>deck[1][i];
+    for(int i=0;i<n;i++){
+      cin>>team2[i];
     }
     //prepare
-    table[0]={true,0}; Answer++;//0: 남은 값 0
-    int newCard;
-    for(int i=0;i<N;i++){
-      auto tmp=table[i]; 
-        newCard=deck[0][i];
-        if(!tmp.first){
-          table[i+1]={true,K-newCard};
-          Answer++;
-        }else if(tmp.first&&(tmp.second==0||tmp.second<newCard)){
-          table[i+1]={false,K-newCard};
-        }else{
-          table[i+1]={true,tmp.second-newCard};
-          Answer++;
-        }
+    sort(team1,team1+n);
+    sort(team2,team2+n);
+    int uNow,dNow,uNext(team1[0]),dNext(team2[0]);
+    for(int i=0;i<n-1;i++){   //N
+      uNow=uNext;uNext=team1[i+1];
+      dNow=dNext;dNext=team2[i+1];
+      DP1[0][i]=abs(uNow-dNow);
+      DP2[0][i]=abs(uNow-dNext);
+      DP3[0][i]=abs(uNext-dNow);
+    }DP1[0][n-1]=abs(uNext-dNext);
+    DP1[1][0]=DP1[0][0];DP2[1][0]=DP2[0][0];DP3[1][0]=DP3[0][0];
+    for(int i=1;i<n-1;i++){   //F
+      DP1[1][i]=DP1[1][i-1]+DP1[0][i];
+      DP2[1][i]=DP2[1][i-1]+DP2[0][i];
+      DP3[1][i]=DP3[1][i-1]+DP3[0][i];  
+    }DP1[1][n-1]=DP1[1][n-2]+DP1[0][n-1];
+    DP1[2][n-1]=DP1[0][n-1];DP1[2][n-2]=DP1[2][n-1]+DP1[0][n-2];
+    DP2[2][n-2]=DP2[0][n-2];DP3[2][n-2]=DP3[0][n-2];
+    for(int i=n-3;i>=0;i--){  //B
+      DP1[2][i]=DP1[2][i+1]+DP1[0][i];
+      DP2[2][i]=DP2[2][i+1]+DP2[0][i];
+      DP3[2][i]=DP3[2][i+1]+DP3[0][i];
     }
-    //calculate
-    for(int i=0;i<N;i++){
-      for(int j=0;j<=i;j++){
-        auto tmp=table[j]; 
-        newCard=deck[1][i];
-        if(!tmp.first){
-          table[j]={true,K-newCard};
-          Answer++;
-        }else if(tmp.first&&(tmp.second==0||tmp.second<newCard)){
-          table[j]={false,K};
-        }else{
-          table[j]={true,tmp.second-newCard};
-          Answer++;
-        }
-      }
-      
-      for(int j=i;j<N;j++){
-        auto tmp=table[j]; 
-        newCard=deck[0][j];
-        if(tmp.second<newCard){
-          table[j+1]={!tmp.first,K-newCard};
-        }else{
-          table[j+1]={tmp.first,tmp.second-newCard};
-        }
-        if(table[j+1].first){
-          Answer++;
-        }
-      }
-    }
-		// Print the answer to standard output(screen).
-		cout << "Case #" << test_case+1 << endl;
-		cout << Answer << ' ' << (N+1)*(N+1)-Answer << endl;
+    
+    //calc
+
+    //output
+		cout << "Case #" << test_case+1 << "\n";
+		cout << Answer << "\n";
 	}
 
 	return 0;//Your program should return 0 on normal termination.
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
