@@ -4,12 +4,9 @@
 using namespace std;
 
 
-int Answer;
+long long Answer;
 int team1[200000];
 int team2[200000];
-int DP1[3][200000];  // i and i, M,F,B
-int DP2[3][200000];  // i and i+1, M,F,B, up
-int DP3[3][200000];  // i+1 and i, M,F,B, down
 
 int main(int argc, char** argv)
 {
@@ -34,37 +31,27 @@ int main(int argc, char** argv)
       continue;
     }
     //prepare
-    sort(team1,team1+n);
-    sort(team2,team2+n);
-    int uNow,dNow,uNext(team1[0]),dNext(team2[0]);
-    for(int i=0;i<n-1;i++){   //N
-      uNow=uNext;uNext=team1[i+1];
-      dNow=dNext;dNext=team2[i+1];
-      DP1[0][i]=abs(uNow-dNow);
-      DP2[0][i]=abs(uNow-dNext);
-      DP3[0][i]=abs(uNext-dNow);
-    }DP1[0][n-1]=abs(uNext-dNext);
-    DP1[1][0]=DP1[0][0];DP2[1][0]=DP2[0][0];DP3[1][0]=DP3[0][0];
-    for(int i=1;i<n-1;i++){   //F
-      DP1[1][i]=DP1[1][i-1]+DP1[0][i];
-      DP2[1][i]=DP2[1][i-1]+DP2[0][i];
-      DP3[1][i]=DP3[1][i-1]+DP3[0][i];  
-    }DP1[1][n-1]=DP1[1][n-2]+DP1[0][n-1];
-    DP1[2][n-1]=DP1[0][n-1];DP1[2][n-2]=DP1[2][n-1]+DP1[0][n-2];
-    DP2[2][n-2]=DP2[0][n-2];DP3[2][n-2]=DP3[0][n-2];
-    for(int i=n-3;i>=0;i--){  //B
-      DP1[2][i]=DP1[2][i+1]+DP1[0][i];
-      DP2[2][i]=DP2[2][i+1]+DP2[0][i];
-      DP3[2][i]=DP3[2][i+1]+DP3[0][i];
-    }
+    sort(team1,team1+n);sort(team2,team2+n);
     //calc
-    Answer=min(min(DP1[1][n-2],DP1[2][1]),min(DP2[1][n-2],DP3[1][n-2]));  //0,n-1
-    for(int i=0;i<n-2;i++){
-      Answer=min(Answer,DP1[1][i]+min(DP2[2][i+1],DP3[2][i+1]));
-      Answer=min(Answer,DP1[2][i+2]+min(DP2[1][i],DP3[1][i]));
-      Answer=min(Answer,DP1[1][i]+DP1[2][i+2]); //i+1 
+    long long prev1,prev2,now1(team1[0]),now2(team2[0]),tmp(abs(now1-now2)),gap(tmp),gap1(0),gap2(0),N1(-tmp),N2(-tmp),tmp1,tmp2;
+    Answer=tmp;
+    for(int i=1;i<n;i++){
+      prev1=now1;prev2=now2;now1=team1[i];now2=team2[i];
+      tmp=abs(now1-now2);
+      Answer+=tmp;
+      gap=max(gap,tmp);
+      
+      tmp1=abs(now1-prev2);
+      N1+=tmp-tmp1;
+      N1=max(N1,-tmp);
+      gap1=max(gap1,N1);
+      tmp2=abs(now2-prev1);
+      N2+=tmp-tmp2;
+      N2=max(N2,-tmp);
+      gap2=max(gap2,N2);
     }
-
+    gap=max(gap,max(gap1,gap2));
+    Answer-=gap;
     //output
 		cout << "Case #" << test_case+1 << "\n";
 		cout << Answer << "\n";
