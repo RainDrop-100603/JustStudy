@@ -8,8 +8,8 @@ int Answer;
 int team1[200000];
 int team2[200000];
 int DP1[3][200000];  // i and i, M,F,B
-int DP2[3][199999];  // i and i+1, M,F,B, up
-int DP3[3][199999];  // i+1 and i, M,F,B, down
+int DP2[3][200000];  // i and i+1, M,F,B, up
+int DP3[3][200000];  // i+1 and i, M,F,B, down
 
 int main(int argc, char** argv)
 {
@@ -19,7 +19,6 @@ int main(int argc, char** argv)
 	cin >> T;
 	for(test_case = 0; test_case  < T; test_case++)
 	{
-    Answer=0;
     //input
     int n;
     cin>>n;
@@ -28,6 +27,11 @@ int main(int argc, char** argv)
     }
     for(int i=0;i<n;i++){
       cin>>team2[i];
+    }
+    if(n==1){
+      cout << "Case #" << test_case+1 << "\n";
+		  cout << 0 << "\n";
+      continue;
     }
     //prepare
     sort(team1,team1+n);
@@ -53,8 +57,13 @@ int main(int argc, char** argv)
       DP2[2][i]=DP2[2][i+1]+DP2[0][i];
       DP3[2][i]=DP3[2][i+1]+DP3[0][i];
     }
-    
     //calc
+    Answer=min(min(DP1[1][n-2],DP1[2][1]),min(DP2[1][n-2],DP3[1][n-2]));  //0,n-1
+    for(int i=0;i<n-2;i++){
+      Answer=min(Answer,DP1[1][i]+min(DP2[2][i+1],DP3[2][i+1]));
+      Answer=min(Answer,DP1[2][i+2]+min(DP2[1][i],DP3[1][i]));
+      Answer=min(Answer,DP1[1][i]+DP1[2][i+2]); //i+1 
+    }
 
     //output
 		cout << "Case #" << test_case+1 << "\n";
