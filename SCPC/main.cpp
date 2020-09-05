@@ -4,11 +4,9 @@
 
 using namespace std;
 
-
-int Answer;
 int cost[200000];
 int pay[200000];
-int pay2[200000];
+
 
 int main(int argc, char** argv)
 {
@@ -33,47 +31,36 @@ int main(int argc, char** argv)
       pay[i-1]+=cost[i];
       pay[i]+=cost[i];
     }
+    multiset<int> set;
     for(int i=0;i<n-2;i++){
-      pay2[i]=pay[i];
+      set.insert(pay[i]);
     }
-    sort(pay,pay+n-2);
-    multiset<int> set1,set2;
-    for(int i=0;i<n/2-1;i++){
-      set1.insert(pay[i]);
+    multiset<int>::iterator iter;
+    iter=set.begin();
+    for(int i=0;i<(set.size()+1)/2;i++){
+      iter++;
     }
-    for(int i=n/2-1;i<n-2;i++){
-      set2.insert(pay[i]);
-    }
-    int mid=*set2.begin();
-    cout<<mid<<" ";
+    cout<<*iter<<" ";
     
     int day,value;
     for(int i=0;i<Q;i++){
       cin>>day>>value;
-      int from=max(0,day-1),to=min(n-2,day+2);
+      day--;
+      int from=max(0,day-2);
       int prev,now;
-      for(;from<to;from++){
-        prev=pay2[from];
-        pay2[from]+=value-cost[day];
-        now=pay2[from];
-        if(prev<mid){
-          set1.erase(set1.lower_bound(prev));
-          if(now<mid){
-            set1.insert(now);
-          }else{
-            set2.insert(now);
-          }
-        }else{
-          set2.erase(set2.lower_bound(prev));
-          if(now<mid){
-            set1.insert(now);
-          }else{
-            set2.insert(now);
-          }
-        }
-        int mid=*set2.begin(); 
+      for(;from<=day;from++){
+        prev=pay[from];
+        pay[from]+=value-cost[day];
+        now=pay[from];
+        cost[day]=value;
+        set.insert(now);
+        set.erase(set.lower_bound(prev));
       }
-      cout<<mid<<" ";
+      iter=set.begin();
+      for(int i=0;i<(set.size()+1)/2;i++){
+        iter++;
+      }
+      cout<<*iter<<" ";
     }
     cout<<endl;
 	}
