@@ -1,12 +1,14 @@
 #include <iostream>
 #include <algorithm>
+#include <set>
 
 using namespace std;
 
 
-long long Answer;
-int team1[200000];
-int team2[200000];
+int Answer;
+int cost[200000];
+int pay[200000];
+int pay2[200000];
 
 int main(int argc, char** argv)
 {
@@ -17,44 +19,63 @@ int main(int argc, char** argv)
 	for(test_case = 0; test_case  < T; test_case++)
 	{
     //input
-    int n;
-    cin>>n;
+    int n,K,Q;
+    cin>>n>>K>>Q;
     for(int i=0;i<n;i++){
-      cin>>team1[i];
-    }
-    for(int i=0;i<n;i++){
-      cin>>team2[i];
-    }
-    if(n==1){
-      cout << "Case #" << test_case+1 << "\n";
-		  cout << 0 << "\n";
-      continue;
+      cin>>cost[i];
     }
     //prepare
-    sort(team1,team1+n);sort(team2,team2+n);
-    //calc
-    long long prev1,prev2,now1(team1[0]),now2(team2[0]),tmp(abs(now1-now2)),gap(tmp),gap1(0),gap2(0),N1(-tmp),N2(-tmp),tmp1,tmp2;
-    Answer=tmp;
-    for(int i=1;i<n;i++){
-      prev1=now1;prev2=now2;now1=team1[i];now2=team2[i];
-      tmp=abs(now1-now2);
-      Answer+=tmp;
-      gap=max(gap,tmp);
-      
-      tmp1=abs(now1-prev2);
-      N1+=tmp-tmp1;
-      N1=max(N1,-tmp);
-      gap1=max(gap1,N1);
-      tmp2=abs(now2-prev1);
-      N2+=tmp-tmp2;
-      N2=max(N2,-tmp);
-      gap2=max(gap2,N2);
+    fill_n(pay,n-2,0);
+    pay[0]=cost[0]+cost[1];
+    pay[1]=cost[1];
+    for(int i=2;i<n;i++){
+      pay[i-2]+=cost[i];
+      pay[i-1]+=cost[i];
+      pay[i]+=cost[i];
     }
-    gap=max(gap,max(gap1,gap2));
-    Answer-=gap;
-    //output
-		cout << "Case #" << test_case+1 << "\n";
-		cout << Answer << "\n";
+    for(int i=0;i<n-2;i++){
+      pay2[i]=pay[i];
+    }
+    sort(pay,pay+n-2);
+    multiset<int> set1,set2;
+    for(int i=0;i<n/2-1;i++){
+      set1.insert(pay[i]);
+    }
+    for(int i=n/2-1;i<n-2;i++){
+      set2.insert(pay[i]);
+    }
+    int mid=*set2.begin();
+    cout<<mid<<" ";
+    
+    int day,value;
+    for(int i=0;i<Q;i++){
+      cin>>day>>value;
+      int from=max(0,day-1),to=min(n-2,day+2);
+      int prev,now;
+      for(;from<to;from++){
+        prev=pay2[from];
+        pay2[from]+=value-cost[day];
+        now=pay2[from];
+        if(prev<mid){
+          set1.erase(set1.lower_bound(prev));
+          if(now<mid){
+            set1.insert(now);
+          }else{
+            set2.insert(now);
+          }
+        }else{
+          set2.erase(set2.lower_bound(prev));
+          if(now<mid){
+            set1.insert(now);
+          }else{
+            set2.insert(now);
+          }
+        }
+        int mid=*set2.begin(); 
+      }
+      cout<<mid<<" ";
+    }
+    cout<<endl;
 	}
 
 	return 0;//Your program should return 0 on normal termination.
