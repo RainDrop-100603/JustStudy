@@ -49,9 +49,10 @@ void BK10217(){  // Dijkstra
         구현에서 에러떠서 포기 
     fourth  - 인터넷 참고_memOver
       DP table : A[i][j]=K  : i에 j cost로 도달하는데 걸린 시간 
-    fifth:
+    fifth: 
       cost 는 증가하기만 하고 감소하지 않는다 -> cost,dest,time DP table 생성, 낮은 cost 부터 높은 cost에 대하여 vertex에서 갱신한다.
         mem size: Money range*dest*int(time)=10001*100*4=4MB
+        Edge: #edge*int*3=10000*4*3=0.12MB
       A(ij)=k : i cost, 1 to j vertex, k time;
         A(ij)에서 vertex j를 확인하여 갱신 
         cost:i 를 0~M까지 증가시키며 갱신
@@ -61,45 +62,38 @@ void BK10217(){  // Dijkstra
 //input
   int N,M,K,A,B,C,D;
   cin>>N>>M>>K; // #vertex, max Cost, #edge
-  vector<vector<pair<int,pair<int,int>>>> graph(N+1); // dest, money, time
+  vector<pair<int,pair<int,int>>> graph[N+1]; // dest, money, time
   for(int i=0;i<K;i++){
     cin>>A>>B>>C>>D; //from,dest,money,time
     graph[A].push_back({B,{C,D}}); //dest,money,time
   }
 //prepare
-  vector<map<int,int>> cost_V(N+1);  //cost[i][j]=k : 1 to i with time:j cost:k
-  priority_queue<pair<pair<int,int>,int>,vector<pair<pair<int,int>,int>>,greater<pair<pair<int,int>,int>>> pq; //money,time,dest
+  int INF=10000*10000+1;  //#edge*maxCost(or Time)+1;
+  vector<vector<int>> table(M+1,vector<int>(N+1,INF));//INF: 경로없음, cost,dest,time
+  table[0][1]=0;
+  int newCost;
 //calc
-  pq.push({{0,0},1});
-  while(!pq.empty()){
-    auto tmp=pq.top();
-    pq.pop();
-    int cost(tmp.first.first),time(tmp.first.second),from_V(tmp.second);
-    auto ans=cost_V[from_V].insert({time,cost}); //갱신
-    if(!ans.second){
-      ans.first->second=cost;
-    }
-    for(auto& ele:graph[from_V]){
-      int newCost(cost+ele.second.first),newDest(ele.first),newTime(time+ele.second.second);
-      if(newCost<=M){
-        bool jmp(false);
-        for(auto& ele:cost_V[from_V]){
-          if(ele.first<=newTime&&ele.second<=newCost){
-            jmp=true;
-            break;
+  for(int i=0;i<M;i++){ //money, M일때는 어차피 더이상 이동 불가능 하여 M-1 까지
+    for(int j=1;j<=N;j++){  //dest vertex, 0행은 사용하지 않으므로 생략
+      if(table[i][j]!=INF){
+        for(auto& ele:graph[j]){
+          newCost=ele.second.first+i;
+          if(newCost<=M){
+            table[newCost][ele.first]=min(table[newCost][ele.first],table[i][j]+ele.second.second); //기존 시간과, 새롭게 추가된 시간중 작은값
           }
-        }
-        if(!jmp){
-          pq.push({{newTime,newCost},newDest});
         }
       }
     }
   }
 //output
-  if(!cost_V[N].empty()){
-    cout<<cost_V[N].begin()->first<<endl;
+  int result=INF;
+  for(int i=0;i<=M;i++){
+    result=min(result,table[i][N]);
+  }
+  if(result==INF){
+    cout<<"Poor KCM\n";
   }else{
-    cout<<"Poor KCM"<<endl;
+    cout<<result<<"\n";
   }
   
 }
