@@ -16,6 +16,12 @@ using namespace std;
 
 void BK10217(){  // Dijkstra
   /*
+  문제조건
+    입력 파일의 첫 번째 줄에 테스트 케이스의 수를 의미하는 자연수 T가 주어진다. 그 다음에는 T개의 테스트 케이스가 주어진다.
+    각 테스트 케이스의 첫 줄에는 공항의 수 N (2 ≤ N ≤ 100), 총 지원비용 M (0 ≤ M ≤ 10,000), 티켓정보의 수 K (0 ≤ K ≤ 10,000)가 공백으로 구분되어 주어진다. 
+    이어서 K개의 줄에 걸쳐 각 티켓의 출발공항 u, 도착공항 v (1 ≤ u, v ≤ N, u ≠ v), 비용 c (1 ≤ c ≤ M, 정수), 그리고 소요시간 d (1 ≤ d ≤ 1,000) 가 공백으로 
+    구분되어 주어진다. 인천은 언제나 1번 도시이고, LA는 언제나 N번 도시이다
+    자료형: 최대크기= #edge*maxTime(or cost)=10,000*1,000(10,000)=10^8 : int
   Dijkstra Algorithm
     first_memOver: 대부분의 정보를 모두 저장해버렸기 때문 -> 일정수준 이전 정보는 삭제해버리는 DP 이용 필요
       lowest time이 목표
@@ -43,6 +49,13 @@ void BK10217(){  // Dijkstra
         구현에서 에러떠서 포기 
     fourth  - 인터넷 참고_memOver
       DP table : A[i][j]=K  : i에 j cost로 도달하는데 걸린 시간 
+    fifth:
+      cost 는 증가하기만 하고 감소하지 않는다 -> cost,dest,time DP table 생성, 낮은 cost 부터 높은 cost에 대하여 vertex에서 갱신한다.
+        mem size: Money range*dest*int(time)=10001*100*4=4MB
+      A(ij)=k : i cost, 1 to j vertex, k time;
+        A(ij)에서 vertex j를 확인하여 갱신 
+        cost:i 를 0~M까지 증가시키며 갱신
+        마지막에 N행을 확인하여 lowest time이 정답
 
   */
 //input
