@@ -125,6 +125,12 @@ void BK11404();  // Floyd-Warshall Algorithm, 음수 가중치도 허용한다, 
 void BK10217();  // Dijkstra의 원리 (cost는 항상 증가한다) + Queue 대신 DP를 이용
 void BK1956();  // Floyd-warShall을 이용하여 circle 확인
 
+//비트 마스크, DP
+  //비트마스크: 11011은 {0,1,3,4}원소는 포함하고, {2}원소는 포함하지 않는다는 의미. 적은 메모리로 표현이 가능하다. 비트 단위로 표현한다는 의미
+    //and(&),or(|),xor(^),not(~),shift(>>,<<)
+void BK11723();  // 비트마스크
+
+
 
 
 

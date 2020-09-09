@@ -14,54 +14,55 @@
 
 using namespace std;
 
-void BK1956(){  // Dijkstra
+void BK11723(){  // 비트마스크
   /*
-  문제조건
-    첫째 줄에 V와 E가 빈칸을 사이에 두고 주어진다. (2<=V<=400, 0<=E<=V*(V-1)) 다음 E개의 줄에는 각각 세 개의 정수 a, b, c가 주어진다.
-     a번 마을에서 b번 마을로 가는 거리가 c인 도로가 있다는 의미이다. (a->b임에 주의) 거리는 10,000 이하의 자연수이다.
-    자료형: 최대크기= #edge*maxTime(or cost)=400*400*10,000=1,600,000,000: int
-    시작점으로 돌아오는 cycle을 찾아라 
-  first
-    Dijkstra 반복
-    BellmanFord 사용시 이득 없음
-    FloydWarshall : 쓸만한듯
-      vertex간 거리를 저장하는 table에서, A(ij)+A(ji): j=1~#edge == i로 돌아오는 모든 사이클 
-      -> 1로 돌아오는 사이클만 보는것이 아님을 고려해야한다.
+  비트마스크 : 원소를 비트 단위로 표현한다.
+    {0,1,2,3,4} 라는 집합이 있다고 하자.
+      {0,1,2}라는 부분집합을 나타내고 싶을 때, int 3개를 이용하여 표현하는 대신 간단하게 11100으로 표현할 수 있다.
+        집합의 원소의 개수가 n개라면, 직접적인 표현은 n*int의 크기가 필요하지만 비트마스크는 (1+(n-1)/32) *int의 크기만 이용한다.
+    and(&),or(|),xor(^),not(~),shift(>>,<<)
   */
 //input
-  int V,E,a,b,c;
-  cin>>V>>E; // #vertex, #edge
-  vector<map<int,int>> graph(V+1); // dest, money, time
-  for(int i=0;i<E;i++){
-    cin>>a>>b>>c; //from,dest,cost
-    auto ans=graph[a].insert({b,c}); //dest,money,time
-    if(!ans.second&&ans.first->second>c){
-      ans.first->second=c;
-    }
-  }
+  int M;
+  cin>>M; // #연산
 //prepare
-  vector<vector<int>> cost_V(V+1,vector<int>(V+1));
-  vector<vector<int>> prev_V(V+1,vector<int>(V+1));
+  int S(0); //비트마스크로 표현한 집합, 1~20
+  string s;
+  int num;
 //calc
-  FloydWarshall(graph,cost_V,prev_V);
-//output
-  int result=INT32_MAX;
-  for(int i=1;i<=V;i++){
-    for(int j=i+1;j<=V;j++){
-      if(cost_V[i][j]!=INT32_MAX&&cost_V[j][i]!=INT32_MAX){
-        result=min(result,cost_V[i][j]+cost_V[j][i]);
-      }
+  while(M--){
+    cin>>s;
+    cin.ignore(); //buffer에 남은 " " or "\n" 제거
+    switch(s[1]){
+      case 'd':
+        cin>>num;
+        S|=(1<<num);
+        break;
+      case 'e':
+        cin>>num;
+        S&=~(1<<num);
+        break;
+      case 'h':
+        cin>>num;
+        cout<<((S&1<<num)>>num)<<"\n";
+        break;
+      case 'o':
+        cin>>num;
+        S^=(1<<num);
+        break;
+      case 'l':
+        S=(1<<21)-1;
+        break;
+      case 'm':
+        S=0;
+        break;
     }
   }
-  if(result==INT32_MAX){ //if there is one INF, sum is INF or minus
-    cout<<-1;
-  }else{
-    cout<<result;
-  }
+//output
 }
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
-  BK1956();
+  BK11723();
   return 0;
 }
