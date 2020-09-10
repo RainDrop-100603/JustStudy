@@ -14,55 +14,48 @@
 
 using namespace std;
 
-void BK11723(){  // 비트마스크
+void BK2098(){  // Traveling Salesman Problem (TSP)
   /*
-  비트마스크 : 원소를 비트 단위로 표현한다.
-    {0,1,2,3,4} 라는 집합이 있다고 하자.
-      {0,1,2}라는 부분집합을 나타내고 싶을 때, int 3개를 이용하여 표현하는 대신 간단하게 11100으로 표현할 수 있다.
-        집합의 원소의 개수가 n개라면, 직접적인 표현은 n*int의 크기가 필요하지만 비트마스크는 (1+(n-1)/32) *int의 크기만 이용한다.
-    and(&),or(|),xor(^),not(~),shift(>>,<<)
+  문제
+    첫째 줄에 도시의 수 N이 주어진다. (2 ≤ N ≤ 16) 다음 N개의 줄에는 비용 행렬이 주어진다. 각 행렬의 성분은 1,000,000 이하의 양의 정수이며, 갈 수 없는 경우는 0이 주어진다. 
+    W[i][j]는 도시 i에서 j로 가기 위한 비용을 나타낸다.
+    항상 순회할 수 있는 경우만 입력으로 주어진다.
+  
   */
 //input
-  int M;
-  cin>>M; // #연산
-  cin.get();  //or cin.ignore(): 개행문자 처리
-//prepare
-  int S(0); //비트마스크로 표현한 집합, 1~20
+  int N,prev(0),now,len,cnt;
+  cin>>N; // #연산
+  cin.get();
   string s;
-  int num;
-//calc
-  while(M--){
+  vector<vector<int>> table(N,vector<int>(N));
+  for(int i=0;i<N;i++){
+    cnt=0;
+    prev=0;
     getline(cin,s);
-    switch(s[1]){
-      case 'd':
-        num=stoi(s.substr(4));
-        S|=(1<<num);
-        break;
-      case 'e':
-        num=stoi(s.substr(7));
-        S&=~(1<<num);
-        break;
-      case 'h':
-        num=stoi(s.substr(6));
-        cout<<((S&1<<num)>>num)<<"\n";
-        break;
-      case 'o':
-        num=stoi(s.substr(7));
-        S^=(1<<num);
-        break;
-      case 'l':
-        S=(1<<21)-1;
-        break;
-      case 'm':
-        S=0;
-        break;
+    len=s.length();
+    for(int j=0;j<len;j++){
+      if(s[j]==' '){
+        now=j;
+        table[i][cnt]=stoi(s.substr(prev,now-prev));
+        cnt++;prev=now;
+      }
     }
+    table[i][cnt]=stoi(s.substr(prev,len-prev));
   }
+//prepare
+
+//calc
 //output
+  for(auto& ele: table){
+    for(auto& ele2:ele){
+      cout<<ele2<<" ";
+    }
+    cout<<endl;
+  }
 }
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
-  BK11723();
+  BK2098();
   return 0;
 }
