@@ -25,29 +25,29 @@ void BK11723(){  // 비트마스크
 //input
   int M;
   cin>>M; // #연산
+  cin.get();  //or cin.ignore(): 개행문자 처리
 //prepare
   int S(0); //비트마스크로 표현한 집합, 1~20
   string s;
   int num;
 //calc
   while(M--){
-    cin>>s;
-    cin.ignore(); //buffer에 남은 " " or "\n" 제거
+    getline(cin,s);
     switch(s[1]){
       case 'd':
-        cin>>num;
+        num=stoi(s.substr(4));
         S|=(1<<num);
         break;
       case 'e':
-        cin>>num;
+        num=stoi(s.substr(7));
         S&=~(1<<num);
         break;
       case 'h':
-        cin>>num;
+        num=stoi(s.substr(6));
         cout<<((S&1<<num)>>num)<<"\n";
         break;
       case 'o':
-        cin>>num;
+        num=stoi(s.substr(7));
         S^=(1<<num);
         break;
       case 'l':
