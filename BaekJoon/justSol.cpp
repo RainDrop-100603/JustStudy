@@ -2781,3 +2781,63 @@
 //   }
 // //output
 // }
+// int TSP(int current,int visited){
+//   if(visited==END&&graph[current][0]){return graph[current][0];}
+//   int& ret=DP[current][visited];
+//   if(ret){return ret;}
+//   ret=INF;
+//   for(int i=1;i<N;i++){
+//     if(visited&(1<<i)||graph[current][i]==0){
+//       continue;
+//     }
+//     ret=min(ret,TSP(i,visited|(1<<i))+graph[current][i]);
+//   }
+//   return ret;
+// }
+// void BK2098(){  // Traveling Salesman Problem (TSP)
+//   /*
+//   전역변수 영역
+// int graph[16][16];
+// int DP[16][1<<16];  //current, visited
+// int N, END;  //#vertex, 모든경로 방문: (1<<N)-1
+// int INF=16*1000000+1; //#vertex*maxCost +1
+
+//   문제
+//     첫째 줄에 도시의 수 N이 주어진다. (2 ≤ N ≤ 16) 다음 N개의 줄에는 비용 행렬이 주어진다. 각 행렬의 성분은 1,000,000 이하의 양의 정수이며, 갈 수 없는 경우는 0이 주어진다. 
+//     W[i][j]는 도시 i에서 j로 가기 위한 비용을 나타낸다.
+//     항상 순회할 수 있는 경우만 입력으로 주어진다.
+//   Priority Queue에 cost, 경로를 저장 -> 최대 15!*int*2 필요->mem over
+//   1. 모든 경우, DP 아님, cost: 현재까지의 cost 의미
+//     DP를 통해 원점에서 시작하여 끝 경로까지
+//       visited==END -> return;
+//       for(int i=1;i<N;i++); 
+//         if(visited&(1<<i));
+//           if graph[current][i]==0 -> continue;
+//           else: -> DP[i][visited+(1<<i)]=min(this,DP[current][visited]+graph[current][i]); TSP(i,visited+(1<<i));
+//   2. DP로 변경, cost: 끝 경로가지의 cost 의미
+//   */
+// //input
+//   int prev(0),now,len,cnt;
+//   cin>>N; // #연산
+//   cin.get();
+//   string s;
+//   for(int i=0;i<N;i++){
+//     cnt=0;
+//     prev=0;
+//     getline(cin,s);
+//     len=s.length();
+//     for(int j=0;j<len;j++){
+//       if(s[j]==' '){
+//         now=j;
+//         graph[i][cnt]=stoi(s.substr(prev,now-prev));
+//         cnt++;prev=now;
+//       }
+//     }
+//     graph[i][cnt]=stoi(s.substr(prev,len-prev));
+//   }
+// //prepare
+//   END=(1<<N)-1;
+// //calc
+//   cout<<TSP(0,1); //INF를 출력하면 경로 없음 
+// //output
+// }
