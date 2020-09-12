@@ -1,14 +1,14 @@
 #include <string>
 #include <vector>
-#include <map>
-#include <utility>
+#include <set>
+#include <iterator>
 
 using namespace std;
 
 vector<int> solution(vector<string> info, vector<string> query) {
   vector<int> answer;
   int N=info.size();
-  multimap<int,int> table;  //bitmask save
+  multiset<int> table[1<<9];  //bitmask save
   for(int i=0;i<N;i++){
     string& tmpS=info[i];
     int tmp(0);
@@ -39,8 +39,9 @@ vector<int> solution(vector<string> info, vector<string> query) {
     }
     //점수
     int num=stoi(tmpS.substr(idx));
-    table.insert({num,tmp});
+    table[tmp].insert(num);
   }
+
   int M=query.size();
   answer.reserve(M);
   for(int i=0;i<M;i++){
@@ -79,10 +80,9 @@ vector<int> solution(vector<string> info, vector<string> query) {
     int num=stoi(tmpS.substr(idx));
     //비교
     int count(0);
-    auto END=table.end();
-    for(auto iter=table.lower_bound(num);iter!=END;iter++){
-      if((iter->second&tmp)==iter->second){
-        count++;
+    for(int i=0;i<(1<<9);i++){
+      if((tmp&i)==i){
+        count+=distance(table[i].lower_bound(num),table[i].end());
       }
     }
     answer.push_back(count);
