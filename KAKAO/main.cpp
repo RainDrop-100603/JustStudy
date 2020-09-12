@@ -7,91 +7,94 @@ using namespace std;
 vector<int> solution(vector<string> info, vector<string> query) {
   vector<int> answer;
   int N=info.size();
-  vector<vector<int>> table(N,vector<int>(5));  //bitmask save
+  vector<vector<int>> table(N,vector<int>(2));  //bitmask save
   for(int i=0;i<N;i++){
     string& tmpS=info[i];
-    int tmp;
+    int tmp(0);
     //언어
     switch(tmpS[0]){
-      case 'c': tmp=1; break;
-      case 'j': tmp=2; break;
-      case 'p': tmp=4; break;
+      case 'c': tmp+=1; break;
+      case 'j': tmp+=2; break;
+      case 'p': tmp+=4; break;
     }
-    table[i][0]=tmp;
+    tmp=tmp<<2;
     //직군
     int idx(0);
     idx=tmpS.find(' ',idx);
     idx++;
     switch(tmpS[idx]){
-      case 'b': tmp=1; break;
-      case 'f': tmp=2; break;
+      case 'b': tmp+=1; break;
+      case 'f': tmp+=2; break;
     }
-    table[i][1]=tmp;
+    tmp=tmp<<2;
     //경력
     idx=tmpS.find(' ',idx);
     idx++;
     switch(tmpS[idx]){
-      case 'j': tmp=1; break;
-      case 's': tmp=2; break;
+      case 'j': tmp+=1; break;
+      case 's': tmp+=2; break;
     }
-    table[i][2]=tmp;
+    tmp=tmp<<2;
     //소울푸드
     idx=tmpS.find(' ',idx);
     idx++;
     switch(tmpS[idx]){
-      case 'c': tmp=1; break;
-      case 'p': tmp=2; break;
+      case 'c': tmp+=1; break;
+      case 'p': tmp+=2; break;
     }
-    table[i][3]=tmp;
+    table[i][0]=tmp;
     //점수
     idx=tmpS.find(' ',idx);
     idx++;
-    table[i][4]=stoi(tmpS.substr(idx));
+    table[i][1]=stoi(tmpS.substr(idx));
   }
   int M=query.size();
   for(int i=0;i<M;i++){
-    int v1,v2,v3,v4,v5;
+    int tmp(0);
     string& tmpS=query[i];
     //언어
     switch(tmpS[0]){
-      case 'c': v1=1; break;
-      case 'j': v1=2; break;
-      case 'p': v1=4; break;
-      default: v1=7; break;
+      case 'c': tmp+=1; break;
+      case 'j': tmp+=2; break;
+      case 'p': tmp+=4; break;
+      default: tmp+=7; break;
     }
+    tmp=tmp<<2;
     //직군
     int idx(0);
     idx=tmpS.find(' ',idx);
     idx+=5;
     switch(tmpS[idx]){
-      case 'b': v2=1; break;
-      case 'f': v2=2; break;
-      default: v2=3; break;
+      case 'b': tmp+=1; break;
+      case 'f': tmp+=2; break;
+      default: tmp+=3; break;
     }
+    tmp=tmp<<2;
     //경력
     idx=tmpS.find(' ',idx);
     idx+=5;
     switch(tmpS[idx]){
-      case 'j': v3=1; break;
-      case 's': v3=2; break;
-      default: v3=3; break;
+      case 'j': tmp+=1; break;
+      case 's': tmp+=2; break;
+      default: tmp+=3; break;
     }
+    tmp=tmp<<2;
     //소울푸드
     idx=tmpS.find(' ',idx);
     idx+=5;
     switch(tmpS[idx]){
-      case 'c': v4=1; break;
-      case 'p': v4=2; break;
-      default: v4=3; break;
+      case 'c': tmp+=1; break;
+      case 'p': tmp+=2; break;
+      default: tmp+=3; break;
     }
     //점수
     idx=tmpS.find(' ',idx);
     idx++;;
-    v5=stoi(tmpS.substr(idx));
+    int num=stoi(tmpS.substr(idx));
     //비교
     int count(0);
     for(int j=0;j<N;j++){
-      if((table[j][0]&v1)&&(table[j][1]&v2)&&(table[j][2]&v3)&&(table[j][3]&v4)&&(table[j][4]>=v5)){
+      if((tmp&table[j][0])==table[j][0]&&table[j][1]>=num){
         count++;
       }
     }
