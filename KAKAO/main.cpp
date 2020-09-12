@@ -40,8 +40,22 @@ vector<int> solution(vector<string> info, vector<string> query) {
     //점수
     int num=stoi(tmpS.substr(idx));
     table[tmp].insert(num);
+    table[tmp|3].insert(num);
+    table[tmp|12].insert(num);
+    table[tmp|15].insert(num);
+    table[tmp|48].insert(num);
+    table[tmp|51].insert(num);
+    table[tmp|60].insert(num);
+    table[tmp|63].insert(num);
+    table[tmp|448].insert(num);
+    table[tmp|451].insert(num);
+    table[tmp|460].insert(num);
+    table[tmp|463].insert(num);
+    table[tmp|496].insert(num);
+    table[tmp|499].insert(num);
+    table[tmp|508].insert(num);
+    table[tmp|511].insert(num);
   }
-
   int M=query.size();
   answer.reserve(M);
   for(int i=0;i<M;i++){
@@ -50,26 +64,23 @@ vector<int> solution(vector<string> info, vector<string> query) {
     string& tmpS=query[i];
     //언어
     switch(tmpS[0]){
-      case 'c': tmp+=1; idx+=8; break;
-      case 'j': tmp+=2; idx+=9; break;
-      case 'p': tmp+=4; idx+=11; break;
-      case '-': tmp+=7; idx+=6; break;
+      case 'c': tmp+=64; idx+=8; break;
+      case 'j': tmp+=128; idx+=9; break;
+      case 'p': tmp+=256; idx+=11; break;
+      case '-': tmp+=448; idx+=6; break;
     }
-    tmp=tmp<<2;
     //직군
     switch(tmpS[idx]){
-      case 'b': tmp+=1; idx+=12; break;
-      case 'f': tmp+=2; idx+=13; break;
-      case '-': tmp+=3; idx+=6; break;
+      case 'b': tmp+=16; idx+=12; break;
+      case 'f': tmp+=32; idx+=13; break;
+      case '-': tmp+=48; idx+=6; break;
     }
-    tmp=tmp<<2;
     //경력
     switch(tmpS[idx]){
-      case 'j': tmp+=1; idx+=11; break;
-      case 's': tmp+=2; idx+=11; break;
-      case '-': tmp+=3; idx+=6; break;
+      case 'j': tmp+=4; idx+=11; break;
+      case 's': tmp+=8; idx+=11; break;
+      case '-': tmp+=12; idx+=6; break;
     }
-    tmp=tmp<<2;
     //소울푸드
     switch(tmpS[idx]){
       case 'c': tmp+=1; idx+=8; break;
@@ -79,13 +90,7 @@ vector<int> solution(vector<string> info, vector<string> query) {
     //점수
     int num=stoi(tmpS.substr(idx));
     //비교
-    int count(0);
-    for(int i=0;i<(1<<9);i++){
-      if((tmp&i)==i){
-        count+=distance(table[i].lower_bound(num),table[i].end());
-      }
-    }
-    answer.push_back(count);
+    answer.push_back(distance(table[tmp].lower_bound(num),table[tmp].end()));
   }
   return answer;
 }
