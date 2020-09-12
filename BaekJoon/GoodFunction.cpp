@@ -270,7 +270,7 @@ void FloydWarshall(const vector<map<int,int>>& graph, vector<vector<int>>& cost_
       A(i,dest)=min(A(i,dest),A(i,k)+Edge(k,dest))
       B(i,dest)=k, iff A(i,dest) is changed
   */
-  int num_V(cost_V.size()),INF(INT32_MAX),NIL(-1);  //there is no vertex: -1, so NIL==-1 
+  int num_V(cost_V.size()),INF(INT32_MAX),NIL(-1);  //there is no "-1" vertex, so NIL==-1 
   //initialize
   for(int i=0;i<num_V;i++){ 
     for(int j=0;j<num_V;j++){ //default value

@@ -13,6 +13,18 @@
 #include <deque>
 #include <queue>
 
+/*
+  시간을 줄이는 테크닉
+    비트마스크 이용
+    입출력 횟수를 줄이기
+      ex)두번 입력받을 것을 getline을 통해 한번에 입력받아서 이용
+    비교를 더욱 간단하게
+      ex) add sub check toggle all 은 1번째 idx문자만 비교하면 더욱 쉽다. switch도 이용 가능
+  문자열 입력시 주의점
+    cin>>number등 일부 입력은 마지막에 개행문자를 남겨버린다.
+    cin.ignore(), cin.get()등을 이용하여 개행문자를 적절히 제거해야한다.
+*/
+
 using namespace std;
 //useful
 bool IsPrime(int num);  //소수(Prime Number) 판별
