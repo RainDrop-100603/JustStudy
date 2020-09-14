@@ -91,11 +91,16 @@ void BK1086(){  //
     numMod[N-1-i]=tmp;
   }
   int ans(0);
-  vector<int> DP(1<<N,-1); 
+  vector<vector<int>> DP(N,vector<int>(N)); //DP(ij)= i에서 시작하여 j+1개만큼 이어진다. 
   for(int i=0;i<N;i++){ //initialize
-    DP[1<<i]=numMod[i];
+    DP[i][0]=numMod[i];
   }
 //calc
+  for(int i=1;i<N;i++){
+    for(int j=0;j<N-i;j++){
+      
+    }
+  }
   for(int i=1;i<(1<<N);i++){
     if(DP[i]==-1){
       int idx(0);
@@ -113,6 +118,7 @@ void BK1086(){  //
     }
   }
 //output
+  N=N*(N+1)/2;
   cout<<ans<<endl;
   vector<int> prime=GetPrimeVector(ans);
   for(auto& ele:prime){
