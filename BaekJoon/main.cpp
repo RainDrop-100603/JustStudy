@@ -10,7 +10,7 @@
 #include <deque>
 #include <queue>
 
-//#include "GoodFunction.h"
+#include "GoodFunction.h"
 
 using namespace std;
 
@@ -68,7 +68,6 @@ void BK1086(){  //
         A(ij)=mod(loop table(A(i,j-1),len(A(i+j,0))%len(loop table(A(i,j-1))))+A(i+j,0))==0 -> Ans++;
           -> 배열 세줄만써서 이용, 0은 
       최대 50자리의 수를 mod할 방법이 필요 
-      1 3 4 수열의 경우 해결 불가능 
     3. 포함된 수를 DP마스크 형식으로 표현 : 1<<15
       A(11011100)=(A(11011000)*10^len(2) mod K + A(00000100) ) mod K
   */
@@ -115,6 +114,18 @@ void BK1086(){  //
   }
 //output
   cout<<ans<<endl;
+  vector<int> prime=GetPrimeVector(ans);
+  for(auto& ele:prime){
+    cout<<ele<<" ";
+  }
+  cout<<endl;
+  for(auto& ele: prime){
+    while(ans%ele==0&&N%ele==0){
+      ans/=ele;
+      N/=ele;
+    }
+  }
+  cout<<ans<<"/"<<N<<endl;
 }
 int main(){
   cin.tie(NULL);
