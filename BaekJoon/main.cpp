@@ -83,21 +83,38 @@ void BK1086(){  //
   }
   cin>>K;
 //prepare
-  for(int i=0;i<N;i++){
-    numLen[i]=numbers[i].length();
+  for(int i=0;i<N;i++){ //역순으로 저장
+    numLen[N-1-i]=numbers[i].length();
     int tmp(0);
     for(auto& ele: numbers[i]){
       tmp=(tmp*10+ele)%K;
     }
-    numMod[i]=tmp;
+    numMod[N-1-i]=tmp;
   }
-  vector<int> DP(1<<N,-1); //-1 means not yet
-  for(int i=N-1;i>=0;i--){ //initialize
+  int ans(0);
+  vector<int> DP(1<<N,-1); 
+  for(int i=0;i<N;i++){ //initialize
     DP[1<<i]=numMod[i];
   }
 //calc
-  for(int i=)
+  for(int i=1;i<(1<<N);i++){
+    if(DP[i]==-1){
+      int idx(0);
+      while(!((1<<idx)&i)){ //find first 1's idx
+        idx++;
+      }
+      int tmp=DP[i-(1<<idx)];
+      for(int j=0;j<numLen[idx];j++){
+        tmp=(tmp*10)%K;
+      }
+      DP[i]=(tmp+numMod[idx])%K;
+    }
+    if(DP[i]==0){
+      ans++;
+    }
+  }
 //output
+  cout<<ans<<endl;
 }
 int main(){
   cin.tie(NULL);
