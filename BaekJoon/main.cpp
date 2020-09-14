@@ -79,7 +79,7 @@ void BK1086(){  //
   vector<int> numLen(N);  //len of each number;
   vector<int> numMod(N);  //mod K of each number
   for(int i=0;i<N;i++){
-    getline(cin,numbers[i]);
+    cin>>numbers[i];
   }
   cin>>K;
 //prepare
@@ -87,7 +87,7 @@ void BK1086(){  //
     numLen[N-1-i]=numbers[i].length();
     int tmp(0);
     for(auto& ele: numbers[i]){
-      tmp=(tmp*10+ele)%K;
+      tmp=(tmp*10+(ele-'0'))%K;
     }
     numMod[N-1-i]=tmp;
   }
