@@ -14,12 +14,7 @@
 
 using namespace std;
 
-string numbers[15];
-int N,K;
-int len[15];  //len of numbers;
-int modTable[15][15];
-
-void BK1086(){  // Traveling Salesman Problem (TSP)
+void BK1086(){  // 
   /*
   전역변수 영역
 
@@ -67,32 +62,38 @@ void BK1086(){  // Traveling Salesman Problem (TSP)
           ex) 00110 은 1번째 2번째 수의 길이를 10의 거듭제곱 했을때의 mod를 의미한다.
       알아서 더 디벨롭
     2. 10^x 곱하는 것을 간략하게 줄이기 위한 table 생성
-      table:  1~K-1 mod K 값을 저장하고 있다. 행이 증가할때마다 10을 곱하고 mod한 것이라 생각하면 된다. 새로운 mod 값이 first와 같다면 거기서 종료.
+      loop table:  1~K-1 mod K 값을 저장하고 있다. 행이 증가할때마다 10을 곱하고 mod한 것이라 생각하면 된다. 새로운 mod 값이 first와 같다면 거기서 종료.
       mod table A
-        A(ij)== i번째수부터 j번째 수 까지 이어붙인 순열의 mod 값
-        A(ij)=table(A(im),mj길이 mod table(A.len))+A(mj) 의 mod
+        A(ij)== i번째수부터 j+1개의 수를 이어붙인 순열의 mod 값
+        A(ij)=mod(loop table(A(i,j-1),len(A(i+j,0))%len(loop table(A(i,j-1))))+A(i+j,0))==0 -> Ans++;
+          -> 배열 세줄만써서 이용, 0은 
       최대 50자리의 수를 mod할 방법이 필요 
+      1 3 4 수열의 경우 해결 불가능 
+    3. 포함된 수를 DP마스크 형식으로 표현 : 1<<15
+      A(11011100)=(A(11011000)*10^len(2) mod K + A(00000100) ) mod K
   */
 //input
+  int N,K;  // # numbers, mod value
   cin>>N;
+  vector<string> numbers(N);
+  vector<int> numLen(N);  //len of each number;
+  vector<int> numMod(N);  //mod K of each number
   for(int i=0;i<N;i++){
     getline(cin,numbers[i]);
   }
   cin>>K;
 //prepare
   for(int i=0;i<N;i++){
-    len[i]=numbers[i].length();
-  }
-  int tmp;
-  vector<int> table[K]; //loop chk
-  for(int i=0;i<K;i++){
-    table[i].push_back(i);
-    tmp=i;
-    while(true){
-      tmp=(tmp*10)%K;
-      if(tmp==i){break;}
-      table[i].push_back(tmp);
+    numLen[i]=numbers[i].length();
+    int tmp(0);
+    for(auto& ele: numbers[i]){
+      tmp=(tmp*10+ele)%K;
     }
+    numMod[i]=tmp;
+  }
+  vector<int> DP(1<<N,-1); //-1 means not yet
+  for(int i=N-1;i>=0;i--){ //initialize
+    DP[1<<i]=numMod[i];
   }
 //calc
   for(int i=)
