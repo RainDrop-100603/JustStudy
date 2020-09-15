@@ -19,33 +19,23 @@ bool IsPrime(int num){
   }
   return true;
 }
-bool* GetPrimeArray(int num){
-  num++;
-  bool* array=new bool[num+1];
-  fill_n(array,num+1,true);
-  array[0]=false;
-  array[1]=false;
-  for(int i=2;i<sqrt(num);i++){
-    if(array[i]){
-      for(int j=i*2;j<num+1;j+=i){
-        if(array[j]){
-          array[j]=false;
-        }
+vector<int> GetPrimeVector(int num){
+  vector<bool> arr(num+1,true);
+  arr[0]=false;arr[1]=false;
+  for(int i=2;i<=sqrt(num);i++){  
+    if(arr[i]){
+      for(int j=i*2;j<=num;j+=i){
+        arr[j]=false;
       }
     }
   }
-  return array;
-}
-vector<int> GetPrimeVector(int num){
-  vector<int> prime;
-  bool* array= GetPrimeArray(num);
-  for(int i=0;i<num+1;i++){
-    if(array[i]){
-      prime.push_back(i);
+  vector<int> result;
+  for(int i=2;i<=num;i++){
+    if(arr[i]){
+      result.push_back(i);
     }
   }
-  delete[] array;
-  return prime;
+  return result;
 }
 void Merge(int* &array, const int start, const int end){  //[start,end) sorting 
   int middle=(end+start)/2; //두 vector 사이의 경계 idx

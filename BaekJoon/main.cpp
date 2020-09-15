@@ -77,60 +77,49 @@ void BK1086(){  //
   vector<string> numbers(N);
   vector<int> numLen(N);  //len of each number;
   vector<int> numMod(N);  //mod K of each number
+  vector<int> modDP[K]; //x * 10^idx mod K, 0~x~K-1
+  vector<vector<int>> DP(N,vector<int>(N)); //DP(ij)= i에서 시작하여 j개만큼 더해진다 (전체길이 j+1)
   for(int i=0;i<N;i++){
     cin>>numbers[i];
   }
   cin>>K;
 //prepare
-  for(int i=0;i<N;i++){ //역순으로 저장
-    numLen[N-1-i]=numbers[i].length();
+  for(int i=0;i<N;i++){ 
+    numLen[i]=numbers[i].length();
     int tmp(0);
     for(auto& ele: numbers[i]){
       tmp=(tmp*10+(ele-'0'))%K;
     }
-    numMod[N-1-i]=tmp;
+    numMod[i]=tmp;
   }
   int ans(0);
-  vector<vector<int>> DP(N,vector<int>(N)); //DP(ij)= i에서 시작하여 j+1개만큼 이어진다. 
   for(int i=0;i<N;i++){ //initialize
     DP[i][0]=numMod[i];
+    if(DP[i][0]==0){
+      ans++;
+    }
+  }
+  for(int i=0;i<K;i++){
+    modDP[i].push_back(i);
   }
 //calc
-  for(int i=1;i<N;i++){
-    for(int j=0;j<N-i;j++){
-      
-    }
-  }
-  for(int i=1;i<(1<<N);i++){
-    if(DP[i]==-1){
-      int idx(0);
-      while(!((1<<idx)&i)){ //find first 1's idx
-        idx++;
+  for(int j=1;j<N;j++){
+    for(int i=0;i<N-j;i++){
+      int tmp= DP[i][j-1];
+      while(modDP[tmp].size()<=numLen[i+j]){
+        modDP[tmp].push_back((modDP[tmp].back()*10)%K);
       }
-      int tmp=DP[i-(1<<idx)];
-      for(int j=0;j<numLen[idx];j++){
-        tmp=(tmp*10)%K;
+      DP[i][j]=(modDP[tmp][numLen[i+j]]+numMod[i+j])%K;
+      if(DP[i][j]==0){
+        ans++;
       }
-      DP[i]=(tmp+numMod[idx])%K;
-    }
-    if(DP[i]==0){
-      ans++;
     }
   }
 //output
   N=N*(N+1)/2;
-  cout<<ans<<endl;
-  vector<int> prime=GetPrimeVector(ans);
-  for(auto& ele:prime){
-    cout<<ele<<" ";
-  }
-  cout<<endl;
-  for(auto& ele: prime){
-    while(ans%ele==0&&N%ele==0){
-      ans/=ele;
-      N/=ele;
-    }
-  }
+  int gcd=getGCD(ans,N);
+  ans/=gcd;
+  N/=gcd;
   cout<<ans<<"/"<<N<<endl;
 }
 int main(){
