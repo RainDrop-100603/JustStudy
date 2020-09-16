@@ -70,6 +70,7 @@ void BK1086(){  //
       최대 50자리의 수를 mod할 방법이 필요 
     3. 포함된 수를 DP마스크 형식으로 표현 : 1<<15
       A(11011100)=(A(11011000)*10^len(2) mod K + A(00000100) ) mod K
+      mod가 반드시 loop를 도는것은 아님에 유의
   */
 //input
   int N,K;  // # numbers, mod value
@@ -77,7 +78,7 @@ void BK1086(){  //
   vector<string> numbers(N);
   vector<int> numLen(N);  //len of each number;
   vector<int> numMod(N);  //mod K of each number
-  vector<vector<int>> modDP(K); //x * 10^idx mod K, 0~x~K-1,  modDP[K] is undefined, because arr[N] is array that N must be constant;
+  vector<vector<int>> modDP(K,vector<int>(51)); //x * 10^idx mod K, 0~x~K-1,  modDP[K] is undefined, because arr[N] is array that N must be constant;
   vector<vector<int>> DP(N,vector<int>(N)); //DP(ij)= i에서 시작하여 j개만큼 더해진다 (전체길이 j+1)
   for(int i=0;i<N;i++){
     cin>>numbers[i];
@@ -99,16 +100,22 @@ void BK1086(){  //
       ans++;
     }
   }
-  vector<int> v;
   for(int i=0;i<K;i++){
-    v.clear();
+    vector<int> v;
     v.push_back(i);
     int tmp=(i*10)%K;
     while(tmp!=i){
       v.push_back(tmp);
       tmp=(tmp*10)%K;
     }
-    modDP.push_back(v);
+    modDP.push_back(move(v));
+  }
+  for(auto& ele:modDP){
+    cout<<"size: "<<ele.size()<<", ele: ";
+    for(auto& ele2: ele){
+      cout<< ele2<<" ";
+    }
+    cout<<endl;
   }
 //calc
   for(int j=1;j<N;j++){
