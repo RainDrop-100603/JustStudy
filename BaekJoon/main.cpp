@@ -77,7 +77,7 @@ void BK1086(){  //
   vector<string> numbers(N);
   vector<int> numLen(N);  //len of each number;
   vector<int> numMod(N);  //mod K of each number
-  vector<int> modDP[K]; //x * 10^idx mod K, 0~x~K-1
+  vector<vector<int>> modDP(K); //x * 10^idx mod K, 0~x~K-1,  modDP[K] is undefined, because arr[N] is array that N must be constant;
   vector<vector<int>> DP(N,vector<int>(N)); //DP(ij)= i에서 시작하여 j개만큼 더해진다 (전체길이 j+1)
   for(int i=0;i<N;i++){
     cin>>numbers[i];
@@ -99,17 +99,22 @@ void BK1086(){  //
       ans++;
     }
   }
+  vector<int> v;
   for(int i=0;i<K;i++){
-    modDP[i].push_back(i);
+    v.clear();
+    v.push_back(i);
+    int tmp=(i*10)%K;
+    while(tmp!=i){
+      v.push_back(tmp);
+      tmp=(tmp*10)%K;
+    }
+    modDP.push_back(v);
   }
 //calc
   for(int j=1;j<N;j++){
     for(int i=0;i<N-j;i++){
       int tmp= DP[i][j-1];
-      while(modDP[tmp].size()<=numLen[i+j]){
-        modDP[tmp].push_back((modDP[tmp].back()*10)%K);
-      }
-      DP[i][j]=(modDP[tmp][numLen[i+j]]+numMod[i+j])%K;
+      DP[i][j]=(modDP[tmp][numLen[i+j]%modDP[tmp].size()]+numMod[i+j])%K;
       if(DP[i][j]==0){
         ans++;
       }
