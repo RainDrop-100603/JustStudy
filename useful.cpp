@@ -1,6 +1,6 @@
 #include "useful.h"
 
-vector<int> GetPrimeVector(int num){
+vector<int> getPrimeVector(int num){
   vector<bool> arr(num+1,true);
   arr[0]=false;arr[1]=false;
   for(int i=2;i<=sqrt(num);i++){  
@@ -18,12 +18,12 @@ vector<int> GetPrimeVector(int num){
   }
   return result;
 }
-int GetGCD(int A, int B){     //유클리드 호제법을 이용한 A와 B의 GCD
-  return A%B ? GetGCD(B,A%B) : B; //A=qB+r, r=A%B, GCD(A,B)=GCD(B,r)=GCD(B,A%B), r==0이면 B가 최대공약수 
+int getGCD(int A, int B){     //유클리드 호제법을 이용한 A와 B의 GCD
+  return A%B ? getGCD(B,A%B) : B; //A=qB+r, r=A%B, GCD(A,B)=GCD(B,r)=GCD(B,A%B), r==0이면 B가 최대공약수 
 }
-pair<long long,long long> EuclidAlgo(long long A,long long B){      //조건: A>B  ____  Ax+By=d, d=gcd(A,B). 유클리드 알고리즘의 해(x,y)
+pair<long long,long long> euclidAlgo(long long A,long long B){      //조건: A>B  ____  Ax+By=d, d=gcd(A,B). 유클리드 알고리즘의 해(x,y)
   if(B!=0){ //B=r==0이면 A가 최대공약수
-    pair<long long,long long> temp=EuclidAlgo(B,A%B);
+    pair<long long,long long> temp=euclidAlgo(B,A%B);
     return make_pair(temp.second,temp.first-(A/B)*temp.second);
   }else{
     return make_pair(1,0);  // GCD(d,0) = dx+0y=d: 
