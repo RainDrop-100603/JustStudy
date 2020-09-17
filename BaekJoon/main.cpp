@@ -134,6 +134,6 @@ void BK1086_tmp(){  //
 int main(){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
-  BK1086();
+  BK1086_tmp();
   return 0;
 }
