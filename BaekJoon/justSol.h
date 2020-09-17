@@ -131,7 +131,7 @@ void BK1956();  // Floyd-warShall을 이용하여 circle 확인
 void BK11723();  // 비트마스크
 int TSP(int current,int visited);
 void BK2098();  // Traveling Salesman Problem (TSP), optimal 이 없어 전부 check, DP를 이용하여 경우의 수를 약간 줄여줌 
-
+// void BK1086_tmp(); //문제 이해가 거지같다.
 
 
 
