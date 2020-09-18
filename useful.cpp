@@ -1,6 +1,7 @@
 #include "useful.h"
 
 vector<int> getPrimeVector(int num){
+  //0~num 범위의 bool arr, prime 이라면 true
   vector<bool> arr(num+1,true);
   arr[0]=false;arr[1]=false;
   for(int i=2;i<=sqrt(num);i++){  
@@ -10,6 +11,7 @@ vector<int> getPrimeVector(int num){
       }
     }
   }
+  //prime number만을 원소로 가진 arr 
   vector<int> result;
   for(int i=2;i<=num;i++){
     if(arr[i]){
