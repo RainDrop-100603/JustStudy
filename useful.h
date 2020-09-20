@@ -5,8 +5,13 @@
 using namespace std;
 
 /*프로그래밍 수행시 도움이 되는 기법
+대략적인 시간제한
+  초당 1억번의 연산횟수 기준
 시간 줄이기
   입출력 횟수를 줄인다 (getline 사용)
+  이진 탐색
+  인접메모리 사용 : 캐시는 인접메모리를 한번에 가져온다.
+  실수 자료형 지양
 테스트 검증
   rand를 이용하여 무작위 변수를 input
   표준함수가 구현되어 있다면 Algo와 표준함수와 비교
@@ -14,6 +19,8 @@ using namespace std;
 유용한 표준함수
   사전순 정렬
     lexicographical_compare()
+  이진 탐색
+    lower_bound(), upper_bound()
 유의사항
   오버로딩
     operator오버로딩시 기존 operator가 가지는 성질을 유지해야 일관적인 결과를 기대할 수 있다.
