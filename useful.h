@@ -71,6 +71,12 @@ using namespace std;
     변수 초기화
     자료형의 표현 범위 
     너무 큰 INF 값 (INF+a이 오버플로우가 날 수 있다.)
+  NP hard, complete 등 정리
+  알고리즘의 정당성 증명
+    귀납법 - 0일때 성립, 증가할 때 성립
+    귀류법 - 가정과 반대되는 상황을 가정하여 가정이 맞을수밖에 없음을 증명
+    비둘기집 원리 - 필연적인 중복 발생
+    구성적 증명 - 안정적인 짝 찾기
 */
 
 vector<int> getPrimeVector(int num);  //[0,num] 범위의 소수를 저장하는 vector<int>를 반환
