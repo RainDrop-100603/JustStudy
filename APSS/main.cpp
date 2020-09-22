@@ -21,7 +21,7 @@ void BoggleInput(vector<char>& probTable, vector<string>& wordArr){
     wordArr.push_back(tmpS);
   }
 }
-void BoggleGame(vector<char>& arr, vector<string>& wordArr){
+vector<int> BoggleGame(vector<char>& probTable, vector<string>& wordArr){
   /*
     제한시간 10초, 제한 메모리 2^16Kb=8MB
     brute force
@@ -42,6 +42,7 @@ void BoggleGame(vector<char>& arr, vector<string>& wordArr){
       N번째 원소가 empty가 아니라면, yes 출력 
       time complexity: 625*len*N
   */
+  vector<int> result;
   //인접 8칸을 의미
   vector<int> near={-6,-5,-4,-1,1,4,5,6};
   //알고리즘
@@ -51,15 +52,15 @@ void BoggleGame(vector<char>& arr, vector<string>& wordArr){
     vector<vector<int>> DP(len);
     //0번째 원소 초기조건
     for(int j=0;j<25;j++){
-      if(ele[0]==arr[j]){
+      if(ele[0]==probTable[j]){
         DP[0].push_back(j);
       }
     }
     //1~len-1번째 원소
     for(int i=1;i<len;i++){
-      //arr 순회
+      //probTable 순회
       for(int j=0;j<25;j++){
-        if(ele[i]==arr[j]){
+        if(ele[i]==probTable[j]){
           for(auto& ele2: DP[i-1]){
             int gap=ele2-j;
             for(auto& ele3:near){
@@ -71,23 +72,14 @@ void BoggleGame(vector<char>& arr, vector<string>& wordArr){
         }
       }
     }
-    //출력
-
-    cout<<"wordSize: "<<sizeof(ele)<<"\n";
-    int sum=0;
-    for(auto& elsp:DP){
-      sum+=sizeof(elsp);
-    }
-    cout<<"DP: "<<sum<<"\n";
-
-    cout<<ele<<" ";
+    //결과, 0=no, 1=yes
     if(DP.back().empty()){
-      cout<<"NO\n";
+      result.push_back(0);
     }else{
-      cout<<"YES\n";
+      result.push_back(1);
     }
   }
-  
+  return result;
 }
 
 int main(void){
@@ -100,7 +92,16 @@ int main(void){
     vector<char> probTable(25);
     vector<string> wordArr;
     BoggleInput(probTable, wordArr);
-    BoggleGame(probTable, wordArr);
+    vector<int> result=BoggleGame(probTable, wordArr);
+    int len=result.size();
+    for(int i=0;i<len;i++){
+      cout<<wordArr[i]<<" ";
+      if(result[i]){
+        cout<<"YES\n";
+      }else{
+        cout<<"NO\n";
+      }
+    }
   }
 
   return 0;
