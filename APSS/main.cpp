@@ -5,17 +5,49 @@
 #include <vector>
 
 using namespace std;
+void PicnicInput(vector<vector<bool>>& friendTable){
+  int studentNum,friendNum;
+  cin>>studentNum>>friendNum;
+  //n*n table로 변경
+  for(int i=0;i<studentNum;i++){
+    friendTable.push_back(vector<bool>(studentNum));
+  }
+  int num1,num2;
+  for(int i=0;i<friendNum;i++){
+    cin>>num1>>num2;
+    friendTable[num1][num2]=true;
+    friendTable[num2][num1]=true;
+  }
+}
+int PicnicAlgo(vector<vector<bool>>& friendTable,int std1, int std2){
+  /*
+  조합 문제
+    12 34 56 과 21 65 43은 같은 조합.
+    최대 경우의 수:10C2*8C2*6C2*4C2*2C2/(5!)=2310
+  brute force
+    재귀
 
-void PICNIC(){
-
-
+  */
+  int result(0),studentNum(friendTable.size());
+  
+  return result;
+}
+void Picnic(){
+  int testCase;
+  cin>>testCase;
+  while(testCase--){
+    vector<vector<bool>> friendTable;
+    PicnicInput(friendTable);
+    int result=PicnicAlgo(friendTable,0,1);
+    cout<<result<<"\n";
+  }
 }
 
 int main(void){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  PICNIC();
+  Picnic();
 
   return 0;
 }
