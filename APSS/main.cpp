@@ -8,7 +8,7 @@ using namespace std;
 
 void BoggleGame(){
   /*
-    제한시간 10초 
+    제한시간 10초, 제한 메모리 2^16Kb=8MB
     brute force
       8방향을 확인하여 단어를 순서대로 만든다 -> R, E, P, E, A, T
         bool boggle(string word, int idx, pair<int,int> point);  //word의 idx번째가 point와 값이 같은지 chk;
@@ -21,37 +21,74 @@ void BoggleGame(){
         인접하는 경우, 다음 원소 탐색  p->r
         인접하지 않는경우, 같은 원소의 다른위치로 다시  p1->p2
     DP2
-      단어의 길이 N -> N 번 순회
+      단어의 길이 len -> len 번 순회
         i번째 순회시 i번째에 해당하는 원소를 찾는다.        25
           i-1번째 원소와 인접한지 확인후, 인접하다면 input    <=25
       N번째 원소가 empty가 아니라면, yes 출력 
-      time complexity: 625*N
+      time complexity: 625*len*N
   */
-  int testCase,numWords;
+  int testCase,wordNum;
   cin>>testCase;
-  //2차원 배열이지만 한줄로 간단하게 처리
-  vector<char> table(25);  
-  for(int i=0;i<5;i++){
-    string tmpS;
-    cin>>tmpS;
-    for(int j=0;j<5;j++){
-      table[5*i+j]=tmpS[j];
+  //인접 8칸을 의미
+  vector<int> near={-6,-5,-4,-1,1,4,5,6};
+  while(testCase--){
+    //2차원 배열이지만 한줄로 간단하게 처리
+    vector<char> arr(25);  
+    for(int i=0;i<5;i++){
+      string tmpS;
+      cin>>tmpS;
+      for(int j=0;j<5;j++){
+        arr[5*i+j]=tmpS[j];
+      }
     }
-  }
-  //단어 입력
-  cin>>numWords;
-  vector<string> wordArr(numWords);
-  for(auto& ele:wordArr){
-    cin>>ele;
-  }
-  //알고리즘
-  for(auto& ele:wordArr){
-    //DP[i][k]=x, ele의 i번째 원소의 위치는 x (k는 단순 idx)
-    int len=ele.length();
-    vector<vector<int>> DP(len);
-    //i=0일때 초기조건
-    for(int i=0;i<25;i++){
-      if(ele[0]==)
+    //단어 입력
+    cin>>wordNum;
+    vector<string> wordArr(wordNum);
+    for(auto& ele:wordArr){
+      cin>>ele;
+    }
+    //알고리즘
+    for(auto& ele:wordArr){
+      //DP[i][k]=x, ele의 i번째 원소의 위치는 x (k는 단순 idx)
+      int len=ele.length();
+      vector<vector<int>> DP(len);
+      //0번째 원소 초기조건
+      for(int j=0;j<25;j++){
+        if(ele[0]==arr[j]){
+          DP[0].push_back(j);
+        }
+      }
+      //1~len-1번째 원소
+      for(int i=1;i<len;i++){
+        //arr 순회
+        for(int j=0;j<25;j++){
+          if(ele[i]==arr[j]){
+            for(auto& ele2: DP[i-1]){
+              int gap=ele2-j;
+              for(auto& ele3:near){
+                if(gap==ele3){
+                  DP[i].push_back(j);
+                }
+              }
+            }
+          }
+        }
+      }
+      //출력
+
+      cout<<"wordSize: "<<sizeof(ele)<<"\n";
+      int sum=0;
+      for(auto& elsp:DP){
+        sum+=sizeof(elsp);
+      }
+      cout<<"DP: "<<sum<<"\n";
+
+      cout<<ele<<" ";
+      if(DP[len-1].empty()){
+        cout<<"NO\n";
+      }else{
+        cout<<"YES\n";
+      }
     }
   }
 }
