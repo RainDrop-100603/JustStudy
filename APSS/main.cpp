@@ -5,8 +5,23 @@
 #include <vector>
 
 using namespace std;
-
-void BoggleGame(){
+void BoggleInput(vector<char>& probTable, vector<string>& wordArr){
+  for(int i=0;i<5;i++){
+    string tmpS;
+    cin>>tmpS;
+    for(int j=0;j<5;j++){
+      probTable[5*i+j]=tmpS[j];
+    }
+  }
+  int wordNum;
+  cin>>wordNum;
+  string tmpS;
+  for(int i=0;i<wordNum;i++){
+    cin>>tmpS;
+    wordArr.push_back(tmpS);
+  }
+}
+void BoggleGame(vector<char>& arr, vector<string>& wordArr){
   /*
     제한시간 10초, 제한 메모리 2^16Kb=8MB
     brute force
@@ -27,77 +42,66 @@ void BoggleGame(){
       N번째 원소가 empty가 아니라면, yes 출력 
       time complexity: 625*len*N
   */
-  int testCase,wordNum;
-  cin>>testCase;
   //인접 8칸을 의미
   vector<int> near={-6,-5,-4,-1,1,4,5,6};
-  while(testCase--){
-    //2차원 배열이지만 한줄로 간단하게 처리
-    vector<char> arr(25);  
-    for(int i=0;i<5;i++){
-      string tmpS;
-      cin>>tmpS;
-      for(int j=0;j<5;j++){
-        arr[5*i+j]=tmpS[j];
+  //알고리즘
+  for(auto& ele:wordArr){
+    //DP[i][k]=x, ele의 i번째 원소의 위치는 x (k는 단순 idx)
+    int len=ele.length();
+    vector<vector<int>> DP(len);
+    //0번째 원소 초기조건
+    for(int j=0;j<25;j++){
+      if(ele[0]==arr[j]){
+        DP[0].push_back(j);
       }
     }
-    //단어 입력
-    cin>>wordNum;
-    vector<string> wordArr(wordNum);
-    for(auto& ele:wordArr){
-      cin>>ele;
-    }
-    //알고리즘
-    for(auto& ele:wordArr){
-      //DP[i][k]=x, ele의 i번째 원소의 위치는 x (k는 단순 idx)
-      int len=ele.length();
-      vector<vector<int>> DP(len);
-      //0번째 원소 초기조건
+    //1~len-1번째 원소
+    for(int i=1;i<len;i++){
+      //arr 순회
       for(int j=0;j<25;j++){
-        if(ele[0]==arr[j]){
-          DP[0].push_back(j);
-        }
-      }
-      //1~len-1번째 원소
-      for(int i=1;i<len;i++){
-        //arr 순회
-        for(int j=0;j<25;j++){
-          if(ele[i]==arr[j]){
-            for(auto& ele2: DP[i-1]){
-              int gap=ele2-j;
-              for(auto& ele3:near){
-                if(gap==ele3){
-                  DP[i].push_back(j);
-                }
+        if(ele[i]==arr[j]){
+          for(auto& ele2: DP[i-1]){
+            int gap=ele2-j;
+            for(auto& ele3:near){
+              if(gap==ele3){
+                DP[i].push_back(j);
               }
             }
           }
         }
       }
-      //출력
+    }
+    //출력
 
-      cout<<"wordSize: "<<sizeof(ele)<<"\n";
-      int sum=0;
-      for(auto& elsp:DP){
-        sum+=sizeof(elsp);
-      }
-      cout<<"DP: "<<sum<<"\n";
+    cout<<"wordSize: "<<sizeof(ele)<<"\n";
+    int sum=0;
+    for(auto& elsp:DP){
+      sum+=sizeof(elsp);
+    }
+    cout<<"DP: "<<sum<<"\n";
 
-      cout<<ele<<" ";
-      if(DP[len-1].empty()){
-        cout<<"NO\n";
-      }else{
-        cout<<"YES\n";
-      }
+    cout<<ele<<" ";
+    if(DP.back().empty()){
+      cout<<"NO\n";
+    }else{
+      cout<<"YES\n";
     }
   }
+  
 }
 
 int main(void){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  BoggleGame();
+  int testCase;
+  cin>>testCase;
+  while(testCase--){
+    vector<char> probTable(25);
+    vector<string> wordArr;
+    BoggleInput(probTable, wordArr);
+    BoggleGame(probTable, wordArr);
+  }
 
   return 0;
 }
