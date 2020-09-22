@@ -21,6 +21,8 @@ void PicnicInput(vector<vector<bool>>& friendTable){
 }
 int PicnicAlgo(vector<vector<bool>>& friendTable,int std1, int std2){
   /*
+  제한시간 1초
+  제한메모리 2^16kb=64MB
   조합 문제
     12 34 56 과 21 65 43은 같은 조합.
     최대 경우의 수:10C2*8C2*6C2*4C2*2C2/(5!)=2310

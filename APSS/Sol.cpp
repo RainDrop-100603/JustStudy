@@ -32,7 +32,7 @@ void BoggleInput(vector<char>& probTable, vector<string>& wordArr){
 }
 vector<int> BoggleAlgo(vector<char>& probTable, vector<string>& wordArr){
   /*
-    제한시간 10초, 제한 메모리 2^16Kb=8MB
+    제한시간 10초, 제한 메모리 2^16Kb=64MB
     brute force
       8방향을 확인하여 단어를 순서대로 만든다 -> R, E, P, E, A, T
         bool boggle(string word, int idx, pair<int,int> point);  //word의 idx번째가 point와 값이 같은지 chk;
