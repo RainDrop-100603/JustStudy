@@ -132,7 +132,7 @@ int PicnicAlgo(vector<vector<bool>>& friendTable,vector<bool>& toBePush){
   제한메모리 2^16kb=64MB
   조합 문제
     12 34 56 과 21 65 43은 같은 조합.
-    최대 경우의 수:10C2*8C2*6C2*4C2*2C2/(5!)=2310
+    최대 경우의 수:10C2*8C2*6C2*4C2*2C2/(5!)=945
   brute force
     재귀
       Algo(frientTable,input toBePush)
@@ -143,21 +143,13 @@ int PicnicAlgo(vector<vector<bool>>& friendTable,vector<bool>& toBePush){
         toBePush[idx]=true: idx push 가능
         friend인 경우에만 input
       기저: stack의 크기가 10 -> return 1;
+  업데이트
+    기저와 첫번째 학생을 하나의 search로 합칠 수 있다.
+    if 문 통합, loop에 i 대신 직관적 표현 이용 
   */
-  //기저
-  int studentNum(friendTable.size());
-  bool isFinish(true);
-  for(auto&& ele: toBePush){
-    if(ele){
-      isFinish=false;
-      break;
-    }
-  }
-  if(isFinish){
-    return 1;
-  }
   //첫번째 원소
-  int result(0),first,second;
+  int studentNum(friendTable.size());
+  int result(0),first(-1);
   for(int i=0;i<studentNum;i++){
     if(toBePush[i]){
       first=i;
@@ -165,15 +157,16 @@ int PicnicAlgo(vector<vector<bool>>& friendTable,vector<bool>& toBePush){
       break;
     }
   }
+  //기저, 첫번째 학생이 없다면 모두 정렬 완료된 것이므로.
+  if(first==-1){
+    return 1;
+  }
   //두번째원소
-  for(int i=first+1;i<studentNum;i++){
-    if(toBePush[i]){
-      second=i;
-      if(friendTable[first][second]){
-        toBePush[second]=false;
-        result+=PicnicAlgo(friendTable,toBePush);
-        toBePush[second]=true;
-      }
+  for(int second=first+1;second<studentNum;second++){
+    if(toBePush[second]&&friendTable[first][second]){
+      toBePush[second]=false;
+      result+=PicnicAlgo(friendTable,toBePush);
+      toBePush[second]=true;
     }
   }
   toBePush[first]=true;
