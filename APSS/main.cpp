@@ -5,12 +5,6 @@
 #include <vector>
 
 using namespace std;
-const int Type[4][3][2]={
-  {{0,0},{1,0},{0,1}},
-  {{0,0},{1,0},{1,1}},
-  {{0,0},{0,1},{1,1}},
-  {{0,0},{0,1},{-1,1}}
-};
 void BoardCoverInput(vector<vector<bool>>& boardTable){
   int height,width;
   cin>>height>>width;
@@ -58,7 +52,8 @@ int BoardCoverAlgo(vector<vector<bool>>& boardTable){
           4모양 모두 불가능 하면 return 0;
           가능하다면 재귀
     time complexity
-      4^(width*height/3)<=10^60
+      4^(width*height/3)<=10^60 //하얀색이 50칸 이하라는 조건이 존재한다.
+      white<50 -> 4^13=6*10^7
     mem complexity
       width*height<=400
    
@@ -66,56 +61,50 @@ int BoardCoverAlgo(vector<vector<bool>>& boardTable){
   //first position
   int height=boardTable.size();
   int width=boardTable[0].size();
-  int xpos=-1,ypos=-1;
+  int yPos=-1,xPos=-1;
   for(int i=0;i<height;i++){
     for(int j=0;j<width;j++){
       if(boardTable[i][j]){
-        xpos=j;
-        ypos=i;
+        xPos=j;
+        yPos=i;
         i=height;
         break;
       }
     }
   }
   //기저
-  if(xpos==-1){
+  if(yPos==-1){
     return 1;
   }
   //Algo
   int result(0);
-  bool xp1(xpos+1<width),xm1(xpos>0),yp1(ypos+1<height);
-  for(int i=0;i<4;i++){
-    for(int j=0;j<3;j++){
-      
-    }
-  }
+  bool xp1(xPos+1<width),xm1(xPos>0),yp1(yPos+1<height);
   if(xp1&&yp1){
-    if(boardTable[xpos+1][ypos+1]&&boardTable[xpos][ypos+1]){
-      boardTable[xpos][ypos]=boardTable[xpos+1][ypos+1]=boardTable[xpos][ypos+1]=false;
+    if(boardTable[yPos][xPos+1]&&boardTable[yPos+1][xPos+1]){
+      boardTable[yPos][xPos]=boardTable[yPos][xPos+1]=boardTable[yPos+1][xPos+1]=false;
       result+=BoardCoverAlgo(boardTable);
-      boardTable[xpos][ypos]=boardTable[xpos+1][ypos+1]=boardTable[xpos][ypos+1]=true;
+      boardTable[yPos][xPos]=boardTable[yPos][xPos+1]=boardTable[yPos+1][xPos+1]=true;
     }
-    if(boardTable[xpos+1][ypos]&&boardTable[xpos+1][ypos+1]){
-      boardTable[xpos][ypos]=boardTable[xpos+1][ypos]=boardTable[xpos+1][ypos+1]=false;
+    if(boardTable[yPos+1][xPos]&&boardTable[yPos+1][xPos+1]){
+      boardTable[yPos][xPos]=boardTable[yPos+1][xPos]=boardTable[yPos+1][xPos+1]=false;
       result+=BoardCoverAlgo(boardTable);
-      boardTable[xpos][ypos]=boardTable[xpos+1][ypos]=boardTable[xpos+1][ypos+1]=true;
+      boardTable[yPos][xPos]=boardTable[yPos+1][xPos]=boardTable[yPos+1][xPos+1]=true;
     }
-    if(boardTable[xpos+1][ypos]&&boardTable[xpos][ypos+1]){
-      boardTable[xpos][ypos]=boardTable[xpos+1][ypos]=boardTable[xpos][ypos+1]=false;
+    if(boardTable[yPos+1][xPos]&&boardTable[yPos][xPos+1]){
+      boardTable[yPos][xPos]=boardTable[yPos+1][xPos]=boardTable[yPos][xPos+1]=false;
       result+=BoardCoverAlgo(boardTable);
-      boardTable[xpos][ypos]=boardTable[xpos+1][ypos]=boardTable[xpos][ypos+1]=true;
+      boardTable[yPos][xPos]=boardTable[yPos+1][xPos]=boardTable[yPos][xPos+1]=true;
     }
   }
   if(xm1&&yp1){
-    if(boardTable[xpos-1][ypos+1]&&boardTable[xpos][ypos+1]){
-      boardTable[xpos][ypos]=boardTable[xpos-1][ypos+1]=boardTable[xpos][ypos+1]=false;
+    if(boardTable[yPos+1][xPos-1]&&boardTable[yPos+1][xPos]){
+      boardTable[yPos][xPos]=boardTable[yPos+1][xPos-1]=boardTable[yPos+1][xPos]=false;
       result+=BoardCoverAlgo(boardTable);
-      boardTable[xpos][ypos]=boardTable[xpos-1][ypos+1]=boardTable[xpos][ypos+1]=true;
+      boardTable[yPos][xPos]=boardTable[yPos+1][xPos-1]=boardTable[yPos+1][xPos]=true;
     }
   }
   return result;
 }
-
 void BoardCover(){
   int testCase;
   cin>>testCase;

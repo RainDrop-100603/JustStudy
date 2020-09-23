@@ -13,3 +13,9 @@ void BoggleGame();
 void PicnicInput(vector<vector<bool>>& friendTable);
 int PicnicAlgo(vector<vector<bool>>& friendTable,vector<bool>& toBePush);
 void Picnic();
+
+//BoardCover
+void BoardCoverInput(vector<vector<bool>>& boardTable);
+bool BoradCoverNoAns(vector<vector<bool>>& boardTable);
+int BoardCoverAlgo(vector<vector<bool>>& boardTable);
+void BoardCover();
