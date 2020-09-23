@@ -1,6 +1,6 @@
 #include "Sol.h"
 
-void BogglerandInput(vector<char>& probTable, vector<string>& wordArr){
+void BoggleRandInput(vector<char>& probTable, vector<string>& wordArr){
   for(int i=0;i<25;i++){
     probTable[i]=rand()%26+'A';
   }
@@ -98,7 +98,7 @@ void BoggleGame(){
     vector<char> probTable(25);
     vector<string> wordArr;
     //BoggleInput(probTable, wordArr);
-    BogglerandInput(probTable,wordArr);
+    BoggleRandInput(probTable,wordArr);
     vector<int> result=BoggleAlgo(probTable, wordArr); 
     int len=result.size();
     for(int i=0;i<len;i++){

@@ -21,6 +21,39 @@ using namespace std;
     lexicographical_compare()
   이진 탐색
     lower_bound(), upper_bound()
+런타임에러
+  배열에 할당된 크기를 넘어서 접근했을 때
+  전역 배열의 크기가 메모리 제한을 초과할 때
+  지역 배열의 크기가 스택 크기 제한을 넘어갈 때
+  0으로 나눌 떄
+  라이브러리에서 예외를 발생시켰을 때
+  재귀 호출이 너무 깊어질 때
+  이미 해제된 메모리를 또 참조할 때
+  프로그램(main 함수)이 0이 아닌 수를 반환했을 때
+  C/C++에서 반환형이 void가 아닌 main이 아닌 함수에서 아무런 값을 반환하지 않았을 때
+조합에서 중복 제거  
+  원소를 사전순 정렬 -> 중복을 삭제할 수 있다. (조합이므로 순서 중요 X)
+  조합 생성시 사전순으로만 생성되도록 -> 추가 작업 없이도 중복이 없다.
+RValue Reference(우측값 참조) &&
+  복사를 하지 않고 임시객체(우측값)를 그대로 이용하는것(이동)
+  vector<bool> 배열의 경우 범위기반 for 문에서 우측값 참조를 이용해야 한다.
+    vector<bool>은 bool container가 아니라, int container에 bitmask로 저장한 것이기 때문에, 접근시 임시값(RValue)를 반환한다.
+  Vs LValue
+    LValue: 식이 끝난 후에도 존재하는 좌측값, RValue: 식이 끝난 후에도 존재하는 우측값
+    LValue ref: & , RVlue ref: &&
+    다른 형식의 참조이므로 함수 오버로딩이 가능
+      func(int& x), func(int&& x) 오버로딩
+std::move, std::forward 
+  move
+    LValue 를 RValue로 캐스팅 해준다.
+      기존 LValue는 더이상 남아있지 않다(RValue로 바뀌었으므로 사라지는것이 당연하다)
+    move 생성자, move 대입연산자 이용 가능
+      암묵적으로 생성되지 않는다.
+      복사 생성자, 대입연산자가 move 복사, move 대입보다 우선순위가 높으므로 std::move 사용 필요
+  forward
+    Lvalue는 LValue로, RValue는 RValue로 캐스팅 해준다.
+      자동으로 LValue->RValue로 캐스팅 되는것을 막아준다.
+
 유의사항
   오버로딩
     operator오버로딩시 기존 operator가 가지는 성질을 유지해야 일관적인 결과를 기대할 수 있다.
