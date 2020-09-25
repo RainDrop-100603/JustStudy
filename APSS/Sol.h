@@ -19,3 +19,9 @@ void BoardCoverInput(vector<vector<bool>>& boardTable);
 bool BoradCoverNoAns(vector<vector<bool>>& boardTable);
 int BoardCoverAlgo(vector<vector<bool>>& boardTable);
 void BoardCover();
+
+//ClockSync
+void ClockSyncInput(vector<int>& clockArr);
+int ClockSyncAlgo(vector<int>& clockArr,vector<vector<int>>& switchArr,int nowSwitch);
+void ClockSync();
+

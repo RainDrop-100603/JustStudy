@@ -31,3 +31,14 @@ pair<long long,long long> euclidAlgo(long long A,long long B){      //조건: A>
     return make_pair(1,0);  // GCD(d,0) = dx+0y=d: 
   }
 } 
+int fastSum(int n){
+  //기저
+  if(n==1) return 1;
+  //홀수
+  if(n%2) return fastSum(n-1)+n;
+  //짝수
+  return 2*fastSum(n/2)+(n/2)*(n/2);
+}
+
+
+/////

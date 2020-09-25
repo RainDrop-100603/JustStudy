@@ -12,6 +12,8 @@ using namespace std;
   이진 탐색
   인접메모리 사용 : 캐시는 인접메모리를 한번에 가져온다.
   실수 자료형 지양
+  제약이 있는 빠른 함수, fastSum 참고
+    짝수만 적용가능한 함수의 경우, 홀수를 다룰때 n-1까지 함수를 적용하고 한단계는 직접 계산하도록 함수를 만들 수 있다(짝수->General)
 테스트 검증
   rand를 이용하여 무작위 변수를 input
   표준함수가 구현되어 있다면 Algo와 표준함수와 비교
@@ -21,6 +23,8 @@ using namespace std;
     lexicographical_compare()
   이진 탐색
     lower_bound(), upper_bound()
+  주어진 순열의 다음 순열을 구하는 Algo
+    next_permutation()
 런타임에러
   배열에 할당된 크기를 넘어서 접근했을 때
   전역 배열의 크기가 메모리 제한을 초과할 때
@@ -117,4 +121,4 @@ vector<int> getPrimeVector(int num);  //[0,num] 범위의 소수를 저장하는
 int  getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
 // LCM=A*B/GCD(A*B);
 pair<long long,long long> euclidAlgo(long long A,long long B);  //유클리드 알고리즘"Ax+By=gcd(A,B)"의 해(x,y), 조건: A>B,  
-
+int fastSum(int n); //1~n까지의 합을 구한다. 분할정복방식
