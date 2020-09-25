@@ -14,6 +14,11 @@ using namespace std;
   실수 자료형 지양
   제약이 있는 빠른 함수, fastSum 참고
     짝수만 적용가능한 함수의 경우, 홀수를 다룰때 n-1까지 함수를 적용하고 한단계는 직접 계산하도록 함수를 만들 수 있다(짝수->General)
+  시간복잡도는 절대적 지표가 아니다.
+    N이 작은경우, 단순한 N^2함수가 복잡한 NlgN보다 빠를 수 있다.
+접근 방법
+  작은 입력에 대해서만 동작하는 단순한 알고리즘에서 시작하여 큰 입력에서도 작동하도록 develop
+  
 테스트 검증
   rand를 이용하여 무작위 변수를 input
   표준함수가 구현되어 있다면 Algo와 표준함수와 비교
@@ -57,7 +62,8 @@ std::move, std::forward
   forward
     Lvalue는 LValue로, RValue는 RValue로 캐스팅 해준다.
       자동으로 LValue->RValue로 캐스팅 되는것을 막아준다.
-
+아주 큰 숫자(문자열 숫자) 연산
+  곱셈: 카라츠바 알고리즘 참고
 유의사항
   오버로딩
     operator오버로딩시 기존 operator가 가지는 성질을 유지해야 일관적인 결과를 기대할 수 있다.
@@ -120,5 +126,5 @@ std::move, std::forward
 vector<int> getPrimeVector(int num);  //[0,num] 범위의 소수를 저장하는 vector<int>를 반환
 int  getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
 // LCM=A*B/GCD(A*B);
-pair<long long,long long> euclidAlgo(long long A,long long B);  //유클리드 알고리즘"Ax+By=gcd(A,B)"의 해(x,y), 조건: A>B,  
+pair<long long,long long> euclidAlgo(long long A,long long B);  //유클리드 알고리즘"Ax+By=gcd(A,B)"의 해(x,y), 
 int fastSum(int n); //1~n까지의 합을 구한다. 분할정복방식
