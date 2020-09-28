@@ -49,9 +49,9 @@ int FenceAlgo(vector<int>& fenceData,int left, int right){
       time complexity: NlgN
       mem complexity: N
   */
-  //기저, left==right일 때, max=leftmax=rightmax=fenceData[left];
-  if(right==left){
-    return fenceData[left];
+  //기저
+  if(right<left){
+    return 0;
   }
   //Algo, 
   int pivot,minValue(12345);
@@ -62,7 +62,8 @@ int FenceAlgo(vector<int>& fenceData,int left, int right){
     }
   }
   int leftMax=FenceAlgo(fenceData,left,pivot-1);
-  return result;
+  int rightMax=FenceAlgo(fenceData,pivot+1,right);
+  return max(minValue*(right-left+1),max(leftMax,rightMax));
 }
 void Fence(){
   int testCase;
@@ -70,7 +71,7 @@ void Fence(){
   while(testCase--){
     vector<int> fenceData;
     FenceInput(fenceData);
-    cout<<FenceAlgo(fenceData)<<"\n";
+    cout<<FenceAlgo(fenceData,0,fenceData.size()-1)<<"\n";
   }
 }
 
