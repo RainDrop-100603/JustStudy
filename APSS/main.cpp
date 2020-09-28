@@ -34,6 +34,10 @@ public:
   longNum& operator+(){}
   longNum karatsuba(){}
 };
+//https://jungwoong.tistory.com/53
+//std move, std forward, 이동생성자 공부
+//rValue로 전달된 a는 num을 초기화 할때도 rvalue 상태인가?
+//longNum(vector<int>&& a):num(a){} 가 맞는가, longNum(vector<int>&& a):num(move(a)){} 가 맞는가 
 
 
 void FanmeetingInput(vector<int>& member,vector<int>& fan){
