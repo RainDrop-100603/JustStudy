@@ -29,3 +29,8 @@ void ClockSync();
 void QuadTreeInput(string& treeData);
 string QuadTreeAlgo(string::iterator& iter);
 void QuadTree();
+
+//Fence, Divide&Conquer, Bk6549, stack(19장), line sweeping(15장), 상호배타적 집합(25장)
+void FenceInput(vector<int>& fenceData);
+int FenceAlgo(vector<int>& fenceData,int left, int right);
+void Fence();

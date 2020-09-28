@@ -5,49 +5,69 @@
 #include <vector>
 
 using namespace std;
-void FenceInput(vector<int>& fenceData){
-  int fenceNum,tmp;
-  cin>>fenceNum;
-  fenceData.reserve(fenceNum);
-  for(int i=0;i<fenceNum;i++){
-    cin>>tmp;
-    fenceData.push_back(tmp);
+
+class longNum{
+  vector<int> num;
+public:
+  //생성자
+  longNum(){} 
+  longNum(const vector<int>& a):num(a){}
+  longNum(vector<int>&& a):num(a){}
+  longNum(const string& a){
+    num.reserve(a.length());
+    for(auto& ele:a){
+      num.push_back(ele);
+    }
+  }
+  ~longNum(){}
+  //복사 생성자, 이동 생성자
+  longNum(const longNum& lN):num(lN.num){}
+  longNum(longNum&& lN) noexcept :num(lN.num){}
+  //대입 연산자 오버로딩
+  longNum& operator=(const longNum& lN){
+    num=lN.num;
+  }
+  longNum& operator=(longNum&& lN){
+    num=lN.num;
+  }
+  longNum& operator*(){}
+  longNum& operator+(){}
+  longNum karatsuba(){}
+};
+
+
+void FanmeetingInput(vector<int>& member,vector<int>& fan){
+  string memberTmp,fanTmp;
+  cin>>memberTmp>>fanTmp;
+  member.reserve(memberTmp.length());
+  for(auto& ele: memberTmp){
+    if(ele=='M'){
+      member.push_back(1);
+    }else{
+      member.push_back(0);
+    }
+  }
+  fan.reserve(fanTmp.length());
+  for(auto& ele: fanTmp){
+    if(ele=='M'){
+      fan.push_back(1);
+    }else{
+      fan.push_back(0);
+    }
   }
 }
-int FenceAlgo(vector<int>& fenceData,int left, int right){
+int FanmeetingAlgo(string& member, string& fan){
   /*
-  제한시간 1초
+  제한시간 10초
   제한메모리 2^16kb=64MB
   전략1
-    기저: left==right일 때, max=leftmax=rightmax=fenceData[left];
-    재귀: L(left,mid), R(mid+1,right) 재귀
-    반환: max, leftmax, right max
-      leftmax= L's leftmax
-      rightmax= R's right max
-      newMax=if(fenceData[mid]<fenceData[mid+1])
-        L's rightmax + R's leftmax*fenceData[mid]/fenceData[mid+1]
-        else: vice versa
-      max=max(newMax, L's max, R's max);
+    모든 멤버와 모든팬은 만난다.
+    한 줄의 모든 멤버들이 포옹하는 경우 -> M & M 이없는 경우 
+      M=1, F=0으로 하고 bit and(&) -> if (0)-> 모든멤버 포옹
     time complexity
-      O(NlgN): lgN 번 호출, O(n) 비교
     mem complexity
-      O(N)
   전략2
-    앞에서부터 뒤로 search
-      key, prev, now 존재
-        key 왼쪽으로는 모두 key보다 크거나 같다
-        prev는 now 직전
-          now가 prev보다 작다면,
-    stack을 이용하는 건데 헷갈려
   전략 3
-    quick sort 전략을 이용한다.
-      가장 작은 pivot을 구한다
-        분할: (left,pivot-1), (pivot+1,right)로 분리
-        반환: result= max(pivot*(right-left),func(left,pivot-1),func(pivot+1,right));
-        기저: right=left -> return fenceData[left];
-      총 lgN번 구한다
-      time complexity: NlgN
-      mem complexity: N
   */
   //기저
   if(right<left){
@@ -65,13 +85,13 @@ int FenceAlgo(vector<int>& fenceData,int left, int right){
   int rightMax=FenceAlgo(fenceData,pivot+1,right);
   return max(minValue*(right-left+1),max(leftMax,rightMax));
 }
-void Fence(){
+void Fanmeeting(){
   int testCase;
   cin>>testCase;
   while(testCase--){
-    vector<int> fenceData;
-    FenceInput(fenceData);
-    cout<<FenceAlgo(fenceData,0,fenceData.size()-1)<<"\n";
+    string member,fan;
+    FanmeetingInput(member,fan);
+    cout<<FanmeetingAlgo(member,fan)<<"\n";
   }
 }
 
@@ -79,7 +99,7 @@ int main(void){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
-  Fence();
+  Fanmeeting();
 
   return 0;
 }
