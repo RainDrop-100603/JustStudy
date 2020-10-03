@@ -7,13 +7,15 @@
 using namespace std;
 
 class longNum{
-  //ele=num[idx]*10^idx, only 양수(추후 음수 추가)
+  //ele=num[idx]*10^idx, sign: true means positive
   vector<int> num;
+  bool sign;
 public:
   //생성자
   longNum(){} 
-  longNum(vector<int>& v):num(v){}
-  longNum(const string& s){
+  longNum(vector<int>& v,bool sign=true):num(v),sign(sign){}
+  longNum(vector<int>&& v,bool sign=true):num(move(v)),sign(sign){}
+  longNum(const string& s, bool sign=true):sign(sign){
     num.reserve(s.length());
     for(auto& ele:s){
       num.push_back(ele-'0');
@@ -21,72 +23,90 @@ public:
   }
   longNum(long long n){
     // 더 낮은 비트수의 자료형, int도 포함된다.
-    while(n>0){
+    //sign
+    if(n<0){sign=false;n*=-1;}
+    else{sign=true;}
+    //value
+    while(n!=0){
       num.push_back(n%10);
       n/=10;
     }
   }
-  longNum(longNum&& lN):num(move(lN.num)){}
   ~longNum(){}
   //복사 생성자, 이동 생성자
-  longNum(const longNum& lN):num(lN.num){}
+  longNum(const longNum& lN):num(lN.num),sign(lN.sign){}
+  longNum(longNum&& lN):num(move(lN.num)),sign(lN.sign){}
   //대입 연산자 오버로딩
-  longNum& operator=(const longNum& lN){num=lN.num;return *this;}
-  longNum& operator=(longNum&& lN){num=move(lN.num);return *this;}
+  longNum& operator=(const longNum& lN){num=lN.num;sign=lN.sign;return *this;}
+  longNum& operator=(longNum&& lN){num=move(lN.num);sign=lN.sign;return *this;}
+  //연산자 오버로딩
+  int& operator[] (int idx){return num[idx];}
+  const int& operator[] (int idx) const{return num[idx];}
+  friend ostream& operator<<(ostream& os, const longNum& lN);
   //멤버함수
   int length() const{return num.size();}
-  int at(int idx) const{return num[idx];}
-  void change(int idx, int n){num[idx]=n;}
-  longNum mult(const longNum& a) const{
-    int lenThis(this->length()),lenA(a.length());
-    vector<int> result(lenThis+lenA);
+  longNum mult(const longNum& lN) const{
+    int lenThis(num.size()),lenA(lN.length());
+    vector<int> tmp(vector<int>(lenThis+lenA));
     for(int i=0;i<lenThis;i++){
       for(int j=0;j<lenA;j++){
-        result[i+j]+=this->at(i)*a.at(j);
+        tmp[i+j]+=num[i]*lN[j];
       }
     }
-    return longNum(result);
+    longNum result(move(tmp),!(sign^lN.sign));
+    result.normalize();
+    return result;
   }
   longNum karatsuba(const longNum& a) const{
-
+    //기저
+    if((this->length()<50)&&a.length()<50){
+      return this->mult(a);
+    }
   }
-  longNum& normalize(){
-    int len=num.size();
-    int prev,now(num.at(0)),borrow;
-    for(int i=1;i<len;i++){
-      prev=now;
-      now=num.at(i);
-      borrow=prev/10;
-      if(prev<0){
+  void normalize(){
+    int len(num.size()),borrow;
+    for(int i=0;i<len-1;i++){
+      borrow=num[i]/10;
+      if(num[i]<0){
         borrow--;
       }
-      prev-=borrow*10;
-      now+=borrow;
-      this->change(i-1,prev);
+      num[i]-=borrow*10;
+      num[i+1]+=borrow;
     }
-    this->change(len-1,now);
-    return *this;
+    //모든 경우에 대응하는 normalize
+    while(num.back()>9||num.back()<-9){
+      num.push_back(0);
+      borrow=num[len-1]/10;
+      if(num[len-1]<0){
+        borrow--;
+      }
+      num[len-1]-=borrow*10;
+      num[len]+=borrow;
+      len++;
+    }
+    //끝자리 0 제거
+    while(num.size()>1&&num.back()==0){
+      num.pop_back();
+    }
   }
   void print_withSpace(){
-    int len(num.size());
-    if(num[len-1]!=0){
-      cout<<num[len-1]<<' ';
+    if(!sign){
+      cout<<"- ";
     }
-    for(int i=len-2;i>=0;i--){
-      cout<<num[i]<<' ';
-    }
-  }
-  void print(){//주석
-    //must be normalized
-    int len(num.size());
-    if(num[len-1]!=0){
-      cout<<num[len-1];
-    }
-    for(int i=len-2;i>=0;i--){
-      cout<<num[i];
+    for(auto iter=num.rbegin();iter!=num.rend();iter++){
+      cout<<*iter<<' ';
     }
   }
 };
+ostream& operator<<(ostream& os, const longNum& lN){
+  if(!lN.sign){
+    os<<'-';
+  }
+  for(auto iter=lN.num.rbegin();iter!=lN.num.rend();iter++){
+    os<<*iter;
+  }
+  return os;
+}
 //https://jungwoong.tistory.com/53
 //std move, std forward, 이동생성자 공부
 //rValue로 전달된 a는 num을 초기화 할때도 rvalue 상태인가?
@@ -190,14 +210,14 @@ int main(void){
   //Fanmeeting();
   //longNumTest();
   //moveTest_vec();
-  longNum lN1(123),lN2(456);
+  longNum lN1(-123),lN2(456);
   longNum lN3=(lN1.mult(lN2));
   cout<<"Before Normalize: ";
   lN3.print_withSpace();cout<<endl;
   cout<<"After Normalize: ";
   lN3.normalize();
   lN3.print_withSpace();cout<<endl;
-  lN3.print();
+  cout<<lN3<<endl;
 
   return 0;
 }
