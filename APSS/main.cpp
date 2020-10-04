@@ -7,6 +7,7 @@
 using namespace std;
 
 class longNum{
+  //ver0.1, 2020_10_4
   //ele=num[idx]*10^idx, sign: true means positive
   vector<int> num;
   bool sign;
@@ -39,6 +40,71 @@ public:
   //대입 연산자 오버로딩
   longNum& operator=(const longNum& lN){num=lN.num;sign=lN.sign;return *this;}
   longNum& operator=(longNum&& lN){num=move(lN.num);sign=lN.sign;return *this;}
+  longNum operator+(const longNum& lN)const{
+    //부호가 다른경우 sub
+    if(sign^lN.sign){
+      if(sign){
+        return *this-lN.changeSign();
+      }else{
+        return lN-(this->changeSign());
+      }
+    }
+    //연산
+    int thisLen(this->length()),lNLen(lN.length()),Len(max(thisLen,lNLen));
+    vector<int> tmp(Len);
+    for(int i=0;i<thisLen;i++){
+      tmp[i]+=num[i];
+    }
+    for(int i=0;i<lNLen;i++){
+      tmp[i]+=lN[i];
+    }
+    longNum result(move(tmp),sign);
+    result.normalize();
+    return result;
+  }
+  longNum operator-(const longNum& lN)const{
+    //부호가 다를경우 add 
+    if(sign^lN.sign){
+      return *this+lN.changeSign();
+    }
+    //계산
+    int tmpSign;
+    int thisLen(this->length()),lNLen(lN.length()),Len(max(thisLen,lNLen));
+    vector<int> tmp(Len);
+    if(this->absBigger(lN)){
+      tmpSign=sign;
+      for(int i=0;i<thisLen;i++){
+        tmp[i]+=num[i];
+      }
+      for(int i=0;i<lNLen;i++){
+        tmp[i]-=lN[i];
+      }
+    }else{
+      tmpSign=lN.sign;
+      for(int i=0;i<thisLen;i++){
+        tmp[i]-=num[i];
+      }
+      for(int i=0;i<lNLen;i++){
+        tmp[i]+=lN[i];
+      }
+    }
+    longNum result(move(tmp),tmpSign);
+    result.normalize();
+    return result;
+  } 
+  longNum operator*(const longNum& lN)const{
+    int lenThis(num.size()),lenA(lN.length());
+    vector<int> tmp(vector<int>(lenThis+lenA));
+    for(int i=0;i<lenThis;i++){
+      for(int j=0;j<lenA;j++){
+        tmp[i+j]+=num[i]*lN[j];
+      }
+    }
+    longNum result(move(tmp),!(sign^lN.sign));
+    result.normalize();
+    return result;
+  }
+  
   //연산자 오버로딩
   int& operator[] (int idx){return num[idx];}
   int operator[] (int idx) const{return num[idx];}
@@ -83,18 +149,6 @@ public:
       num.pop_back();
     }
   }
-  longNum mult(const longNum& lN) const{
-    int lenThis(num.size()),lenA(lN.length());
-    vector<int> tmp(vector<int>(lenThis+lenA));
-    for(int i=0;i<lenThis;i++){
-      for(int j=0;j<lenA;j++){
-        tmp[i+j]+=num[i]*lN[j];
-      }
-    }
-    longNum result(move(tmp),!(sign^lN.sign));
-    result.normalize();
-    return result;
-  }
   longNum& pow10(int exp){
     vector<int> tmp(exp+this->length());
     for(int i=0;i<this->length();i++){
@@ -125,67 +179,27 @@ public:
   longNum changeSign()const{
     return longNum(num,!sign);
   }
-  longNum add(const longNum& lN)const{
-    //부호가 다른경우 sub 계산이부분 바꿔야함
-    if(sign^lN.sign){
-      return this->sub(lN.changeSign());
-    }
-    //연산
-    int thisLen(this->length()),lNLen(lN.length()),Len(max(thisLen,lNLen));
-    vector<int> tmp(Len);
-    for(int i=0;i<thisLen;i++){
-      tmp[i]+=num[i];
-    }
-    for(int i=0;i<lNLen;i++){
-      tmp[i]+=lN[i];
-    }
-    longNum result(move(tmp),sign);
-    result.normalize();
-    return result;
-  }
-  longNum sub(const longNum& lN)const{
-    //부호가 다를경우 add 계산
-    if(sign^lN.sign){
-      return this->add(lN.changeSign());
-    }
-    //계산
-    int tmpSign;
-    int thisLen(this->length()),lNLen(lN.length()),Len(max(thisLen,lNLen));
-    vector<int> tmp(Len);
-    if(this->absBigger(lN)){
-      tmpSign=sign;
-      for(int i=0;i<thisLen;i++){
-        tmp[i]+=num[i];
-      }
-      for(int i=0;i<lNLen;i++){
-        tmp[i]-=lN[i];
-      }
-    }else{
-      tmpSign=lN.sign;
-      for(int i=0;i<thisLen;i++){
-        tmp[i]-=num[i];
-      }
-      for(int i=0;i<lNLen;i++){
-        tmp[i]+=lN[i];
-      }
-    }
-    longNum result(move(tmp),tmpSign);
-    result.normalize();
-    return result;
-  }
   longNum karatsuba(const longNum& lN) const{
-    //기저,shortLen(this)<longLen(lN)<50 
+    //기저,shortLen(this)<longLen(lN)<50, 
     int shortLen(this->length()),longLen(lN.length());
     if(shortLen>longLen){
       return lN.karatsuba(*this);
     }
+    if(shortLen==0){
+      return longNum();
+    }
     if(longLen<50){
-      return this->mult(lN);
+      return this->operator*(lN);
     }
     //divide&conquer
     int divLen((shortLen+1)/2);
-    longNum thisLow(this->sublN(0,divLen)),thisHigh(this->sublN(divLen,shortLen+1));
-    longNum lNLow(lN.sublN(0,divLen)),lNHigh(lN.sublN(divLen,longLen+1));
+    longNum thisLow(this->sublN(0,divLen)),thisHigh(this->sublN(divLen,shortLen));
+    longNum lNLow(lN.sublN(0,divLen)),lNHigh(lN.sublN(divLen,longLen));
+    //a0 x^2 + a1 x + a2 : x=10^divLen, a0=thisHigh*lNHigh, a1=(this low+high)*(lN low+high)-a0-a2, a2=thisLow*lNLow
+    longNum a0(thisHigh.karatsuba(lNHigh));
+    longNum a2(thisLow.karatsuba(lNLow));
+    longNum a1((thisLow+thisHigh).karatsuba(lNLow+lNHigh)-a0-a2);
+    return longNum(a0.pow10(divLen*2)+a1.pow10(divLen)+a2);
   }
   void print_withSpace(){
     if(!sign){
@@ -212,13 +226,13 @@ ostream& operator<<(ostream& os, const longNum& lN){
 
 void longNumTest(){
   //자료형 생성
-  longNum void1;
-  longNum int1(123);
-  longNum ll1(1234567891011121314);
-  string tmpStr1("12345678910111213141516171819202122232425262728293031323334353637383940");
-  vector<int> tmpVec1={1,2,3,4,5,6,7,8,9,10};
-  longNum lN1(tmpStr1);
-  longNum lN2(tmpVec1);
+  // longNum void1;
+  // longNum int1(123);
+  // longNum ll1(1234567891011121314);
+  // string tmpStr1("12345678910111213141516171819202122232425262728293031323334353637383940");
+  // vector<int> tmpVec1={1,2,3,4,5,6,7,8,9,10};
+  // longNum lN1(tmpStr1);
+  // longNum lN2(tmpVec1);
   //각 자료형의 주소
   // cout<<"----------address----------"<<endl;
   // int1.printAddress();cout<<endl;
@@ -232,6 +246,26 @@ void longNumTest(){
   // cout<<"lN1: ";lN1.printAddress();cout<<endl;
   // longNum void2(move(lN1));
   // cout<<"void2: ";void2.printAddress();cout<<endl;
+  
+  //사칙연산
+  longNum lN1(-123),lN2(456);
+  longNum lN3(lN1.operator*(lN2));
+  longNum lN4(lN1+lN2);
+  longNum lN5(lN1-lN2);
+  longNum lN6(lN2-(lN1));
+  longNum lN7(lN2+(lN1));
+  longNum lN8(lN1+(lN1));
+  longNum lN9(lN1-(lN1));
+  longNum lN10(lN2+(lN2));
+  longNum lN11(lN2-(lN2));
+  longNum lN12("123456789123456789123456789123456789123456789123456789");
+  longNum lN13(lN12*(lN12));
+  cout<<lN1<<endl<<lN2<<endl<<lN3<<endl<<lN4<<endl<<lN5<<endl<<lN6<<endl<<lN7<<endl;
+  cout<<lN8<<endl<<lN9<<endl<<lN10<<endl<<lN11<<endl;
+  cout<<lN12<<endl<<lN13<<endl;
+  cout<<lN12.karatsuba(lN12)<<endl;
+  cout<<lN1+lN2<<endl;
+  cout<<lN13.karatsuba(lN13)<<endl;
 }
 
 void moveTest_vec(){
@@ -306,15 +340,9 @@ int main(void){
   cin.sync_with_stdio(false);
   
   //Fanmeeting();
-  //longNumTest();
+  longNumTest();
   //moveTest_vec();
-  longNum lN1(-123),lN2(456);
-  longNum lN3(lN1.mult(lN2));
-  longNum lN4(lN1.add(lN2));
-  longNum lN5(lN1.sub(lN2));
-  longNum lN6(lN2.sub(lN1));
-  longNum lN7(lN2.add(lN1));
-  cout<<lN1<<endl<<lN2<<endl<<lN3<<endl<<lN4<<endl<<lN5<<endl<<lN6<<endl<<lN7<<endl;
+  
 
   return 0;
 }
