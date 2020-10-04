@@ -221,8 +221,8 @@ ostream& operator<<(ostream& os, const longNum& lN){
 }
 //https://jungwoong.tistory.com/53
 //std move, std forward, 이동생성자 공부
-//rValue로 전달된 a는 num을 초기화 할때도 rvalue 상태인가?
-//longNum(vector<int>&& a):num(a){} 가 맞는가, longNum(vector<int>&& a):num(move(a)){} 가 맞는가 
+//rValue로 전달된 a는 num을 초기화 할때도 rvalue 상태인가? -> lvalue 취급되서 move를 써주어여 한다.
+//longNum(vector<int>&& a):num(a){} 가 맞는가, longNum(vector<int>&& a):num(move(a)){} 가 맞는가-> 후자가 맞다.
 
 void longNumTest(){
   //자료형 생성
