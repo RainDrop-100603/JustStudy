@@ -104,13 +104,21 @@ public:
     result.normalize();
     return result;
   }
-  
   //연산자 오버로딩
   int& operator[] (int idx){return num[idx];}
   int operator[] (int idx) const{return num[idx];}
   friend ostream& operator<<(ostream& os, const longNum& lN);
   //멤버함수
   int length() const{return num.size();}
+  longNum& reverse(){
+    vector<int> tmp;
+    tmp.reserve(num.size());
+    for(auto iter=num.rbegin();iter!=num.rend();iter++){
+      tmp.push_back(*iter);
+    }
+    num=move(tmp);
+    return *this;
+  }
   longNum sublN(int start, int end) const{
     //[start,end)
     vector<int> tmp(end-start);
@@ -209,6 +217,58 @@ public:
       cout<<*iter<<' ';
     }
   }
+  //문제풀이용
+  longNum mult_notNorm(const longNum& lN)const{
+    //양수 계산만 한다, this가 lN보다 크다. 기존 방식은 시간이 너무 오래 걸려서 빠른 방식
+    int lenThis(num.size()),lenA(lN.length());
+    vector<int> tmp(vector<int>(lenThis+lenA-1));
+    for(int i=0;i<lenThis;i++){
+      for(int j=0;j<lenA;j++){
+        tmp[i+j]+=num[i]*lN[j];
+      }
+    }
+    return longNum(move(tmp),!(sign^lN.sign));
+  }
+  longNum& sub_notNorm(const longNum& lN){
+    //양수 계산만 한다, this가 lN보다 크다. 기존 방식은 시간이 너무 오래 걸려서 빠른 방식
+    for(int i=0;i<lN.length();i++){
+      num[i]-=lN[i];
+    }
+    return *this;
+  }
+  longNum& add_notNorm(const longNum& lN){
+    //양수 계산만 한다, this가 lN보다 크다. 기존 방식은 시간이 너무 오래 걸려서 빠른 방식
+    for(int i=0;i<lN.length();i++){
+      num[i]+=lN[i];
+    }
+    return *this;
+  }
+  longNum karatsuba_notNorm(const longNum& lN)const{
+    //기저,shortLen(lN)<longLen(this)<50, normalize하지 않는다.
+    int shortLen(lN.length()),longLen(num.size());
+    if(shortLen>longLen){
+      return lN.karatsuba_notNorm(*this);
+    }
+    if(shortLen==0){
+      return longNum();
+    }
+    if(longLen<50){
+      return this->mult_notNorm(lN);
+    }
+    //divide&conquer
+    int divLen((shortLen+1)/2);
+    longNum thisLow(this->sublN(0,divLen)),thisHigh(this->sublN(divLen,longLen));
+    longNum lNLow(lN.sublN(0,divLen)),lNHigh(lN.sublN(divLen,shortLen));
+    //a0 x^2 + a1 x + a2 : x=10^divLen, a0=thisHigh*lNHigh, a1=(this low+high)*(lN low+high)-a0-a2, a2=thisLow*lNLow
+    longNum a0(thisHigh.karatsuba_notNorm(lNHigh));
+    longNum a2(thisLow.karatsuba_notNorm(lNLow));
+    longNum a1((thisLow.add_notNorm(thisHigh)).karatsuba_notNorm(lNLow.add_notNorm(lNHigh)).sub_notNorm(a0).sub_notNorm(a2));
+    return longNum(a0.pow10(divLen*2).add_notNorm(a1.pow10(divLen)).add_notNorm(a2));
+  }
+  //range based loop(for), operator++부터 추가바람
+  //이 경우 operator를 오버로딩할 필요가 없을듯 하다? int*형식이기 때문
+  int* begin(){return &num[0];}
+  int* end(){return &num[num.size()];}
 };
 ostream& operator<<(ostream& os, const longNum& lN){
   if(!lN.sign){
@@ -288,27 +348,30 @@ void moveTest_vec(){
   //std::move가 일어나도 vector의 주소는 바뀐다는ㅗ 것을 확인할 수 있다. 
 }
 
-void FanmeetingInput(vector<int>& member,vector<int>& fan){
+void FanmeetingInput(longNum& member,longNum& fan){
   string memberTmp,fanTmp;
   cin>>memberTmp>>fanTmp;
-  member.reserve(memberTmp.length());
+  vector<int> memberV,fanV;
+  memberV.reserve(memberTmp.length());
   for(auto& ele: memberTmp){
     if(ele=='M'){
-      member.push_back(1);
+      memberV.push_back(1);
     }else{
-      member.push_back(0);
+      memberV.push_back(0);
     }
   }
-  fan.reserve(fanTmp.length());
+  fanV.reserve(fanTmp.length());
   for(auto& ele: fanTmp){
     if(ele=='M'){
-      fan.push_back(1);
+      fanV.push_back(1);
     }else{
-      fan.push_back(0);
+      fanV.push_back(0);
     }
   }
+  member=move(memberV);
+  fan=move(fanV);
 }
-int FanmeetingAlgo(vector<int>& member, vector<int>& fan){
+int FanmeetingAlgo(longNum& member, longNum& fan){
   /*
   제한시간 10초
   제한메모리 2^16kb=64MB
@@ -316,33 +379,57 @@ int FanmeetingAlgo(vector<int>& member, vector<int>& fan){
     모든 멤버와 모든팬은 만난다.
     한 줄의 모든 멤버들이 포옹하는 경우 -> M & M 이없는 경우 
       M=1, F=0으로 하고 bit and(&) -> if (0)-> 모든멤버 포옹
+    곱셈을 이용, abc 123 각 숫자가 있다 가정하자.
+      cba*123= a3+(a2+b3)10+(a1+b2+c3)10^2+(b1+c2)10^3+(c1)10^4
+      악수하는 경우 -> c1, b1+c2, a1+b2+c3, a2+b3, a3
+        두 숫자중 한 수를 뒤집고 곱한것의 계수와 같다.
+        이떄 계수가 10을 초과할 수 있으므로 normalize하면 안된다.
+        karatsuba를 수정해서, normalize를 하지 않도록 수정한다.
+        모든 멤버가 포옹해야 한다 -> member수~fan의수
     time complexity
+      karatsuba Time + ele 세기 = n^lg3 + n = O(n^lg3)
     mem complexity
-  전략2
-  전략 3
+      O(n)
   */
-  //기저
-  //Algo, 
-  
+  fan.reverse();
+  longNum result(fan.karatsuba_notNorm(member));
+  int ans(0);
+  int start(member.length()-1),end(fan.length());
+  for(int i=start;i<end;i++){
+    if(result[i]==0){
+      ans++;
+    }
+  }
+  return ans;
 }
 void Fanmeeting(){
   int testCase;
   cin>>testCase;
   while(testCase--){
-    vector<int> member,fan;
+    longNum member,fan;
     FanmeetingInput(member,fan);
     cout<<FanmeetingAlgo(member,fan)<<"\n";
   }
 }
+
+
 
 int main(void){
   cin.tie(NULL);
   cin.sync_with_stdio(false);
   
   //Fanmeeting();
-  longNumTest();
+  //longNumTest();
   //moveTest_vec();
-  
-
+  longNum tmp("123654653213543516513515126513215313546513465");
+  longNum a(tmp.karatsuba(tmp));
+  longNum b(tmp.operator*(tmp));
+  longNum c(tmp.karatsuba_notNorm(tmp));
+  longNum d(tmp.mult_notNorm(tmp));
+  cout<<a<<endl<<b<<endl<<c<<endl<<d<<endl;
+  c.print_withSpace();cout<<endl;
+  d.print_withSpace();cout<<endl;
+  c.normalize();
+  cout<<c<<endl;
   return 0;
 }
