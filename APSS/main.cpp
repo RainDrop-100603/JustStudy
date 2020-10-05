@@ -490,8 +490,8 @@ int FanmeetingAlgo(longNum& member, longNum& fan){
   return ans;
 }
 void FanmeetingRand(string& memS,string fanS){
-  long long fanLen=rand()*rand();
-  long long memLen=fanLen%rand();
+  long long fanLen=(rand()<<15)|rand();
+  long long memLen=rand();
   for(int i=0;i<fanLen;i++){
     switch(rand()%2){
       case 1:
@@ -508,6 +508,7 @@ void FanmeetingRand(string& memS,string fanS){
         memS.push_back('F');
     }
   }
+  cout<<memS<<endl<<fanS<<endl;
 }
 void FanmeeTingRandInput(longNum& member, longNum& fan,string& memberTmp,string& fanTmp){
   vector<int> memberV,fanV;
