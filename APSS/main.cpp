@@ -6,107 +6,28 @@
 
 using namespace std;
 
-//O(n^2) 곱셈 알고리즘
-vector<int> multiply(const vector<int> &a, const vector<int> &b){
-    vector<int> c(a.size() + b.size() + 1, 0);
-    for (int i = 0; i < a.size(); i++)
-        for (int j = 0; j < b.size(); j++)
-            c[i + j] += (a[i] * b[j]);
-    return c;
-}
-
-//a += b*(10^k)
-void addTo(vector<int> &a, const vector<int> &b, int k){
-    a.resize(max(a.size(), b.size() + k));
-    for (int i = 0; i < b.size(); i++)
-        a[i + k] += b[i];
-}
-
-//a -= b
-void subFrom(vector<int> &a, const vector<int> &b){
-    a.resize(max(a.size(), b.size()) + 1);
-    for (int i = 0; i < b.size(); i++)
-        a[i] -= b[i];
-}
-
-vector<int> karatsuba(const vector<int> &a, const vector<int> &b){
-    int an = a.size(), bn = b.size();
-    if (an < bn)
-        return karatsuba(b, a);
-    if (an == 0 || bn == 0)
-        return vector<int>();
-    //크기가 작은경우 카라츠바 알고리즘을 사용하지 않고 구한다.
-    if (an <= 50)
-        return multiply(a, b);
-
-    /*카라츠바 알고리즘
-    ∴ z0 + ( z1 * 10^half ) + ( z2 * 10^(half*2) )
-        z0 = a0 * b0
-        z2 = a1 * b1
-        z1 = (a0 + b1) * (b0 + b1) - z0 - z2
-        a0 = a 앞부분 절반 b0 = b 앞부분 절반
-        a1 = a 뒷부분 절반 b1 = b 뒷부분 절반
-    */
-
-    //a와 b를 절반으로 나눈다.
-    int half = an / 2;
-    vector<int> a0(a.begin(), a.begin() + half);
-    vector<int> a1(a.begin() + half, a.end());
-    vector<int> b0(b.begin(), b.begin() + min<int>(bn, half));
-    vector<int> b1(b.begin() + min<int>(bn, half), b.end());
-
-    vector<int> z2 = karatsuba(a1, b1);
-    vector<int> z0 = karatsuba(a0, b0);
-
-    addTo(a0, a1, 0);
-    addTo(b0, b1, 0);
-
-    vector<int> z1 = karatsuba(a0, b0);
-    subFrom(z1, z0);
-    subFrom(z1, z2);
-
-    vector<int> res;
-    addTo(res, z0, 0);
-    addTo(res, z1, half);
-    addTo(res, z2, half * 2);
-
-    return res;
-}
-
-int hugs(const string &members, const string &fans){
-    int N = members.size(), M = fans.size();
-    vector<int> A(N), B(M);
-    for (int i = 0; i < N; i++)
-        A[i] = (members[i] == 'M');
-    for (int i = 0; i < M; i++)
-        B[M-i-1] = (fans[i] == 'M');
-
-    vector<int> C = karatsuba(A, B);
-    int allHugs = 0;
-
-    //모든 멤버들이 펜을 만나기 시작한 시점부터
-    for (int i = N - 1; i < M; i++)
-        if (C[i] == 0)
-            allHugs++;
-
-    return allHugs;
-}
-
-
 class longNum{
   //ver0.1, 2020_10_4
+  //fanMeeting algospot 문제 실패, 추후 수정 
   //ele=num[idx]*10^idx, sign: true means positive
   vector<int> num;
   bool sign;
 public:
   //생성자
-  longNum(){} 
+  longNum():num(vector<int>()),sign(true){} 
   longNum(const vector<int>& v,bool sign=true):num(v),sign(sign){}
   longNum(vector<int>&& v,bool sign=true):num(move(v)),sign(sign){}
-  longNum(const string& s,bool sign=true):sign(sign){
+  longNum(const string& s){
     num.reserve(s.length());
-    for(auto& ele:s){
-      num.push_back(ele-'0');
+    for(auto iter=s.rbegin();iter!=s.rend();iter++){
+      num.push_back(*iter-'0');
+    }
+    //부호결정
+    if(num.back()=='-'-'0'){
+      num.pop_back();
+      sign=false;
+    }else{
+      sign=true;
     }
   }
   longNum(long long n){
@@ -208,13 +129,15 @@ public:
   }
   longNum sublN(int start, int end) const{
     //[start,end)
-    vector<int> tmp(end-start);
-    int idx(0);
+    if(start>=end){
+      return longNum();
+    }
+    vector<int> tmp;
+    tmp.reserve(end-start);
     start=max(start,0);
     end=min(end,this->length()+1);
     for(int i=start;i<end;i++){
-      tmp[idx]=num[i];
-      idx++;
+      tmp.push_back(num[i]);
     }
     return longNum(move(tmp),sign);
   }
@@ -276,11 +199,11 @@ public:
   }
   longNum karatsuba(const longNum& lN) const{
     //기저,shortLen(this)<longLen(lN)<50, 
-    int shortLen(this->length()),longLen(lN.length());
+    int longLen(this->length()),shortLen(lN.length());
     if(shortLen>longLen){
       return lN.karatsuba(*this);
     }
-    if(shortLen==0){
+    if(shortLen==0||longLen==0){
       return longNum();
     }
     if(longLen<50){
@@ -288,8 +211,8 @@ public:
     }
     //divide&conquer
     int divLen((shortLen+1)/2);
-    longNum thisLow(this->sublN(0,divLen)),thisHigh(this->sublN(divLen,shortLen));
-    longNum lNLow(lN.sublN(0,divLen)),lNHigh(lN.sublN(divLen,longLen));
+    longNum thisLow(this->sublN(0,divLen)),thisHigh(this->sublN(divLen,longLen));
+    longNum lNLow(lN.sublN(0,divLen)),lNHigh(lN.sublN(divLen,shortLen));
     //a0 x^2 + a1 x + a2 : x=10^divLen, a0=thisHigh*lNHigh, a1=(this low+high)*(lN low+high)-a0-a2, a2=thisLow*lNLow
     longNum a0(thisHigh.karatsuba(lNHigh));
     longNum a2(thisLow.karatsuba(lNLow));
@@ -314,7 +237,7 @@ public:
         tmp[i+j]+=num[i]*lN[j];
       }
     }
-    return longNum(move(tmp),!(sign^lN.sign));
+    return longNum(move(tmp),true);
   }
   longNum& sub_notNorm(const longNum& lN){
     //양수 계산만 한다, this가 lN보다 크다. 기존 방식은 시간이 너무 오래 걸려서 빠른 방식
@@ -332,11 +255,11 @@ public:
   }
   longNum karatsuba_notNorm(const longNum& lN)const{
     //기저,shortLen(lN)<longLen(this)<50, normalize하지 않는다.
-    int shortLen(lN.length()),longLen(num.size());
+    int shortLen(lN.length()),longLen(this->length());
     if(shortLen>longLen){
       return lN.karatsuba_notNorm(*this);
     }
-    if(shortLen==0){
+    if(shortLen==0||longLen==0){
       return longNum();
     }
     if(longLen<50){
@@ -478,10 +401,9 @@ int FanmeetingAlgo(longNum& member, longNum& fan){
     mem complexity
       O(n)
   */
-  fan.reverse();
+  member.reverse();
   longNum result(fan.karatsuba_notNorm(member));
-  int ans(0);
-  int start(member.length()-1),end(fan.length());
+  int ans(0),start(member.length()-1),end(fan.length());
   for(int i=start;i<end;i++){
     if(result[i]==0){
       ans++;
@@ -489,65 +411,15 @@ int FanmeetingAlgo(longNum& member, longNum& fan){
   }
   return ans;
 }
-void FanmeetingRand(string& memS,string fanS){
-  long long fanLen=(rand()<<15)|rand();
-  long long memLen=rand();
-  for(int i=0;i<fanLen;i++){
-    switch(rand()%2){
-      case 1:
-        fanS.push_back('M');
-      case 0:
-        fanS.push_back('F');
-    }
-  }
-  for(int i=0;i<memLen;i++){
-    switch(rand()%2){
-      case 1:
-        memS.push_back('M');
-      case 0:
-        memS.push_back('F');
-    }
-  }
-  cout<<memS<<endl<<fanS<<endl;
-}
-void FanmeeTingRandInput(longNum& member, longNum& fan,string& memberTmp,string& fanTmp){
-  vector<int> memberV,fanV;
-  memberV.reserve(memberTmp.length());
-  for(auto& ele: memberTmp){
-    if(ele=='M'){
-      memberV.push_back(1);
-    }else{
-      memberV.push_back(0);
-    }
-  }
-  fanV.reserve(fanTmp.length());
-  for(auto& ele: fanTmp){
-    if(ele=='M'){
-      fanV.push_back(1);
-    }else{
-      fanV.push_back(0);
-    }
-  }
-  member=move(memberV);
-  fan=move(fanV);
-}
 void Fanmeeting(){
-  while(true){
+  int testCase;
+  cin>>testCase;
+  while(testCase--){
     longNum member,fan;
-    //FanmeetingInput(member,fan);
-    string memS,fanS;
-    FanmeetingRand(memS,fanS);
-    FanmeeTingRandInput(member,fan,memS,fanS);
-    int Sol(hugs(memS,fanS));
-    int mySol(FanmeetingAlgo(member,fan));
-    if(Sol!=mySol){
-      cout<<member<<endl<<fan<<endl;
-      break;
-    }
+    FanmeetingInput(member,fan);
+    cout<<FanmeetingAlgo(member,fan)<<"\n";
   }
 }
-
-
 
 int main(void){
   cin.tie(NULL);
@@ -556,5 +428,6 @@ int main(void){
   Fanmeeting();
   //longNumTest();
   //moveTest_vec();
+  
   return 0;
 }
