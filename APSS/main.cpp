@@ -16,16 +16,31 @@ void WildcardInput(string& wildcard,vector<string>& fileName){
     fileName.push_back(move(tmp));
   }
 }
-int WildcardAlgo(string& wildcard,vector<string>& fileName){
+vector<int> WildcardAlgo(string& wildcard,vector<string>& fileName){
   /*
   제한시간 2초
   제한메모리 2^16kb=64MB
+  문자열의 길이는 1~100, 알파벳 대소문자, ?, *로 구성, 공백 없음 
+  ?는 문자 하나를 대응, *는 길이 0이상의 문자열 대응
+  파일명의 수 1~50개
   전략1
-    Dynamic Programming
+    brtue force
+        1:1 비교 원칙: 같으면 continue, 다르면 return false
+        ?의 경우: 항상 continue
+        *의 경우: 
+            *의 다음 문자가 있을경우: 해당 문자를 찾을 때까지 continue
+                다음 문자가 없을경우: return true
     time complexity
+        wildCardLen(N)*#fileName(50)*fileNameLen(100)=5000N
     mem complexity
+        N+50*100
+    
   */
-  int result(0);
+  vector<int> result();
+  for(int i=0;i<fileName.size();i++){
+    string& file=fileName[i];
+    int fileLen=file.length();
+  }
   return result;
 }
 void Wildcard(){
@@ -35,7 +50,10 @@ void Wildcard(){
     string wildcard;
     vector<string> fileName;
     WildcardInput(wildcard,fileName);
-    cout<<WildcardAlgo(wildcard,fileName)<<"\n";
+    vector<int> result(WildcardAlgo(wildcard,fileName));
+    for(auto& ele:result){
+        cout<<fileName[ele]<<"\n";
+    }
   }
 }
 
