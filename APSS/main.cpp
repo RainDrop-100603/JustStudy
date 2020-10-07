@@ -30,6 +30,9 @@ vector<int> WildcardAlgo(string& wildcard,vector<string>& fileName){
         *의 경우: 
             *의 다음 문자가 있을경우: 해당 문자를 찾을 때까지 continue
                 다음 문자가 없을경우: return true
+    Problem 
+        *의 다음문자가 l이라 하자, l이 여러개 있을경우 그만큼 분기를 생성해줘야 한다.
+            분기-> 재귀 
     time complexity
         wildCardLen(N)*#fileName(50)*fileNameLen(100)=5000N
     mem complexity
@@ -40,6 +43,9 @@ vector<int> WildcardAlgo(string& wildcard,vector<string>& fileName){
   for(int i=0;i<fileName.size();i++){
     string& file=fileName[i];
     int fileLen=file.length();
+    for(int j=0;j<fileLen;j++){
+        
+    }
   }
   return result;
 }
