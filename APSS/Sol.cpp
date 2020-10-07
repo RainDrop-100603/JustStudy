@@ -494,3 +494,65 @@ void Fence(){
     cout<<FenceAlgo(fenceData,0,fenceData.size()-1)<<"\n";
   }
 }
+// void FanmeetingInput(longNum& member,longNum& fan){
+//   string memberTmp,fanTmp;
+//   cin>>memberTmp>>fanTmp;
+//   vector<int> memberV,fanV;
+//   memberV.reserve(memberTmp.length());
+//   for(auto& ele: memberTmp){
+//     if(ele=='M'){
+//       memberV.push_back(1);
+//     }else{
+//       memberV.push_back(0);
+//     }
+//   }
+//   fanV.reserve(fanTmp.length());
+//   for(auto& ele: fanTmp){
+//     if(ele=='M'){
+//       fanV.push_back(1);
+//     }else{
+//       fanV.push_back(0);
+//     }
+//   }
+//   member=move(memberV);
+//   fan=move(fanV);
+// }
+// int FanmeetingAlgo(longNum& member, longNum& fan){
+//   /*
+//   제한시간 10초
+//   제한메모리 2^16kb=64MB
+//   전략1
+//     모든 멤버와 모든팬은 만난다.
+//     한 줄의 모든 멤버들이 포옹하는 경우 -> M & M 이없는 경우 
+//       M=1, F=0으로 하고 bit and(&) -> if (0)-> 모든멤버 포옹
+//     곱셈을 이용, abc 123 각 숫자가 있다 가정하자.
+//       cba*123= a3+(a2+b3)10+(a1+b2+c3)10^2+(b1+c2)10^3+(c1)10^4
+//       악수하는 경우 -> c1, b1+c2, a1+b2+c3, a2+b3, a3
+//         두 숫자중 한 수를 뒤집고 곱한것의 계수와 같다.
+//         이떄 계수가 10을 초과할 수 있으므로 normalize하면 안된다.
+//         karatsuba를 수정해서, normalize를 하지 않도록 수정한다.
+//         모든 멤버가 포옹해야 한다 -> member수~fan의수
+//     time complexity
+//       karatsuba Time + ele 세기 = n^lg3 + n = O(n^lg3)
+//     mem complexity
+//       O(n)
+//   */
+//   member.reverse();
+//   longNum result(fan.karatsuba_notNorm(member));
+//   int ans(0),start(member.length()-1),end(fan.length());
+//   for(int i=start;i<end;i++){
+//     if(result[i]==0){
+//       ans++;
+//     }
+//   }
+//   return ans;
+// }
+// void Fanmeeting(){
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     longNum member,fan;
+//     FanmeetingInput(member,fan);
+//     cout<<FanmeetingAlgo(member,fan)<<"\n";
+//   }
+// }

@@ -1,5 +1,7 @@
 #include "useful.h"
 
+//유용한 함수
+
 vector<int> getPrimeVector(int num){
   //0~num 범위의 bool arr, prime 이라면 true
   vector<bool> arr(num+1,true);
@@ -43,5 +45,28 @@ int fastSum(int n){
   return 2*fastSum(n/2)+(n/2)*(n/2);
 }
 
+//유용한 테스트
+void moveTest_vec(){
+  vector<int> vec1(3,1);
+  cout<<"&vec1: "<<&vec1<<endl;
+  cout<<"&vec1[0]: "<<&vec1[0]<<endl;
+  vector<int> vec2(move(vec1));
+  cout<<"&vec2: "<<&vec2<<endl;
+  cout<<"&vec2[0]: "<<&vec2[0]<<endl;
+  //권장되지 않는 선언
+  vector<int> vec3(vec1);
+  cout<<"&vec3: "<<&vec3<<endl;
+  for(auto& ele:vec1){
+    cout<<ele;
+  }cout<<endl;
+  for(auto& ele:vec2){
+    cout<<ele;
+  }cout<<endl;
+  for(auto& ele:vec3){
+    cout<<ele;
+  }cout<<endl;
+  //vector v1에서 v1은 "배열의 시작위치"가 아닌, "배열의 시작위치를 가리키는 포인터"이다. 배열의 시작위치는 "&v[0]"이다.
+  //따라서 move연산이 제대로 이루어졌는지 확인하려면, &v1이 아닌 &v1[0]을 통해 확인해야한다.
+}
 
-/////
+//미완성

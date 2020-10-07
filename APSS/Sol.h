@@ -34,3 +34,9 @@ void QuadTree();
 void FenceInput(vector<int>& fenceData);
 int FenceAlgo(vector<int>& fenceData,int left, int right);
 void Fence();
+
+//fanMeeting, Divide&conquer, bitmask, 미완성 
+// void FanmeetingInput(longNum& member,longNum& fan);
+// int FanmeetingAlgo(longNum& member, longNum& fan);
+// void Fanmeeting();
+
