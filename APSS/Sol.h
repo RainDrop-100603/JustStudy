@@ -40,3 +40,10 @@ void Fence();
 // int FanmeetingAlgo(longNum& member, longNum& fan);
 // void Fanmeeting();
 
+//WildCard, DP, Sol을 한번에 생성하려하지말고 천천히하자: 완전탐색 -> 겹치는부분 DP
+void WildcardInput(string& wildcard,vector<string>& fileArr);
+bool Wildcard_match(string& wildcard,string& file, int w_idx,int f_idx,vector<vector<char>>& DP);
+vector<string> WildcardAlgo(string& wildcard,vector<string>& fileArr);
+void Wildcard();
+
+

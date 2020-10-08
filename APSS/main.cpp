@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -17,11 +18,6 @@ void WildcardInput(string& wildcard,vector<string>& fileArr){
   }
 }
 bool Wildcard_match(string& wildcard,string& file, int w_idx,int f_idx,vector<vector<char>>& DP){
-  //기저, 범위를 벗어나는 경우
-  int f_len(file.length());
-  if(f_idx==f_len){
-    return false;
-  }
   //wildcard의 w_idx, file의 f_idx부터 비교한다.
   char& result=DP[w_idx][f_idx];
   //답이 이미 있을경우
@@ -29,7 +25,7 @@ bool Wildcard_match(string& wildcard,string& file, int w_idx,int f_idx,vector<ve
     return result;
   }
   //w_idx==w_len까지, wildcard를 모두 비교하는것이 목표
-  int w_len(wildcard.length());
+  int w_len(wildcard.length()),f_len(file.length());;
   while(w_idx<w_len&&f_idx<f_len){
     char w_char=wildcard[w_idx];
     if(w_char==file[f_idx]||w_char=='?'){
@@ -51,11 +47,11 @@ bool Wildcard_match(string& wildcard,string& file, int w_idx,int f_idx,vector<ve
   }
   //f_len은 반드시 모두 매칭되어야 하며, w_len은 마지막 부분이 모두 *라면 모두 매칭되지 않아도 괜찮다.
   if(f_len==f_idx){
-    if(w_len!=w_idx){
+    if(w_len>w_idx){
       for(int i=w_idx;i<w_len;i++){
         if(wildcard[i]!='*'){
           result=0;
-          break;
+          return result;
         }
       }
     }
@@ -65,7 +61,7 @@ bool Wildcard_match(string& wildcard,string& file, int w_idx,int f_idx,vector<ve
   }
   return result;
 }
-vector<int> WildcardAlgo(string& wildcard,vector<string>& fileArr){
+vector<string> WildcardAlgo(string& wildcard,vector<string>& fileArr){
   /*
   제한시간 2초
   제한메모리 2^16kb=64MB
@@ -106,12 +102,12 @@ vector<int> WildcardAlgo(string& wildcard,vector<string>& fileArr){
     mem complexity
       wildcard(100)+DP(100*100)+fileArr(100*50)
   */
-  vector<int> result;
+  vector<string> result;
   for(int i=0;i<fileArr.size();i++){
     string& file=fileArr[i];
-    vector<vector<char>> DP(wildcard.length(),vector<char>(file.length(),-1));
+    vector<vector<char>> DP(wildcard.length(),vector<char>(file.length()+1,-1));
     if(Wildcard_match(wildcard,file,0,0,DP)){
-      result.push_back(i);
+      result.push_back(file);
     }
   }
   return result;
@@ -123,12 +119,14 @@ void Wildcard(){
     string wildcard;
     vector<string> fileArr;
     WildcardInput(wildcard,fileArr);
-    vector<int> result(WildcardAlgo(wildcard,fileArr));
+    vector<string> result(WildcardAlgo(wildcard,fileArr));
+    sort(result.begin(),result.end());
     for(auto& ele:result){
-        cout<<fileArr[ele]<<"\n";
+        cout<<ele<<"\n";
     }
   }
 }
+
 
 int main(void){
   cin.tie(NULL);
