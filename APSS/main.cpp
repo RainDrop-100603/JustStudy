@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cstring>
 
 using namespace std;
 
@@ -17,49 +18,29 @@ void WildcardInput(string& wildcard,vector<string>& fileArr){
     fileArr.push_back(move(tmp));
   }
 }
-bool Wildcard_match(string& wildcard,string& file, int w_idx,int f_idx,vector<vector<char>>& DP){
-  //wildcard의 w_idx, file의 f_idx부터 비교한다.
-  char& result=DP[w_idx][f_idx];
+bool Wildcard_match2(string& wildcard,string& file, int w_idx,int f_idx,vector<vector<char>>& DP){
   //답이 이미 있을경우
+  char& result=DP[w_idx][f_idx];
   if(result!=-1){
     return result;
   }
-  //w_idx==w_len까지, wildcard를 모두 비교하는것이 목표
-  int w_len(wildcard.length()),f_len(file.length());;
-  while(w_idx<w_len&&f_idx<f_len){
-    char w_char=wildcard[w_idx];
-    if(w_char==file[f_idx]||w_char=='?'){
-      w_idx++;f_idx++;
-      continue;
-    }
-    if(w_char=='*'){
-      //*에 하나이상 대응
-      if(Wildcard_match(wildcard,file,w_idx,f_idx+1,DP)){
-        return result;
-      }
-      //*에 0개 대응
-      w_idx++;
-      continue;
-    }
-    //*도 아니고, 두 문자도 다른경우 false;
-    result=0;
-    return result;
+  //1:1 대응시 다음 idx로 넘어간다.
+  int w_len(wildcard.length()),f_len(file.length());
+  if(w_idx<w_len&&f_idx<f_len&&(wildcard[w_idx]==file[f_idx]||wildcard[w_idx]=='?')){
+    return result=Wildcard_match2(wildcard,file,w_idx+1,f_idx+1,DP);
   }
-  //f_len은 반드시 모두 매칭되어야 하며, w_len은 마지막 부분이 모두 *라면 모두 매칭되지 않아도 괜찮다.
-  if(f_len==f_idx){
-    if(w_len>w_idx){
-      for(int i=w_idx;i<w_len;i++){
-        if(wildcard[i]!='*'){
-          result=0;
-          return result;
-        }
-      }
-    }
-    result=1;
-  }else{
-    result=0;
+  //wildcard search가 끝났을 경우, file search도 끝났어야 match가 된 것이다.
+  if(w_idx==w_len){
+    return result=(f_idx==f_len);
   }
-  return result;
+  // *이 있을 경우, *와 대응되는것의 길이가 0인 경우(w_idx+1)와 1이상인 경우(f_idx+1)로 구분, 이때 match함수에는 f_idx==file_len에 대한 조건이 없으므로, 제한조건에 추가한다.
+  if(wildcard[w_idx]=='*'){
+    if(Wildcard_match2(wildcard,file,w_idx+1,f_idx,DP)||(f_idx<f_len&&Wildcard_match2(wildcard,file,w_idx,f_idx+1,DP))){
+      return result=1;
+    }
+  }
+  //나머지 경우에는 문자열과 wildcard가 대응되지 않는다.
+  return result=0;
 }
 vector<string> WildcardAlgo(string& wildcard,vector<string>& fileArr){
   /*
@@ -89,7 +70,7 @@ vector<string> WildcardAlgo(string& wildcard,vector<string>& fileArr){
       재귀를 통한 완전 탐색을 기준으로 한다.
         1:1 비교 원칙: 같으면 continue, 다르면 return false
         ?의 경우: 항상 continue
-        *의 경우: f_idx+1로 재귀
+        *의 경우: f_idx+1로 재귀 or w_idx+1로 loop 이어서
       반환 경우의 수
         w_idx와 f_idx가 마무리 -> return true;
         w_idx만 마무리-> return false;
@@ -98,15 +79,22 @@ vector<string> WildcardAlgo(string& wildcard,vector<string>& fileArr){
         반환하기 전에 DP[w_idx][f_idx]에 1(true) 0(false)저장, -1(not initialized)
         DP여부 맨 처음에 확인 
     time complexity
-      wildCardLen(100)*fileLen(100)*#file(50)
+      wildCardLen(100)*fileLen(100)*loopInMatch(100) = O(n^3);
     mem complexity
-      wildcard(100)+DP(100*100)+fileArr(100*50)
+      wildcard(100)+DP(100*100)+fileArr(100*50) = O(n);
+  전략 3
+    Dynamic Programming
+      전략2에서 함수 내 재귀를 없앤다. -> O(n^2)
+    time complexity
+      wildCardLen*fileLen=O(n^2);
+    mem complexity
+      same as 전략 2
   */
   vector<string> result;
   for(int i=0;i<fileArr.size();i++){
     string& file=fileArr[i];
-    vector<vector<char>> DP(wildcard.length(),vector<char>(file.length()+1,-1));
-    if(Wildcard_match(wildcard,file,0,0,DP)){
+    vector<vector<char>> DP(wildcard.length()+1,vector<char>(file.length()+1,-1));
+    if(Wildcard_match2(wildcard,file,0,0,DP)){
       result.push_back(file);
     }
   }
