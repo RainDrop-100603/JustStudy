@@ -74,7 +74,7 @@ int JoinedLISAlgo_2(vector<int>& arrA,vector<int>& arrB,int idxA, int idxB,vecto
         idxA, idxB
       기존 LIS 전략을 쓰되, 입력을 양쪽 arr의 head중 더 작은값을 넣는다.
       LIS 전략
-        input이 tail보다 크면 push_back, tail보다 작으면 lower_bound를 찾아서 다음위치를 input으로 변경
+        input이 tail보다 크면 push_back, tail보다 작으면 lower_bound를 찾아서 해당 값을 input으로 변경
       input
         각 arr의 head 중 작은 값을 input, 값이 같다면 바로 다음 값을 비교하여 더 작은 값을 input, 둘이 같다면 그냥 첫번째 input
     Problem
@@ -95,6 +95,17 @@ int JoinedLISAlgo_2(vector<int>& arrA,vector<int>& arrB,int idxA, int idxB,vecto
       재귀 n^2* 반복문 n: O(n^3)
     mem complexity
       DP(n^2)+ arrA and B(n): O(n^2)
+  전략3
+    Dynmaic Programming?
+      arrA에 LIS 적용 후, arrB에대해 LIS 적용, 다소 다른 전략
+      LIS 전략:1
+        input이 tail보다 크면 push_back, tail보다 작으면 lower_bound를 찾아서 해당 값을 input으로 변경
+      LIS 전략:2
+        input이 tail보다 크면 push_back, tail보다 작으면 lower_bound를 찾아서 값이 다르면 해당 위치에 insert
+    time complexity
+      arrA(n)+arrB(n)=O(n)
+    mem complexity
+      arrA(n)+arrB(n)+result(2n)=O(n)
   */
   //-1부터 시작해서 각 idx에 1을 더했다.
   int& result=DP[idxA+1][idxB+1];
