@@ -48,4 +48,11 @@ bool Wildcard_match2(string& wildcard,string& file, int w_idx,int f_idx,vector<v
 vector<string> WildcardAlgo(string& wildcard,vector<string>& fileArr);
 void Wildcard();
 
+//JLIS, DP, 최적화가 아닌 메모제이션
+void JoinedLISInput(vector<int>& arrA,vector<int>& arrB);
+bool joinedLIS_Afirst(vector<int>& arrA,vector<int>& arrB,int idxA,int idxB);
+int JoinedLISAlgo_1(vector<int>& arrA,vector<int>& arrB);
+int JoinedLISAlgo_2(vector<int>& arrA,vector<int>& arrB,int idxA, int idxB,vector<vector<int>>& DP);
+void JoinedLIS();
+
 
