@@ -63,6 +63,31 @@ int JoinedLISAlgo_1(vector<int>& arrA,vector<int>& arrB){
   }
   return result.size();
 }
+int JoinedLISAlgo_3(vector<int>& arrA,vector<int>& arrB){
+  vector<int> result1;
+  vector<int> result2;
+  result1.push_back(arrA.front());
+  result2.push_back(arrB.front());
+  //전략 1, 각 arr에 대해 LIS를 만든다
+  for(auto& ele:arrA){
+    if(result1.back()<ele){
+      result1.push_back(ele);
+    }else{
+      *lower_bound(result1.begin(),result1.end(),ele)=ele;
+    }
+  }
+  for(auto& ele:arrA){
+    if(result2.back()<ele){
+      result2.push_back(ele);
+    }else{
+      *lower_bound(result2.begin(),result2.end(),ele)=ele;
+    }
+  }
+  //전략 2, 각 결과에 대해 앞에서부터 greedy
+  vector<int> result;
+
+  return result.size();
+}
 int JoinedLISAlgo_2(vector<int>& arrA,vector<int>& arrB,int idxA, int idxB,vector<vector<int>>& DP){
   /*
   제한시간 2초
@@ -96,14 +121,18 @@ int JoinedLISAlgo_2(vector<int>& arrA,vector<int>& arrB,int idxA, int idxB,vecto
     mem complexity
       DP(n^2)+ arrA and B(n): O(n^2)
   전략3
-    Dynmaic Programming?
-      arrA에 LIS 적용 후, arrB에대해 LIS 적용, 다소 다른 전략
+    Stack
+      각 arr에 전략 1 적용후(vector 형식으로 생성), 적용한 것들을 가지고 greedy(전략 2)
       LIS 전략:1
         input이 tail보다 크면 push_back, tail보다 작으면 lower_bound를 찾아서 해당 값을 input으로 변경
-      LIS 전략:2
-        input이 tail보다 크면 push_back, tail보다 작으면 lower_bound를 찾아서 값이 다르면 해당 위치에 insert
+      전략 2
+        결과값은 정렬되어 있다 -> 앞에서부터 작은 값을 input
+    Problem
+      10 20 40 100 400 에서 10 20 30 100 400 으로 변한 결과1
+      15 25 30 200 300 인 결과 2가 있다고 하자
+      결과 1의 3번째가 40일때가 30일때보다 1 긴데, 30이 최종 값이다. 즉 실제 결과보다 길이가 짧다.
     time complexity
-      arrA(n)+arrB(n)=O(n)
+      (arrA(n)+arrB(n))*lower_bound(lgn)=O(nlgn)
     mem complexity
       arrA(n)+arrB(n)+result(2n)=O(n)
   */
@@ -138,7 +167,7 @@ void JoinedLIS(){
     vector<int> arrA,arrB;
     JoinedLISInput(arrA,arrB);
     //vector<vector<int>> DP(arrA.size()+1,vector<int>(arrB.size()+1,-1));
-    printf("%d\n",JoinedLISAlgo_1(arrA,arrB));
+    printf("%d\n",JoinedLISAlgo_3(arrA,arrB));
   }
 }
 
