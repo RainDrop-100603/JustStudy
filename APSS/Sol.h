@@ -49,6 +49,19 @@ vector<string> WildcardAlgo(string& wildcard,vector<string>& fileArr);
 void Wildcard();
 
 //JLIS, DP, 최적화가 아닌 메모제이션
+void JoinedLISInput(vector<int>& arrA,vector<int>& arrB);
+bool joinedLIS_Afirst(vector<int>& arrA,vector<int>& arrB,int idxA,int idxB);
+int JoinedLISAlgo_1(vector<int>& arrA,vector<int>& arrB);
+int JoinedLISAlgo_3(vector<int>& arrA,vector<int>& arrB);
+int JoinedLISAlgo_2(vector<int>& arrA,vector<int>& arrB,int idxA, int idxB,vector<vector<int>>& DP);
+void JoinedLIS();
+
+//PI 외우기, DP 메모제이션
+void PImem_Input(string& s);
+int PImem_hard(string& numbers,int start,int len);
+int PImem_Algo(string& numbers, vector<int>& DP, int start);
+void PImem();
+
 
 
 

@@ -176,6 +176,9 @@ using namespace std;
 미완성
   cin과 getline
     https://qastack.kr/programming/21567291/why-does-stdgetline-skip-input-after-a-formatted-extraction
+    https://leeusin.tistory.com/418
+    cin은 공백에서(스페이스바,개행문자) 자르며, 입력버퍼에 해당 공백을 남겨둔다?(개행 문자만 남는가?). 그러나 해당 공백이 입력에 영향을 주지는 않는다.
+    getline은 개행문자에서 자르며, 입력버퍼에 개행문자가 남아있으면 개행문자만 입력되어 버리므로, 입력전 cin.ignore()을 사용한다.
   cin 대신 scanf 이용
     https://eine.tistory.com/entry/CC-%EC%9E%85%EC%B6%9C%EB%A0%A5-%EB%B0%A9%EB%B2%95%EC%97%90-%EB%94%B0%EB%A5%B8-%EC%86%8D%EB%8F%84-%EC%A0%95%EB%A6%AC
     https://m.blog.naver.com/luku756/220985996127
