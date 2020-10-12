@@ -70,5 +70,11 @@ int Quantization_DP_B(vector<int>& number, vector<vector<int>>& DP_A,vector<vect
 int Quantization_Algo(vector<int>& number,int quantRange);
 void Quantization();
 
+//AsymTiling, DP 메모제이션, 비대칭타일을 세는 것이 아닌, 전체타일 - 대칭타일 (비대칭 타일도 DP로 해결 가능하지만 전자가 더 간단.)
+void AsymTiling_Input(int& tileLen);
+int AsymTiling_DP(vector<int>& DP,int tileLen);
+int AsymTiling_Algo(int tileLen);
+void AsymTiling();
+
 
 
