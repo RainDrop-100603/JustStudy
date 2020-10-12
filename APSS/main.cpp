@@ -11,14 +11,14 @@ using namespace std;
 void Poly_Input(int& block){
   cin>>block;
 }
-int Poly_DP(vector<vector<int>>& DP,int blockNum,int height){
-  int& result=DP[blockNum][height];
+long long Poly_DP(vector<vector<long long>>& DP,int blockNum,int height){
+  long long& result=DP[blockNum][height];
   if(result!=-1) return result;
   //substructrue, top=꼭대기에 쌓은 블록의 갯수
-  //모드값*곱셈이라 문제가 생김. 
+  //모드값*곱셈이라 문제가 생김. long long으로 해결 안되는거 보니 모드곱셈 필요
   result=0;
   for(int top=1;top<=blockNum-height+1;top++){
-    result=(result+top*Poly_DP(DP,blockNum-top,height-1))%10000000;
+    result+=top*Poly_DP(DP,blockNum-top,height-1);
   }
   return result;
 }
@@ -38,7 +38,7 @@ int Poly_Algo(int block){
       #DP_A(n^2)=O(n^2)
   */
   //DP 생성 및 계산
-  vector<vector<int>> DP(block+1,vector<int>(block+1,-1));
+  vector<vector<long long>> DP(block+1,vector<long long>(block+1,-1));
   //기저
   for(int i=1;i<=block;i++){
     DP[i][i]=1;
@@ -46,7 +46,7 @@ int Poly_Algo(int block){
   } 
   int result=0;
   for(int i=1;i<=block;i++)
-    result+=Poly_DP(DP,block,i);
+    result+=Poly_DP(DP,block,i)%10000000;
   return result;
 }
 void Poly(){
