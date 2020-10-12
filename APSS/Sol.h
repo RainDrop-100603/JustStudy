@@ -56,13 +56,13 @@ int JoinedLISAlgo_3(vector<int>& arrA,vector<int>& arrB);
 int JoinedLISAlgo_2(vector<int>& arrA,vector<int>& arrB,int idxA, int idxB,vector<vector<int>>& DP);
 void JoinedLIS();
 
-//PI 외우기, DP 메모제이션
+//PI 외우기, DP 최적화
 void PImem_Input(string& s);
 int PImem_hard(string& numbers,int start,int len);
 int PImem_Algo(string& numbers, vector<int>& DP, int start);
 void PImem();
 
-//Quantization, DP 메모제이션, 간단한 처리를 통해 DP를 사용 가능하게 만들었다. 부분합의 이용
+//Quantization, DP 최적화, 간단한 처리를 통해 DP를 사용 가능하게 만들었다. 부분합의 이용
 void Quantization_Input(vector<int>& number,int& quantRange);
 void Quantization_DP_A(vector<int>& number, vector<vector<int>>& DP_A);
 void Quantization_DP_A_2(vector<int>& number, vector<vector<int>>& DP_A);
