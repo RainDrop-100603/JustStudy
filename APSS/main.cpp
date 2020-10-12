@@ -8,55 +8,58 @@
 
 using namespace std;
 
-void AsymTiling_Input(int& tileLen){
-  cin>>tileLen;
+void Poly_Input(int& block){
+  cin>>block;
 }
-int AsymTiling_DP(vector<int>& DP,int tileLen){
-  int& result=DP[tileLen];
-  if(result!=0) return result;
-  return result=(AsymTiling_DP(DP,tileLen-1)+AsymTiling_DP(DP,tileLen-2))%1000000007;
-}
-int AsymTiling_Algo(int tileLen){
-  /*
-  1초, 64MB, 테스트케이스 50개
-  사각형의 너비 1~100, mod 1,000,000,007
-  전략1
-    Dynamic Programming
-      모든 사각형의 수 - 대칭인 사각형의 수
-      뺄셈에서 mod는 항등이다(음수일경우 mod를 더해준다.)
-      모든 사각형
-        substructure: func(len)=func(len-1)+func(len-2)
-        기저: if len<=1, return 1; -> DP[0], DP[1]을 1로 미리 정하면 됨
-      대칭 사각형
-        if(len%2==1) func2(len)=func(len/2)
-        if(len%2==0) func2(len)=func(len/2)+func(len/2-1)
-    time complexity
-      #func(n)*func(1)+#func2(1)*func2(1)=O(n)
-    mem complexity
-      #DP_A(n)=O(n)
-  */
-  //모든 사각형의 경우의 수
-  vector<int> DP(tileLen+1);DP[0]=1;DP[1]=1;
-  int result=AsymTiling_DP(DP,tileLen);
-  //정답
-  int modValue=1000000007;
-  if(tileLen%2==0)
-    result=(result-(DP[tileLen/2]+DP[tileLen/2-1])%modValue+modValue)%modValue;
-  else
-    result=(result-DP[tileLen/2]+modValue)%modValue;
+int Poly_DP(vector<vector<int>>& DP,int blockNum,int height){
+  int& result=DP[blockNum][height];
+  if(result!=-1) return result;
+  //substructrue, top=꼭대기에 쌓은 블록의 갯수
+  //모드값*곱셈이라 문제가 생김. 
+  result=0;
+  for(int top=1;top<=blockNum-height+1;top++){
+    result=(result+top*Poly_DP(DP,blockNum-top,height-1))%10000000;
+  }
   return result;
 }
-void AsymTiling(){
+int Poly_Algo(int block){
+  /*
+  1초, 64MB, 테스트케이스 50개
+  사각형의 개수 1~100, mod 10,000,000
+  전략1
+    Dynamic Programming
+      func(사용한 정사각형의 개수, 높이), x는 가장 위에 쌓을 개수
+        substructure: for(height=1~n) func(n,height)= for(x=1~n-height+1) sum(x*func(n-x,height-1))
+        기저: func(i.i)=1;
+        정답: for(i=1~n) sum(func(n,i))
+    time complexity
+      #func(n^2)*func(n)+=O(n^3)
+    mem complexity
+      #DP_A(n^2)=O(n^2)
+  */
+  //DP 생성 및 계산
+  vector<vector<int>> DP(block+1,vector<int>(block+1,-1));
+  //기저
+  for(int i=1;i<=block;i++){
+    DP[i][i]=1;
+    DP[i][1]=1;
+  } 
+  int result=0;
+  for(int i=1;i<=block;i++)
+    result+=Poly_DP(DP,block,i);
+  return result;
+}
+void Poly(){
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int tileLen;
-    AsymTiling_Input(tileLen);
-    cout<<AsymTiling_Algo(tileLen)<<'\n';
+    int block;
+    Poly_Input(block);
+    cout<<Poly_Algo(block)<<'\n';
   }
 }
 
 int main(void){
-  AsymTiling();
+  Poly();
   return 0;
 }
