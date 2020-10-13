@@ -8,11 +8,17 @@
 
 using namespace std;
 
-void Poly_Input(int& block){
-  cin>>block;
+void Numb3rs_Input(int& townNum,int& dayPast,int& prison,vector<vector<int>>& townGraph,int& chkTownNum,vector<int>& chkTown){
+  cin>>townNum>>dayPast>>prison;
+  for(auto& ele:townGraph)
+    for(auto& ele2:ele)
+      scanf("%d",&ele2);
+  cin>>chkTownNum;
+  for(auto& ele:chkTown)
+    scanf("%d",&ele);
 }
-int Poly_DP(vector<vector<int>>& DP,int blockNum,int topNum){
-  int& result=DP[blockNum][topNum];
+int Numb3rs_DP(vector<vector<int>>& townGraph,vector<vector<int>>& DP, int dayPast, int town){
+  int& result=DP[dayPast][town];
   if(result!=-1) return result;
   //substructrue, preTop=꼭대기 직전 블록의 갯수
   result=0;
@@ -21,55 +27,53 @@ int Poly_DP(vector<vector<int>>& DP,int blockNum,int topNum){
   }
   return result;
 }
-int Poly_Algo(int block){
+vector<double> Numb3rs_Algo(int townNum,int dayPast,int prison,vector<vector<int>>& townGraph,int chkTownNum,vector<int>& chkTown){
   /*
-  1초, 64MB, 테스트케이스 50개
-  사각형의 개수 1~100, mod 10,000,000
+  2초, 64MB, 테스트케이스 50개
+  마을의 수(N)2~50, 지난 일수 1~100, 교도소 위치(마을 중 하나), 마을 이름=0~N -1,확률을 계산할 마을의 수(1~N)
   전략1
     Dynamic Programming
-      func(사용한 정사각형의 개수, 높이), x는 가장 위에 쌓을 개수
-        substructure: for(height=1~n) func(n,height)= for(x=1~n-height+1) sum(x*func(n-x,height-1))
-        기저: func(i.i)=1;func(i,1)=1;
-        정답: for(i=1~n) sum(func(n,i))
-    Problem
-      top*func(...)가 아니고, (top+직전 높이의 가로 개수-1)*func(...)이다.
-    time complexity
-      #func(n^2)*func(n)+=O(n^3)
-    mem complexity
-      #DP_A(n^2)=O(n^2)
-  전략2
-    Dynamic Programming
-      func(사용한 정사각형의 개수, 가장 높은 위치(top)의 블록갯수)
-        substructure: for(topNum=1~n) func(n,topNum)=for(x=1~n-topNum) sum((topNum+x-1)*func(n-topNum,x))
-        기저: func(i,i)=1;
-        정답: for(i=1~n) sum(func(n,i))
+      func(지난 날짜, 마을)= 마을을 방문한 경우의 수
+        substructure: for(town=0~N-1) func(dayPast,town)=for(preTown=인접마을 of town, from townGraph) sum(func(dayPast-1,preTown))
+        기저: prison이 정해져 있으므로, prison인접 마을은 1, prison마을 및 비인접마을은 0으로 초기화 
+        정답: 마지막 날짜, 마을의 경우의 수/전체 경우의 수
     time complexity
       #func(n^2)*func(n)+=O(n^3)
     mem complexity
       #DP_A(n^2)=O(n^2)
   */
-  //DP 생성 및 계산
-  vector<vector<int>> DP(block+1,vector<int>(block+1,-1));
-  //기저
-  for(int i=1;i<=block;i++){
-    DP[i][i]=1;
-  } 
-  int result=0;
-  for(int i=1;i<=block;i++)
-    result+=Poly_DP(DP,block,i);
-  return result%10000000;
+  //DP 생성
+  vector<vector<int>> DP(dayPast+1,vector<int>(townNum,-1));
+  //기저 생성
+  for(int i=0;i<townNum;i++){
+    if(townGraph[prison][i]) DP[1][i]=1;
+    else DP[1][i]=0;
+  }
+  //DP 완성, sum= 마지막 날짜의 경우의 수 
+  int sum=0;
+  for(int i=0;i<townNum;i++)
+    sum+=Numb3rs_DP(townGraph,DP,dayPast,i);
+  //정답 생성
+  vector<double> result;
+  for(auto& ele:chkTown)
+    result.push_back(static_cast<double>(DP[dayPast][ele])/sum);
+  return result;
 }
-void Poly(){
+void Numb3rs(){
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int block;
-    Poly_Input(block);
-    cout<<Poly_Algo(block)<<'\n';
+    int townNum,dayPast,prison,chkTownNum;
+    vector<vector<int>> townGraph(townNum,vector<int>(townNum));
+    vector<int> chkTown(chkTownNum);
+    Numb3rs_Input(townNum,dayPast,prison,townGraph,chkTownNum,chkTown);
+    for(auto& ele:Numb3rs_Algo(townNum,dayPast,prison,townGraph,chkTownNum,chkTown))
+      printf("%.8f ",ele);
+    cout<<"\n";
   }
 }
 
 int main(void){
-  Poly();
+  Numb3rs();
   return 0;
 }
