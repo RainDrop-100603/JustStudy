@@ -26,9 +26,9 @@ int Numb3rs_DP(vector<vector<int>>& townGraph,vector<vector<int>>& DP, int dayPa
   if(result!=-1) return result;
   //substructrue, preTop=꼭대기 직전 블록의 갯수
   result=0;
-  for(int preTown=1;preTown<townGraph.size();preTown++){
+  for(int preTown=0;preTown<townGraph.size();preTown++){
     if(townGraph[preTown][town])
-      result+=DP[dayPast-1][preTown];
+      result+=Numb3rs_DP(townGraph,DP,dayPast-1,preTown);
   }
   return result;
 }
@@ -40,8 +40,10 @@ vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGrap
     Dynamic Programming
       func(지난 날짜, 마을)= 마을을 방문한 경우의 수
         substructure: for(town=0~N-1) func(dayPast,town)=for(preTown=인접마을 of town, from townGraph) sum(func(dayPast-1,preTown))
-        기저: prison이 정해져 있으므로, prison인접 마을은 1, prison마을 및 비인접마을은 0으로 초기화 
+        기저: prison이 정해져 있으므로, prison인접 마을은 1, prison마을 및 비인접마을은 0으로 초기화,
         정답: 마지막 날짜, 마을의 경우의 수/전체 경우의 수
+    Problem 
+      경우의 수로 구하는것이 불가능하다.
     time complexity
       #func(n^2)*func(n)+=O(n^3)
     mem complexity
@@ -52,14 +54,21 @@ vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGrap
   vector<vector<int>> DP(dayPast+1,vector<int>(townNum,-1));
   //기저 생성
   for(int i=0;i<townNum;i++){
-    if(townGraph[prison][i]) DP[1][i]=1;
-    else DP[1][i]=0;
+    if(townGraph[prison][i]) DP[0][i]=1;
+    else DP[0][i]=0;
   }
   //DP 완성, sum= 마지막 날짜의 경우의 수 
   int sum=0;
   for(int i=0;i<townNum;i++)
     sum+=Numb3rs_DP(townGraph,DP,dayPast,i);
   //정답 생성
+  cout<<"========DP======\n";
+  for(auto& ele:DP){
+    for(auto& ele2:ele){
+      cout<<ele2<<" ";
+    }cout<<"\n";
+  }
+  cout<<"========DP======\n";
   vector<double> result;
   for(auto& ele:chkTown)
     result.push_back(static_cast<double>(DP[dayPast][ele])/sum);
