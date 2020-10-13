@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <cstring>
+#include <cmath>
 
 using namespace std;
 
@@ -21,14 +22,17 @@ void Numb3rs_Input(int& dayPast,int& prison,vector<vector<int>>& townGraph,vecto
   for(auto& ele:chkTown)
     scanf("%d",&ele);
 }
-int Numb3rs_DP(vector<vector<int>>& townGraph,vector<vector<int>>& DP, int dayPast, int town){
-  int& result=DP[dayPast][town];
-  if(result!=-1) return result;
+int Numb3rs_DP(vector<vector<int>>& townGraph,vector<vector<double>>& DP, int dayPast, int town){
+  double& result=DP[dayPast][town];
+  if(fabs(result+0.5)>__DBL_EPSILON__) return result;
   //substructrue, preTop=꼭대기 직전 블록의 갯수
   result=0;
   for(int preTown=0;preTown<townGraph.size();preTown++){
+    int caseAll(0);
+    for(auto ele:townGraph[preTown])
+      if(ele) caseAll++;
     if(townGraph[preTown][town])
-      result+=Numb3rs_DP(townGraph,DP,dayPast-1,preTown);
+      result+=Numb3rs_DP(townGraph,DP,dayPast-1,preTown)/caseAll;
   }
   return result;
 }
@@ -48,19 +52,22 @@ vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGrap
       #func(n^2)*func(n)+=O(n^3)
     mem complexity
       #DP_A(n^2)=O(n^2)
+  전략2
+    전략1과 같은데 경우의 수가 아닌 확률 계산
   */
   //DP 생성
   int townNum=townGraph.size();
-  vector<vector<int>> DP(dayPast+1,vector<int>(townNum,-1));
-  //기저 생성
+  vector<vector<double>> DP(dayPast+1,vector<double>(townNum,-0.5));
+  //기저 생성, caseAll은 prison에서 갈 수 있는 모든 경로의 수
+  int caseAll(0);
+  for(auto ele:townGraph[prison]) caseAll+=ele;
   for(int i=0;i<townNum;i++){
-    if(townGraph[prison][i]) DP[0][i]=1;
+    if(townGraph[prison][i]) DP[0][i]=(double)1/caseAll;
     else DP[0][i]=0;
   }
-  //DP 완성, sum= 마지막 날짜의 경우의 수 
-  int sum=0;
+  //DP 완성,
   for(int i=0;i<townNum;i++)
-    sum+=Numb3rs_DP(townGraph,DP,dayPast,i);
+    Numb3rs_DP(townGraph,DP,dayPast,i);
   //정답 생성
   cout<<"========DP======\n";
   for(auto& ele:DP){
@@ -71,7 +78,7 @@ vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGrap
   cout<<"========DP======\n";
   vector<double> result;
   for(auto& ele:chkTown)
-    result.push_back(static_cast<double>(DP[dayPast][ele])/sum);
+    result.push_back(DP[dayPast][ele]);
   return result;
 }
 void Numb3rs(){

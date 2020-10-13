@@ -44,6 +44,9 @@ int fastSum(int n){
   //짝수
   return 2*fastSum(n/2)+(n/2)*(n/2);
 }
+bool db_Equal_Abs(double a, double b, double eps=__DBL_EPSILON__){  //절대오차 비교
+  return fabs(a-b)<eps;
+}
 
 //유용한 테스트
 void moveTest_vec(){

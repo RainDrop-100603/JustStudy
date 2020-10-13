@@ -198,6 +198,7 @@ int  getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
 // LCM=A*B/GCD(A*B);
 pair<long long,long long> euclidAlgo(long long A,long long B);  //유클리드 알고리즘"Ax+By=gcd(A,B)"의 해(x,y), 
 int fastSum(int n); //1~n까지의 합을 구한다. 분할정복방식
+bool db_Equal_Abs(double a, double b, double eps=__DBL_EPSILON__); //절대오차 비교
 
 
 //유용한 테스트
