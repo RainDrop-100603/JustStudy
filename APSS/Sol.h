@@ -76,5 +76,10 @@ int AsymTiling_DP(vector<int>& DP,int tileLen);
 int AsymTiling_Algo(int tileLen);
 void AsymTiling();
 
+//Poly-omino, DP 최적화, optimal substructrue를 잘 찾자.
+void Poly_Input(int& block);
+int Poly_DP(vector<vector<int>>& DP,int blockNum,int topNum);
+int Poly_Algo(int block);
+void Poly();
 
 
