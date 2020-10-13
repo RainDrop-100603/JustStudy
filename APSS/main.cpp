@@ -8,12 +8,16 @@
 
 using namespace std;
 
-void Numb3rs_Input(int& townNum,int& dayPast,int& prison,vector<vector<int>>& townGraph,int& chkTownNum,vector<int>& chkTown){
+void Numb3rs_Input(int& dayPast,int& prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
+  int townNum;
   cin>>townNum>>dayPast>>prison;
+  townGraph=vector<vector<int>>(townNum,vector<int>(townNum));
   for(auto& ele:townGraph)
     for(auto& ele2:ele)
       scanf("%d",&ele2);
+  int chkTownNum;
   cin>>chkTownNum;
+  chkTown=vector<int>(chkTownNum);
   for(auto& ele:chkTown)
     scanf("%d",&ele);
 }
@@ -22,12 +26,13 @@ int Numb3rs_DP(vector<vector<int>>& townGraph,vector<vector<int>>& DP, int dayPa
   if(result!=-1) return result;
   //substructrue, preTop=꼭대기 직전 블록의 갯수
   result=0;
-  for(int preTop=1;preTop<=blockNum-topNum;preTop++){
-    result=(result+(topNum+preTop-1)*Poly_DP(DP,blockNum-topNum,preTop))%10000000;
+  for(int preTown=1;preTown<townGraph.size();preTown++){
+    if(townGraph[preTown][town])
+      result+=DP[dayPast-1][preTown];
   }
   return result;
 }
-vector<double> Numb3rs_Algo(int townNum,int dayPast,int prison,vector<vector<int>>& townGraph,int chkTownNum,vector<int>& chkTown){
+vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
   /*
   2초, 64MB, 테스트케이스 50개
   마을의 수(N)2~50, 지난 일수 1~100, 교도소 위치(마을 중 하나), 마을 이름=0~N -1,확률을 계산할 마을의 수(1~N)
@@ -43,6 +48,7 @@ vector<double> Numb3rs_Algo(int townNum,int dayPast,int prison,vector<vector<int
       #DP_A(n^2)=O(n^2)
   */
   //DP 생성
+  int townNum=townGraph.size();
   vector<vector<int>> DP(dayPast+1,vector<int>(townNum,-1));
   //기저 생성
   for(int i=0;i<townNum;i++){
@@ -63,11 +69,11 @@ void Numb3rs(){
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int townNum,dayPast,prison,chkTownNum;
-    vector<vector<int>> townGraph(townNum,vector<int>(townNum));
-    vector<int> chkTown(chkTownNum);
-    Numb3rs_Input(townNum,dayPast,prison,townGraph,chkTownNum,chkTown);
-    for(auto& ele:Numb3rs_Algo(townNum,dayPast,prison,townGraph,chkTownNum,chkTown))
+    int dayPast,prison;
+    vector<vector<int>> townGraph;
+    vector<int> chkTown;
+    Numb3rs_Input(dayPast,prison,townGraph,chkTown);
+    for(auto& ele:Numb3rs_Algo(dayPast,prison,townGraph,chkTown))
       printf("%.8f ",ele);
     cout<<"\n";
   }
