@@ -28,7 +28,7 @@ using namespace std;
   표준함수가 구현되어 있다면 Algo와 표준함수와 비교
   표준함수가 없다면, 더 느리지만 확실한 정답의 Algo와 비교 
 ------------------------------
-유용한 표준함수
+유용한 표준함수, 방법
   ASCII code 순서 정렬
     <algorithm>의 sort의 기본 정렬(char 비교가 ascii단위이기 때문)
   사전순 정렬
@@ -37,6 +37,8 @@ using namespace std;
     lower_bound(), upper_bound()
   주어진 순열의 다음 순열을 구하는 Algo
     next_permutation()
+  DP등에서 double로 초기화 할 때 기법
+    기대값이 양수라면, -1로 초기화 하고 "ele>-0.5"와 같은 식으로 비교하면, ele가 -1인지 양수인지 알 수 있다.
 ------------------------------
 런타임에러
   배열에 할당된 크기를 넘어서 접근했을 때
@@ -83,6 +85,9 @@ using namespace std;
         목표는 가능한 한 중복되는 부분 문제를 많이 만들어 메모제이션을 이용하는 것. 입력의 종류가 줄어들수록 더 많은 부분문제 중복
       4.입력이 배열이거나 문자열인경우, 가능하다면 적절한 변환을 통해 메모제이션
       5.메모제이션 적용 
+    DP 테크닉
+      마르코프 연쇄: numb3r
+        유한개의 상태가 있으며, 매 시간마다 상태가 변경되며, 상태 변경은 현재 상태에만 영향을 받는다(이전상태, 현재 시간등 X)
   vector v1에서 v1은 "배열의 시작위치"가 아닌, "배열의 시작위치를 가리키는 포인터"이다. 배열의 시작위치는 "&v[0]"이다.
     따라서 move연산이 제대로 이루어졌는지 확인하려면, &v1이 아닌 &v1[0]을 통해 확인해야한다.
   배열 매개변수
@@ -198,7 +203,6 @@ int  getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
 // LCM=A*B/GCD(A*B);
 pair<long long,long long> euclidAlgo(long long A,long long B);  //유클리드 알고리즘"Ax+By=gcd(A,B)"의 해(x,y), 
 int fastSum(int n); //1~n까지의 합을 구한다. 분할정복방식
-bool db_Equal_Abs(double a, double b, double eps=__DBL_EPSILON__); //절대오차 비교
 
 
 //유용한 테스트
