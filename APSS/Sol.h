@@ -85,7 +85,7 @@ int Poly_Algo(int block);
 void Poly();
 
 //numb3rs, DP 최적화, 마르코프 연쇄, double 사용 테크닉
-void Numb3rs_Input(int& dayPast,int& prison,vector<vector<int>>& townGraph,vector<int>& chkTown)
+void Numb3rs_Input(int& dayPast,int& prison,vector<vector<int>>& townGraph,vector<int>& chkTown);
 double Numb3rs_DP(vector<vector<int>>& townGraph,vector<int>& degree,vector<vector<double>>& DP, int dayPast, int town);
 vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGraph,vector<int>& chkTown);
 void Numb3rs();

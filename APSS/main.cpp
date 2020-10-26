@@ -9,78 +9,81 @@
 
 using namespace std;
 
-void Packing_Input(int& dayPast,int& prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
-  int townNum;
-  cin>>townNum>>dayPast>>prison;
-  townGraph=vector<vector<int>>(townNum,vector<int>(townNum));
-  for(auto& ele:townGraph)
-    for(auto& ele2:ele)
-      scanf("%d",&ele2);
-  int chkTownNum;
-  cin>>chkTownNum;
-  chkTown=vector<int>(chkTownNum);
-  for(auto& ele:chkTown)
-    scanf("%d",&ele);
+void Packing_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,vector<int>& itemDesp){
+  int itemNum;
+  cin>>itemNum>>weight;
+  itemName=vector<string>(itemNum+1);
+  itemWeight=vector<int>(itemNum+1);
+  itemDesp=vector<int>(itemNum+1);
+  for(int i=1;i<=itemNum;i++){
+    cin>>itemName[i]>>itemWeight[i]>>itemDesp[i];
+  }
 }
-double Packing_DP(vector<vector<int>>& townGraph,vector<int>& degree,vector<vector<double>>& DP, int dayPast, int town){
-  double& result=DP[dayPast][town];
-  if(result>-0.5) return result;
-  //substructrue, preTop=꼭대기 직전 블록의 갯수
+int Packing_DP(vector<vector<int>>& DP_desp,vector<vector<int>>& DP_choice,vector<int>& itemWeight,vector<int>& itemDesp,int prevChoice,int weightRemain){
+  //기저, weightRemain<1, prevChoice==N
+  if(weightRemain<0) return -987654321;
+  if(prevChoice==itemWeight.size()-1) return 0;
+  int& result=DP_desp[prevChoice][weightRemain];
+  if(result!=-1) return result;
+  //substructrue
   result=0;
-  for(int preTown=0;preTown<townGraph.size();preTown++){
-    if(townGraph[preTown][town])
-      result+=Numb3rs_DP(townGraph,degree,DP,dayPast-1,preTown)/degree[preTown];
+  int& nextPick=DP_choice[prevChoice][weightRemain];
+  int tmp;
+  for(int nextChoice=prevChoice+1;nextChoice<DP_desp.size();nextChoice++){
+    tmp=itemDesp[nextChoice]+Packing_DP(DP_desp,DP_choice,itemWeight,itemDesp,nextChoice,weightRemain-itemWeight[nextChoice]);
+    if(tmp>result){
+      nextPick=nextChoice;
+      result=tmp;
+    }
   }
   return result;
 }
-vector<double> Packing_Algo(int dayPast,int prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
+vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp){
   /*
   2초, 64MB, 테스트케이스 50개
   입력:물건의 수(N)1~100, 캐리어의 용량(W)1~1000, N개의 물건을 이름,부피,절박도 순서로 각 줄에 주어짐, 이름:공백없는 알파벳 대소문자 1~20, 부피와절박도는 1~1000
   출력:첫 줄에는 최대 절박도 합과 가져갈 물건들의 개수 출력, 이후 한 줄마다 각 물건들의 이름을 출력, 조합이 여러개일 경우 하나만 출력한다.
   전략1
     Dynamic Programming
-      func(이전에 선택한 물건, 남은 캐리어 용량)= 절박도의 합
+      func(직전에 선택한 물건, 남은 캐리어 용량)= 절박도의 합
         DP: size 100*1000, 물건은 순서대로만 선택 가능
-        substructure: func(n,w)=for(i=n+1~N), max, func(i,w-i_weight)
-        기저: W<1, n>N
+        substructure: func(prevChoice,weightRemain)=for(i=prevChoice+1~N), max, func(i,weightRemain-i_weight)
+        기저: weightRemain<1, prevChoice=N
         정답: 경로를 저장한 DP를 이용하여 출력
     time complexity
-      #func(nw)*func(n)+=O(d*n^2)
+      #func(NW)*func(N)+=O(N^2*W)
     mem complexity
-      #DP_A(nd)=O(nd)
+      #DP(NW)=O(NW)
   */
-  //DP 생성, degree[town]=town에서 갈 수 있는 마을의 경우의 수
-  int townNum=townGraph.size();
-  vector<vector<double>> DP(dayPast+1,vector<double>(townNum,-1));
-  vector<int> degree(townNum);
-  for(int i=0;i<townNum;i++){
-    for(auto& ele:townGraph[i]){
-      degree[i]+=ele;
-    }
-  }
-  //기저 생성
-  for(int i=0;i<townNum;i++){
-    if(townGraph[prison][i]) DP[1][i]=(double)1/degree[prison];
-    else DP[1][i]=0;
-  }
+  //DP 생성
+  int itemNum=itemWeight.size()-1;
+  vector<vector<int>> DP_desp(itemNum+1,vector<int>(weight+1,-1));
+  vector<vector<int>> DP_choice=DP_desp;
+  //DP 채우기
+  int tmp=Packing_DP(DP_desp,DP_choice,itemWeight,itemDesp,0,weight);
   //정답 생성
-  vector<double> result;
-  for(auto& ele:chkTown)
-    result.push_back(Numb3rs_DP(townGraph,degree,DP,dayPast,ele));
+  vector<int> result;
+  result.push_back(tmp);
+  int nextPick=DP_choice[0][weight];
+  while(nextPick!=-1){
+    result.push_back(nextPick);
+    nextPick=DP_choice[nextPick][weight-itemWeight[nextPick]];
+  }
   return result;
 }
 void Packing(){
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int dayPast,prison;
-    vector<vector<int>> townGraph;
-    vector<int> chkTown;
-    Packing_Input(dayPast,prison,townGraph,chkTown);
-    for(auto& ele:Packing_Algo(dayPast,prison,townGraph,chkTown))
-      printf("%.8f ",ele);
-    cout<<"\n";
+    int weight;
+    vector<string> itemName;
+    vector<int> itemWeight,itemDesp;
+    Packing_Input(weight,itemName,itemWeight,itemDesp);
+    vector<int> result=Packing_Algo(weight,itemWeight,itemDesp);
+    cout<<result.front()<<' '<<result.size()-1<<'\n';
+    for(auto iter=++result.begin();iter<result.end();iter++){
+      cout<<itemName[*iter]<<'\n';
+    }
   }
 }
 
