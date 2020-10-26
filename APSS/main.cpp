@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void Numb3rs_Input(int& dayPast,int& prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
+void Packing_Input(int& dayPast,int& prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
   int townNum;
   cin>>townNum>>dayPast>>prison;
   townGraph=vector<vector<int>>(townNum,vector<int>(townNum));
@@ -22,7 +22,7 @@ void Numb3rs_Input(int& dayPast,int& prison,vector<vector<int>>& townGraph,vecto
   for(auto& ele:chkTown)
     scanf("%d",&ele);
 }
-double Numb3rs_DP(vector<vector<int>>& townGraph,vector<int>& degree,vector<vector<double>>& DP, int dayPast, int town){
+double Packing_DP(vector<vector<int>>& townGraph,vector<int>& degree,vector<vector<double>>& DP, int dayPast, int town){
   double& result=DP[dayPast][town];
   if(result>-0.5) return result;
   //substructrue, preTop=꼭대기 직전 블록의 갯수
@@ -33,24 +33,22 @@ double Numb3rs_DP(vector<vector<int>>& townGraph,vector<int>& degree,vector<vect
   }
   return result;
 }
-vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
+vector<double> Packing_Algo(int dayPast,int prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
   /*
   2초, 64MB, 테스트케이스 50개
-  마을의 수(n)2~50, 지난 일수(d) 1~100, 교도소 위치(마을 중 하나), 마을 이름=0~n-1,확률을 계산할 마을의 수(1~n)
+  입력:물건의 수(N)1~100, 캐리어의 용량(W)1~1000, N개의 물건을 이름,부피,절박도 순서로 각 줄에 주어짐, 이름:공백없는 알파벳 대소문자 1~20, 부피와절박도는 1~1000
+  출력:첫 줄에는 최대 절박도 합과 가져갈 물건들의 개수 출력, 이후 한 줄마다 각 물건들의 이름을 출력, 조합이 여러개일 경우 하나만 출력한다.
   전략1
     Dynamic Programming
-      func(지난 날짜, 마을)= 마을을 방문한 경우의 수
-        substructure: for(town=0~n-1) func(dayPast,town)=for(preTown=인접마을 of town, from townGraph) sum(func(dayPast-1,preTown))
-        기저: prison이 정해져 있으므로, prison인접 마을은 1, prison마을 및 비인접마을은 0으로 초기화,
-        정답: 마지막 날짜, 마을의 경우의 수/전체 경우의 수
-    Problem 
-      경우의 수로 구하는것이 불가능하다.
+      func(이전에 선택한 물건, 남은 캐리어 용량)= 절박도의 합
+        DP: size 100*1000, 물건은 순서대로만 선택 가능
+        substructure: func(n,w)=for(i=n+1~N), max, func(i,w-i_weight)
+        기저: W<1, n>N
+        정답: 경로를 저장한 DP를 이용하여 출력
     time complexity
-      #func(nd)*func(n)+=O(d*n^2)
+      #func(nw)*func(n)+=O(d*n^2)
     mem complexity
       #DP_A(nd)=O(nd)
-  전략2
-    전략1과 같은데 경우의 수가 아닌 확률 계산
   */
   //DP 생성, degree[town]=town에서 갈 수 있는 마을의 경우의 수
   int townNum=townGraph.size();
@@ -72,21 +70,21 @@ vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGrap
     result.push_back(Numb3rs_DP(townGraph,degree,DP,dayPast,ele));
   return result;
 }
-void Numb3rs(){
+void Packing(){
   int testCase;
   cin>>testCase;
   while(testCase--){
     int dayPast,prison;
     vector<vector<int>> townGraph;
     vector<int> chkTown;
-    Numb3rs_Input(dayPast,prison,townGraph,chkTown);
-    for(auto& ele:Numb3rs_Algo(dayPast,prison,townGraph,chkTown))
+    Packing_Input(dayPast,prison,townGraph,chkTown);
+    for(auto& ele:Packing_Algo(dayPast,prison,townGraph,chkTown))
       printf("%.8f ",ele);
     cout<<"\n";
   }
 }
 
 int main(void){
-  Numb3rs();
+  Packing();
   return 0;
 }
