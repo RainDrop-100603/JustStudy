@@ -20,9 +20,9 @@ void Packing_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,
   }
 }
 int Packing_DP(vector<vector<int>>& DP_desp,vector<vector<int>>& DP_choice,vector<int>& itemWeight,vector<int>& itemDesp,int prevChoice,int weightRemain){
-  //기저, weightRemain<1, prevChoice==N
+  //기저, weightRemain<=0
   if(weightRemain<0) return -987654321;
-  if(prevChoice==itemWeight.size()-1) return 0;
+  if(weightRemain==0) return 0;
   int& result=DP_desp[prevChoice][weightRemain];
   if(result!=-1) return result;
   //substructrue
@@ -61,6 +61,23 @@ vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDes
   vector<vector<int>> DP_choice=DP_desp;
   //DP 채우기
   int tmp=Packing_DP(DP_desp,DP_choice,itemWeight,itemDesp,0,weight);
+  // //디버깅
+  // cout<<"------------------------------------\n";
+  // for(auto& ele:DP_desp){
+  //   for(auto& ele2:ele){
+  //     cout<<ele2<<" ";
+  //   }
+  //   cout<<'\n';
+  // }
+  // cout<<"------------------------------------\n";
+  // cout<<"------------------------------------\n";
+  // for(auto& ele:DP_choice){
+  //   for(auto& ele2:ele){
+  //     cout<<ele2<<" ";
+  //   }
+  //   cout<<'\n';
+  // }
+  // cout<<"------------------------------------\n";
   //정답 생성
   vector<int> result;
   result.push_back(tmp);
@@ -69,6 +86,11 @@ vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDes
     result.push_back(nextPick);
     nextPick=DP_choice[nextPick][weight-itemWeight[nextPick]];
   }
+  cout<<"------------------------------------\n";
+  for(auto& ele:result){
+    cout<<ele<<" ";
+  }cout<<endl;
+  cout<<"------------------------------------\n";
   return result;
 }
 void Packing(){
@@ -81,7 +103,7 @@ void Packing(){
     Packing_Input(weight,itemName,itemWeight,itemDesp);
     vector<int> result=Packing_Algo(weight,itemWeight,itemDesp);
     cout<<result.front()<<' '<<result.size()-1<<'\n';
-    for(auto iter=++result.begin();iter<result.end();iter++){
+    for(auto iter=++result.begin();iter!=result.end();iter++){
       cout<<itemName[*iter]<<'\n';
     }
   }
