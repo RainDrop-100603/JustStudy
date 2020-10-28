@@ -12,29 +12,20 @@ using namespace std;
 void Packing_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,vector<int>& itemDesp){
   int itemNum;
   cin>>itemNum>>weight;
-  itemName=vector<string>(itemNum+1);
-  itemWeight=vector<int>(itemNum+1);
-  itemDesp=vector<int>(itemNum+1);
-  for(int i=1;i<=itemNum;i++){
+  itemName=vector<string>(itemNum);
+  itemWeight=itemDesp=vector<int>(itemNum);
+  for(int i=0;i<itemNum;i++)
     cin>>itemName[i]>>itemWeight[i]>>itemDesp[i];
-  }
 }
-int Packing_DP(vector<vector<int>>& DP_desp,vector<vector<int>>& DP_choice,vector<int>& itemWeight,vector<int>& itemDesp,int prevChoice,int weightRemain){
-  //기저, weightRemain<0
-  if(weightRemain<0) return -123456789;
-  int& result=DP_desp[prevChoice][weightRemain];
+int Packing_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& itemDesp,int nowChoice,int weightRemain){
+  //기저, nowChoice==N
+  if(nowChoice==itemDesp.size()) return 0;
+  int& result=DP_desp[nowChoice][weightRemain];
   if(result!=-1) return result;
-  //substructrue
-  result=0;
-  int& nextPick=DP_choice[prevChoice][weightRemain];
-  int tmp;
-  for(int nextChoice=prevChoice+1;nextChoice<itemDesp.size();nextChoice++){
-    tmp=itemDesp[nextChoice]+Packing_DP(DP_desp,DP_choice,itemWeight,itemDesp,nextChoice,weightRemain-itemWeight[nextChoice]);
-    if(tmp>result){
-      nextPick=nextChoice;
-      result=tmp;
-    }
-  }
+  //substructrue, 선택하지 않았을경우, 선택했을경우
+  result=Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain);
+  if(weightRemain>=itemWeight[nowChoice])
+    result=max(result,itemDesp[nowChoice]+Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain-itemWeight[nowChoice]));
   return result;
 }
 vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp){
@@ -47,30 +38,38 @@ vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDes
     Dynamic Programming
       func(직전에 선택한 물건, 남은 캐리어 용량)= 절박도의 합
         DP: size 100*1000, 물건은 순서대로만 선택 가능
-        substructure: func(prevChoice,weightRemain)=for(i=prevChoice+1~N), max, func(i,weightRemain-i_weight)
+        substructure: func(nowChoice,weightRemain)=for(i=nowChoice+1~N), max, func(i,weightRemain-i_weight)
         기저: weightRemain<0
         정답: 경로를 저장한 DP를 이용하여 출력
+    개선1
+      func내부의 loop를 제거하여 수행시간을 줄인다.
+      다음 물건을 선택하느냐/선택하지 않느냐로 구분
+        func(이번에 선택할 물건, 남은 캐리어 용량)= 절박도의 합
+        기저:이번에 선택할 물건==N
+      선택지가 두개뿐이다 -> 이전 기록과 비교하여 선택이 됐는지 비교 가능, 기록 DP 삭제
     time complexity
-      #func(NW)*func(N)+=O(N^2*W)
+      #func(NW)*func(1)+=O(NW)
     mem complexity
       #DP(NW)=O(NW)
   */
   //DP 생성
-  int itemNum=itemWeight.size()-1;
-  vector<vector<int>> DP_desp(itemNum+1,vector<int>(weight+1,-1));
-  vector<vector<int>> DP_choice=DP_desp;
+  vector<vector<int>> DP_desp(itemWeight.size(),vector<int>(weight+1,-1));
   //DP 채우기
-  int tmp=Packing_DP(DP_desp,DP_choice,itemWeight,itemDesp,0,weight);
+  int tmp=Packing_DP(DP_desp,itemWeight,itemDesp,0,weight);
   //정답 생성
   vector<int> result;
   result.push_back(tmp);
-  int weightRemain=weight;
-  int nextPick=DP_choice[0][weightRemain];
-  while(nextPick!=-1){
-    result.push_back(nextPick);
-    weightRemain-=itemWeight[nextPick];
-    nextPick=DP_choice[nextPick][weightRemain];
+  int nowPick(0),weightRemain(weight);
+  while(nowPick<itemWeight.size()-1){
+    //선택했다면, 절박도가 다를것이다.
+    if(DP_desp[nowPick][weightRemain]!=DP_desp[nowPick+1][weightRemain]){
+      result.push_back(nowPick);
+      weightRemain-=itemWeight[nowPick];
+    }
+    nowPick++;
   }
+  if(DP_desp[nowPick][weightRemain]>0)
+    result.push_back(nowPick);
   return result;
 }
 void Packing(){

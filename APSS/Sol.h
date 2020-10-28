@@ -90,4 +90,11 @@ double Numb3rs_DP(vector<vector<int>>& townGraph,vector<int>& degree,vector<vect
 vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGraph,vector<int>& chkTown);
 void Numb3rs();
 
+//Packing, DP최적화, 함수내부의 루프를 제거하도록 노력하자
+void Packing_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,vector<int>& itemDesp);
+int Packing_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& itemDesp,int nowChoice,int weightRemain);
+vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp);
+void Packing();
+
+
 
