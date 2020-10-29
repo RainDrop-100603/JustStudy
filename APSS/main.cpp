@@ -9,13 +9,26 @@
 
 using namespace std;
 
-void Ocr_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,vector<int>& itemDesp){
-  int itemNum;
-  cin>>itemNum>>weight;
-  itemName=vector<string>(itemNum);
-  itemWeight=itemDesp=vector<int>(itemNum);
-  for(int i=0;i<itemNum;i++)
-    cin>>itemName[i]>>itemWeight[i]>>itemDesp[i];
+void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
+  cin>>wordNum>>sentenceNum;
+  wordArr.resize(wordNum);
+  for(auto& ele:wordArr)
+    cin>>ele;
+  firstPoss.resize(wordNum);
+  for(auto& ele: firstPoss)
+    scanf("%lf",&ele);
+  nextPoss=classifiPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
+  for(auto& ele: nextPoss)
+    for(auto& ele2: ele)
+      scanf("%lf",&ele2);
+  for(auto& ele: classifiPoss)
+    for(auto& ele2: ele)
+      scanf("%lf",&ele2);
+  sentenceArr.resize(sentenceNum);
+  cin.ignore();
+  for(auto& ele: sentenceArr)
+    getline(cin,ele);
 }
 int Ocr_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& itemDesp,int nowChoice,int weightRemain){
   //기저, nowChoice==N
@@ -28,7 +41,8 @@ int Ocr_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& ite
     result=max(result,itemDesp[nowChoice]+Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain-itemWeight[nowChoice]));
   return result;
 }
-vector<int> Ocr_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp){
+vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
   /*
   10초, 64MB, 테스트케이스 50개
   입력: 분석이 끝난 과거 자료의 통계치, 분류기가 인식한 문장으로구성, 자세한 내용은 문제에서 확인
@@ -74,15 +88,13 @@ vector<int> Ocr_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp){
 }
 void Ocr(){
   int wordNum,sentenceNum;
-  vector<string> sentenceArr;
-  vector<int> firstPoten
-  vector<string> itemName;
-  vector<int> itemWeight,itemDesp;
-  Ocr_Input(weight,itemName,itemWeight,itemDesp);
-  vector<int> result=Ocr_Algo(weight,itemWeight,itemDesp);
-  cout<<result.front()<<' '<<result.size()-1<<'\n';
-  for(auto iter=++result.begin();iter!=result.end();iter++){
-    cout<<itemName[*iter]<<'\n';
+  vector<string> wordArr,sentenceArr;   //i, am, a, boy, buy 각 단어 저장, i am a boy 각 문장 저장
+  vector<double> firstPoss;    //맨 처음에 각 word가 나올 확률
+  vector<vector<double>> nextPoss,classifiPoss; //A(ij)=i단어 다음 j단어가 나올 확률, B(ij)=i단어를 j단어로 분류할 확률
+  Ocr_Input(wordNum,sentenceNum,wordArr,firstPoss,nextPoss,classifiPoss,sentenceArr);
+  vector<string> result=Ocr_Algo(wordNum,sentenceNum,wordArr,firstPoss,nextPoss,classifiPoss,sentenceArr);
+  for(auto& ele:result){
+    cout<<ele<<'\n';
   }
 }
 
