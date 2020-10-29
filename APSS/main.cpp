@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void Packing_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,vector<int>& itemDesp){
+void Ocr_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,vector<int>& itemDesp){
   int itemNum;
   cin>>itemNum>>weight;
   itemName=vector<string>(itemNum);
@@ -17,7 +17,7 @@ void Packing_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,
   for(int i=0;i<itemNum;i++)
     cin>>itemName[i]>>itemWeight[i]>>itemDesp[i];
 }
-int Packing_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& itemDesp,int nowChoice,int weightRemain){
+int Ocr_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& itemDesp,int nowChoice,int weightRemain){
   //기저, nowChoice==N
   if(nowChoice==itemDesp.size()) return 0;
   int& result=DP_desp[nowChoice][weightRemain];
@@ -28,11 +28,11 @@ int Packing_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>&
     result=max(result,itemDesp[nowChoice]+Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain-itemWeight[nowChoice]));
   return result;
 }
-vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp){
+vector<int> Ocr_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp){
   /*
-  2초, 64MB, 테스트케이스 50개
-  입력:물건의 수(N)1~100, 캐리어의 용량(W)1~1000, N개의 물건을 이름,부피,절박도 순서로 각 줄에 주어짐, 이름:공백없는 알파벳 대소문자 1~20, 부피와절박도는 1~1000
-  출력:첫 줄에는 최대 절박도 합과 가져갈 물건들의 개수 출력, 이후 한 줄마다 각 물건들의 이름을 출력, 조합이 여러개일 경우 하나만 출력한다.
+  10초, 64MB, 테스트케이스 50개
+  입력: 분석이 끝난 과거 자료의 통계치, 분류기가 인식한 문장으로구성, 자세한 내용은 문제에서 확인
+  출력: 한 뭉장마다 한 줄에 주어진 인식 결과에 대해 조건주 출현 확률이 가장 높은 문장을 출력, 같은 확률을 가진 문장이 여러개라면 어떤것을 출력해도 좋다.
   제한: 절박도 최대=100*1000=100000
   전략1
     Dynamic Programming
@@ -72,23 +72,21 @@ vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDes
     result.push_back(nowPick);
   return result;
 }
-void Packing(){
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    int weight;
-    vector<string> itemName;
-    vector<int> itemWeight,itemDesp;
-    Packing_Input(weight,itemName,itemWeight,itemDesp);
-    vector<int> result=Packing_Algo(weight,itemWeight,itemDesp);
-    cout<<result.front()<<' '<<result.size()-1<<'\n';
-    for(auto iter=++result.begin();iter!=result.end();iter++){
-      cout<<itemName[*iter]<<'\n';
-    }
+void Ocr(){
+  int wordNum,sentenceNum;
+  vector<string> sentenceArr;
+  vector<int> firstPoten
+  vector<string> itemName;
+  vector<int> itemWeight,itemDesp;
+  Ocr_Input(weight,itemName,itemWeight,itemDesp);
+  vector<int> result=Ocr_Algo(weight,itemWeight,itemDesp);
+  cout<<result.front()<<' '<<result.size()-1<<'\n';
+  for(auto iter=++result.begin();iter!=result.end();iter++){
+    cout<<itemName[*iter]<<'\n';
   }
 }
 
 int main(void){
-  Packing();
+  Ocr();
   return 0;
 }
