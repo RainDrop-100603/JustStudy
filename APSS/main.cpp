@@ -50,9 +50,12 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ve
   제한: 절박도 최대=100*1000=100000
   전략1
     Dynamic Programming
-      func(직전에 선택한 물건, 남은 캐리어 용량)= 절박도의 합
-        DP: size 100*1000, 물건은 순서대로만 선택 가능
-        substructure: func(nowChoice,weightRemain)=for(i=nowChoice+1~N), max, func(i,weightRemain-i_weight)
+      sentenceArr을 분리하는 작업 필요, 분리한 각 sentence에 대해 함수 적용 
+      앞에서 부터 뒤로 넘어가는 방식을 사용 
+      A로 판정된 문자가 X일 확률은? (X->A/everyWord->A)
+      func(문장의 n번쨰 단어가, i번째 단어일때)= 최대 가능성
+        DP: 100*100
+        substructure: func(order,wordIdx)=for(nextWord=wordIdx range), max, nextPoss[wordIdx][nextWord]*func(order+1,nextWord)
         기저: weightRemain<0
         정답: 경로를 저장한 DP를 이용하여 출력
     개선1
