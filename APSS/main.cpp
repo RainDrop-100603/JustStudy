@@ -44,15 +44,18 @@ int Ocr_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& ite
 vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
                 vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
   /*
-  10초, 64MB, 테스트케이스 50개
+  10초, 64MB, 테스트케이스=문장의 수 20개
   입력: 분석이 끝난 과거 자료의 통계치, 분류기가 인식한 문장으로구성, 자세한 내용은 문제에서 확인
   출력: 한 뭉장마다 한 줄에 주어진 인식 결과에 대해 조건주 출현 확률이 가장 높은 문장을 출력, 같은 확률을 가진 문장이 여러개라면 어떤것을 출력해도 좋다.
   제한: 절박도 최대=100*1000=100000
   전략1
     Dynamic Programming
-      sentenceArr을 분리하는 작업 필요, 분리한 각 sentence에 대해 함수 적용 
-      앞에서 부터 뒤로 넘어가는 방식을 사용 
-      A로 판정된 문자가 X일 확률은? (X->A/everyWord->A)
+      준비: sentenceArr->sentence->word 로 분해
+      해석: sentence의 word의 길이 n, 등장 가능한 word의 개수 N
+            sentence X에 대해, 각 word는 x0 x1 ... xn-1 이다 (인식된 결과이므로, 실제 문자와 다를 수 있다.)
+            이전 문자가 Y일 때, 다음으로 등장한 문자가 Z일 확률 nextPoss[Y][Z]
+        DP  이전 문자가 Y일 때, 다음으로 인식된 문자가 R일 확률 p(Y,R)=nextPoss[Y][R]*classifiPoss[R][R]+ ... +nextPoss[Y][N-1]*classifiPoss[N-1][R]
+        DP  이전 문자가 Y이고, 인식된 문자가 R일 때, 실제 등장한 문자가 Z일 가능성 rp(Y,R,Z)=nextPoss[Y][Z]*classifiPoss[Z][R]/p(Y,R)
       func(문장의 n번쨰 단어가, i번째 단어일때)= 최대 가능성
         DP: 100*100
         substructure: func(order,wordIdx)=for(nextWord=wordIdx range), max, nextPoss[wordIdx][nextWord]*func(order+1,nextWord)
