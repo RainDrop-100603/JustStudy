@@ -52,27 +52,25 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ve
     Dynamic Programming
       준비: sentenceArr->sentence->word 로 분해
       해석: sentence의 word의 길이 n, 등장 가능한 word의 개수 N
-            sentence X에 대해, 각 word는 x0 x1 ... xn-1 이다 (인식된 결과이므로, 실제 문자와 다를 수 있다.)
+            sentence X에 대해, 각 word는 x1 x2 ... xn 이다 (인식된 결과이므로, 실제 문자와 다를 수 있다.),1 부터 시작하는 이유는, 1의 이전문자 0을 만들기 위함
             이전 문자가 Y일 때, 다음으로 등장한 문자가 Z일 확률 nextPoss[Y][Z]
         DP  이전 문자가 Y일 때, 다음으로 인식된 문자가 R일 확률 p(Y,R)=nextPoss[Y][R]*classifiPoss[R][R]+ ... +nextPoss[Y][N-1]*classifiPoss[N-1][R]
         DP  이전 문자가 Y이고, 인식된 문자가 R일 때, 실제 등장한 문자가 Z일 가능성 rp(Y,R,Z)=nextPoss[Y][Z]*classifiPoss[Z][R]/p(Y,R)
       Ocr_DP1(이전문자 Y,인식된문자 R)=가능성
         DP: 501*500
-        기저: 이전문자가 -1일 경우는 맨 처음 시작하는 경우이므로 미리 값을 정해두자. 또한 이를 처리하기위해 Y+1로 처리
       Ocr_DP2(이전문자 Y,인식된문자 R, 실제문자 Z)=가능성
         DP: 501*500*500
-        기저: 이전문자가 -1일 경우는 맨 처음 시작하는 경우이므로 미리 값을 정해두자. 또한 이를 처리하기위해 Y+1로 처리
       func(sentence 에서 idx 번째 word,idx-1에서 선택한 word)=idx번째 word부터 시작할때 최대 possibility
         DP: 100*500
         substructure: func(idx,prevWord)=for(nowWord=word range), max, Ocr_DP2(prevWord,sentence[idx],nowWord)*func(idx+1,nowWord)
-        기저: idx==sentenceLen: return 1, 맨 처음에 선택한 word는 -1로 한다.
+        기저: idx>sentenceLen: return 1, 맨 처음에 선택한 word는 0
         정답: Ocr_DP2 func_DP를 이용하여 최적 경로를 따라간다.
-  의문점
-    Ocr_DP2 있는것이 속도 측면에서 유리한가? 경로를 추적해야 하므로 Ocr_DP2 필요한긴 하지만 속도적인 측면에서.
+    의문점
+      Ocr_DP2 있는것이 속도 측면에서 유리한가? 경로를 추적해야 하므로 Ocr_DP2 필요한긴 하지만 속도적인 측면에서 어떤지.
     time complexity
-      #func(n*m)*func(m)+=O(n*m^2)
+      #func(n*m)*func(m)=O(n*m^2)
     mem complexity
-      #DP(NW)=O(NW)
+      DP(m*m*m)=O(m^3)
   */
   //DP 생성
   vector<vector<int>> DP_desp(itemWeight.size(),vector<int>(weight+1,-1));
