@@ -56,19 +56,21 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ve
             이전 문자가 Y일 때, 다음으로 등장한 문자가 Z일 확률 nextPoss[Y][Z]
         DP  이전 문자가 Y일 때, 다음으로 인식된 문자가 R일 확률 p(Y,R)=nextPoss[Y][R]*classifiPoss[R][R]+ ... +nextPoss[Y][N-1]*classifiPoss[N-1][R]
         DP  이전 문자가 Y이고, 인식된 문자가 R일 때, 실제 등장한 문자가 Z일 가능성 rp(Y,R,Z)=nextPoss[Y][Z]*classifiPoss[Z][R]/p(Y,R)
-      func(문장의 n번쨰 단어가, i번째 단어일때)= 최대 가능성
-        DP: 100*100
-        substructure: func(order,wordIdx)=for(nextWord=wordIdx range), max, nextPoss[wordIdx][nextWord]*func(order+1,nextWord)
-        기저: weightRemain<0
-        정답: 경로를 저장한 DP를 이용하여 출력
-    개선1
-      func내부의 loop를 제거하여 수행시간을 줄인다.
-      다음 물건을 선택하느냐/선택하지 않느냐로 구분
-        func(이번에 선택할 물건, 남은 캐리어 용량)= 절박도의 합
-        기저:이번에 선택할 물건==N
-      선택지가 두개뿐이다 -> 이전 기록과 비교하여 선택이 됐는지 비교 가능, 기록 DP 삭제
+      Ocr_DP1(이전문자 Y,인식된문자 R)=가능성
+        DP: 501*500
+        기저: 이전문자가 -1일 경우는 맨 처음 시작하는 경우이므로 미리 값을 정해두자. 또한 이를 처리하기위해 Y+1로 처리
+      Ocr_DP2(이전문자 Y,인식된문자 R, 실제문자 Z)=가능성
+        DP: 501*500*500
+        기저: 이전문자가 -1일 경우는 맨 처음 시작하는 경우이므로 미리 값을 정해두자. 또한 이를 처리하기위해 Y+1로 처리
+      func(sentence 에서 idx 번째 word,idx-1에서 선택한 word)=idx번째 word부터 시작할때 최대 possibility
+        DP: 100*500
+        substructure: func(idx,prevWord)=for(nowWord=word range), max, Ocr_DP2(prevWord,sentence[idx],nowWord)*func(idx+1,nowWord)
+        기저: idx==sentenceLen: return 1, 맨 처음에 선택한 word는 -1로 한다.
+        정답: Ocr_DP2 func_DP를 이용하여 최적 경로를 따라간다.
+  의문점
+    Ocr_DP2 있는것이 속도 측면에서 유리한가? 경로를 추적해야 하므로 Ocr_DP2 필요한긴 하지만 속도적인 측면에서.
     time complexity
-      #func(NW)*func(1)+=O(NW)
+      #func(n*m)*func(m)+=O(n*m^2)
     mem complexity
       #DP(NW)=O(NW)
   */
