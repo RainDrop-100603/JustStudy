@@ -60,7 +60,7 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ve
         DP: 500*500
       Ocr_DP2(이전문자 Y,인식된문자 R, 실제문자 Z)=가능성
         DP: 501*500*500
-        맨 첫번째 문자는 이전문자가 없다. 따라서 이전문자를 -1로 해주고, DP에는  Y+1위치에 저장하도록 하자
+        맨 첫번째 문자는 이전문자가 없다. 따라서 이전문자를 -1로 해주고, DP에는 Y+1위치에 저장하도록 하자
         기저: Y==0인 모든 경우를 우선 설정해준다.
       func(sentence 에서 idx 번째 word,idx-1에서 선택한 word)=idx번째 word부터 시작할때 최대 possibility
         DP: 100*500
@@ -75,7 +75,8 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ve
       DP(m*m*m)=O(m^3)
   */
   //DP 생성
-  vector<vector<int>> DP_desp(itemWeight.size(),vector<int>(weight+1,-1));
+  vector<vector<int>> DP_Ocr1(wordNum,vector<int>(wordNum,-1));
+  vector<vector<vector<int>>> DP_Ocr2(wordNum,vector<vector<int>>(wordNum,vector<int>(wordNum,-1)));
   //DP 채우기
   int tmp=Packing_DP(DP_desp,itemWeight,itemDesp,0,weight);
   //정답 생성
