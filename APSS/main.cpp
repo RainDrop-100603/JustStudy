@@ -38,6 +38,7 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>
   double& result=DP_Poss[idx][before];
   if(result>-0.5) return result;
   //함수
+  for()
 
   return result;
 }
@@ -103,7 +104,7 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
     }
     wordsIdx.push_back(wordArrMap.find(tmpWord)->second);
     //조건부 출현확률 최대치 도출
-    vector<vector<double>> DP_Poss(wordsIdx.size(),vector<double>(wordNum+1,-1));
+    vector<vector<vector<double>>> DP_Poss(wordsIdx.size(),vector<double>(wordNum+1,-1));
     double maxPoss=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,wordsIdx,0,-1);
     //경로 도출
     vector<int> path=Ocr_path(DP_Ocr2,DP_Poss,maxPoss,wordsIdx,0);
