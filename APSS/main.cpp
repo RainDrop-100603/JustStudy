@@ -63,10 +63,10 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
         DP: 501*500*500
         맨 첫번째 문자는 이전문자가 없다. 따라서 이전문자를 -1로 해주고, DP에는 Y+1위치에 저장하도록 하자
         기저: Y==0인 모든 경우를 우선 설정해준다.
-      func(sentence 에서 idx 번째 word,idx-1에서 선택한 word)=idx번째 word부터 시작할때 최대 possibility
+      func(sentence 에서 idx 번째 word,실제 word:X)=idx번째 word부터 시작하며, 해당 word의 실제 값이 X일 때, 최대 possibility
         DP: 100*500
-        substructure: func(idx,prevWord)=for(nowWord=word range), max, Ocr_DP2(prevWord,sentence[idx],nowWord)*func(idx+1,nowWord)
-        기저: idx>sentenceLen: return 1, 맨 처음에 선택한 word는 -1
+        substructure: func(idx,nowWord)=for(nextWord=word range), max, Ocr_DP2(nowWord,wordArr[idx+1],nextWord)*func(idx+1,nextWord)
+        기저: idx==sentenceLen: return 1
         정답: Ocr_DP2 func_DP를 이용하여 최적 경로를 따라간다.
     의문점
       Ocr_DP2 있는것이 속도 측면에서 유리한가? 경로를 추적해야 하므로 Ocr_DP2 필요한긴 하지만 속도적인 측면에서 어떤지.
@@ -104,10 +104,11 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
     }
     wordsIdx.push_back(wordArrMap.find(tmpWord)->second);
     //조건부 출현확률 최대치 도출
-    vector<vector<vector<double>>> DP_Poss(wordsIdx.size(),vector<double>(wordNum+1,-1));
+    vector<vector<double>> DP_Poss(wordsIdx.size(),vector<double>(wordNum+1,-1));
+    vector<vector<double>> DP_Path()=DP_Poss;
     double maxPoss=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,wordsIdx,0,-1);
     //경로 도출
-    vector<int> path=Ocr_path(DP_Ocr2,DP_Poss,maxPoss,wordsIdx,0);
+    vector<int> path=Ocr_path(DP_Path,start);
     string tmpResult;
     for(auto& ele: path){
       tmpResult+=wordArr[ele]+' ';
