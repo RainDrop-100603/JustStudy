@@ -6,15 +6,18 @@
 #include <algorithm>
 #include <cstring>
 #include <cmath>
+#include <map>
 
 using namespace std;
 
-void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
                 vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
   cin>>wordNum>>sentenceNum;
-  wordArr.resize(wordNum);
-  for(auto& ele:wordArr)
-    cin>>ele;
+  for(int i=0;i<wordNum;i++){
+    string tmp;cin>>tmp;
+    wordArrMap.insert({tmp,i});
+    wordArr.push_back(tmp);
+  }
   firstPoss.resize(wordNum);
   for(auto& ele: firstPoss)
     scanf("%lf",&ele);
@@ -30,7 +33,15 @@ void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,vector<doub
   for(auto& ele: sentenceArr)
     getline(cin,ele);
 }
-vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>& DP_Ocr2,vector<vector<double>>& DP_Poss,vector<int>& wordsIdx,int idx,int before){
+  //이미 값이 있는경우
+  double& result=DP_Poss[idx][before];
+  if(result>-0.5) return result;
+  //함수
+
+  return result;
+}
+vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
                 vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
   /*
   10초, 64MB, 테스트케이스=문장의 수 20개
@@ -78,30 +89,41 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ve
   //정답 생성
   vector<string> result;
   for(int cnt=0;cnt<sentenceNum;cnt++){
-    //sentence의 각 word 분리
+    //sentence의 각 word 분리, idx로 치환하여저장
     vector<int> wordsIdx;
     string sentence=sentenceArr[cnt].substr(2); //앞에 두개는 sentence의 word 갯수, 공백(스페이스바)
     string tmpWord;
     for(auto iter=sentence.begin();iter!=sentence.end();iter++){
       if(*iter==' '){
-        wordsIdx.push_back(tmpWord);
+        wordsIdx.push_back(wordArrMap.find(tmpWord)->second);
         tmpWord.clear();
       }else{
         tmpWord.push_back(*iter);
       }
     }
-    wordsIdx.push_back(move(tmpWord));
+    wordsIdx.push_back(wordArrMap.find(tmpWord)->second);
     //조건부 출현확률 최대치 도출
-    double maxPoss=Ocr_DPposs(DP_Ocr1,DP_Ocr2,wordsIdx,wordsIdx.front(),-1);
+    vector<vector<double>> DP_Poss(wordsIdx.size(),vector<double>(wordNum+1,-1));
+    double maxPoss=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,wordsIdx,0,-1);
+    //경로 도출
+    vector<int> path=Ocr_path(DP_Ocr2,DP_Poss,maxPoss,wordsIdx,0);
+    string tmpResult;
+    for(auto& ele: path){
+      tmpResult+=wordArr[ele]+' ';
+    }
+    tmpResult.pop_back(); //마지막 공백 제거 
+    //result에 정답 입력
+    result.push_back(move(tmpResult));
   }
 }
 void Ocr(){
   int wordNum,sentenceNum;
   vector<string> wordArr,sentenceArr;   //i, am, a, boy, buy 각 단어 저장, i am a boy 각 문장 저장
+  map<string,int> wordArrMap;
   vector<double> firstPoss;    //맨 처음에 각 word가 나올 확률
   vector<vector<double>> nextPoss,classifiPoss; //A(ij)=i단어 다음 j단어가 나올 확률, B(ij)=i단어를 j단어로 분류할 확률
-  Ocr_Input(wordNum,sentenceNum,wordArr,firstPoss,nextPoss,classifiPoss,sentenceArr);
-  vector<string> result=Ocr_Algo(wordNum,sentenceNum,wordArr,firstPoss,nextPoss,classifiPoss,sentenceArr);
+  Ocr_Input(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
+  vector<string> result=Ocr_Algo(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
   for(auto& ele:result){
     cout<<ele<<'\n';
   }
