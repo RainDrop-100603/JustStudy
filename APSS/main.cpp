@@ -30,17 +30,6 @@ void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,vector<doub
   for(auto& ele: sentenceArr)
     getline(cin,ele);
 }
-int Ocr_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& itemDesp,int nowChoice,int weightRemain){
-  //기저, nowChoice==N
-  if(nowChoice==itemDesp.size()) return 0;
-  int& result=DP_desp[nowChoice][weightRemain];
-  if(result!=-1) return result;
-  //substructrue, 선택하지 않았을경우, 선택했을경우
-  result=Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain);
-  if(weightRemain>=itemWeight[nowChoice])
-    result=max(result,itemDesp[nowChoice]+Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain-itemWeight[nowChoice]));
-  return result;
-}
 vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
                 vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
   /*
@@ -75,25 +64,36 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ve
       DP(m*m*m)=O(m^3)
   */
   //DP 생성
-  vector<vector<int>> DP_Ocr1(wordNum,vector<int>(wordNum,-1));
-  vector<vector<vector<int>>> DP_Ocr2(wordNum,vector<vector<int>>(wordNum,vector<int>(wordNum,-1)));
-  //DP 채우기
-  int tmp=Packing_DP(DP_desp,itemWeight,itemDesp,0,weight);
-  //정답 생성
-  vector<int> result;
-  result.push_back(tmp);
-  int nowPick(0),weightRemain(weight);
-  while(nowPick<itemWeight.size()-1){
-    //선택했다면, 절박도가 다를것이다.
-    if(DP_desp[nowPick][weightRemain]!=DP_desp[nowPick+1][weightRemain]){
-      result.push_back(nowPick);
-      weightRemain-=itemWeight[nowPick];
+  vector<vector<double>> DP_Ocr1(wordNum,vector<double>(wordNum,-1));
+  vector<vector<vector<double>>> DP_Ocr2(wordNum+1,vector<vector<double>>(wordNum,vector<double>(wordNum,-1)));
+  //DP 기저
+  for(int guess=0;guess<wordNum;guess++){
+    for(int real=0;real<wordNum;real++){
+      double guessPoss(0);
+      for(int k=0;k<wordNum;k++)
+        guessPoss+=firstPoss[k]*classifiPoss[k][guess];
+      DP_Ocr2[0][guess][real]=firstPoss[real]*classifiPoss[real][guess]/guessPoss;
     }
-    nowPick++;
   }
-  if(DP_desp[nowPick][weightRemain]>0)
-    result.push_back(nowPick);
-  return result;
+  //정답 생성
+  vector<string> result;
+  for(int cnt=0;cnt<sentenceNum;cnt++){
+    //sentence의 각 word 분리
+    vector<int> wordsIdx;
+    string sentence=sentenceArr[cnt].substr(2); //앞에 두개는 sentence의 word 갯수, 공백(스페이스바)
+    string tmpWord;
+    for(auto iter=sentence.begin();iter!=sentence.end();iter++){
+      if(*iter==' '){
+        wordsIdx.push_back(tmpWord);
+        tmpWord.clear();
+      }else{
+        tmpWord.push_back(*iter);
+      }
+    }
+    wordsIdx.push_back(move(tmpWord));
+    //조건부 출현확률 최대치 도출
+    double maxPoss=Ocr_DPposs(DP_Ocr1,DP_Ocr2,wordsIdx,wordsIdx.front(),-1);
+  }
 }
 void Ocr(){
   int wordNum,sentenceNum;

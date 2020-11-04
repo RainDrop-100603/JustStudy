@@ -57,6 +57,10 @@ using namespace std;
   비둘기집 원리 - 필연적인 중복 발생
   구성적 증명 - 안정적인 짝 찾기
 ------------------------------
+string to something
+  int stoi(const string& str, size_t* idx, int base=10): string을 앞에서부터 base형식 int로 변환, int 바로 다음 위치를 idx에 저장
+    ex) 2001, test: return==2001, idx=4
+------------------------------
 자주하는 실수
   산술 오버플로우
   배열 범위 밖 원소 접근 (런타임 에러 발생 가능)
