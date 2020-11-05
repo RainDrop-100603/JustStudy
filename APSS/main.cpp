@@ -9,21 +9,21 @@
 #include <map>
 
 using namespace std;
-int cmpDouble_Abs(double a, double b, double absTolerance=(1.0e-8)){
+int cmpDouble_Abs(double a, double b, double absTolerance=(1.0e-8)){  // 1:(a>b), 0:(a==b), -1:(a<b)
   //큰 수는 비교하기 어렵다.
   double diff=a-b;
   if(fabs(diff)<=absTolerance) 
     return 0;
   return diff>0 ? 1: -1;
 }
-int cmpDouble_Rel(double a, double b, double relTolerance=__DBL_EPSILON__){
+int cmpDouble_Rel(double a, double b, double relTolerance=__DBL_EPSILON__){  // 1:(a>b), 0:(a==b), -1:(a<b)
   //0에 아주 가까운 작은 값은 비교하기 어렵다
   double diff=a-b;
   if(fabs(diff)<=relTolerance*max(fabs(a),fabs(b))) 
     return 0;
   return diff>0 ? 1: -1;
 }
-int cmpDouble_AbsRel(double a, double b, double absTolerance=(1.0e-8), double relTolerance=__DBL_EPSILON__){
+int cmpDouble_AbsRel(double a, double b, double absTolerance=(1.0e-8), double relTolerance=__DBL_EPSILON__){  // 1:(a>b), 0:(a==b), -1:(a<b)
   double diff=a-b;
   if(fabs(diff)<=absTolerance) // absolute compare
     return 0;  
@@ -31,7 +31,7 @@ int cmpDouble_AbsRel(double a, double b, double absTolerance=(1.0e-8), double re
     return 0; 
   return diff>0 ? 1: -1;
 }
-int cmpDouble_Ulps(double a, double b, int ulpsTolerance=4){
+int cmpDouble_Ulps(double a, double b, int ulpsTolerance=4){  // 1:(a>b), 0:(a==b), -1:(a<b)
   //bit를 double이 아닌 long long(64bit)으로 해석하여, 두 값을 정수형태로 비교, 상대오차 비교와 유사
   //주의할 것은 double->long long으로 형을 변환한것이 아닌, 비트 자체는 그대로 두고 long long으로 해석한 것
   double diff=a-b;
@@ -48,7 +48,7 @@ int cmpDouble_Ulps(double a, double b, int ulpsTolerance=4){
     return 0;
   return (diff>0) ? 1: -1; 
 }
-int cmpDouble_UlpsAbs(double a, double b, int absTolerance=(1.0e-8), int ulpsTolerance=4){
+int cmpDouble_UlpsAbs(double a, double b, int absTolerance=(1.0e-8), int ulpsTolerance=4){  // 1:(a>b), 0:(a==b), -1:(a<b)
   double diff=a-b;
   if(fabs(diff)<=absTolerance) 
     return 0;
@@ -97,14 +97,16 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>
   if(idx==-1){
     for(int i=0;i<wordNum;i++){
       double tmp=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,DP_Path,wordsIdx,0,i);
-      if(tmp>result){
+      if(cmpDouble_AbsRel(tmp,result)==1){
         result=tmp;
         path=i;
       }
     }
   }
   //함수
-  for()
+  for(int i=0;i<wordNum;i++){
+    double tmp=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,DP_Path,wordsIdx,idx+1,i);
+  }
 
   return result;
 }
