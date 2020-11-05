@@ -9,7 +9,58 @@
 #include <map>
 
 using namespace std;
-
+int cmpDouble_Abs(double a, double b, double absTolerance=(1.0e-8)){
+  //큰 수는 비교하기 어렵다.
+  double diff=a-b;
+  if(fabs(diff)<=absTolerance) 
+    return 0;
+  return diff>0 ? 1: -1;
+}
+int cmpDouble_Rel(double a, double b, double relTolerance=__DBL_EPSILON__){
+  //0에 아주 가까운 작은 값은 비교하기 어렵다
+  double diff=a-b;
+  if(fabs(diff)<=relTolerance*max(fabs(a),fabs(b))) 
+    return 0;
+  return diff>0 ? 1: -1;
+}
+int cmpDouble_AbsRel(double a, double b, double absTolerance=(1.0e-8), double relTolerance=__DBL_EPSILON__){
+  double diff=a-b;
+  if(fabs(diff)<=absTolerance) // absolute compare
+    return 0;  
+  if(fabs(diff)<=relTolerance*max(fabs(a),fabs(b))) // relative compare
+    return 0; 
+  return diff>0 ? 1: -1;
+}
+int cmpDouble_Ulps(double a, double b, int ulpsTolerance=4){
+  //bit를 double이 아닌 long long(64bit)으로 해석하여, 두 값을 정수형태로 비교, 상대오차 비교와 유사
+  //주의할 것은 double->long long으로 형을 변환한것이 아닌, 비트 자체는 그대로 두고 long long으로 해석한 것
+  double diff=a-b;
+  long long na=*((long long*)&a); //bit를 long long형식으로 해석했을경우
+  long long nb=*((long long*)&b);
+  //부호비트를 비교, 부호가 다를경우 처리
+  if((na&0x8000000000000000)!=(nb&0x8000000000000000)){
+    if(a==b) //0은 double에서 +0과 -0으로 처리되므로, 부호비트가 다를수도 있다.
+      return 0;  
+    return diff>0 ? 1: -1;  //부호가 다르면 비교가 easy
+  }
+  long long ulpsDiff=abs(na-nb); //ulps 비교
+  if(ulpsDiff<=ulpsTolerance) 
+    return 0;
+  return (diff>0) ? 1: -1; 
+}
+int cmpDouble_UlpsAbs(double a, double b, int absTolerance=(1.0e-8), int ulpsTolerance=4){
+  double diff=a-b;
+  if(fabs(diff)<=absTolerance) 
+    return 0;
+  long long na=*((long long*)&a); 
+  long long nb=*((long long*)&b);
+  if((na&0x8000000000000000)!=(nb&0x8000000000000000)) 
+    return diff>0 ? 1: -1;  
+  long long ulpsDiff=abs(na-nb); 
+  if(ulpsDiff<=ulpsTolerance) 
+    return 0;
+  return (diff>0) ? 1: -1;
+}
 void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
                 vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
   cin>>wordNum>>sentenceNum;
@@ -33,17 +84,32 @@ void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,
   for(auto& ele: sentenceArr)
     getline(cin,ele);
 }
-double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>& DP_Ocr2,vector<vector<double>>& DP_Poss,vector<int>& wordsIdx,int idx,int before){
+double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>& DP_Ocr2,vector<vector<double>>& DP_Poss,
+                  vector<vector<int>>& DP_Path, vector<int>& wordsIdx,int idx,int nowWord){
   //이미 값이 있는경우
-  double& result=DP_Poss[idx][before];
+  double& result=DP_Poss[idx+1][nowWord];
   if(result>-0.5) return result;
+  //함수 진행
+  result=0;
+  int wordNum=DP_Poss[0].size();
+  int& path=DP_Path[idx+1][nowWord];
+  //맨처음, idx==-1인 경우
+  if(idx==-1){
+    for(int i=0;i<wordNum;i++){
+      double tmp=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,DP_Path,wordsIdx,0,i);
+      if(tmp>result){
+        result=tmp;
+        path=i;
+      }
+    }
+  }
   //함수
   for()
 
   return result;
 }
-vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
-                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
+vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,
+                        vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
   /*
   10초, 64MB, 테스트케이스=문장의 수 20개
   입력: 분석이 끝난 과거 자료의 통계치, 분류기가 인식한 문장으로구성, 자세한 내용은 문제에서 확인
@@ -104,11 +170,11 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
     }
     wordsIdx.push_back(wordArrMap.find(tmpWord)->second);
     //조건부 출현확률 최대치 도출
-    vector<vector<double>> DP_Poss(wordsIdx.size(),vector<double>(wordNum+1,-1));
-    vector<vector<double>> DP_Path()=DP_Poss;
-    double maxPoss=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,wordsIdx,0,-1);
+    vector<vector<double>> DP_Poss(wordsIdx.size()+1,vector<double>(wordNum,-1));
+    vector<vector<int>> DP_Path(wordsIdx.size()+1,vector<int>(wordNum,-1));
+    double maxPoss=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,DP_Path,wordsIdx,-1,-1);
     //경로 도출
-    vector<int> path=Ocr_path(DP_Path,start);
+    vector<int> path=Ocr_path(DP_Path,-1);
     string tmpResult;
     for(auto& ele: path){
       tmpResult+=wordArr[ele]+' ';
