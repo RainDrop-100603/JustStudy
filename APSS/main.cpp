@@ -84,12 +84,10 @@ void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,
   for(auto& ele: sentenceArr)
     getline(cin,ele);
 }
-double Ocr_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,int prev, int )
-double Ocr_DP2(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>& DP_Ocr2,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
-                  vector<vector<double>>& DP_Poss,int prev, int nowGuess, int nowReal){
+double Ocr_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,int prev, int nextGuessPoss){
 
 }
-double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>& DP_Ocr2,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
+double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
                   vector<vector<double>>& DP_Poss,vector<vector<int>>& DP_Path, vector<int>& wordsIdx,int idx,int nowWord){
   //이미 값이 있는경우
   double& result=DP_Poss[idx+1][nowWord];
@@ -100,8 +98,11 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>
   int& path=DP_Path[idx+1][nowWord];
   //맨처음, idx==-1인 경우
   if(idx==-1){
+    double nextGuessPoss=0;
+    for(int i=0;i<wordNum;i++)  //실제 다음위치가 i 값인데, 이를 wordsIdx[0] 으로 인식했을 확률
+      nextGuessPoss+=firstPoss[i]*classifiPoss[i][wordsIdx[0]];
     for(int i=0;i<wordNum;i++){
-      double tmp=Ocr_DP2(DP_Ocr1,DP_Ocr2,-1,wordsIdx[0],i)*Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,DP_Path,wordsIdx,0,i);
+      double tmp=firstPoss[i]*classifiPoss[i][wordsIdx[0]]*Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordsIdx,0,i)/nextGuessPoss;
       if(cmpDouble_AbsRel(tmp,result)==1){
         result=tmp;
         path=i;
@@ -110,8 +111,16 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>
   }
   //함수
   for(int i=0;i<wordNum;i++){
-    double tmp=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,DP_Path,wordsIdx,idx+1,i);
-
+    double nextGuessPoss=0;
+    for(int i=0;i<wordNum;i++)  //실제 다음위치가 i 값인데, 이를 wordsIdx[0] 으로 인식했을 확률
+      nextGuessPoss+=nextPoss[nowWord][i]*classifiPoss[i][wordsIdx[0]];
+    for(int i=0;i<wordNum;i++){
+      double tmp=nextPoss[nowWord][i]*classifiPoss[i][wordsIdx[0]]*Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordsIdx,0,i)/nextGuessPoss;
+      if(cmpDouble_AbsRel(tmp,result)==1){
+        result=tmp;
+        path=i;
+      }
+    }
   }
 
   return result;
@@ -129,18 +138,15 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
             sentence X에 대해, 각 word는 x0 x2 ... xn-1 이다 (인식된 결과이므로, 실제 문자와 다를 수 있다.)
             이전 문자가 Y일 때, 다음으로 등장한 문자가 Z일 확률 nextPoss[Y][Z]
         DP  이전 문자가 Y일 때, 다음으로 인식된 문자가 R일 확률 p(Y,R)=nextPoss[Y][0]*classifiPoss[0][R]+ ... +nextPoss[Y][m-1]*classifiPoss[m-1][R]
-        DP  이전 문자가 Y이고, 인식된 문자가 R일 때, 실제 등장한 문자가 Z일 가능성 rp(Y,R,Z)=nextPoss[Y][Z]*classifiPoss[Z][R]/p(Y,R)
+            이전 문자가 Y이고, 인식된 문자가 R일 때, 실제 등장한 문자가 Z일 가능성 rp(Y,R,Z)=nextPoss[Y][Z]*classifiPoss[Z][R]/p(Y,R)
+              맨 처음 문자는 이전문자를 -1이라고 가정하고 처리하자
       Ocr_DP1(이전문자 Y,인식된문자 R)=가능성
         DP: 500*500
-      Ocr_DP2(이전문자 Y,인식된문자 R, 실제문자 Z)=가능성
-        DP: 501*500*500
-        맨 첫번째 문자는 이전문자가 없다. 따라서 이전문자를 -1로 해주고, DP에는 Y+1위치에 저장하도록 하자
-        기저: Y==0인 모든 경우를 우선 설정해준다.
       func(sentence 에서 idx 번째 word,실제 word:X)=idx번째 word가 X일 때, idx+1부터 시작하는 sentence의 조건부 확률 최대치
           idx부터 시작하는 sentence의 조건부 확률 최대치 = DP[0][0] 
         DP: 101*500, idx번째 정보는 idx+1 위치에 저장 
-        substructure: func(idx,nowWord)=for(nextWord=word range), max, Ocr_DP2(nowWord,wordArr[idx+1],nextWord)*func(idx+1,nextWord)
-        기저: idx==sentenceLen: return 1, idx==-1: 따로 적용
+        substructure: func(idx,nowWord)=for(nextWord=word range), max, nextPoss[Y][Z]*classifiPoss[Z][R]/Ocr_DP1(Y,R)*func(idx+1,nextWord)
+        기저: idx==sentenceLen: return 1, idx==-1: nextPoss 대신 firstPoss 사용 
         정답: Ocr_DP2 func_DP를 이용하여 최적 경로를 따라간다.
     의문점
       Ocr_DP2 있는것이 속도 측면에서 유리한가? 경로를 추적해야 하므로 Ocr_DP2 필요한긴 하지만 속도적인 측면에서 어떤지.
@@ -152,16 +158,6 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
   */
   //DP 생성
   vector<vector<double>> DP_Ocr1(wordNum,vector<double>(wordNum,-1));
-  vector<vector<vector<double>>> DP_Ocr2(wordNum+1,vector<vector<double>>(wordNum,vector<double>(wordNum,-1)));
-  //DP 기저
-  for(int guess=0;guess<wordNum;guess++){
-    for(int real=0;real<wordNum;real++){
-      double guessPoss(0);
-      for(int k=0;k<wordNum;k++)
-        guessPoss+=firstPoss[k]*classifiPoss[k][guess];
-      DP_Ocr2[0][guess][real]=firstPoss[real]*classifiPoss[real][guess]/guessPoss;
-    }
-  }
   //정답 생성
   vector<string> result;
   for(int cnt=0;cnt<sentenceNum;cnt++){
@@ -181,7 +177,7 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
     //조건부 출현확률 최대치 도출
     vector<vector<double>> DP_Poss(wordsIdx.size()+1,vector<double>(wordNum,-1));
     vector<vector<int>> DP_Path(wordsIdx.size()+1,vector<int>(wordNum,-1));
-    double maxPoss=Ocr_DPposs(DP_Ocr1,DP_Ocr2,nextPoss,classifiPoss,DP_Poss,DP_Path,wordsIdx,-1,0);
+    double maxPoss=Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordsIdx,-1,0);
     //경로 도출
     vector<int> path=Ocr_path(DP_Path,-1);
     string tmpResult;
