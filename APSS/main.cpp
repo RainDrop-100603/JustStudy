@@ -84,8 +84,13 @@ void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,
   for(auto& ele: sentenceArr)
     getline(cin,ele);
 }
-double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>& DP_Ocr2,vector<vector<double>>& DP_Poss,
-                  vector<vector<int>>& DP_Path, vector<int>& wordsIdx,int idx,int nowWord){
+double Ocr_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,int prev, int )
+double Ocr_DP2(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>& DP_Ocr2,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
+                  vector<vector<double>>& DP_Poss,int prev, int nowGuess, int nowReal){
+
+}
+double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>& DP_Ocr2,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
+                  vector<vector<double>>& DP_Poss,vector<vector<int>>& DP_Path, vector<int>& wordsIdx,int idx,int nowWord){
   //이미 값이 있는경우
   double& result=DP_Poss[idx+1][nowWord];
   if(result>-0.5) return result;
@@ -96,7 +101,7 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>
   //맨처음, idx==-1인 경우
   if(idx==-1){
     for(int i=0;i<wordNum;i++){
-      double tmp=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,DP_Path,wordsIdx,0,i);
+      double tmp=Ocr_DP2(DP_Ocr1,DP_Ocr2,-1,wordsIdx[0],i)*Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,DP_Path,wordsIdx,0,i);
       if(cmpDouble_AbsRel(tmp,result)==1){
         result=tmp;
         path=i;
@@ -106,6 +111,7 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<vector<vector<double>>>
   //함수
   for(int i=0;i<wordNum;i++){
     double tmp=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,DP_Path,wordsIdx,idx+1,i);
+
   }
 
   return result;
@@ -115,8 +121,7 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
   /*
   10초, 64MB, 테스트케이스=문장의 수 20개
   입력: 분석이 끝난 과거 자료의 통계치, 분류기가 인식한 문장으로구성, 자세한 내용은 문제에서 확인
-  출력: 한 뭉장마다 한 줄에 주어진 인식 결과에 대해 조건주 출현 확률이 가장 높은 문장을 출력, 같은 확률을 가진 문장이 여러개라면 어떤것을 출력해도 좋다.
-  제한: 절박도 최대=100*1000=100000
+  출력: 한 문장마다 한 줄에 주어진 인식 결과에 대해 조건주 출현 확률이 가장 높은 문장을 출력, 같은 확률을 가진 문장이 여러개라면 어떤것을 출력해도 좋다.
   전략1
     Dynamic Programming
       준비: sentenceArr->sentence->word 로 분해
@@ -131,13 +136,15 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
         DP: 501*500*500
         맨 첫번째 문자는 이전문자가 없다. 따라서 이전문자를 -1로 해주고, DP에는 Y+1위치에 저장하도록 하자
         기저: Y==0인 모든 경우를 우선 설정해준다.
-      func(sentence 에서 idx 번째 word,실제 word:X)=idx번째 word부터 시작하며, 해당 word의 실제 값이 X일 때, 최대 possibility
-        DP: 100*500
+      func(sentence 에서 idx 번째 word,실제 word:X)=idx번째 word가 X일 때, idx+1부터 시작하는 sentence의 조건부 확률 최대치
+          idx부터 시작하는 sentence의 조건부 확률 최대치 = DP[0][0] 
+        DP: 101*500, idx번째 정보는 idx+1 위치에 저장 
         substructure: func(idx,nowWord)=for(nextWord=word range), max, Ocr_DP2(nowWord,wordArr[idx+1],nextWord)*func(idx+1,nextWord)
-        기저: idx==sentenceLen: return 1
+        기저: idx==sentenceLen: return 1, idx==-1: 따로 적용
         정답: Ocr_DP2 func_DP를 이용하여 최적 경로를 따라간다.
     의문점
       Ocr_DP2 있는것이 속도 측면에서 유리한가? 경로를 추적해야 하므로 Ocr_DP2 필요한긴 하지만 속도적인 측면에서 어떤지.
+        -> 함수 실행시간이 1이므로 속도측면에서 유리하지 않다. 경로추적은 전용 DP를 추가하여 해결하자
     time complexity
       #func(n*m)*func(m)+#Ocr_DP2(n*m^2)*Ocr_DP2(1)+#Ocr_DP1(n*m)*Ocr_DP1(m)=O(n*m^2)
     mem complexity
@@ -174,7 +181,7 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
     //조건부 출현확률 최대치 도출
     vector<vector<double>> DP_Poss(wordsIdx.size()+1,vector<double>(wordNum,-1));
     vector<vector<int>> DP_Path(wordsIdx.size()+1,vector<int>(wordNum,-1));
-    double maxPoss=Ocr_DPposs(DP_Ocr1,DP_Ocr2,DP_Poss,DP_Path,wordsIdx,-1,-1);
+    double maxPoss=Ocr_DPposs(DP_Ocr1,DP_Ocr2,nextPoss,classifiPoss,DP_Poss,DP_Path,wordsIdx,-1,0);
     //경로 도출
     vector<int> path=Ocr_path(DP_Path,-1);
     string tmpResult;
