@@ -9,6 +9,7 @@
 #include <map>
 
 using namespace std;
+
 int cmpDouble_Abs(double a, double b, double absTolerance=(1.0e-8)){  // 1:(a>b), 0:(a==b), -1:(a<b)
   //큰 수는 비교하기 어렵다.
   double diff=a-b;
@@ -84,34 +85,66 @@ void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,
   for(auto& ele: sentenceArr)
     getline(cin,ele);
 }
-double Ocr_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,int prev, int nextGuess){
-  double& result=DP_Ocr1[prev][nextGuess];
+void Ocr_Input_test(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
+  cout<<"wordNum: "<<wordNum<<"\n";
+  cout<<"sentenceNum: "<<sentenceNum<<"\n";
+  cout<<"wordArr----------\n";
+  for(auto& ele: wordArr)
+    cout<<ele<<" ";
+  cout<<"\n";
+  cout<<"wordArrMap----------\n";
+  for(auto& ele:wordArrMap)
+    cout<<"("<<ele.first<<", "<<ele.second<<") ";
+  cout<<"\n";
+  cout<<"firstPoss----------\n";
+  for(auto& ele: firstPoss)
+    cout<<ele<<" ";
+  cout<<"\n";
+  cout<<"nextPoss----------\n";
+  for(auto& ele:nextPoss){
+    for(auto& ele2:ele)
+      cout<<ele2<<" ";
+    cout<<"\n";
+  }
+  cout<<"classifiPoss----------\n";
+  for(auto& ele:classifiPoss){
+    for(auto& ele2:ele)
+      cout<<ele2<<" ";
+    cout<<"\n";
+  }
+  cout<<"sentenceArr----------\n";
+  for(auto& ele:sentenceArr)
+    cout<<ele<<"END\n";
+}
+double Ocr_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,int now, int nextGuess){
+  double& result=DP_Ocr1[now][nextGuess];
   if(result>-0.5)
     return result;
-  result=0;
+  result=0.0;
   for(int i=0;i<nextPoss[0].size();i++)
-    result+=nextPoss[prev][i]*classifiPoss[i][nextGuess];
+    result+=nextPoss[now][i]*classifiPoss[i][nextGuess];
   return result;
 }
 double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
-                  vector<vector<double>>& DP_Poss,vector<vector<int>>& DP_Path, vector<int>& wordsIdx,int idx,int nowWord){
+                  vector<vector<double>>& DP_Poss,vector<vector<int>>& DP_Path, vector<int>& wordOfSentence,int idx,int nowWord){
   //기저, 범위 밖, 이미 값이 있는경우
-  if(idx==wordsIdx.size())
+  if(idx==wordOfSentence.size()-1)
     return 1;
   double& result=DP_Poss[idx+1][nowWord];
   if(result>-0.5) 
     return result;
   //함수 진행
   int wordNum=DP_Poss[0].size();
-  result=0;
+  result=0.0;
   int& path=DP_Path[idx+1][nowWord];
   //맨처음, idx==-1인 경우
   if(idx==-1){
-    double nextGuessPoss=0;
-    for(int i=0;i<wordNum;i++)  //실제 다음위치가 i 값인데, 이를 wordsIdx[0] 으로 인식했을 확률
-      nextGuessPoss+=firstPoss[i]*classifiPoss[i][wordsIdx[0]];
+    double nextGuessPoss=0.0;
+    for(int i=0;i<wordNum;i++)  //실제 다음위치가 i 값인데, 이를 wordOfSentence[0] 으로 인식했을 확률
+      nextGuessPoss+=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]];
     for(int i=0;i<wordNum;i++){
-      double tmp=firstPoss[i]*classifiPoss[i][wordsIdx[0]]*Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordsIdx,0,i)/nextGuessPoss;
+      double tmp=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,0,i)/nextGuessPoss;
       if(cmpDouble_AbsRel(tmp,result)==1){
         result=tmp;
         path=i;
@@ -119,9 +152,9 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vect
     }
   }
   //함수
+  double nextGuessPoss=Ocr_DP1(DP_Ocr1,nextPoss,classifiPoss,nowWord,wordOfSentence[idx+1]);
   for(int i=0;i<wordNum;i++){
-    double nextGuessPoss=Ocr_DP1(DP_Ocr1,nextPoss,classifiPoss,nowWord,wordsIdx[idx+1]);
-    double tmp=nextPoss[nowWord][i]*classifiPoss[i][wordsIdx[idx+1]]*Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordsIdx,idx+1,i)/nextGuessPoss;
+    double tmp=nextPoss[nowWord][i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,idx+1,i)/nextGuessPoss;
     if(cmpDouble_AbsRel(tmp,result)==1){
       result=tmp;
       path=i;
@@ -161,31 +194,31 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
       DP(m*m*m)=O(m^3)
   */
   //DP 생성
-  vector<vector<double>> DP_Ocr1(wordNum,vector<double>(wordNum,-1));
+  vector<vector<double>> DP_Ocr1(wordNum,vector<double>(wordNum,-1.0));
   //정답 생성
   vector<string> result;
-  for(int cnt=0;cnt<sentenceNum;cnt++){
+  for(auto& ele: sentenceArr){
     //sentence의 각 word 분리, idx로 치환하여저장
-    vector<int> wordsIdx;
-    string sentence=sentenceArr[cnt].substr(2); //앞에 두개는 sentence의 word 갯수, 공백(스페이스바)
+    vector<int> wordOfSentence;
+    string sentence=ele.substr(2); //앞에 두개는 sentence의 word 갯수, 공백(스페이스바)
     string tmpWord;
     for(auto iter=sentence.begin();iter!=sentence.end();iter++){
       if(*iter==' '){
-        wordsIdx.push_back(wordArrMap.find(tmpWord)->second);
+        wordOfSentence.push_back(wordArrMap.find(tmpWord)->second);
         tmpWord.clear();
       }else{
         tmpWord.push_back(*iter);
       }
     }
-    wordsIdx.push_back(wordArrMap.find(tmpWord)->second);
+    wordOfSentence.push_back(wordArrMap.find(tmpWord)->second);
     //조건부 출현확률 최대치 도출
-    vector<vector<double>> DP_Poss(wordsIdx.size()+1,vector<double>(wordNum,-1));
-    vector<vector<int>> DP_Path(wordsIdx.size()+1,vector<int>(wordNum,-1));
-    double maxPoss=Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordsIdx,-1,0);
+    vector<vector<double>> DP_Poss(wordOfSentence.size()+1,vector<double>(wordNum,-1.0));
+    vector<vector<int>> DP_Path(wordOfSentence.size()+1,vector<int>(wordNum,-1));
+    Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,-1,0);
     //경로 도출
     vector<int> path;
     int frag=DP_Path[0][0];
-    for(int i=0;i<wordsIdx.size();i++){
+    for(int i=0;i<wordOfSentence.size();i++){
       path.push_back(frag);
       frag=DP_Path[i+1][frag];
     }
@@ -206,6 +239,7 @@ void Ocr(){
   vector<double> firstPoss;    //맨 처음에 각 word가 나올 확률
   vector<vector<double>> nextPoss,classifiPoss; //A(ij)=i단어 다음 j단어가 나올 확률, B(ij)=i단어를 j단어로 분류할 확률
   Ocr_Input(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
+  //Ocr_Input_test(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
   vector<string> result=Ocr_Algo(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
   for(auto& ele:result){
     cout<<ele<<'\n';
