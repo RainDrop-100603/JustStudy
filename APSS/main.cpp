@@ -130,12 +130,12 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vect
                   vector<vector<double>>& DP_Poss,vector<vector<int>>& DP_Path, vector<int>& wordOfSentence,int idx,int nowWord){
   //기저, 범위 밖, 이미 값이 있는경우
   if(idx==wordOfSentence.size()-1)
-    return 1;
+    return 1.0;
   double& result=DP_Poss[idx+1][nowWord];
   if(result>-0.5) 
     return result;
   //함수 진행
-  int wordNum=DP_Poss[0].size();
+  int wordNum=firstPoss.size();
   result=0.0;
   int& path=DP_Path[idx+1][nowWord];
   //맨처음, idx==-1인 경우
@@ -144,12 +144,13 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vect
     for(int i=0;i<wordNum;i++)  //실제 다음위치가 i 값인데, 이를 wordOfSentence[0] 으로 인식했을 확률
       nextGuessPoss+=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]];
     for(int i=0;i<wordNum;i++){
-      double tmp=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,0,i)/nextGuessPoss;
+      double tmp=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,idx+1,i)/nextGuessPoss;
       if(cmpDouble_AbsRel(tmp,result)==1){
         result=tmp;
         path=i;
       }
     }
+    return result;
   }
   //함수
   double nextGuessPoss=Ocr_DP1(DP_Ocr1,nextPoss,classifiPoss,nowWord,wordOfSentence[idx+1]);
