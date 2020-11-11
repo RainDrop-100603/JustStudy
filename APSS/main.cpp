@@ -117,7 +117,7 @@ void Ocr_Input_test(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<st
   for(auto& ele:sentenceArr)
     cout<<ele<<"END\n";
 }
-double Ocr_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,int now, int nextGuess){
+double Ocr1_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,int now, int nextGuess){
   double& result=DP_Ocr1[now][nextGuess];
   if(result>-0.5)
     return result;
@@ -126,7 +126,7 @@ double Ocr_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,
     result+=nextPoss[now][i]*classifiPoss[i][nextGuess];
   return result;
 }
-double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
+double Ocr1_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
                   vector<vector<double>>& DP_Poss,vector<vector<int>>& DP_Path, vector<int>& wordOfSentence,int idx,int nowWord){
   //기저, 범위 밖, 이미 값이 있는경우
   if(idx==wordOfSentence.size()-1)
@@ -144,7 +144,7 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vect
     for(int i=0;i<wordNum;i++)  //실제 다음위치가 i 값인데, 이를 wordOfSentence[0] 으로 인식했을 확률
       nextGuessPoss+=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]];
     for(int i=0;i<wordNum;i++){
-      double tmp=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,idx+1,i)/nextGuessPoss;
+      double tmp=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr1_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,idx+1,i)/nextGuessPoss;
       if(cmpDouble_AbsRel(tmp,result)==1){
         result=tmp;
         path=i;
@@ -153,9 +153,12 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vect
     return result;
   }
   //함수
-  double nextGuessPoss=Ocr_DP1(DP_Ocr1,nextPoss,classifiPoss,nowWord,wordOfSentence[idx+1]);
+  double nextGuessPoss=Ocr1_DP1(DP_Ocr1,nextPoss,classifiPoss,nowWord,wordOfSentence[idx+1]);
+  if(cmpDouble_AbsRel(0.0,nextGuessPoss)==0){
+    return 0.0;
+  }
   for(int i=0;i<wordNum;i++){
-    double tmp=nextPoss[nowWord][i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,idx+1,i)/nextGuessPoss;
+    double tmp=nextPoss[nowWord][i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr1_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,idx+1,i)/nextGuessPoss;
     if(cmpDouble_AbsRel(tmp,result)==1){
       result=tmp;
       path=i;
@@ -163,7 +166,7 @@ double Ocr_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vect
   }
   return result;
 }
-vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,
+vector<string> Ocr1_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,
                         vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
   /*
   10초, 64MB, 테스트케이스=문장의 수 20개
@@ -178,21 +181,28 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
         DP  이전 문자가 Y일 때, 다음으로 인식된 문자가 R일 확률 p(Y,R)=nextPoss[Y][0]*classifiPoss[0][R]+ ... +nextPoss[Y][m-1]*classifiPoss[m-1][R]
             이전 문자가 Y이고, 인식된 문자가 R일 때, 실제 등장한 문자가 Z일 가능성 rp(Y,R,Z)=nextPoss[Y][Z]*classifiPoss[Z][R]/p(Y,R)
               맨 처음 문자는 이전문자를 -1이라고 가정하고 처리하자
-      Ocr_DP1(이전문자 Y,인식된문자 R)=가능성
+      Ocr1_DP1(이전문자 Y,인식된문자 R)=가능성
         DP: 500*500
       func(sentence 에서 idx 번째 word,실제 word:X)=idx번째 word가 X일 때, idx+1부터 시작하는 sentence의 조건부 확률 최대치
           idx부터 시작하는 sentence의 조건부 확률 최대치 = DP[0][0] 
         DP: 101*500, idx번째 정보는 idx+1 위치에 저장 
-        substructure: func(idx,nowWord)=for(nextWord=word range), max, nextPoss[Y][Z]*classifiPoss[Z][R]/Ocr_DP1(Y,R)*func(idx+1,nextWord)
+        substructure: func(idx,nowWord)=for(nextWord=word range), max, nextPoss[Y][Z]*classifiPoss[Z][R]/Ocr1_DP1(Y,R)*func(idx+1,nextWord)
         기저: idx==sentenceLen: return 1, idx==-1: nextPoss 대신 firstPoss 사용 
         정답: Ocr_DP2 func_DP를 이용하여 최적 경로를 따라간다.
     의문점
       Ocr_DP2 있는것이 속도 측면에서 유리한가? 경로를 추적해야 하므로 Ocr_DP2 필요한긴 하지만 속도적인 측면에서 어떤지.
         -> 함수 실행시간이 1이므로 속도측면에서 유리하지 않다. 경로추적은 전용 DP를 추가하여 해결하자
     time complexity
-      #func(n*m)*func(m)+#Ocr_DP2(n*m^2)*Ocr_DP2(1)+#Ocr_DP1(n*m)*Ocr_DP1(m)=O(n*m^2)
+      #func(n*m)*func(m)+#Ocr_DP2(n*m^2)*Ocr_DP2(1)+#Ocr1_DP1(n*m)*Ocr1_DP1(m)=O(n*m^2)
     mem complexity
       DP(m*m*m)=O(m^3)
+  책의 해답과 나의 해답의 차이
+    원문 Q, 인식된 sentence R, Q 후보 Q1, Q2 ... 이라 하면
+      나는 각 후보 Qn에 대해 P(Qn|R)를 직접 구하여 Q를 구한 것이고
+        P(Q|R)
+      해답은 P(Qn|R)==P(R|Qn)*P(Qn)/P(R)로 수정하여 구했다.
+        P(R)은 모든 Qn에 대해 동일하다
+        P(Qn)과 P(R|Qn)은 문제에서 주어진 값을 이용해 쉽게 구할 수 있다.
   */
   //DP 생성
   vector<vector<double>> DP_Ocr1(wordNum,vector<double>(wordNum,-1.0));
@@ -215,7 +225,7 @@ vector<string> Ocr_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,ma
     //조건부 출현확률 최대치 도출
     vector<vector<double>> DP_Poss(wordOfSentence.size()+1,vector<double>(wordNum,-1.0));
     vector<vector<int>> DP_Path(wordOfSentence.size()+1,vector<int>(wordNum,-1));
-    Ocr_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,-1,0);
+    Ocr1_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,-1,0);
     //경로 도출
     vector<int> path;
     int frag=DP_Path[0][0];
@@ -241,7 +251,7 @@ void Ocr(){
   vector<vector<double>> nextPoss,classifiPoss; //A(ij)=i단어 다음 j단어가 나올 확률, B(ij)=i단어를 j단어로 분류할 확률
   Ocr_Input(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
   //Ocr_Input_test(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
-  vector<string> result=Ocr_Algo(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
+  vector<string> result=Ocr1_Algo(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
   for(auto& ele:result){
     cout<<ele<<'\n';
   }
