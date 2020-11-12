@@ -73,7 +73,8 @@ void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,
   firstPoss.resize(wordNum);
   for(auto& ele: firstPoss)
     scanf("%lf",&ele);
-  nextPoss=classifiPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
+  nextPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
+  classifiPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
   for(auto& ele: nextPoss)
     for(auto& ele2: ele)
       scanf("%lf",&ele2);
@@ -207,7 +208,7 @@ vector<string> Ocr1_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,m
   }
   return result;
 }
-double Ocr2_possQ(vector<vector<double>>& DP, int prev, int now){
+double Ocr2_possQ(const vector<vector<double>>& DP, int prev, int now){
   return DP[prev+1][now];
 }
 double Ocr2_DPposs(const vector<vector<double>>& DP_possQ,const vector<vector<double>>& DP_RgivenQ,vector<vector<double>>& DP_Poss,
@@ -221,8 +222,19 @@ double Ocr2_DPposs(const vector<vector<double>>& DP_possQ,const vector<vector<do
     return result;
   }
   //Algo
-  result=log(0.0);
   int& path=DP_Path[idx+1][nowWord];
+  if(idx==-1){
+    nowWord=-1;
+  }
+  result=-1e200;
+  for(int nextWord=0;nextWord<DP_RgivenQ.size();nextWord++){
+    double tmp=Ocr2_possQ(DP_possQ,nowWord,nextWord)+DP_RgivenQ[nextWord][wordOfSentence[idx+1]]+Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,idx+1,nextWord);
+    if(cmpDouble_AbsRel(tmp,result)==1){
+      result=tmp;
+      path=nextWord;
+    }
+  }
+  return result;
 }
 vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordArr,const map<string,int>& wordArrMap,const vector<double>& firstPoss,
                         const vector<vector<double>>& nextPoss,const vector<vector<double>>& classifiPoss,const vector<string>& sentenceArr){
@@ -239,7 +251,8 @@ vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordA
     }
   }
   //classifiPoss를 log형식으로 변환한 함수 생성
-  vector<vector<double>> DP_RgivenQ=classifiPoss;
+  vector<vector<double>> DP_RgivenQ;
+  DP_RgivenQ.assign(classifiPoss.begin(),classifiPoss.end());
   for(auto& ele:DP_RgivenQ){
     for(auto& ele2:ele){
       ele2=log(ele2);
@@ -267,10 +280,10 @@ vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordA
     Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,-1,0);
     //경로 도출
     vector<int> path;
-    int frag=DP_Path[0][0];
+    int frag=0;
     for(int i=0;i<wordOfSentence.size();i++){
+      frag=DP_Path[i][frag];
       path.push_back(frag);
-      frag=DP_Path[i+1][frag];
     }
     string tmpResult;
     for(auto& ele: path){
@@ -344,20 +357,13 @@ void Ocr(){
   vector<vector<double>> nextPoss,classifiPoss; //A(ij)=i단어 다음 j단어가 나올 확률, B(ij)=i단어를 j단어로 분류할 확률
   Ocr_Input(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
   //Ocr_Input_test(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
-  vector<string> result=Ocr1_Algo(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
+  vector<string> result=Ocr2_Algo(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
   for(auto& ele:result){
     cout<<ele<<'\n';
   }
 }
 
 int main(void){
-  //Ocr();
-  double a(-1e200);
-  double b(a+log(0.1));
-  cout<<a<<endl<<b<<endl<<cmpDouble_Rel(a,b)<<endl<<cmpDouble_Ulps(a,b)<<endl;
-  if(b>a)
-    cout<<1;
-  else
-    cout<<0;
+  Ocr();
   return 0;
 }
