@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <cstring>
+#include <string>
 #include <cmath>
 #include <map>
 
@@ -73,8 +73,7 @@ void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,
   firstPoss.resize(wordNum);
   for(auto& ele: firstPoss)
     scanf("%lf",&ele);
-  nextPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
-  classifiPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
+  classifiPoss=nextPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
   for(auto& ele: nextPoss)
     for(auto& ele2: ele)
       scanf("%lf",&ele2);
@@ -213,12 +212,12 @@ double Ocr2_possQ(const vector<vector<double>>& DP, int prev, int now){
 }
 double Ocr2_DPposs(const vector<vector<double>>& DP_possQ,const vector<vector<double>>& DP_RgivenQ,vector<vector<double>>& DP_Poss,
                     vector<vector<int>>& DP_Path,const vector<int>& wordOfSentence,int idx,int nowWord){
-  //기저
+  //기저, idx== [-1,sentenceLen-1)
   if(idx==wordOfSentence.size()-1){
     return 0.0;
   }
   double& result=DP_Poss[idx+1][nowWord];
-  if(result<0.0){
+  if(result<0.5){
     return result;
   }
   //Algo
@@ -251,8 +250,7 @@ vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordA
     }
   }
   //classifiPoss를 log형식으로 변환한 함수 생성
-  vector<vector<double>> DP_RgivenQ;
-  DP_RgivenQ.assign(classifiPoss.begin(),classifiPoss.end());
+  vector<vector<double>> DP_RgivenQ=classifiPoss;
   for(auto& ele:DP_RgivenQ){
     for(auto& ele2:ele){
       ele2=log(ele2);
@@ -263,25 +261,26 @@ vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordA
   for(auto& ele: sentenceArr){
     //sentence의 각 word 분리, idx로 치환하여저장
     vector<int> wordOfSentence;
+    int sentenceLen=ele.front()-'0';
     string sentence=ele.substr(2); //앞에 두개는 sentence의 word 갯수, 공백(스페이스바)
-    string tmpWord;
+    int from(0), len(0);
     for(auto iter=sentence.begin();iter!=sentence.end();iter++){
       if(*iter==' '){
-        wordOfSentence.push_back(wordArrMap.find(tmpWord)->second);
-        tmpWord.clear();
+        wordOfSentence.push_back(wordArrMap.find(sentence.substr(from,len))->second);
+        from+=len;
       }else{
-        tmpWord.push_back(*iter);
+        len++;
       }
     }
-    wordOfSentence.push_back(wordArrMap.find(tmpWord)->second);
+    wordOfSentence.push_back(wordArrMap.find(sentence.substr(from,len))->second);
     //조건부 출현확률 최대치 도출
-    vector<vector<double>> DP_Poss(wordOfSentence.size(),vector<double>(wordNum,1.0));  //확률은 1이하이기 때문에 항상 음수값, 따라서 기저는 1.0
-    vector<vector<int>> DP_Path(wordOfSentence.size(),vector<int>(wordNum,-1));
+    vector<vector<double>> DP_Poss(sentenceLen,vector<double>(wordNum,1.0));  //확률은 1이하이기 때문에 항상 음수값, 따라서 기저는 1.0
+    vector<vector<int>> DP_Path(sentenceLen,vector<int>(wordNum,-1));
     Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,-1,0);
     //경로 도출
     vector<int> path;
     int frag=0;
-    for(int i=0;i<wordOfSentence.size();i++){
+    for(int i=0;i<sentenceLen;i++){
       frag=DP_Path[i][frag];
       path.push_back(frag);
     }
