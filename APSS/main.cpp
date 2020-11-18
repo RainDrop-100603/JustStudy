@@ -122,16 +122,21 @@ void Ocr_randInput(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<str
   wordNum=rand()%500+1; //1~500
   sentenceNum=rand()%20+1;  //1~20
   wordArr.resize(wordNum);
-  //wordArr
+  //wordArr, wordArrMap
+  int idx=0;
   for(auto& ele:wordArr){ //each word=1~10, only lowercase
-    int len=rand()%10+1;
-    for(int i=0;i<len;i++){
-      ele.push_back(rand()%26+97);  //a~z: #26, 97~122
+    while(true){
+      int len=rand()%10+1;
+      string tmpStr;
+      for(int i=0;i<len;i++){
+        tmpStr.push_back(rand()%26+97);  //a~z: #26, 97~122
+      }
+      if(wordArrMap.insert({tmpStr,idx}).second){
+        wordArr[idx]=tmpStr;
+        break;
+      }
     }
-  }
-  //wordArrMap
-  for(int i=0;i<wordNum;i++){
-    wordArrMap.insert({wordArr[i],i});
+    idx++;
   }
   //firstPoss
   firstPoss.resize(wordNum);
@@ -169,8 +174,7 @@ void Ocr_randInput(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<str
   sentenceArr.resize(sentenceNum);
   for(auto& sentence:sentenceArr){
     int sentenceLen=rand()%100+1; //1~100
-    sentence.push_back(sentenceLen+'0');
-    sentence.push_back(' ');
+    sentence+=to_string(sentenceLen)+' ';
     for(int i=0;i<sentenceLen;i++){
       int tmp=rand()%wordNum;
       sentence+=wordArr[tmp]+' ';
@@ -198,7 +202,7 @@ void Ocr_input_simpleT(int& wordNum,int& sentenceNum,vector<string>& wordArr,map
     for(auto& ele2: ele){
       tmpSum+=ele2;
     }
-    cout<<tmpSum<<'___';
+    cout<<tmpSum;
   }
   cout<<endl;
   cout<<"classifiPoss Sum: ";
@@ -207,7 +211,7 @@ void Ocr_input_simpleT(int& wordNum,int& sentenceNum,vector<string>& wordArr,map
     for(auto& ele2: ele){
       tmpSum+=ele2;
     }
-    cout<<tmpSum<<'___';
+    cout<<tmpSum;
   }
   cout<<endl;
   //sentence
