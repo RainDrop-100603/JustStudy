@@ -329,10 +329,8 @@ double Ocr2_DPposs(const vector<vector<double>>& DP_possQ,const vector<vector<do
   }
   result=-1e200;
   for(int nextWord=0;nextWord<DP_RgivenQ.size();nextWord++){
-    double tmp=Ocr2_possQ(DP_possQ,nowWord,nextWord);
-    tmp+=DP_RgivenQ[nextWord][wordOfSentence[nextIdx]];
-    //error 발생 지점
-    tmp+=Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,nextIdx+1,nextWord);
+    double tmp=Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,nextIdx+1,nextWord);
+    tmp+=DP_RgivenQ[nextWord][wordOfSentence[nextIdx]]+Ocr2_possQ(DP_possQ,nowWord,nextWord);
     //double tmp=Ocr2_possQ(DP_possQ,nowWord,nextWord)+DP_RgivenQ[nextWord][wordOfSentence[nextIdx]]+Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,nextIdx+1,nextWord);
     if(cmpDouble_AbsRel(tmp,result)==1){
       result=tmp;
