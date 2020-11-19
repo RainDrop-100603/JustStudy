@@ -60,6 +60,7 @@ using namespace std;
 string to something
   int stoi(const string& str, size_t* idx, int base=10): string을 앞에서부터 base형식 int로 변환, int 바로 다음 위치를 idx에 저장
     ex) 2001, test: return==2001, idx=4
+  ele - '0'과 같은 방식은 0~9의 범위일때만 사용가능하고, 10을 넘어가는 순간 오류가 생긴다. 되도록 stoi를 애용하자
 ------------------------------
 자주하는 실수
   산술 오버플로우

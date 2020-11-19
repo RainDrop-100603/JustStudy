@@ -360,14 +360,15 @@ vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordA
       ele2=log(ele2);
     }
   }
-  cout<<DP_RgivenQ.size()<<endl;
   //정답 생성
   vector<string> result;
   for(auto& ele: sentenceArr){
     //sentence의 각 word 분리, idx로 치환하여저장
     vector<int> wordOfSentence;
-    int sentenceLen=ele.front()-'0';
-    string sentence=ele.substr(2); //앞에 두개는 sentence의 word 갯수, 공백(스페이스바)
+    string::size_type sz;
+    int sentenceLen=stoi(ele,&sz);  //각 sentence의 단어의 길이는 1~100이다.
+    //int sentenceLen=ele.front() - '0'; // sentence의 단어의 길이가 1~9일때만 성립한다.
+    string sentence=ele.substr(sz+1); // sentence의 길이와, 첫 단어 사이에는 공백이 있기 때문에 제거 
     int from(0), len(0);
     for(auto iter=sentence.begin();iter!=sentence.end();iter++){
       if(*iter==' '){
@@ -382,6 +383,12 @@ vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordA
     //조건부 출현확률 최대치 도출
     vector<vector<double>> DP_Poss(sentenceLen,vector<double>(wordNum,1.0));  //확률은 1이하이기 때문에 항상 음수값, 따라서 기저는 1.0
     vector<vector<int>> DP_Path(sentenceLen,vector<int>(wordNum,-1));
+    int cnt(0);
+    for(auto& ele:DP_Poss){
+      for(auto& ele2:ele){
+        cnt++;
+      }
+    }
     Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,0,0);
     //경로 도출
     vector<int> path;
