@@ -1,8 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <cstring>
+#include <string>
 #include <cmath>
+#include <map>
+
+#include "useful.h"
 
 using namespace std;
 
@@ -96,5 +99,25 @@ int Packing_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>&
 vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp);
 void Packing();
 
+//Ocr, DP최적화, P(A|B)=P(B|A)P(A)/P(B) 와 같은 변환을 유용하게 이용하자, string 처리할 때 유의하여 처리하자,
+void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr);
+void Ocr_Input_test(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr);
+void Ocr_randInput(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr);
+void Ocr_input_simpleT(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr);
+double Ocr1_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,int now, int nextGuess);
+double Ocr1_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
+                  vector<vector<double>>& DP_Poss,vector<vector<int>>& DP_Path, vector<int>& wordOfSentence,int idx,int nowWord);
+vector<string> Ocr1_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,
+                        vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,vector<string>& sentenceArr);
+double Ocr2_possQ(const vector<vector<double>>& DP, int prev, int now);
+double Ocr2_DPposs(const vector<vector<double>>& DP_possQ,const vector<vector<double>>& DP_RgivenQ,vector<vector<double>>& DP_Poss,
+                    vector<vector<int>>& DP_Path,const vector<int>& wordOfSentence,int nextIdx,int nowWord);
+vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordArr,const map<string,int>& wordArrMap,const vector<double>& firstPoss,
+                        const vector<vector<double>>& nextPoss,const vector<vector<double>>& classifiPoss,const vector<string>& sentenceArr);
+void Ocr();
 
 
