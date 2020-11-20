@@ -94,6 +94,9 @@ string to something
     DP 테크닉
       마르코프 연쇄: numb3r
         유한개의 상태가 있으며, 매 시간마다 상태가 변경되며, 상태 변경은 현재 상태에만 영향을 받는다(이전상태, 현재 시간등 X)
+      은닉 마르코프 모델: OCR
+        마르코프 연쇄에 의해 생성된 데이터를, 별도의 (오류가 있는)관찰자를 통해서만 확인가능한 모델
+        Viterbi Algorithm: 은닉 마르코프 모델에서, 관측결과가 주어질때 가장 가능성이 높은 실제상태를 계산하는 Algo
       배낭 문제: knapsack problem
         물건의 cost, value 가 정해져 있으며, 제한 cost내에서 최대 value를 얻도록 물건을 고르는 문제 
         각 물건을 최대 하나만 고르는 0/1 문제, 여러개 고를 수 있는 문제, 쪼개서(분수) 넣을 수 있는 fractional knapsack problem - greedy로 해결 가능(직관적임)
