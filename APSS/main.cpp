@@ -83,33 +83,39 @@ void KLIS(){
       해석: 사전순 K번째 LIS:
               LIS끼리는 당연히 길이가 같다, 따라서 사전순으로 배열하는 것은 어렵지 않다. 
             완전탐색:
-              LIS생성 정보를 담는 DP를 만든다
-                DP[i][j]=idx, LIS에서 i번째 순서, i행에서 j번째로 입력된, 행렬에서 idx번째 숫자
+              LIS생성 정보를 담는 History를 만든다
+                History[i][j]=idx, LIS에서 i번째 순서, i행에서 j번째로 입력된, 행렬에서 idx번째 숫자
                 마지막 행렬의 마지막 열보다 idx가 큰 값은 삭제한다(LIS에 영향을 끼치지 않는 값들이다)
                 법칙
                   i행에 있는 모든 수는 i+1행에 있는 모든 수보다 작다
                   한 행에서, j번째 열에 있는 수는 j+1번째 열에 있는 수보다 크다.
                   LIS에서 idx는 행이 증가할수록 반드시 커지게 된다.(작아지면 순서가 뒤바낀것을 의미)
-              DP를 이용한 완전탐색
+              History를 이용한 완전탐색
                 각 행에서 가장 뒤에있는(가장 큰 열) 값들을 이어붙이면, 사전순으로 가장 앞인 LIS다.
                 이후 idx는 계속 커져야 한다는 법칙을 유지하면서, 뒤에서부터 idx를 줄여나가면 된다.
             k가 20억 까지 이므로, O(lgn)으로 search해야한다.
-            
-      Ocr1_DP1(이전문자 Y,인식된문자 R)=가능성
-        DP: 500*500
-      func(sentence 에서 idx 번째 word,실제 word:X)=idx번째 word가 X일 때, idx+1부터 시작하는 sentence의 조건부 확률 최대치
-          idx부터 시작하는 sentence의 조건부 확률 최대치 = DP[0][0] 
-        DP: 101*500, idx번째 정보는 idx+1 위치에 저장 
-        substructure: func(idx,nowWord)=for(nextWord=word range), max, nextPoss[Y][Z]*classifiPoss[Z][R]/Ocr1_DP1(Y,R)*func(idx+1,nextWord)
-        기저: idx==sentenceLen: return 1, idx==-1: nextPoss 대신 firstPoss 사용 
-        정답: DP_path를 이용한다
-    의문점
-      Ocr_DP2 있는것이 속도 측면에서 유리한가? 경로를 추적해야 하므로 Ocr_DP2 필요한긴 하지만 속도적인 측면에서 어떤지.
-        -> 함수 실행시간이 1이므로 속도측면에서 유리하지 않다. 경로추적은 전용 DP를 추가하여 해결하자
-    개선점
-      확률 자체보다 확륭리 최대치인 경로를 구하는 것인데, P(R)==DP1의 경우 공통되는 항이므로 없애버리자
-      확률을 그대로 사용하면 반드시 상대비교만을 사용해야한다(절대비교를 사용할시 오차 발생)
-      0이하의 확률을 곱하다보면 의미없는 수치로 낮아질 수 있다. log로 변환하여 이용하자
+              LIS에서 idx번째 수가 정해졌을때, idx+1부터의 경우의 수는 O(n) : DP이용
+                DP생성, O(n)개를 지정하는데, 각 값 초기화에는 lg(t: means tiny) 시간 소요.
+              DP를 이용하여 O(lgK)로 search 가능
+                func(LIS idx, order, k) return result(str)
+                  order=0 , 사전순이므로 0부터 시작
+                  if cases>k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,k);
+                  if cases=k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,0); 
+                    if k==0  -> return arr[History[LIS idx].back()]+func(LIS idx+1,0,0);
+                  if cases<k -> return func(LIS idx, order+1, k-cases);
+      KLIS_GetLIS(arr, History)
+        History[LIS idx][order]=idx of Arr
+          LIS의 길이를 구하는 식을 사용할 때 생성
+          order가 낮으면 사전순으로 더 앞이 되도록 설정하자
+      KLIS_DP(LIS idx, order)= #cases
+        DP: LIS len * arr len
+      string func(LIS idx, order, k) = LIS idx ~ LIS END 범위에 대해, k번째 LIS return
+        substructure: func(LIS idx, order, k), #cases=KLIS_DP(LIS idx, order)
+                  if k==0  -> return arr[History[LIS idx].back()]+func(LIS idx+1,0,0);
+                  if cases>k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,k);
+                  if cases=k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,0); 
+                  if cases<k -> return func(LIS idx, order+1, k-cases);
+        기저: if LIS idx== idx len -> return ;  //공백을 return 하여 operator+ 가능한가? 아니면 조건단에서 처리해버리나?
     time complexity
       #func(n*m)*func(m)+#Ocr_DP2(n*m^2)*Ocr_DP2(1)+#Ocr1_DP1(n*m)*Ocr1_DP1(m)=O(n*m^2)
     mem complexity
