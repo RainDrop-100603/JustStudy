@@ -107,19 +107,20 @@ void KLIS(){
         History[LIS idx][order]=idx of Arr
           LIS의 길이를 구하는 식을 사용할 때 생성
           order가 낮으면 사전순으로 더 앞이 되도록 설정하자
-      KLIS_DP(LIS idx, order)= #cases
+      KLIS_DP(LIS idx, order,History)= #cases
         DP: LIS len * arr len
+        DP개선: History[LIS idx][order]를 통해 길이를 arrlen(O(n))으로 줄일 수 있다.
       string func(LIS idx, order, k) = LIS idx ~ LIS END 범위에 대해, k번째 LIS return
         substructure: func(LIS idx, order, k), #cases=KLIS_DP(LIS idx, order)
                   if k==0  -> return arr[History[LIS idx].back()]+func(LIS idx+1,0,0);
                   if cases>k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,k);
                   if cases=k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,0); 
                   if cases<k -> return func(LIS idx, order+1, k-cases);
-        기저: if LIS idx== idx len -> return ;  //공백을 return 하여 operator+ 가능한가? 아니면 조건단에서 처리해버리나?
+        기저: if LIS idx== idx len -> return string();  
     time complexity
-      GetLIS(#n*lgn)+DP(#n*lgn)+func(#n)
+      GetLIS(#n*lgn)+DP(#n*lgn)+func(#n*4)
     mem complexity
-      DP(m*m*m)=O(m^3)
+      GetLIS(#n)+DP(#n)
   */
   int testCase;
   cin>>testCase;
