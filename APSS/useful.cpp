@@ -125,3 +125,12 @@ void moveTest_vec(){
 }
 
 //미완성
+ostream& operator<<(ostream& os, const longNum& lN){
+  if(!lN.sign){
+    os<<'-';
+  }
+  for(auto iter=lN.num.rbegin();iter!=lN.num.rend();iter++){
+    os<<*iter;
+  }
+  return os;
+}

@@ -117,7 +117,7 @@ void KLIS(){
                   if cases<k -> return func(LIS idx, order+1, k-cases);
         기저: if LIS idx== idx len -> return ;  //공백을 return 하여 operator+ 가능한가? 아니면 조건단에서 처리해버리나?
     time complexity
-      #func(n*m)*func(m)+#Ocr_DP2(n*m^2)*Ocr_DP2(1)+#Ocr1_DP1(n*m)*Ocr1_DP1(m)=O(n*m^2)
+      GetLIS(#n*lgn)+DP(#n*lgn)+func(#n)
     mem complexity
       DP(m*m*m)=O(m^3)
   */
@@ -135,14 +135,9 @@ void KLIS(){
     }
   }
 }
-string testFunc(){
-  return string();
-}
+
 int main(void){
   //KLIS();
-  string tmp1("test");
-  cout<<tmp1<<":"<<tmp1.size()<<endl;
-  tmp1+=testFunc();
-  cout<<tmp1<<":"<<tmp1.size()<<endl;
+  
   return 0;
 }

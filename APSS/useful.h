@@ -1,3 +1,6 @@
+#ifndef ____USEFUL_H___
+#define ____USEFUL_H___
+
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -81,6 +84,7 @@ string to something
   자료형의 표현 범위 
   너무 큰 INF 값 (INF+a이 오버플로우가 날 수 있다.)
   재귀함수에서 조건을 제대로 충족 시키는 것 뿐 아니라, 답도 제대로 구할 수 있도록 함수를 설계하자
+  multiple definition: ifndef-endif 확인, header에 함수의 정의 포함하였는지 확인 
   memset
     memset은 byte단위로 메모리를 초기화한다. 0과 -1의 경우는 int자료형의 경우에도 기댓값과 같지만, 나머지는 그렇지 않다
       int: -1=1111,1111,...,1111,1111, 1=0000,0000,...,0000,0001 /= 0001,0001,...,0001,0001 (byte단위로 초기화 되어 실제값은 1이 아니다.)
@@ -513,16 +517,10 @@ public:
   int* begin(){return &num[0];}
   int* end(){return &num[num.size()];}
 };
-ostream& operator<<(ostream& os, const longNum& lN){
-  if(!lN.sign){
-    os<<'-';
-  }
-  for(auto iter=lN.num.rbegin();iter!=lN.num.rend();iter++){
-    os<<*iter;
-  }
-  return os;
-}
+ostream& operator<<(ostream& os, const longNum& lN);
 //https://jungwoong.tistory.com/53
 //std move, std forward, 이동생성자 공부
 //rValue로 전달된 a는 num을 초기화 할때도 rvalue 상태인가? -> lvalue 취급되서 move를 써주어여 한다.
 //longNum(vector<int>&& a):num(a){} 가 맞는가, longNum(vector<int>&& a):num(move(a)){} 가 맞는가-> 후자가 맞다.
+
+#endif
