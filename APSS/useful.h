@@ -62,8 +62,17 @@ string to something
     ex) 2001, test: return==2001, idx=4
   ele - '0'과 같은 방식은 0~9의 범위일때만 사용가능하고, 10을 넘어가는 순간 오류가 생긴다. 되도록 stoi를 애용하자
 ------------------------------
+단락 평가 (Short circuit evaluation)
+  논리 AND연산자(&&)는 하나라도 false면 false 이므로, 앞선 피연산자가 false로 평가되면 뒤이은 피연산자를 계산하지 않고 즉시 false를 반환한다.
+  논리 OR연산자는(||)는 하나라도 true면 true이므로, 앞선 피연산자가 true로 평가되면 뒤이은 피연산자를 계산하지 않고 즉시 true를 반환한다.
+  언어마다 차이점이 다소 있을 수 있으니 주의 
+------------------------------
+간단한 팁
+  공백 string을 반환하고 싶다면 return string();
+------------------------------
 자주하는 실수
   산술 오버플로우
+  매개변수의 Default는 두번 선언될 수 없다(.h와 .cpp에서 중복선언 불가능) -> header에서 선언하는게 더 직관적 
   배열 범위 밖 원소 접근 (런타임 에러 발생 가능)
   상수 오타 
   연산자 오타
@@ -75,6 +84,26 @@ string to something
   memset
     memset은 byte단위로 메모리를 초기화한다. 0과 -1의 경우는 int자료형의 경우에도 기댓값과 같지만, 나머지는 그렇지 않다
       int: -1=1111,1111,...,1111,1111, 1=0000,0000,...,0000,0001 /= 0001,0001,...,0001,0001 (byte단위로 초기화 되어 실제값은 1이 아니다.)
+  vector v1에서 v1은 "배열의 시작위치"가 아닌, "배열의 시작위치를 가리키는 포인터"이다. 배열의 시작위치는 "&v[0]"이다.
+    따라서 move연산이 제대로 이루어졌는지 확인하려면, &v1이 아닌 &v1[0]을 통해 확인해야한다.
+------------------------------
+유의사항
+  오버로딩
+    operator오버로딩시 기존 operator가 가지는 성질을 유지해야 일관적인 결과를 기대할 수 있다.
+      operator<
+        irreflexivity: a<a is always false;
+        asymmetry: a<b is true -> b<a is false;
+        transitivity: a<b and b<c are true -> a<c is true;
+        transtivity of equivalance: if a<b and b<a is true -> a==b, if a==b and b==c -> a==c
+  프로모션
+    이항연산자들의 두 개의 피연산자가, 서로 자료형이 다르거나 자료형의 범위가 너무 작은 경우 컴파일러가 자동으로 같은 자료형으로 변환하여 연산
+      정수형과 실수형: 실수형으로 변환
+      양쪽 다 정수형(실수형)일 경우: 보다 넓은 범위를 갖는 자료형으로 변환
+      양쪽다 int보다 작은 정수형: 양쪽 다 int 형으로 변환
+      unsigned와 signed가 섞여있을경우: unsigned로 변환 
+        size_t: .size()의 return 값, unsigned 자료형이다.
+          a.size()-1 == -1 일 때, int로 프로모션 되면 2^32-1이 되어버린다.
+          미리 size_t를 int 형식으로 casting 하여 에러 방지 
   Dynamic Programing
     최적화 문제 vs 연산 중복 방지
       최적화 문제: LCS와 같이 여러 가능한 답 중 가장 좋은 답을 찾아내는 방법, optimal substructure
@@ -100,47 +129,6 @@ string to something
       배낭 문제: knapsack problem
         물건의 cost, value 가 정해져 있으며, 제한 cost내에서 최대 value를 얻도록 물건을 고르는 문제 
         각 물건을 최대 하나만 고르는 0/1 문제, 여러개 고를 수 있는 문제, 쪼개서(분수) 넣을 수 있는 fractional knapsack problem - greedy로 해결 가능(직관적임)
-  vector v1에서 v1은 "배열의 시작위치"가 아닌, "배열의 시작위치를 가리키는 포인터"이다. 배열의 시작위치는 "&v[0]"이다.
-    따라서 move연산이 제대로 이루어졌는지 확인하려면, &v1이 아닌 &v1[0]을 통해 확인해야한다.
-  배열 매개변수
-    vector를 이용하면 간단하지만 cache로 사용할 경우를 생각하자.
-    arr[][axis2][axis3], (*arr)[axis2][axis3]
-      arr은 포인터와 같이 적용됨을 알 수 있다.
-      다차원 배열을 매개변수로 이용하는 방법. 1차원이 경우 arr[], *arr을 이용하면 되며, 다차원 호출시 *arr에 괄호를 꼭 쳐주어야 한다.
-      axis1자리는 값을 지정해도 무시된다(maybe).
-      배열의 크기는 axis1만 넘겨줘도 되는가? axis2이상은 넘길때 지정해주므로 안넘겨줘도 되는가?
-    axis2,axis3,...,axisN이 필요한 이유
-      1차원 배열의 경우 axis1의 단위크기는 자료형의 크기와 같다.
-      다차원 배열의 경우 axis1의 단위크기는 자료형의크기*axis2의 길이*axis3의 길이 이다.
-      즉 axis2이상의 정보가 없다면, axis[1]에 접근하는것은 불가능하다(다음위치를 알 수가 없기 때문)
-    3차원 배열 파라미터 넘기기
-      https://zetawiki.com/wiki/C%EC%96%B8%EC%96%B4_3%EC%B0%A8%EC%9B%90_%EB%B0%B0%EC%97%B4_%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EB%A1%9C_%EB%84%98%EA%B8%B0%EA%B8%B0
-    배열 참조로 넘기기
-      https://boycoding.tistory.com/217
-  cache사용법
-    전역변수에서만 사용? cpu 특징?
-  단락 평가 (Short circuit evaluation)
-    논리 AND연산자(&&)는 하나라도 false면 false 이므로, 앞선 피연산자가 false로 평가되면 뒤이은 피연산자를 계산하지 않고 즉시 false를 반환한다.
-    논리 OR연산자는(||)는 하나라도 true면 true이므로, 앞선 피연산자가 true로 평가되면 뒤이은 피연산자를 계산하지 않고 즉시 true를 반환한다.
-    언어마다 차이점이 다소 있을 수 있으니 주의 
-------------------------------
-유의사항
-  오버로딩
-    operator오버로딩시 기존 operator가 가지는 성질을 유지해야 일관적인 결과를 기대할 수 있다.
-      operator<
-        irreflexivity: a<a is always false;
-        asymmetry: a<b is true -> b<a is false;
-        transitivity: a<b and b<c are true -> a<c is true;
-        transtivity of equivalance: if a<b and b<a is true -> a==b, if a==b and b==c -> a==c
-  프로모션
-    이항연산자들의 두 개의 피연산자가, 서로 자료형이 다르거나 자료형의 범위가 너무 작은 경우 컴파일러가 자동으로 같은 자료형으로 변환하여 연산
-      정수형과 실수형: 실수형으로 변환
-      양쪽 다 정수형(실수형)일 경우: 보다 넓은 범위를 갖는 자료형으로 변환
-      양쪽다 int보다 작은 정수형: 양쪽 다 int 형으로 변환
-      unsigned와 signed가 섞여있을경우: unsigned로 변환 
-        size_t: .size()의 return 값, unsigned 자료형이다.
-          a.size()-1 == -1 일 때, int로 프로모션 되면 2^32-1이 되어버린다.
-          미리 size_t를 int 형식으로 casting 하여 에러 방지 
   실수 자료형
     주의사항
       float 보다는 double 지향, double까지는 하드웨어 계산으로 속도가 빠른편 (long double은 느림)
@@ -200,6 +188,23 @@ string to something
     forward
       Lvalue는 LValue로, RValue는 RValue로 캐스팅 해준다.
         자동으로 LValue->RValue로 캐스팅 되는것을 막아준다.
+  배열 매개변수
+    vector를 이용하면 간단하지만 cache로 사용할 경우를 생각하자.
+    arr[][axis2][axis3], (*arr)[axis2][axis3]
+      arr은 포인터와 같이 적용됨을 알 수 있다.
+      다차원 배열을 매개변수로 이용하는 방법. 1차원이 경우 arr[], *arr을 이용하면 되며, 다차원 호출시 *arr에 괄호를 꼭 쳐주어야 한다.
+      axis1자리는 값을 지정해도 무시된다(maybe).
+      배열의 크기는 axis1만 넘겨줘도 되는가? axis2이상은 넘길때 지정해주므로 안넘겨줘도 되는가?
+    axis2,axis3,...,axisN이 필요한 이유
+      1차원 배열의 경우 axis1의 단위크기는 자료형의 크기와 같다.
+      다차원 배열의 경우 axis1의 단위크기는 자료형의크기*axis2의 길이*axis3의 길이 이다.
+      즉 axis2이상의 정보가 없다면, axis[1]에 접근하는것은 불가능하다(다음위치를 알 수가 없기 때문)
+    3차원 배열 파라미터 넘기기
+      https://zetawiki.com/wiki/C%EC%96%B8%EC%96%B4_3%EC%B0%A8%EC%9B%90_%EB%B0%B0%EC%97%B4_%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EB%A1%9C_%EB%84%98%EA%B8%B0%EA%B8%B0
+    배열 참조로 넘기기
+      https://boycoding.tistory.com/217
+  cache사용법
+    전역변수에서만 사용? cpu 특징?
   아주 큰 숫자(문자열 숫자) 연산
     곱셈: 카라츠바 알고리즘 참고
 미완성

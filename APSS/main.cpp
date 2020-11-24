@@ -19,15 +19,15 @@ void KLIS_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,vec
     cin>>itemName[i]>>itemWeight[i]>>itemDesp[i];
 }
 int KLIS_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& itemDesp,int nowChoice,int weightRemain){
-  //기저, nowChoice==N
-  if(nowChoice==itemDesp.size()) return 0;
-  int& result=DP_desp[nowChoice][weightRemain];
-  if(result!=-1) return result;
-  //substructrue, 선택하지 않았을경우, 선택했을경우
-  result=Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain);
-  if(weightRemain>=itemWeight[nowChoice])
-    result=max(result,itemDesp[nowChoice]+Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain-itemWeight[nowChoice]));
-  return result;
+  // //기저, nowChoice==N
+  // if(nowChoice==itemDesp.size()) return 0;
+  // int& result=DP_desp[nowChoice][weightRemain];
+  // if(result!=-1) return result;
+  // //substructrue, 선택하지 않았을경우, 선택했을경우
+  // result=Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain);
+  // if(weightRemain>=itemWeight[nowChoice])
+  //   result=max(result,itemDesp[nowChoice]+Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain-itemWeight[nowChoice]));
+  // return result;
 }
 vector<int> KLIS_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp){
   /*
@@ -54,24 +54,24 @@ vector<int> KLIS_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp){
       #DP(NW)=O(NW)
   */
   //DP 생성
-  vector<vector<int>> DP_desp(itemWeight.size(),vector<int>(weight+1,-1));
-  //DP 채우기
-  int tmp=Packing_DP(DP_desp,itemWeight,itemDesp,0,weight);
-  //정답 생성
-  vector<int> result;
-  result.push_back(tmp);
-  int nowPick(0),weightRemain(weight);
-  while(nowPick<itemWeight.size()-1){
-    //선택했다면, 절박도가 다를것이다.
-    if(DP_desp[nowPick][weightRemain]!=DP_desp[nowPick+1][weightRemain]){
-      result.push_back(nowPick);
-      weightRemain-=itemWeight[nowPick];
-    }
-    nowPick++;
-  }
-  if(DP_desp[nowPick][weightRemain]>0)
-    result.push_back(nowPick);
-  return result;
+  // vector<vector<int>> DP_desp(itemWeight.size(),vector<int>(weight+1,-1));
+  // //DP 채우기
+  // int tmp=Packing_DP(DP_desp,itemWeight,itemDesp,0,weight);
+  // //정답 생성
+  // vector<int> result;
+  // result.push_back(tmp);
+  // int nowPick(0),weightRemain(weight);
+  // while(nowPick<itemWeight.size()-1){
+  //   //선택했다면, 절박도가 다를것이다.
+  //   if(DP_desp[nowPick][weightRemain]!=DP_desp[nowPick+1][weightRemain]){
+  //     result.push_back(nowPick);
+  //     weightRemain-=itemWeight[nowPick];
+  //   }
+  //   nowPick++;
+  // }
+  // if(DP_desp[nowPick][weightRemain]>0)
+  //   result.push_back(nowPick);
+  // return result;
 }
 void KLIS(){
   /*
@@ -135,8 +135,14 @@ void KLIS(){
     }
   }
 }
-
+string testFunc(){
+  return string();
+}
 int main(void){
-  KLIS();
+  //KLIS();
+  string tmp1("test");
+  cout<<tmp1<<":"<<tmp1.size()<<endl;
+  tmp1+=testFunc();
+  cout<<tmp1<<":"<<tmp1.size()<<endl;
   return 0;
 }
