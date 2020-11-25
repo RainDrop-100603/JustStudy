@@ -81,6 +81,16 @@ vector<int> KLIS_kthLIS(vector<int>& array, vector<vector<int>>& history, vector
 
   }
   int cases=KLIS_DP(history,DP_KLIS,idx,idxOrder);
+  if(cases>orderK){
+    //lowerbound로 위치 잡아주자
+    auto tmp=history[idx+1];
+    int nextIdxOrder=distance(tmp.begin(),lower_bound(tmp.begin(),tmp.end(),history[idx][idxOrder]));
+    KLIS_kthLIS(array,history,DP_KLIS,idx+1,nextIdxOrder,orderK).push_back(array[history[idx][idxOrder]]);
+  }else if(cases==orderK){
+
+  }else{
+    
+  }
   
 }
 vector<int> KLIS_Algo(int& arrLen,int& orderK,vector<int>& array){
@@ -89,7 +99,8 @@ vector<int> KLIS_Algo(int& arrLen,int& orderK,vector<int>& array){
   KLIS_getLIS(array,history);
   //정답 생성
   vector<int> DP_KLIS(arrLen,-1);
-  vector<int> result=KLIS_kthLIS(array,history,DP_KLIS,0,0,orderK);
+  vector<int> result=KLIS_kthLIS(array,history,DP_KLIS,0,0,orderK);  //result는 역순이다
+  reverse(result.begin(),result.end());
   return result;
 }
 void KLIS(){
