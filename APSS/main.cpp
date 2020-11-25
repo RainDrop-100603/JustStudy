@@ -84,12 +84,12 @@ vector<int> KLIS_kthLIS(vector<int>& array, vector<vector<int>>& history, vector
   if(cases>orderK){
     //lowerbound로 위치 잡아주자
     auto tmp=history[idx+1];
-    int nextIdxOrder=distance(tmp.begin(),lower_bound(tmp.begin(),tmp.end(),history[idx][idxOrder]));
+    int nextIdxOrder=distance(tmp.begin(),lower_bound(tmp.begin(),tmp.end(),history[idx][idxOrder])); //이거 에러 일으킬꺼같은데 잘 생각해보자 
     KLIS_kthLIS(array,history,DP_KLIS,idx+1,nextIdxOrder,orderK).push_back(array[history[idx][idxOrder]]);
   }else if(cases==orderK){
 
   }else{
-    
+
   }
   
 }
