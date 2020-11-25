@@ -52,15 +52,36 @@ void KLIS_getLIS(vector<int>& array, vector<vector<int>>& history){
   }
 } 
 int KLIS_DP(vector<vector<int>>& history,vector<int>& DP_KLIS, int idx, int idxOrder){
+  if(idx==history.size()-1){
+    return 1;
+  }
   int& result=DP_KLIS[history[idx][idxOrder]];
   if(result!=-1){
     return result;
   }
-  //여기부터
+  //Algo
+  result=0;
+  int nowArrIdx=history[idx][idxOrder];
+  int nextIdxOrder=0;
+  for(auto& ele:history[idx+1]){
+    if(ele>nowArrIdx){
+      result+=KLIS_DP(history,DP_KLIS,idx+1,nextIdxOrder);
+    }else{
+      break;
+    }
+    nextIdxOrder++;
+  }
+  return result;
 }
 vector<int> KLIS_kthLIS(vector<int>& array, vector<vector<int>>& history, vector<int>& DP_KLIS,int idx, int idxOrder, int orderK){
-  int cases=KLIS_DP();
-  //여기 마무리
+  if(idx==history.size()){
+    return vector<int>();
+  }
+  if(orderK==0){
+
+  }
+  int cases=KLIS_DP(history,DP_KLIS,idx,idxOrder);
+  
 }
 vector<int> KLIS_Algo(int& arrLen,int& orderK,vector<int>& array){
   //History 생성
