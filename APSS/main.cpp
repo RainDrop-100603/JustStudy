@@ -78,18 +78,24 @@ vector<int> KLIS_kthLIS(vector<int>& array, vector<vector<int>>& history, vector
     return vector<int>();
   }
   if(orderK==0){
-
+    auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,idx+1,-1,0);
+    tmpResult.push_back(array[history[idx].back()]);
+    return tmpResult;
   }
   int cases=KLIS_DP(history,DP_KLIS,idx,idxOrder);
   if(cases>orderK){
     //lowerbound로 위치 잡아주자
     auto tmp=history[idx+1];
     int nextIdxOrder=distance(tmp.begin(),lower_bound(tmp.begin(),tmp.end(),history[idx][idxOrder])); //이거 에러 일으킬꺼같은데 잘 생각해보자 
-    KLIS_kthLIS(array,history,DP_KLIS,idx+1,nextIdxOrder,orderK).push_back(array[history[idx][idxOrder]]);
+    auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,idx+1,nextIdxOrder,orderK);
+    tmpResult.push_back(array[history[idx][idxOrder]]);
+    return tmpResult;
   }else if(cases==orderK){
-
+    auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,idx+1,-1,0);
+    tmpResult.push_back(array[history[idx].back()]);
+    return tmpResult;
   }else{
-
+    return KLIS_kthLIS(array,history,DP_KLIS,idx,idxOrder+1,orderK-cases);
   }
   
 }
@@ -167,7 +173,7 @@ void KLIS(){
 }
 
 int main(void){
-  //KLIS();
+  KLIS();
   
   return 0;
 }
