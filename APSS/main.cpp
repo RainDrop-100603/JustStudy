@@ -44,6 +44,8 @@ int KLIS_DP(vector<map<int,int>>& history,vector<int>& DP_KLIS, int idx, int idx
   result=0;
   int nowArrIdx=history[idx][idxOrder];
   int nextIdxOrder=0;
+  auto nextMap=history[idx+1];
+  for(auto iter=lower_bound(nextMap.begin(),nextMap.end(),idx);iter!=nextMap.end();iter++);
   for(auto& ele:history[idx+1]){
     if(array[ele]>array[nowArrIdx]){
       result+=KLIS_DP(history,DP_KLIS,idx+1,nextIdxOrder);
@@ -55,27 +57,30 @@ int KLIS_DP(vector<map<int,int>>& history,vector<int>& DP_KLIS, int idx, int idx
   return result;
 }
 vector<int> KLIS_kthLIS(vector<int>& array, vector<map<int,int>>& history, vector<int>& DP_KLIS,int LISidx, int RVSSeq, int orderK){
+  //기저
+  //여기 런타임 에러 날거같은데 좀 더 좋은 방법좀 찾아보자 
   if(LISidx==history.size()){
     return vector<int>();
   }
-  // if(orderK==0){
-  //   auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,idx+1,-1,0);
-  //   tmpResult.push_back(array[history[idx].back()]);
-  //   return tmpResult;
-  // }
   int cases=KLIS_DP(history,DP_KLIS,LISidx,RVSSeq);
   auto nowIter=history[LISidx].rbegin()+RVSSeq;
-  if(cases>orderK){
+  if(cases>=orderK){
     auto tmp=history[LISidx+1];
-    int nextIdxOrder=distance(tmp.rbegin(),lower_bound(tmp.rbegin(),tmp.rend(),nowIter->first)); //이거 에러 일으킬꺼같은데 잘 생각해보자 
-    auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,idx+1,nextIdxOrder,orderK);
-    tmpResult.push_back(nowIter->second);
-    return tmpResult;
-  }else if(cases==orderK){
-    auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,LISidx+1,0,0);
+    auto nextIter=lower_bound(tmp.rbegin(),tmp.rend(),nowIter->first);  //idx 관계 확인
+    while(nowIter->second>nextIter->second){  //크기 관계 확인
+      nextIter++;
+    }
+    int nextRVSSeq=distance(tmp.rbegin(),nextIter); //이거 에러 일으킬꺼같은데 잘 생각해보자 
+    if(cases==orderK){
+      orderK=0;
+    }
+    auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,LISidx+1,nextRVSSeq,orderK);
     tmpResult.push_back(nowIter->second);
     return tmpResult;
   }else{
+    if(cases==-1){
+      cases=0;
+    }
     return KLIS_kthLIS(array,history,DP_KLIS,LISidx,RVSSeq+1,orderK-cases);
   }
   
