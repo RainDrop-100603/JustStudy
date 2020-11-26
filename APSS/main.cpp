@@ -16,42 +16,23 @@ void KLIS_Input(int& arrLen,int& orderK,vector<int>& array){
   for(auto& ele:array)
     cin>>ele;
 }
-void KLIS_LIShistory(vector<int>& array, vector<vector<int>>& history, vector<int>& tmpLIS, int idx){
+void KLIS_getLIS(vector<int>& array, vector<map<int,int>>& history, vector<int>& tmpLIS, int idx){
   if(idx==array.size()){
     return;
   }
-  if(idx==0){
+  int now(array[idx]),last(idx==0 ? -1 : tmpLIS.back());
+  if(now>last){
     tmpLIS.push_back(array[idx]);
-    history.push_back(vector<int>(1,idx));
+    history.push_back(map<int,int>());
+    history.back().insert({idx,array[idx]});
   }else{
-    int last(tmpLIS.back()),now(array[idx]);
-    if(now>last){
-      tmpLIS.push_back(array[idx]);
-      history.push_back(vector<int>(1,idx));
-    }else{
-      int pointIdx=distance(tmpLIS.begin(),lower_bound(tmpLIS.begin(),tmpLIS.end(),now));
-      tmpLIS[pointIdx]=now;
-      history[pointIdx].push_back(idx);
-    }
+    int pointIdx=distance(tmpLIS.begin(),lower_bound(tmpLIS.begin(),tmpLIS.end(),now));
+    tmpLIS[pointIdx]=now;
+    history[pointIdx].insert({idx,array[idx]});
   }
-  KLIS_LIShistory(array, history, tmpLIS, idx+1);
-}
-void KLIS_getLIS(vector<int>& array, vector<vector<int>>& history){
-  //history 원형 생성
-  vector<int> tmpLIS;
-  KLIS_LIShistory(array,history,tmpLIS,0);
-  //history 정리
-  int lastIdx=history.back().back();
-  for(auto& ele:history){
-    while(ele.back()>lastIdx){
-      ele.pop_back();
-    }
-  }
-  for(auto& ele:history){ //열의 idx가 낮은것=사전순 앞순서 ; 가 되도록 reverse
-    reverse(ele.begin(),ele.end());
-  }
+  KLIS_getLIS(array, history, tmpLIS, idx+1);
 } 
-int KLIS_DP(vector<int>& array, vector<vector<int>>& history,vector<int>& DP_KLIS, int idx, int idxOrder){
+int KLIS_DP(vector<map<int,int>>& history,vector<int>& DP_KLIS, int idx, int idxOrder){
   if(idx==history.size()-1){
     return 1;
   }
@@ -73,47 +54,41 @@ int KLIS_DP(vector<int>& array, vector<vector<int>>& history,vector<int>& DP_KLI
   }
   return result;
 }
-vector<int> KLIS_kthLIS(vector<int>& array, vector<vector<int>>& history, vector<int>& DP_KLIS,int idx, int idxOrder, int orderK){
-  if(idx==history.size()){
+vector<int> KLIS_kthLIS(vector<int>& array, vector<map<int,int>>& history, vector<int>& DP_KLIS,int LISidx, int RVSSeq, int orderK){
+  if(LISidx==history.size()){
     return vector<int>();
   }
-  if(orderK==0){
-    auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,idx+1,-1,0);
-    tmpResult.push_back(array[history[idx].back()]);
-    return tmpResult;
-  }
-  int cases=KLIS_DP(history,DP_KLIS,idx,idxOrder);
+  // if(orderK==0){
+  //   auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,idx+1,-1,0);
+  //   tmpResult.push_back(array[history[idx].back()]);
+  //   return tmpResult;
+  // }
+  int cases=KLIS_DP(history,DP_KLIS,LISidx,RVSSeq);
+  auto nowIter=history[LISidx].rbegin()+RVSSeq;
   if(cases>orderK){
-    //lowerbound로 위치 잡아주자
-    auto tmp=history[idx+1];
-    int nextIdxOrder=distance(tmp.begin(),lower_bound(tmp.begin(),tmp.end(),history[idx][idxOrder])); //이거 에러 일으킬꺼같은데 잘 생각해보자 
+    auto tmp=history[LISidx+1];
+    int nextIdxOrder=distance(tmp.rbegin(),lower_bound(tmp.rbegin(),tmp.rend(),nowIter->first)); //이거 에러 일으킬꺼같은데 잘 생각해보자 
     auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,idx+1,nextIdxOrder,orderK);
-    tmpResult.push_back(array[history[idx][idxOrder]]);
+    tmpResult.push_back(nowIter->second);
     return tmpResult;
   }else if(cases==orderK){
-    auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,idx+1,-1,0);
-    tmpResult.push_back(array[history[idx][idxOrder]]);
+    auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,LISidx+1,0,0);
+    tmpResult.push_back(nowIter->second);
     return tmpResult;
   }else{
-    return KLIS_kthLIS(array,history,DP_KLIS,idx,idxOrder+1,orderK-cases);
+    return KLIS_kthLIS(array,history,DP_KLIS,LISidx,RVSSeq+1,orderK-cases);
   }
   
 }
 vector<int> KLIS_Algo(int& arrLen,int& orderK,vector<int>& array){
   //History 생성
-  vector<vector<int>> history;
-  KLIS_getLIS(array,history);
+  vector<map<int,int>> history;
+  vector<int> tmpLIS;
+  KLIS_getLIS(array,history,tmpLIS,0);
   //정답 생성
   vector<int> DP_KLIS(arrLen,-1);
   vector<int> result=KLIS_kthLIS(array,history,DP_KLIS,0,0,orderK);  //result는 역순이다
   reverse(result.begin(),result.end());
-  cout<<"======================\n";
-  for(auto& ele: history){
-    for(auto& ele2: ele){
-      cout<<array[ele2]<<"::"<<DP_KLIS[ele2]<<' ';
-    }cout<<"\n";
-  }
-  cout<<"======================\n";
   return result;
 }
 void KLIS(){
@@ -147,7 +122,7 @@ void KLIS(){
               DP를 이용하여 O(lgK)로 search 가능
                 func(LIS idx, order iter, k) return result(str)
                   order=0 , 사전순이므로 0부터 시작
-                  if cases>k -> return arr[History[LIS idx][order]]+func(LIS idx+1,lower_bound iter,k);
+                  if cases>k -> return arr[History[LIS idx][order]]+func(LIS idx+1,lower_bound (Reverse) iter,k);
                   if cases=k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,0); 
                     if k==0  -> return arr[History[LIS idx].back()]+func(LIS idx+1,0,0);
                   if cases<k -> return func(LIS idx, order+1, k-cases);
@@ -169,6 +144,9 @@ void KLIS(){
       GetLIS(#n*lgn)+DP(#n*lgn)+func(#n*4)
     mem complexity
       GetLIS(#n)+DP(#n)
+  전략2
+    History을 map의 배열로 수정하여 이용
+      history[Lisidx].ele = {Arr idx, Value};
   */
   int testCase;
   cin>>testCase;
@@ -177,10 +155,10 @@ void KLIS(){
     vector<int> array;
     KLIS_Input(arrLen,orderK,array);
     vector<int> result=KLIS_Algo(arrLen,orderK,array);
-    // cout<<result.size()<<'\n';
-    // for(auto& ele:result)
-    //   cout<<ele<<' ';
-    // cout<<'\n';
+    cout<<result.size()<<'\n';
+    for(auto& ele:result)
+      cout<<ele<<' ';
+    cout<<'\n';
   }
 }
 
