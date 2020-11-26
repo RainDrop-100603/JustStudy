@@ -51,7 +51,7 @@ void KLIS_getLIS(vector<int>& array, vector<vector<int>>& history){
     reverse(ele.begin(),ele.end());
   }
 } 
-int KLIS_DP(vector<vector<int>>& history,vector<int>& DP_KLIS, int idx, int idxOrder){
+int KLIS_DP(vector<int>& array, vector<vector<int>>& history,vector<int>& DP_KLIS, int idx, int idxOrder){
   if(idx==history.size()-1){
     return 1;
   }
@@ -64,7 +64,7 @@ int KLIS_DP(vector<vector<int>>& history,vector<int>& DP_KLIS, int idx, int idxO
   int nowArrIdx=history[idx][idxOrder];
   int nextIdxOrder=0;
   for(auto& ele:history[idx+1]){
-    if(ele>nowArrIdx){
+    if(array[ele]>array[nowArrIdx]){
       result+=KLIS_DP(history,DP_KLIS,idx+1,nextIdxOrder);
     }else{
       break;
@@ -92,7 +92,7 @@ vector<int> KLIS_kthLIS(vector<int>& array, vector<vector<int>>& history, vector
     return tmpResult;
   }else if(cases==orderK){
     auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,idx+1,-1,0);
-    tmpResult.push_back(array[history[idx].back()]);
+    tmpResult.push_back(array[history[idx][idxOrder]]);
     return tmpResult;
   }else{
     return KLIS_kthLIS(array,history,DP_KLIS,idx,idxOrder+1,orderK-cases);
@@ -107,6 +107,13 @@ vector<int> KLIS_Algo(int& arrLen,int& orderK,vector<int>& array){
   vector<int> DP_KLIS(arrLen,-1);
   vector<int> result=KLIS_kthLIS(array,history,DP_KLIS,0,0,orderK);  //result는 역순이다
   reverse(result.begin(),result.end());
+  cout<<"======================\n";
+  for(auto& ele: history){
+    for(auto& ele2: ele){
+      cout<<array[ele2]<<"::"<<DP_KLIS[ele2]<<' ';
+    }cout<<"\n";
+  }
+  cout<<"======================\n";
   return result;
 }
 void KLIS(){
@@ -121,21 +128,26 @@ void KLIS(){
             완전탐색:
               LIS생성 정보를 담는 History를 만든다
                 History[i][j]=idx, LIS에서 i번째 순서, i행에서 j번째로 입력된, 행렬에서 idx번째 숫자
-                마지막 행렬의 마지막 열보다 idx가 큰 값은 삭제한다(LIS에 영향을 끼치지 않는 값들이다)
+                추가적인 처리는 하지 않기로 하자
+                  마지막 행렬의 마지막 열보다 idx가 큰 값은 삭제한다(LIS에 영향을 끼치지 않는 값들이다) -> 안한다
+                  행렬의 중간에도, LIS에 영향을 끼치지 못하는 값들이 존재한다.
+                  history를 생성할때 이를 모두 고려하긴 어렵고, 이용해 먹을때 lower_bound를 통해 해결하기로 하자
+                  마찬가지로 행렬을 각각 뒤집는것도 사용하지 않는다. rbegin()을 사용하면 해결가능
                 법칙
-                  i행에 있는 모든 수는 i+1행에 있는 모든 수보다 작다
+                  i행에 있는 모든 수는 i+1행에 있는 모든 수보다 작다 ----------- 틀린법칙, 왜냐하면 행렬 중간에도 LIS에 영향을 주지 않는 값이 껴있기 때문이다.
                   한 행에서, j번째 열에 있는 수는 j+1번째 열에 있는 수보다 크다.
                   LIS에서 idx는 행이 증가할수록 반드시 커지게 된다.(작아지면 순서가 뒤바낀것을 의미)
               History를 이용한 완전탐색
                 각 행에서 가장 뒤에있는(가장 큰 열) 값들을 이어붙이면, 사전순으로 가장 앞인 LIS다.
                 이후 idx는 계속 커져야 한다는 법칙을 유지하면서, 뒤에서부터 idx를 줄여나가면 된다.
+                이때 array를 통해 이어진 값들의 실제 상하관계를 확인한다.
             k가 20억 까지 이므로, O(lgn)으로 search해야한다.
               LIS에서 idx번째 수가 정해졌을때, idx+1부터의 경우의 수는 O(n) : DP이용
                 DP생성, O(n)개를 지정하는데, 각 값 초기화에는 lg(t: means tiny) 시간 소요.
               DP를 이용하여 O(lgK)로 search 가능
-                func(LIS idx, order, k) return result(str)
+                func(LIS idx, order iter, k) return result(str)
                   order=0 , 사전순이므로 0부터 시작
-                  if cases>k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,k);
+                  if cases>k -> return arr[History[LIS idx][order]]+func(LIS idx+1,lower_bound iter,k);
                   if cases=k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,0); 
                     if k==0  -> return arr[History[LIS idx].back()]+func(LIS idx+1,0,0);
                   if cases<k -> return func(LIS idx, order+1, k-cases);
@@ -165,10 +177,10 @@ void KLIS(){
     vector<int> array;
     KLIS_Input(arrLen,orderK,array);
     vector<int> result=KLIS_Algo(arrLen,orderK,array);
-    cout<<result.size()<<'\n';
-    for(auto& ele:result)
-      cout<<ele<<' ';
-    cout<<'\n';
+    // cout<<result.size()<<'\n';
+    // for(auto& ele:result)
+    //   cout<<ele<<' ';
+    // cout<<'\n';
   }
 }
 
