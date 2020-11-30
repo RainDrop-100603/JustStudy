@@ -47,6 +47,7 @@ int KLIS_DP(vector<map<int,int>>& history,vector<int>& DP_KLIS, int idx, int RVS
   int nowArrIdx=nowIter->first;
   int nextRVSSeq=0;
   auto nextMap=history[idx+1];
+  auto nextIter=lower_bound(nextMap.rbegin(),nextMap.rend(),nowIter->first);
   for(auto iter=lower_bound(nextMap.begin(),nextMap.end(),idx);iter!=nextMap.end();iter++);
   for(auto& ele:history[idx+1]){
     if(array[ele]>array[nowArrIdx]){
@@ -60,6 +61,8 @@ int KLIS_DP(vector<map<int,int>>& history,vector<int>& DP_KLIS, int idx, int RVS
 }
 vector<int> KLIS_kthLIS(vector<int>& array, vector<map<int,int>>& history, vector<int>& DP_KLIS,int LISidx, int RVSSeq, int orderK){
   //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수를 이용한 함수
+  //대대적 변화: 같은 LISidx에서 arridx가 크다는 것은, 그 값이 작다는 것이다. 작은숫자부터 하므로, rbegin부터 하는것이 당연하다. 다만 값 또한 항상 커져야 하므로, 값을 비교해야한다
+  //값을 비교하는 방법은 새로운 map을 만드는 법, 값이 이전값보다 작으면 RVSSeq를 하나 늘리는 법이 있는데, 우선은 하나 늘리는 방법을 사용해보고 속도가 느리면 개선하도록 하자  
   int cases=KLIS_DP(history,DP_KLIS,LISidx,RVSSeq);
   auto nowIter=history[LISidx].rbegin()+RVSSeq;
   if(cases>=orderK){
