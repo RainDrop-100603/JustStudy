@@ -32,18 +32,20 @@ void KLIS_getLIS(vector<int>& array, vector<map<int,int>>& history, vector<int>&
   }
   KLIS_getLIS(array, history, tmpLIS, idx+1);
 } 
-int KLIS_DP(vector<map<int,int>>& history,vector<int>& DP_KLIS, int idx, int idxOrder){
+int KLIS_DP(vector<map<int,int>>& history,vector<int>& DP_KLIS, int idx, int RVSSeq){
+  //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수
   if(idx==history.size()-1){
     return 1;
   }
-  int& result=DP_KLIS[history[idx][idxOrder]];
+  auto nowIter=history[idx].rbegin()+RVSSeq;
+  int& result=DP_KLIS[nowIter->first];
   if(result!=-1){
     return result;
   }
   //Algo
   result=0;
-  int nowArrIdx=history[idx][idxOrder];
-  int nextIdxOrder=0;
+  int nowArrIdx=nowIter->first;
+  int nextRVSSeq=0;
   auto nextMap=history[idx+1];
   for(auto iter=lower_bound(nextMap.begin(),nextMap.end(),idx);iter!=nextMap.end();iter++);
   for(auto& ele:history[idx+1]){
@@ -57,14 +59,15 @@ int KLIS_DP(vector<map<int,int>>& history,vector<int>& DP_KLIS, int idx, int idx
   return result;
 }
 vector<int> KLIS_kthLIS(vector<int>& array, vector<map<int,int>>& history, vector<int>& DP_KLIS,int LISidx, int RVSSeq, int orderK){
-  //기저
-  //여기 런타임 에러 날거같은데 좀 더 좋은 방법좀 찾아보자 
-  if(LISidx==history.size()){
-    return vector<int>();
-  }
+  //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수를 이용한 함수
   int cases=KLIS_DP(history,DP_KLIS,LISidx,RVSSeq);
   auto nowIter=history[LISidx].rbegin()+RVSSeq;
   if(cases>=orderK){
+    //기저
+    if(LISidx==history.size()-1){
+      return vector<int>(1,nowIter->second);
+    }
+    //일반적인경우
     auto tmp=history[LISidx+1];
     auto nextIter=lower_bound(tmp.rbegin(),tmp.rend(),nowIter->first);  //idx 관계 확인
     while(nowIter->second>nextIter->second){  //크기 관계 확인
@@ -87,7 +90,7 @@ vector<int> KLIS_kthLIS(vector<int>& array, vector<map<int,int>>& history, vecto
 }
 vector<int> KLIS_Algo(int& arrLen,int& orderK,vector<int>& array){
   //History 생성
-  vector<map<int,int>> history;
+  vector<map<int,int>> history; //history[LISidx] = {ArrIdx, value}
   vector<int> tmpLIS;
   KLIS_getLIS(array,history,tmpLIS,0);
   //정답 생성
