@@ -61,13 +61,14 @@ vector<int> KLIS_kthLIS(vector<int>& array, vector<vector<pair<int,int>>>& histo
   //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수를 이용한 함수
   //대대적 변화: 같은 LISidx에서 arridx가 크다는 것은, 그 값이 작다는 것이다. 작은숫자부터 하므로, rbegin부터 하는것이 당연하다. 다만 값 또한 항상 커져야 하므로, 값을 비교해야한다
   //값을 비교하는 방법은 새로운 map을 만드는 법, 값이 이전값보다 작으면 RVSSeq를 하나 늘리는 법이 있는데, 우선은 하나 늘리는 방법을 사용해보고 속도가 느리면 개선하도록 하자  
-  //기저
+  //기저, 
   auto nowIter=history[LISidx].rbegin()+RVSSeq;
   if(orderK==1){
     return vector<int>(1,nowIter->second);
   }
   //Algo
   int cases=KLIS_DP(history,DP_KLIS,LISidx,RVSSeq);
+  if(cases<orderK)
   if(cases>=orderK){
     auto nextIter=history[idx+1].rbegin(); //idx 관계 확인
     while(nowIter->second>nextIter->second){  //크기 관계 확인
