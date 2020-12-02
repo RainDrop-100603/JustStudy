@@ -68,26 +68,18 @@ vector<int> KLIS_kthLIS(vector<int>& array, vector<vector<pair<int,int>>>& histo
   }
   //Algo
   int cases=KLIS_DP(history,DP_KLIS,LISidx,RVSSeq);
-  if(cases<orderK)
-  if(cases>=orderK){
-    auto nextIter=history[idx+1].rbegin(); //idx 관계 확인
-    while(nowIter->second>nextIter->second){  //크기 관계 확인
+  if(cases<orderK){
+    return KLIS_kthLIS(array,history,DP_KLIS,LISidx,RVSSeq+1,orderK-cases);
+  }else{
+    auto nextIter=history[LISidx+1].rbegin();
+    while(nowIter->second>nextIter->second){
       nextIter++;
     }
-    int nextRVSSeq=distance(tmp.rbegin(),nextIter); //이거 에러 일으킬꺼같은데 잘 생각해보자 
-    if(cases==orderK){
-      orderK=0;
-    }
+    int nextRVSSeq=distance(nextIter,history[LISidx+1].rbegin())-1;
     auto tmpResult=KLIS_kthLIS(array,history,DP_KLIS,LISidx+1,nextRVSSeq,orderK);
     tmpResult.push_back(nowIter->second);
     return tmpResult;
-  }else{
-    if(cases==-1){
-      cases=0;
-    }
-    return KLIS_kthLIS(array,history,DP_KLIS,LISidx,RVSSeq+1,orderK-cases);
   }
-  
 }
 vector<int> KLIS_Algo(int& arrLen,int& orderK,vector<int>& array){
   //History 생성, History는 유효하지 않은 값(LIS에 포함되지 않는 값)도 포함되어 있다. 이 경우는 경우의수가 0으로 표기
@@ -167,7 +159,7 @@ void KLIS(){
     cout<<result.size()<<'\n';
     for(auto& ele:result)
       cout<<ele<<' ';
-    cout<<'\n';
+    cout<<'\n'<<endl;
   }
 }
 
