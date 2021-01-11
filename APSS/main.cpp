@@ -107,21 +107,18 @@ void KLIS(){
               LIS생성 정보를 담는 History를 만든다
                 History[i][j]=idx, LIS에서 i번째 순서, i행에서 j번째로 입력된, 행렬에서 idx번째 숫자
                 추가적인 처리는 하지 않기로 하자
-                  마지막 행렬의 마지막 열보다 idx가 큰 값은 삭제한다(LIS에 영향을 끼치지 않는 값들이다) -> 안한다
-                  행렬의 중간에도, LIS에 영향을 끼치지 못하는 값들이 존재한다.
-                  history를 생성할때 이를 모두 고려하긴 어렵고, 이용해 먹을때 lower_bound를 통해 해결하기로 하자
-                  마찬가지로 행렬을 각각 뒤집는것도 사용하지 않는다. rbegin()을 사용하면 해결가능
                 법칙
-                  i행에 있는 모든 수는 i+1행에 있는 모든 수보다 작다 ----------- 틀린법칙, 왜냐하면 행렬 중간에도 LIS에 영향을 주지 않는 값이 껴있기 때문이다.
                   한 행에서, j번째 열에 있는 수는 j+1번째 열에 있는 수보다 크다.
                   LIS에서 idx는 행이 증가할수록 반드시 커지게 된다.(작아지면 순서가 뒤바낀것을 의미)
-              History를 이용한 완전탐색
-                각 행에서 가장 뒤에있는(가장 큰 열) 값들을 이어붙이면, 사전순으로 가장 앞인 LIS다.
+                  LIS의 원소로 사용될 때, 어떤 원소의 LIS에서의 위치는 바뀔 수 없다.(어떨때는 맨뒤, 어떨떄는 두번째뒤가 될 순 없다는 이야기) - 핵심
+                유의점
+                  History에 있는 각 값이 실제로 사용할 수 있는(LIS에 포함되는) 값인지 알 수는 없다.
+              History를 이용한 완전탐색 - not solution
                 이후 idx는 계속 커져야 한다는 법칙을 유지하면서, 뒤에서부터 idx를 줄여나가면 된다.
                 이때 array를 통해 이어진 값들의 실제 상하관계를 확인한다.
             k가 20억 까지 이므로, O(lgn)으로 search해야한다.
               LIS에서 idx번째 수가 정해졌을때, idx+1부터의 경우의 수는 O(n) : DP이용
-                DP생성, O(n)개를 지정하는데, 각 값 초기화에는 lg(t: means tiny) 시간 소요.
+                DP생성, O(n)개를 지정하는데, 각 값 초기화에는 lg t(t means tiny) 시간 소요.
               DP를 이용하여 O(lgK)로 search 가능
                 func(LIS idx, order iter, k) return result(str)
                   order=0 , 사전순이므로 0부터 시작
@@ -129,6 +126,19 @@ void KLIS(){
                   if cases=k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,0); 
                     if k==0  -> return arr[History[LIS idx].back()]+func(LIS idx+1,0,0);
                   if cases<k -> return func(LIS idx, order+1, k-cases);
+      해결법
+        LIS생성 정보를 담는 History를 만든다. H(ij)=arr idx : nlgn
+          arr idx는 arr에서의 idx를 말한다. 즉 ele의 value가 아니라, arr에서의 위치를 History에 저장하는 것이다.
+        arr idx 번째 원소가 사용될 경우, 해당원소이후의 경우의 수를 저장하는 DP배열을 만든다.: 각 lgn, 최대 nlgn
+          어떤 원소가 LIS에서 등장한다면, 해당 원소는 항상 LIS에서 같은 idx번째에 등장한다. 이를 이용한 DP
+          미리 생성하지 않고 이용할 때 호출하도록 만든다.
+          A라는 ele가 등장 했다면, LIS에서 특정위치(A_idx)의 값이 A로 고정되었다는 뜻이다. 이때 A_idx+1의 값은 아직 고정이 아니므로, 경우의 수가 생기게 되는 것이다.
+          DP생성시, arr idx가 더 큰 최초 위치부터 (lower bound를 이용하여 위치찾기) 탐색하여, 값이 arr idx보다 처음으로 더 작아지는 위치에서 끝낸다.
+        History와 DP를 이용하여 KLIS를 탐색한다. 최대 n
+          History의 i행에서, 열이 클 수록 작은 수 이므로, 큰 열 부터 이용하여 탐색한다.
+            currentK=k에서 시작, 열이 큰것부터 탐색해야 하므로 reverse iterator을 이용하여 탐색한다.
+            if(DP(H(ij))<currentK) -> H(ij)번째 수는 포함되지 않는다.다음 열을 탐색한다. currentK-=DP(H(ij));, jIter++;
+            else -> H(ij)번째 수는 포함된다.해당 값을 result에 push한 후, History에서 행을 넘어간다. iIter++; , result.push_back(arr(H(ij)));
       KLIS_GetLIS(arr, History)
         History[LIS idx][order]=idx of Arr
           LIS의 길이를 구하는 식을 사용할 때 생성
