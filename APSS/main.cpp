@@ -16,30 +16,32 @@ void KLIS_Input(int& arrLen,int& orderK,vector<int>& array){
   for(auto& ele:array)
     cin>>ele;
 }
-void KLIS_getLIS(vector<int>& array, vector<vector<pair<int,int>>>& history, vector<int>& tmpLIS, int idx){
+void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history, vector<int>& tmpLIS, int idx){
   if(idx==array.size()){
     return;
   }
   int now(array[idx]),last(idx==0 ? -1 : tmpLIS.back());
   if(now>last){
     tmpLIS.push_back(array[idx]);
-    history.push_back(vector<pair<int,int>>(1,{idx,array[idx]}));
+    history.push_back(vector<pair<int,int>>(1,{idx,now}));
   }else{
     int pointIdx=distance(tmpLIS.begin(),lower_bound(tmpLIS.begin(),tmpLIS.end(),now));
     tmpLIS[pointIdx]=now;
-    history[pointIdx].push_back({idx,array[idx]});
+    history[pointIdx].push_back({idx,now});
   }
-  KLIS_getLIS(array, history, tmpLIS, idx+1);
+  KLIS_getHistory(array, history, tmpLIS, idx+1);
 } 
 int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LISidx, int RVSSeq){
   //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수
   //history의 무의미한 값은 경우의 수가 0이 반환된다.
   //기저, 마지막 경우 경우의 수는 반드시 1
+  if(RVSSeq==history[LISidx].size()){
+    return 0;
+  }
   if(LISidx==history.size()-1){
     return 1;
   }
   //Algo
-  //여기서 없는범위 참조하는 (result) 문제가 발생
   auto nowIter=history[LISidx].rbegin()+RVSSeq;
   int& result=DP_KLIS[nowIter->first];
   if(result!=-1){
@@ -48,23 +50,20 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LIS
   //Algo
   result=0;
   auto nextVector=history[LISidx+1];
-  auto nextIter=lower_bound(nextVector.begin(),nextVector.end(),make_pair(nowIter->first,numeric_limits<int>::min()));
+  auto nextIter=lower_bound(nextVector.begin(),nextVector.end(),make_pair(nowIter->first,numeric_limits<int>::min()));  //idx에 대한 검증
   for(auto iter=nextIter;iter!=nextVector.end();iter++){
     if(iter->second>nowIter->second){
       result+=KLIS_DP(history,DP_KLIS,LISidx+1,distance(iter,nextVector.end())-1);
     }else{
-      break;  //value는 Arridx가 커질수록 작아지므로, value가 최초로 작아진 시점 이후로는 모두 다 작다.
+      break;  //value는 Arridx가 커질수록 작아지므로, value가 최초로 작아진 시점 이후로는 모두 다 작다. value에 대한 검증
     }
   }
   return result;
 }
 vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& DP_KLIS,int LISidx, int RVSSeq, int orderK){
   //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수를 이용한 함수
-  //대대적 변화: 같은 LISidx에서 arridx가 크다는 것은, 그 값이 작다는 것이다. 작은숫자부터 하므로, rbegin부터 하는것이 당연하다. 다만 값 또한 항상 커져야 하므로, 값을 비교해야한다
-  //값을 비교하는 방법은 새로운 map을 만드는 법, 값이 이전값보다 작으면 RVSSeq를 하나 늘리는 법이 있는데, 우선은 하나 늘리는 방법을 사용해보고 속도가 느리면 개선하도록 하자  
-  //기저, 
   auto nowIter=history[LISidx].rbegin()+RVSSeq;
-  if(orderK==1){
+  if(orderK==1&&LISidx==history.size()-1){
     return vector<int>(1,nowIter->second);
   }
   //Algo
@@ -86,10 +85,12 @@ vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array){
   //History 생성, History는 유효하지 않은 값(LIS에 포함되지 않는 값)도 포함되어 있다. 이 경우는 경우의수가 0으로 표기
   vector<vector<pair<int,int>>> history; //history[LISidx][RVSSeq] = {ArrIdx, value}, RVSSeq는 뒤에서 부터의 순서, 값이 작은 순서
   vector<int> tmpLIS;
-  KLIS_getLIS(array,history,tmpLIS,0);
+  KLIS_getHistory(array,history,tmpLIS,0);
   //정답 생성
   vector<int> DP_KLIS(arrLen,-1);
-  return KLIS_kthLIS(history,DP_KLIS,0,0,orderK);  
+  vector<int> result= KLIS_kthLIS(history,DP_KLIS,0,0,orderK); 
+  reverse(result.begin(),result.end());
+  return result; 
 }
 void KLIS(){
   /*
