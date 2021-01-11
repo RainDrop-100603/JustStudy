@@ -89,10 +89,7 @@ vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array){
   KLIS_getLIS(array,history,tmpLIS,0);
   //정답 생성
   vector<int> DP_KLIS(arrLen,-1);
-  vector<int> result=KLIS_kthLIS(history,DP_KLIS,0,0,orderK);  //result는 역순이다
-  reverse(result.begin(),result.end());
-  vector<int> result;
-  return result;
+  return KLIS_kthLIS(history,DP_KLIS,0,0,orderK);  
 }
 void KLIS(){
   /*
@@ -136,9 +133,9 @@ void KLIS(){
           DP생성시, arr idx가 더 큰 최초 위치부터 (lower bound를 이용하여 위치찾기) 탐색하여, 값이 arr idx보다 처음으로 더 작아지는 위치에서 끝낸다.
         History와 DP를 이용하여 KLIS를 탐색한다. 최대 n
           History의 i행에서, 열이 클 수록 작은 수 이므로, 큰 열 부터 이용하여 탐색한다.
-            currentK=k에서 시작, 열이 큰것부터 탐색해야 하므로 reverse iterator을 이용하여 탐색한다.
+            currentK=k에서 시작, 열이 큰것부터 탐색해야 하므로 reverse iterator을 이용하여 탐색한다(jIter == R iter).
             if(DP(H(ij))<currentK) -> H(ij)번째 수는 포함되지 않는다.다음 열을 탐색한다. currentK-=DP(H(ij));, jIter++;
-            else -> H(ij)번째 수는 포함된다.해당 값을 result에 push한 후, History에서 행을 넘어간다. iIter++; , result.push_back(arr(H(ij)));
+            else -> H(ij)번째 수는 포함된다.해당 값을 result에 push한 후, History에서 행을 넘어간다. i++; , result.push_back(arr(H(ij)));
       KLIS_GetLIS(arr, History)
         History[LIS idx][order]=idx of Arr
           LIS의 길이를 구하는 식을 사용할 때 생성
