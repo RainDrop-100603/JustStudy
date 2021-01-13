@@ -33,12 +33,12 @@ void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history,
 } 
 int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LISidx, int RVSSeq){
   //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수
-  //history의 무의미한 값은 경우의 수가 0이 반환된다.
-  //기저, 마지막 경우 경우의 수는 반드시 1
-  if(RVSSeq==history[LISidx].size()){
+  //history의 무의미한 값은 경우의 수가 0으로 반환
+  //기저
+  if(RVSSeq==history[LISidx].size()){ //범위를 벗어나는경우
     return 0;
   }
-  if(LISidx==history.size()-1){
+  if(LISidx==history.size()-1){ //마지막 순서인 경우: 경우의 수가 항상 1
     return 1;
   }
   //Algo
@@ -63,6 +63,7 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LIS
 vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& DP_KLIS,int LISidx, int RVSSeq, int orderK){
   //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수를 이용한 함수
   auto nowIter=history[LISidx].rbegin()+RVSSeq;
+  //마지막 원소인 경우
   if(orderK==1&&LISidx==history.size()-1){
     return vector<int>(1,nowIter->second);
   }
@@ -75,7 +76,7 @@ vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& DP_
     while(nowIter->second>nextIter->second){
       nextIter++;
     }
-    int nextRVSSeq=distance(nextIter,history[LISidx+1].rbegin())-1;
+    int nextRVSSeq=distance(history[LISidx+1].rbegin(),nextIter);
     auto tmpResult=KLIS_kthLIS(history,DP_KLIS,LISidx+1,nextRVSSeq,orderK);
     tmpResult.push_back(nowIter->second);
     return tmpResult;
@@ -169,7 +170,7 @@ void KLIS(){
     cout<<result.size()<<'\n';
     for(auto& ele:result)
       cout<<ele<<' ';
-    cout<<'\n'<<endl;
+    cout<<'\n';
   }
 }
 
