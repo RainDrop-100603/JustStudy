@@ -82,6 +82,21 @@ vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& DP_
     return tmpResult;
   }
 }
+void KLIS_funcTest(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS){
+  cout<<"=============Test==============\n";
+  cout<<"----------history--------------\n";
+  for(auto& ele:history){
+    for(auto& ele2:ele){
+      cout<<ele2.second<<"("<<ele2.first<<") ";
+    }
+    cout<<"\n";
+  }
+  cout<<"----------DP_KLIS--------------\n";
+  for(auto& ele:DP_KLIS){
+    cout<< ele<<" ";
+  }cout<<"\n";
+  cout<<"==========TestEnd==============\n";
+}
 vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array){
   //History 생성, History는 유효하지 않은 값(LIS에 포함되지 않는 값)도 포함되어 있다. 이 경우는 경우의수가 0으로 표기
   vector<vector<pair<int,int>>> history; //history[LISidx][RVSSeq] = {ArrIdx, value}, RVSSeq는 뒤에서 부터의 순서, 값이 작은 순서
@@ -91,6 +106,7 @@ vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array){
   vector<int> DP_KLIS(arrLen,-1);
   vector<int> result= KLIS_kthLIS(history,DP_KLIS,0,0,orderK); 
   reverse(result.begin(),result.end());
+  //KLIS_funcTest(history,DP_KLIS);
   return result; 
 }
 void KLIS(){
