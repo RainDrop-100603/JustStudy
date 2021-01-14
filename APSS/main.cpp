@@ -19,12 +19,14 @@ void KLIS_Input(int& arrLen,int& orderK,vector<int>& array){
     cin>>ele;
 }
 void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history, vector<int>& tmpLIS, int idx=0){
+  //모든 ele에 대해 검토가 완료됐을때
   if(idx==array.size()){
     return;
   }
+  //Algo, last==임시LIS의 가장 뒤의 원소
   int now(array[idx]),last(idx==0 ? -1 : tmpLIS.back());
   if(now>last){
-    tmpLIS.push_back(array[idx]);
+    tmpLIS.push_back(now);
     history.push_back(vector<pair<int,int>>(1,{idx,now}));
   }else{
     int pointIdx=distance(tmpLIS.begin(),lower_bound(tmpLIS.begin(),tmpLIS.end(),now));
@@ -37,13 +39,9 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LIS
   //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수
   //history의 무의미한 값은 경우의 수가 0으로 반환
   //기저
-  if(RVSSeq==history[LISidx].size()){ //범위를 벗어나는경우
-    return 0;
-  }
   if(LISidx==history.size()-1){ //마지막 순서인 경우: 경우의 수가 항상 1
     return 1;
   }
-  //Algo
   auto nowIter=history[LISidx].rbegin()+RVSSeq;
   int& result=DP_KLIS[nowIter->first];
   if(result!=-1){
@@ -55,7 +53,17 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LIS
   auto nextIter=lower_bound(nextVector.begin(),nextVector.end(),make_pair(nowIter->first,numeric_limits<int>::min()));  //idx에 대한 검증
   for(auto iter=nextIter;iter!=nextVector.end();iter++){
     if(iter->second>nowIter->second){
-      result+=KLIS_DP(history,DP_KLIS,LISidx+1,distance(iter,nextVector.end())-1);
+      int tmp=KLIS_DP(history,DP_KLIS,LISidx+1,distance(iter,nextVector.end())-1);
+      if(tmp!=-2){
+        result+=tmp;
+        if(result<=0){
+          result=-2;
+          break;
+        }
+      }else{
+        result=-2;
+        break;
+      }
     }else{
       break;  //value는 Arridx가 커질수록 작아지므로, value가 최초로 작아진 시점 이후로는 모두 다 작다. value에 대한 검증
     }
@@ -71,9 +79,7 @@ vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& DP_
   }
   //Algo
   int cases=KLIS_DP(history,DP_KLIS,LISidx,RVSSeq);
-  if(cases<orderK){
-    return KLIS_kthLIS(history,DP_KLIS,LISidx,RVSSeq+1,orderK-cases);
-  }else{
+  if(cases>=orderK||cases==-2){
     auto nextIter=history[LISidx+1].rbegin();
     while(nowIter->second>nextIter->second){
       nextIter++;
@@ -82,6 +88,8 @@ vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& DP_
     auto tmpResult=KLIS_kthLIS(history,DP_KLIS,LISidx+1,nextRVSSeq,orderK);
     tmpResult.push_back(nowIter->second);
     return tmpResult;
+  }else{
+    return KLIS_kthLIS(history,DP_KLIS,LISidx,RVSSeq+1,orderK-cases);
   }
 }
 void KLIS_funcTest(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS){
@@ -156,6 +164,9 @@ void KLIS(){
             currentK=k에서 시작, 열이 큰것부터 탐색해야 하므로 reverse iterator을 이용하여 탐색한다(jIter == R iter).
             if(DP(H(ij))<currentK) -> H(ij)번째 수는 포함되지 않는다.다음 열을 탐색한다. currentK-=DP(H(ij));, jIter++;
             else -> H(ij)번째 수는 포함된다.해당 값을 result에 push한 후, History에서 행을 넘어간다. i++; , result.push_back(arr(H(ij)));
+        오버플로우 해결
+          K는 항상 int_MAX이하의 크기이다.
+          오버플로우를 -2로 처리하면, -2인 경우 항상 해당 원소가 포함되어야한다는 것을 알 수 있다.
       KLIS_GetLIS(arr, History)
         History[LIS idx][order]=idx of Arr
           LIS의 길이를 구하는 식을 사용할 때 생성
