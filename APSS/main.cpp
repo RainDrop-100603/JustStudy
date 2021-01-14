@@ -10,13 +10,15 @@
 
 using namespace std;
 
+
+//오버플로우 처리를 -2로 하면 어떨까? 
 void KLIS_Input(int& arrLen,int& orderK,vector<int>& array){
   cin>>arrLen>>orderK;
   array=vector<int>(arrLen);
   for(auto& ele:array)
     cin>>ele;
 }
-void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history, vector<int>& tmpLIS, int idx){
+void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history, vector<int>& tmpLIS, int idx=0){
   if(idx==array.size()){
     return;
   }
@@ -101,7 +103,7 @@ vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array){
   //History 생성, History는 유효하지 않은 값(LIS에 포함되지 않는 값)도 포함되어 있다. 이 경우는 경우의수가 0으로 표기
   vector<vector<pair<int,int>>> history; //history[LISidx][RVSSeq] = {ArrIdx, value}, RVSSeq는 뒤에서 부터의 순서, 값이 작은 순서
   vector<int> tmpLIS;
-  KLIS_getHistory(array,history,tmpLIS,0);
+  KLIS_getHistory(array,history,tmpLIS);
   //정답 생성
   vector<int> DP_KLIS(arrLen,-1);
   vector<int> result= KLIS_kthLIS(history,DP_KLIS,0,0,orderK); 

@@ -75,7 +75,7 @@ string to something
   lower_bound를 통해 pair->first만 비교하고 싶다면, make_pair(value,numeric_limits<int>::min())을 비교 인자로 넣으면 된다.
 ------------------------------
 자주하는 실수
-  산술 오버플로우
+  산술 오버플로우::매우 자주 발생하는 오류 
   매개변수의 Default는 두번 선언될 수 없다(.h와 .cpp에서 중복선언 불가능) -> header에서 선언하는게 더 직관적 
   배열 범위 밖 원소 접근 (런타임 에러 발생 가능)
   상수 오타 
