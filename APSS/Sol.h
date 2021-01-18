@@ -8,6 +8,7 @@
 #include "useful.h"
 
 using namespace std;
+// @*: 풀었으나 참고해볼만한 문제, @*@*: 어렵게 풀었던 문제, @*@*@*: 책이나 다른 해답을 참고한 문제 
 
 //Boggle, BruteForce, 런타임 에러 발생 Mem over?
 void BoggleRandInput(vector<char>& probTable, vector<string>& wordArr);

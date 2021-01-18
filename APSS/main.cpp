@@ -11,7 +11,9 @@
 using namespace std;
 
 
-//오버플로우 처리를 -2로 하면 어떨까? 
+//1. overflow -> -2로 처리 
+//2. history의 잡 값이 runtimeError 유발 
+//3. 연상하는것이 너무 어렵다. 수학적으로 증명을 해야하거나, 비 직관적이다.
 void KLIS_Input(int& arrLen,int& orderK,vector<int>& array){
   cin>>arrLen>>orderK;
   array=vector<int>(arrLen);
@@ -27,17 +29,16 @@ void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history,
   int now(array[idx]),last(idx==0 ? -1 : tmpLIS.back());
   if(now>last){
     tmpLIS.push_back(now);
-    history.push_back(vector<pair<int,int>>(1,{idx,now}));
+    history.push_back(vector<pair<int,int>>(1,make_pair(idx,now)));
   }else{
     int pointIdx=distance(tmpLIS.begin(),lower_bound(tmpLIS.begin(),tmpLIS.end(),now));
     tmpLIS[pointIdx]=now;
-    history[pointIdx].push_back({idx,now});
+    history[pointIdx].push_back(make_pair(idx,now));
   }
   KLIS_getHistory(array, history, tmpLIS, idx+1);
 } 
 int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LISidx, int RVSSeq){
   //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수
-  //history의 무의미한 값은 경우의 수가 0으로 반환
   //기저
   if(LISidx==history.size()-1){ //마지막 순서인 경우: 경우의 수가 항상 1
     return 1;
@@ -50,13 +51,13 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LIS
   //Algo
   result=0;
   auto nextVector=history[LISidx+1];
-  auto nextIter=lower_bound(nextVector.begin(),nextVector.end(),make_pair(nowIter->first,numeric_limits<int>::min()));  //idx에 대한 검증
-  for(auto iter=nextIter;iter!=nextVector.end();iter++){
-    if(iter->second>nowIter->second){
-      int tmp=KLIS_DP(history,DP_KLIS,LISidx+1,distance(iter,nextVector.end())-1);
+  auto tmpIter=lower_bound(nextVector.begin(),nextVector.end(),make_pair(nowIter->first,0));  //idx에 대한 검증
+  for(auto nextIter=tmpIter;nextIter!=nextVector.end();nextIter++){
+    if(nextIter->second>nowIter->second){
+      int tmp=KLIS_DP(history,DP_KLIS,LISidx+1,distance(nextIter,nextVector.end())-1);
       if(tmp!=-2){
         result+=tmp;
-        if(result<=0){
+        if(result<=0){  //overflow
           result=-2;
           break;
         }
@@ -65,7 +66,7 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LIS
         break;
       }
     }else{
-      break;  //value는 Arridx가 커질수록 작아지므로, value가 최초로 작아진 시점 이후로는 모두 다 작다. value에 대한 검증
+      break;  //같은 LISidx를 가지는 value는 Arridx가 커질수록 작아지므로, value가 최초로 작아진 시점 이후로는 모두 다 작다. value에 대한 검증
     }
   }
   return result;
@@ -79,6 +80,9 @@ vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& DP_
   }
   //Algo
   int cases=KLIS_DP(history,DP_KLIS,LISidx,RVSSeq);
+  if(cases==0){
+    return KLIS_kthLIS(history,DP_KLIS,LISidx,RVSSeq+1,orderK);
+  }
   if(cases>=orderK||cases==-2){
     auto nextIter=history[LISidx+1].rbegin();
     while(nowIter->second>nextIter->second){
@@ -120,37 +124,20 @@ vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array){
   return result; 
 }
 void KLIS(){
-  /*
+  /*실험 조건
   2초, 64MB, 테스트케이스=50
-  입력: 수열의 원소의 수(n) 1~500, k(번째 LIS)1~2*10e9, n개의 정수로 이루어진 수열(각 수는 1~100,000, 중복 X), K번째 LIS는 반드시 존재한다(LIS의 개수는 K개 이상)
+  입력: #eleOfAr n: 1~500, k(th LIS): 1~INT32MAX, #LIS >= k
   출력: 두 줄에 나눠서 K번쨰 LIS 의 길이, 값 출력
-  전략1
+  */
+  /*전략1_fail
+    문제점: 
+      1. overflow -> -2로 처리 
+      2. history의 잡 값이 runtimeError 유발 
+      3. 연상하는것이 너무 어렵다. 수학적으로 증명을 해야하거나, 비 직관적이다.
+    바탕이 되는 최적화 문제를 푼다. : 이때 최적해를 세야한다는 것을 감안하고 문제를 풀자.
+    최적화 문제의 최적해를 세는 문제를 푼다.
+    답의 수를 기반으로 답안을 재구성한다.
     Dynamic Programming
-      해석: 사전순 K번째 LIS:
-              LIS끼리는 당연히 길이가 같다, 따라서 사전순으로 배열하는 것은 어렵지 않다. 
-            완전탐색:
-              LIS생성 정보를 담는 History를 만든다
-                History[i][j]=idx, LIS에서 i번째 순서, i행에서 j번째로 입력된, 행렬에서 idx번째 숫자
-                추가적인 처리는 하지 않기로 하자
-                법칙
-                  한 행에서, j번째 열에 있는 수는 j+1번째 열에 있는 수보다 크다.
-                  LIS에서 idx는 행이 증가할수록 반드시 커지게 된다.(작아지면 순서가 뒤바낀것을 의미)
-                  LIS의 원소로 사용될 때, 어떤 원소의 LIS에서의 위치는 바뀔 수 없다.(어떨때는 맨뒤, 어떨떄는 두번째뒤가 될 순 없다는 이야기) - 핵심
-                유의점
-                  History에 있는 각 값이 실제로 사용할 수 있는(LIS에 포함되는) 값인지 알 수는 없다.
-              History를 이용한 완전탐색 - not solution
-                이후 idx는 계속 커져야 한다는 법칙을 유지하면서, 뒤에서부터 idx를 줄여나가면 된다.
-                이때 array를 통해 이어진 값들의 실제 상하관계를 확인한다.
-            k가 20억 까지 이므로, O(lgn)으로 search해야한다.
-              LIS에서 idx번째 수가 정해졌을때, idx+1부터의 경우의 수는 O(n) : DP이용
-                DP생성, O(n)개를 지정하는데, 각 값 초기화에는 lg t(t means tiny) 시간 소요.
-              DP를 이용하여 O(lgK)로 search 가능
-                func(LIS idx, order iter, k) return result(str)
-                  order=0 , 사전순이므로 0부터 시작
-                  if cases>k -> return arr[History[LIS idx][order]]+func(LIS idx+1,lower_bound (Reverse) iter,k);
-                  if cases=k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,0); 
-                    if k==0  -> return arr[History[LIS idx].back()]+func(LIS idx+1,0,0);
-                  if cases<k -> return func(LIS idx, order+1, k-cases);
       해결법
         LIS생성 정보를 담는 History를 만든다. H(ij)=arr idx : nlgn
           arr idx는 arr에서의 idx를 말한다. 즉 ele의 value가 아니라, arr에서의 위치를 History에 저장하는 것이다.
@@ -185,9 +172,11 @@ void KLIS(){
       GetLIS(#n*lgn)+DP(#n*lgn)+func(#n*4)
     mem complexity
       GetLIS(#n)+DP(#n)
-  전략2
-    History을 map의 배열로 수정하여 이용
-      history[Lisidx].ele = {Arr idx, Value};
+  */
+  /*전략2
+    DynamicProgramming
+      
+
   */
   int testCase;
   cin>>testCase;
