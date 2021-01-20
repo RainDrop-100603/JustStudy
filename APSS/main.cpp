@@ -37,14 +37,14 @@ void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history,
   }
   KLIS_getHistory(array, history, tmpLIS, idx+1);
 } 
-int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LISidx, int RVSSeq){
-  //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수
+int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases, int LISidx, int reverse_Seq){
+  //LISidx번째 숫자가 reverse_Seq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수
   //기저
   if(LISidx==history.size()-1){ //마지막 순서인 경우: 경우의 수가 항상 1
     return 1;
   }
-  auto nowIter=history[LISidx].rbegin()+RVSSeq;
-  int& result=DP_KLIS[nowIter->first];
+  auto nowIter=history[LISidx].rbegin()+reverse_Seq;
+  int& result=cache_numOfCases[nowIter->first];
   if(result!=-1){
     return result;
   }
@@ -54,7 +54,7 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LIS
   auto tmpIter=lower_bound(nextVector.begin(),nextVector.end(),make_pair(nowIter->first,0));  //idx에 대한 검증
   for(auto nextIter=tmpIter;nextIter!=nextVector.end();nextIter++){
     if(nextIter->second>nowIter->second){
-      int tmp=KLIS_DP(history,DP_KLIS,LISidx+1,distance(nextIter,nextVector.end())-1);
+      int tmp=KLIS_DP(history,cache_numOfCases,LISidx+1,distance(nextIter,nextVector.end())-1);
       if(tmp!=-2){
         result+=tmp;
         if(result<=0){  //overflow
@@ -71,32 +71,30 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS, int LIS
   }
   return result;
 }
-vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& DP_KLIS,int LISidx, int RVSSeq, int orderK){
-  //LISidx번째 숫자가 RVSSeq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수를 이용한 함수
-  auto nowIter=history[LISidx].rbegin()+RVSSeq;
-  //마지막 원소인 경우
-  if(orderK==1&&LISidx==history.size()-1){
-    return vector<int>(1,nowIter->second);
+vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& cache_numOfCases,int LISidx, int orderK, pair<int,int> prevPair){
+  //기저
+  if(LISidx==history.size()){
+    return vector<int>();
   }
-  //Algo
-  int cases=KLIS_DP(history,DP_KLIS,LISidx,RVSSeq);
-  if(cases==0){
-    return KLIS_kthLIS(history,DP_KLIS,LISidx,RVSSeq+1,orderK);
-  }
-  if(cases>=orderK||cases==-2){
-    auto nextIter=history[LISidx+1].rbegin();
-    while(nowIter->second>nextIter->second){
-      nextIter++;
+  //Algo, pair: {idx, value}
+  for(int reverse_Seq=0;reverse_Seq<history[LISidx].size();reverse_Seq++){
+    auto nowPair=*(history[LISidx].rbegin()+reverse_Seq);
+    //reverse_Seq가 커질수록 value는 커진다.
+    if(prevPair.second>nowPair.second){
+      continue;
     }
-    int nextRVSSeq=distance(history[LISidx+1].rbegin(),nextIter);
-    auto tmpResult=KLIS_kthLIS(history,DP_KLIS,LISidx+1,nextRVSSeq,orderK);
-    tmpResult.push_back(nowIter->second);
-    return tmpResult;
-  }else{
-    return KLIS_kthLIS(history,DP_KLIS,LISidx,RVSSeq+1,orderK-cases);
+    //Algo
+    int cases=KLIS_DP(history,cache_numOfCases,LISidx,reverse_Seq);
+    if(cases>=orderK||cases==-2){ //-2 means INT32 overflow, always bigger than orderK
+      auto tmp=KLIS_kthLIS(history,cache_numOfCases,LISidx+1,orderK,nowPair);
+      tmp.push_back(nowPair.second);
+      return tmp;
+    }else{
+      orderK-=cases;
+    }
   }
 }
-void KLIS_funcTest(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS){
+void KLIS_funcTest(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases){
   cout<<"=============Test==============\n";
   cout<<"----------history--------------\n";
   for(auto& ele:history){
@@ -105,22 +103,22 @@ void KLIS_funcTest(vector<vector<pair<int,int>>>& history,vector<int>& DP_KLIS){
     }
     cout<<"\n";
   }
-  cout<<"----------DP_KLIS--------------\n";
-  for(auto& ele:DP_KLIS){
+  cout<<"----------cache_numOfCases--------------\n";
+  for(auto& ele:cache_numOfCases){
     cout<< ele<<" ";
   }cout<<"\n";
   cout<<"==========TestEnd==============\n";
 }
 vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array){
   //History 생성, History는 유효하지 않은 값(LIS에 포함되지 않는 값)도 포함되어 있다. 이 경우는 경우의수가 0으로 표기
-  vector<vector<pair<int,int>>> history; //history[LISidx][RVSSeq] = {ArrIdx, value}, RVSSeq는 뒤에서 부터의 순서, 값이 작은 순서
+  vector<vector<pair<int,int>>> history; //history[LISidx][reverse_Seq] = {ArrIdx, value}, reverse_Seq는 뒤에서 부터의 순서, 값이 작은 순서
   vector<int> tmpLIS;
   KLIS_getHistory(array,history,tmpLIS);
   //정답 생성
-  vector<int> DP_KLIS(arrLen,-1);
-  vector<int> result= KLIS_kthLIS(history,DP_KLIS,0,0,orderK); 
+  vector<int> cache_numOfCases(arrLen,-1);
+  vector<int> result= KLIS_kthLIS(history,cache_numOfCases,0,orderK,{0,0}); //pair: {prev idx, prev value}
   reverse(result.begin(),result.end());
-  //KLIS_funcTest(history,DP_KLIS);
+  //KLIS_funcTest(history,cache_numOfCases);
   return result; 
 }
 void KLIS(){
@@ -190,8 +188,6 @@ void KLIS(){
           k>= numOfCases: k번째 LIS의 idx번째 원소의 값은 value이다.  ->  idx+1에 대해 같은 작업 수행
           k< numOfCases: idx번째 원소가 value인 LIS는 k번째 LIS보다 사전순으로 앞에서 나온다. ->  History에서 value보다 사전순으로 뒤에 있는 값을 가져오도록 한다.
         nunOfCases: idx-1위치의 {arridx,value}를 가져와서, arridx가 뒤에있고 value가 더 큰 모든 것의 numOfCases를 더한다. -> LIS_len*(n/LIS_len) ~= n 
-
-
   */
   int testCase;
   cin>>testCase;
