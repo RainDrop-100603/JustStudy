@@ -50,26 +50,22 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases
   }
   //Algo
   result=0;
-  auto nextVector=history[LISidx+1];
-  auto tmpIter=lower_bound(nextVector.begin(),nextVector.end(),make_pair(nowIter->first,0));  //idx에 대한 검증
-  for(auto nextIter=tmpIter;nextIter!=nextVector.end();nextIter++){
-    if(nextIter->second>nowIter->second){
-      int tmp=KLIS_DP(history,cache_numOfCases,LISidx+1,distance(nextIter,nextVector.end())-1);
-      if(tmp!=-2){
-        result+=tmp;
-        if(result<=0){  //overflow
-          result=-2;
-          break;
-        }
-      }else{
-        result=-2;
-        break;
-      }
-    }else{
-      break;  //같은 LISidx를 가지는 value는 Arridx가 커질수록 작아지므로, value가 최초로 작아진 시점 이후로는 모두 다 작다. value에 대한 검증
+  auto nextLIS_Idx=history[LISidx+1];
+  auto nextIter=lower_bound(history[LISidx+1].begin(),history[LISidx+1].end(),make_pair(nowIter->first,0));
+  for(;nextIter!=history[LISidx+1].end();nextIter++){
+    //value chk, value is strictly decreasing
+    if(nowIter->second>nextIter->second){
+      break;
+    }
+    int next_RVS_seq=history[LISidx+1].size()-distance(history[LISidx+1].begin(),nextIter)-1;
+    int tmp=KLIS_DP(history,cache_numOfCases,LISidx+1,next_RVS_seq);
+    result+=tmp;
+    //overflow chk
+    if(result<0||tmp==-2){
+      result=-2;
+      return result;
     }
   }
-  return result;
 }
 vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& cache_numOfCases,int LISidx, int orderK, pair<int,int> prevPair){
   //기저
