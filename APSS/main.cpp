@@ -76,13 +76,14 @@ vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& cac
   if(LISidx==history.size()){
     return vector<int>();
   }
-  //Algo, pair: {idx, value}
+  //Algo, pair: {idx, value}, 
   for(int reverse_Seq=0;reverse_Seq<history[LISidx].size();reverse_Seq++){
     auto nowPair=*(history[LISidx].rbegin()+reverse_Seq);
-    //reverse_Seq가 커질수록 value는 커진다.
+    //value chk, reverse_Seq가 커질수록 value는 커진다.
     if(prevPair.second>nowPair.second){
       continue;
     }
+    //idx chk는 생략, LIS의 개수>=K이기 때문에, 유효한 idx를 벗어나지 않는다.
     //Algo
     int cases=KLIS_DP(history,cache_numOfCases,LISidx,reverse_Seq);
     if(cases>=orderK||cases==-2){ //-2 means INT32 overflow, always bigger than orderK
