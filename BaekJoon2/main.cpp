@@ -3,8 +3,22 @@
 
 using namespace std;
 
-int BK2104_getMaxRating(vector<int>& arr, int left, int right){
+//BK 6549 복습 
 
+//최대값이 아닌 범위를 찾아야하며, long long을 사용해야 함을 잊지 말자 
+long long BK2104_getMaxRating(vector<int>& arr, vector<long long>& cache_Sum,vector<vector<int>>& cache_Pivot, int left, int right){
+  //기저
+  if(left==right){
+    return 0;
+  }
+  //find pivot
+  int pivot=cache_Pivot[left][right];
+  int min=arr[pivot];
+  //divide conquer
+  long long leftPivot=BK2104_getMaxRating(arr,cache_Sum,cache_Pivot,left,pivot);
+  long long rightPivot=BK2104_getMaxRating(arr,cache_Sum,cache_Pivot,pivot+1,right);
+  long long leftToRight=(cache_Sum[right]-cache_Sum[left])*min;
+  return max(leftToRight,max(leftPivot,rightPivot));
 }
 
 void BK2104(){
@@ -30,16 +44,26 @@ void BK2104(){
   cin>>N;
   vector<int> arr(N);
   for(auto& ele:arr){
-    cin>>arr;
+    cin>>ele;
   }
   //Sum 구해놓기
-  vector<int> cache_Sum(N+1); //sum(a)= sum of x, which is 0<=x<a;
+  vector<long long> cache_Sum(N+1); //sum(a)= sum of x, which is 0<=x<a;
   for(int i=0;i<N;i++){
     cache_Sum[i+1]=cache_Sum[i]+arr[i];
   }
-
+  //Pivot 구해놓기, i<= x < j
+  vector<vector<int>> cache_Pivot(N+1,vector<int>(N+1));
+  for(int i=0;i<N;i++){
+    cache_Pivot[i][i+1]=i;
+    for(int j=i+2;j<=N;j++){
+      int& pivot=cache_Pivot[i][j]=cache_Pivot[i][j-1];
+      if(arr[pivot]>arr[j-1]){
+        pivot=j-1;
+      }
+    }
+  }
   //Algo
-  cout<<BK2104_getMaxRating(arr,0,N);
+  cout<<BK2104_getMaxRating(arr,cache_Sum,cache_Pivot,0,N);
 }
 
 int main(){
