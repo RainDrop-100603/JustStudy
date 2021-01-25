@@ -49,9 +49,9 @@ vector<int> Boggle_Algo2(vector<char>& probTable, vector<string>& wordArr){
       for(int j=0;j<25;j++){
         if(ele[i]==probTable[j]){
           vector<int> near;
-          if(j%5==1){
+          if(j%5==0){
             near=lEdgeNear;
-          }else if(j%5==0){
+          }else if(j%5==4){
             near=rEdgeNear;
           }else{
             near=commonNear;
