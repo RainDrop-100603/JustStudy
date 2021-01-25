@@ -10,19 +10,35 @@
 
 using namespace std;
 
-vector<int> BoggleAlgo(vector<char>& probTable, vector<string>& wordArr){
+void BoggleInput(vector<char>& probTable, vector<string>& wordArr){
+  for(int i=0;i<5;i++){
+    string tmpS;
+    cin>>tmpS;
+    for(int j=0;j<5;j++){
+      probTable[5*i+j]=tmpS[j];
+    }
+  }
+  int wordNum;
+  cin>>wordNum;
+  for(int i=0;i<wordNum;i++){
+    string tmpS;
+    cin>>tmpS;
+    wordArr.push_back(tmpS);
+  }
+}
+vector<int> Boggle_Algo2(vector<char>& probTable, vector<string>& wordArr){
   vector<int> result;
   //인접 8칸을 의미
   vector<int> near={-6,-5,-4,-1,1,4,5,6};
   //알고리즘
   for(auto& ele:wordArr){
-    //DP[i][k]=x, ele의 i번째 원소와 겹치는 위치들 x 
+    //DP[i][k]=x, ele(문장)의 i번째 원소로 k가 사용될 수 있는가(x==1 or 0)
     int len=ele.length();
-    vector<vector<int>> DP(len);
+    vector<vector<int>> DP(len,vector<int>(25));
     //0번째 원소 초기조건
     for(int j=0;j<25;j++){
       if(ele[0]==probTable[j]){
-        DP[0].push_back(j);
+        DP[0][j]=1;
       }
     }
     //1~len-1번째 원소
@@ -30,26 +46,28 @@ vector<int> BoggleAlgo(vector<char>& probTable, vector<string>& wordArr){
       //probTable 순회
       for(int j=0;j<25;j++){
         if(ele[i]==probTable[j]){
-          for(auto& ele2: DP[i-1]){
-            int gap=ele2-j;
-            for(auto& ele3:near){
-              if(gap==ele3){
-                DP[i].push_back(j);
-              }
+          for(auto& ele: near){
+            if(j+ele>=0&&j+ele<25&&DP[i-1][j+ele]==1){
+              DP[i][j]=1;
+              break;
             }
           }
         }
       }
     }
     //결과, 0=no, 1=yes
-    if(DP.back().empty()){
-      result.push_back(0);
-    }else{
-      result.push_back(1);
+    int tmpResult(0);
+    for(auto& ele2:DP[len-1]){
+      if(ele2==1){
+        tmpResult=1;
+        break;
+      }
     }
+    result.push_back(tmpResult);
   }
   return result;
 }
+
 void BoggleGame(){
   /*실험조건
     10초, 64MB, 테스트케이스=50
@@ -103,7 +121,8 @@ void BoggleGame(){
     BoggleInput(probTable, wordArr);
     //int testCase=50;
     //BoggleRandInput(probTable,wordArr);
-    vector<int> result=BoggleAlgo(probTable, wordArr); 
+    //vector<int> result=BoggleAlgo(probTable, wordArr); 
+    vector<int> result=Boggle_Algo2(probTable,wordArr);
     for(int i=0;i<result.size();i++){
       cout<<wordArr[i]<<" ";
       if(result[i]){
