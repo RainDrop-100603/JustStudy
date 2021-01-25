@@ -29,7 +29,9 @@ void BoggleInput(vector<char>& probTable, vector<string>& wordArr){
 vector<int> Boggle_Algo2(vector<char>& probTable, vector<string>& wordArr){
   vector<int> result;
   //인접 8칸을 의미
-  vector<int> near={-6,-5,-4,-1,1,4,5,6};
+  vector<int> commonNear={-6,-5,-4,-1,1,4,5,6};
+  vector<int> rEdgeNear={-6,-5,-1,4,5};
+  vector<int> lEdgeNear={-5,-4,1,5,6};
   //알고리즘
   for(auto& ele:wordArr){
     //DP[i][k]=x, ele(문장)의 i번째 원소로 k가 사용될 수 있는가(x==1 or 0)
@@ -46,6 +48,14 @@ vector<int> Boggle_Algo2(vector<char>& probTable, vector<string>& wordArr){
       //probTable 순회
       for(int j=0;j<25;j++){
         if(ele[i]==probTable[j]){
+          vector<int> near;
+          if(j%5==1){
+            near=lEdgeNear;
+          }else if(j%5==0){
+            near=rEdgeNear;
+          }else{
+            near=commonNear;
+          }
           for(auto& ele: near){
             if(j+ele>=0&&j+ele<25&&DP[i-1][j+ele]==1){
               DP[i][j]=1;
@@ -96,23 +106,19 @@ void BoggleGame(){
       time complexity: 625*len*N
   */
   /*전략2
+    문제점ㄴ
+      2차원 배열이 아닌 1차원 배열 25칸에 저장한것은, 좌우모서리에서 인접 원소 chk에 문제가 발생한다. -> 코딩으로 해결보자 일단
     특징 
-      LIS를 형성할 때, 각 원소가 가질 수 있는 위치는 하나뿐이다. (stack을 이용한 LIS를 잘 생각하면 이해 가능)
-      LIS를 구성하는 원소가, 원본 arr에서 뒤에 있는 원소일수록, 사전순으로는 앞에 위치하는 LIS다.
-        LIS에서 각 원소가 가질 수 있는 위치는 하나뿐인데, 같은 위치에서 arrIdx가 큰 원소라는 것은, value가 더 작은 원소임을 의미한다. (value가 더 크다면 같은 위치를 가질수가 없다.)
-          증명: 임의의 LIS를 잘라서 LIS A , a , b , LIS B 로 만들었다고 하자.
-                LIS A, alpha, a, LIS B로 대체하였다고 가정하면, alpha < a < b 이므로, LIS A, alpha, a, b, LIS B 라는 새로운 LIS가 생겨난다.
-                따라서 임의의 alpha는 추가될수 없으므로, a 또한 위치를 변경할 수 없으며, 원소의 위치는 고정된다.
+      지나간 글자를 다시 지나갈 수 있다, 즉 history가 중요하지 않으므로 Dynamic Programming를 이용할 수 있다.
     DynamicProgramming
-      stack을 이용해 LIS의 길이를 구하는 알고리즘을 이용하여, History를 구한다. -> n*lgn
-        History: stack을 이용하여 LIS를 구할때, 각 stack에서의 값이 변하는 것을 history에 기록한다. 
-          의의: LIS를 형성할때, 각 원소가 가질 수 있는 위치는 하나뿐이다. History를 통해 모든 원소를 검사하지 않고도 numOfCases를 구할 수 있다.
-      History를 이용하여, k번째 LIS를 구한다.
-        LIS의 idx번째 원소의 값이 value일 때의, idx부터 시작하는 LIS의 경우의 수 numOfCases에 대해 -> O(1)
-          k>= numOfCases: k번째 LIS의 idx번째 원소의 값은 value이다.  ->  idx+1에 대해 같은 작업 수행
-          k< numOfCases: idx번째 원소가 value인 LIS는 k번째 LIS보다 사전순으로 앞에서 나온다. ->  History에서 value보다 사전순으로 뒤에 있는 값을 가져오도록 한다.
-        nunOfCases: idx-1위치의 {arridx,value}를 가져와서, arridx가 뒤에있고 value가 더 큰 모든 것의 numOfCases를 더한다. -> LIS_len*(n/LIS_len) ~= n 
+      2차원 배열 DP(wordLen*25)를 이용한다. table에는 25개의 값이 있다.
+        DP[i][j]=x : j 가 word의 i번째 원소가 될 수 있다면, x==1
+    mem complexity
+      25*10(maxWordLen)
+    time complexity
+      #word*10(wordLen)*25(#ele)*8(near ele chk)
   */
+
   int testCase;
   cin>>testCase;
   while(testCase--){
