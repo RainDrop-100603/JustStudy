@@ -12,8 +12,8 @@ using namespace std;
 
 
 //1. overflow -> -2로 처리 
-//2. history의 잡 값이 runtimeError 유발 
-//3. 연상하는것이 너무 어렵다. 수학적으로 증명을 해야하거나, 비 직관적이다.
+//2. 연상하는 것을 간단하게 처리
+//3. error가 발생할경우 return이 항상 발생하는지 확인
 void KLIS_Input(int& arrLen,int& orderK,vector<int>& array){
   cin>>arrLen>>orderK;
   array=vector<int>(arrLen);
@@ -50,7 +50,6 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases
   }
   //Algo
   result=0;
-  auto nextLIS_Idx=history[LISidx+1];
   auto nextIter=lower_bound(history[LISidx+1].begin(),history[LISidx+1].end(),make_pair(nowIter->first,0));
   for(;nextIter!=history[LISidx+1].end();nextIter++){
     //value chk, value is strictly decreasing
@@ -66,6 +65,7 @@ int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases
       return result;
     }
   }
+  return result;
 }
 vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& cache_numOfCases,int LISidx, int orderK, pair<int,int> prevPair){
   //기저
