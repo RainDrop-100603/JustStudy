@@ -12,7 +12,7 @@ using namespace std;
 
 
 //1. overflow -> -2로 처리 
-//2. 연상하는 것을 간단하게 처리
+//2. 연상하는 것을 간단하게 처리, 함수는 되도록 독립적으로 처리(kthLIS 부분)
 //3. error가 발생할경우 return이 항상 발생하는지 확인
 void KLIS_Input(int& arrLen,int& orderK,vector<int>& array){
   cin>>arrLen>>orderK;

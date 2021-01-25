@@ -121,4 +121,11 @@ vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordA
                         const vector<vector<double>>& nextPoss,const vector<vector<double>>& classifiPoss,const vector<string>& sentenceArr);
 void Ocr();
 
-
+//KLIS, DP최적화, overflow 처리, 함수 모듈화 깔끔하게, error발생시 return발생 확인,
+void KLIS_Input(int& arrLen,int& orderK,vector<int>& array);
+void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history, vector<int>& tmpLIS, int idx=0);
+int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases, int LISidx, int reverse_Seq);
+vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& cache_numOfCases,int LISidx, int orderK, pair<int,int> prevPair);
+void KLIS_funcTest(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases);
+vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array);
+void KLIS();
