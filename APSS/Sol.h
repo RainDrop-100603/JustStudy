@@ -100,7 +100,7 @@ int Packing_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>&
 vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp);
 void Packing();
 
-//Ocr, DP최적화,은닉 마르코프 모델,viterbi 알고리즘, P(A|B)=P(B|A)P(A)/P(B) 와 같은 변환을 유용하게 이용하자, string 처리할 때 유의하여 처리하자,
+//@*@*@* Ocr, DP최적화,은닉 마르코프 모델,viterbi 알고리즘, P(A|B)=P(B|A)P(A)/P(B) 와 같은 변환을 유용하게 이용하자, string 처리할 때 유의하여 처리하자,
 void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
                 vector<vector<double>>& classifiPoss,vector<string>& sentenceArr);
 void Ocr_Input_test(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
@@ -121,9 +121,9 @@ vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordA
                         const vector<vector<double>>& nextPoss,const vector<vector<double>>& classifiPoss,const vector<string>& sentenceArr);
 void Ocr();
 
-//KLIS, DP최적화, overflow 처리, 함수 모듈화 깔끔하게, error발생시 return발생 확인,
+//@*@* KLIS, DP최적화, overflow 처리, 함수 모듈화 깔끔하게, error발생시 return발생 확인,
 void KLIS_Input(int& arrLen,int& orderK,vector<int>& array);
-void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history, vector<int>& tmpLIS, int idx=0);
+void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history, vector<int>& tmpLIS, int idx);
 int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases, int LISidx, int reverse_Seq);
 vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& cache_numOfCases,int LISidx, int orderK, pair<int,int> prevPair);
 void KLIS_funcTest(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases);
