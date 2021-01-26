@@ -5,22 +5,56 @@ using namespace std;
 
 //BK 6549 복습 
 
-//최대값이 아닌 범위를 찾아야하며, long long을 사용해야 함을 잊지 말자 
-long long BK2104_getMaxRating(vector<int>& arr, vector<long long>& cache_Sum,vector<vector<int>>& cache_Pivot, int left, int right){
+//segmentTree
+int BK2104_getPivot(vector<int>& arr, vector<int>& segTree,int left, int right,int node, int start, int end){
+  //[left,right) is the target range
+  //[start,end) is the range now we are looking for
+  //case 1
+  if(end<=left||right<=start){
+    return -1;
+  }
+  //case 2
+  if(left<=start&&end<=right){
+    return segTree[node];
+  }
+  //case 3
+  int leftPivot=BK2104_getPivot(arr,segTree,left,right,node*2+1,start,(start+end)/2);
+  int rightPivot=BK2104_getPivot(arr,segTree,left,right,node*2+2,(start+end)/2,end);
+  if(rightPivot==-1){
+    return leftPivot;
+  }else if(leftPivot==-1||arr[rightPivot]<arr[leftPivot]){
+    return rightPivot;
+  }else{
+    return leftPivot;
+  }
+}
+int BK2104_buildSegTree(vector<int>& arr,vector<int>& segTree,int node,int left,int right){
+  if(left==right-1){
+    segTree[node]=left;
+  }else{
+    int leftPivot=BK2104_buildSegTree(arr,segTree,node*2+1,left,(left+right)/2);
+    int rightPivot=BK2104_buildSegTree(arr,segTree,node*2+2,(left+right)/2,right);
+    if(leftPivot>rightPivot){
+      segTree[node]=leftPivot;
+    }else{
+      segTree[node]=rightPivot;
+    }
+  }
+  return segTree[node];
+}
+long long BK2104_getMaxRating(vector<int>& arr, vector<long long>& cache_Sum,vector<int>& segTree, int left, int right){
   //기저
   if(left==right){
     return 0;
   }
   //find pivot
-  int pivot=cache_Pivot[left][right];
-  int min=arr[pivot];
+  int pivot=BK2104_getPivot(arr,segTree,left,right,0,0,arr.size());
   //divide conquer
-  long long leftPivot=BK2104_getMaxRating(arr,cache_Sum,cache_Pivot,left,pivot);
-  long long rightPivot=BK2104_getMaxRating(arr,cache_Sum,cache_Pivot,pivot+1,right);
-  long long leftToRight=(cache_Sum[right]-cache_Sum[left])*min;
+  long long leftPivot=BK2104_getMaxRating(arr,cache_Sum,segTree,left,pivot);
+  long long rightPivot=BK2104_getMaxRating(arr,cache_Sum,segTree,pivot+1,right);
+  long long leftToRight=(cache_Sum[right]-cache_Sum[left])*arr[pivot];
   return max(leftToRight,max(leftPivot,rightPivot));
 }
-
 void BK2104(){
   //부분 배열 고르기
   /*설명 및 입력
@@ -46,24 +80,20 @@ void BK2104(){
   for(auto& ele:arr){
     cin>>ele;
   }
-  //Sum 구해놓기
+  //Sum(a)=sum of [0,a)
   vector<long long> cache_Sum(N+1); //sum(a)= sum of x, which is 0<=x<a;
   for(int i=0;i<N;i++){
     cache_Sum[i+1]=cache_Sum[i]+arr[i];
   }
-  //Pivot 구해놓기, i<= x < j
-  vector<vector<int>> cache_Pivot(N+1,vector<int>(N+1));
-  for(int i=0;i<N;i++){
-    cache_Pivot[i][i+1]=i;
-    for(int j=i+2;j<=N;j++){
-      int& pivot=cache_Pivot[i][j]=cache_Pivot[i][j-1];
-      if(arr[pivot]>arr[j-1]){
-        pivot=j-1;
-      }
-    }
+  //segmentTree, node is pivot(means idx of the lowest)
+  int stLen=1;
+  while(stLen<N){
+    stLen*=2;
   }
+  vector<int> segTree(stLen*2);
+  BK2104_buildSegTree(arr,segTree,0,0,N);
   //Algo
-  cout<<BK2104_getMaxRating(arr,cache_Sum,cache_Pivot,0,N);
+  cout<<BK2104_getMaxRating(arr,cache_Sum,segTree,0,N);
 }
 
 int main(){
