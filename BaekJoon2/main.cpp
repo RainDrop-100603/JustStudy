@@ -3,9 +3,7 @@
 
 using namespace std;
 
-//BK 6549 복습 
-
-//segmentTree
+//DivideConquer
 int BK2104_getPivot(vector<int>& arr, vector<int>& segTree,int left, int right,int node, int start, int end){
   //[left,right) is the target range
   //[start,end) is the range now we are looking for
@@ -34,7 +32,7 @@ int BK2104_buildSegTree(vector<int>& arr,vector<int>& segTree,int node,int left,
   }else{
     int leftPivot=BK2104_buildSegTree(arr,segTree,node*2+1,left,(left+right)/2);
     int rightPivot=BK2104_buildSegTree(arr,segTree,node*2+2,(left+right)/2,right);
-    if(leftPivot>rightPivot){
+    if(arr[leftPivot]<arr[rightPivot]){
       segTree[node]=leftPivot;
     }else{
       segTree[node]=rightPivot;
@@ -55,6 +53,57 @@ long long BK2104_getMaxRating(vector<int>& arr, vector<long long>& cache_Sum,vec
   long long leftToRight=(cache_Sum[right]-cache_Sum[left])*arr[pivot];
   return max(leftToRight,max(leftPivot,rightPivot));
 }
+long long BK2104_Sol_DivideConquer(int N, vector<int> arr){
+  //Sum(a)=sum of [0,a)
+  vector<long long> cache_Sum(N+1); //sum(a)= sum of x, which is 0<=x<a;
+  for(int i=0;i<N;i++){
+    cache_Sum[i+1]=cache_Sum[i]+arr[i];
+  }
+  //segmentTree, node is pivot(means idx of the lowest)
+  int stLen=1;
+  while(stLen<N){
+    stLen*=2;
+  }
+  vector<int> segTree(stLen*2);
+  BK2104_buildSegTree(arr,segTree,0,0,N);
+  //Algo
+  return BK2104_getMaxRating(arr,cache_Sum,segTree,0,N);
+}
+
+//stack
+long long BK2104_Pop(vector<int>& arr, vector<int>& cache_Sum, vector<int>& stack, int nowIdx){
+  //nowIdx==-1 means Pop everything
+  int nowValue=(nowIdx==arr.size()) ? -1 : arr[nowIdx];
+  long long result;
+  //pop
+  int backIdx=stack.back();
+}
+long long BK2104_Sol_Stack(int& N,vector<int>& arr){
+  //Sum(a)=sum of [0,a)
+  vector<long long> cache_Sum(N+1); //sum(a)= sum of x, which is 0<=x<a;
+  for(int i=0;i<N;i++){
+    cache_Sum[i+1]=cache_Sum[i]+arr[i];
+  }
+  //stack, push, or pop&push
+  long long result;
+  vector<int> stack;
+  stack.push_back(0);
+  for(int i=1;i<N;i++){
+    if(arr[i]<arr[stack.back()]){
+      result=max(result,BK2104_Pop(arr,cache_Sum,stack,i));
+    }
+    stack.push_back(i);
+  }
+  return max(result,BK2104_Pop(arr,cache_Sum,stack,N));
+}
+//main
+void BK2104_input(int& N,vector<int>& arr){
+  cin>>N;
+  arr=vector<int>(N);
+  for(auto& ele:arr){
+    cin>>ele;
+  }
+}
 void BK2104(){
   //부분 배열 고르기
   /*설명 및 입력
@@ -71,29 +120,16 @@ void BK2104(){
   /*전략
     Divide Conquer
       Pivot, Left, Right로 나누어서 해결 
-    stack
+      Pivot은 SegmentTree를 이용하여 구한다.
+    Stack
+      Push, Pop을 통해 해결
+      기본적으로는 Push, new<back 일 경우 Pop 이후 Push 실행 
   */
-  //input
   int N;
-  cin>>N;
-  vector<int> arr(N);
-  for(auto& ele:arr){
-    cin>>ele;
-  }
-  //Sum(a)=sum of [0,a)
-  vector<long long> cache_Sum(N+1); //sum(a)= sum of x, which is 0<=x<a;
-  for(int i=0;i<N;i++){
-    cache_Sum[i+1]=cache_Sum[i]+arr[i];
-  }
-  //segmentTree, node is pivot(means idx of the lowest)
-  int stLen=1;
-  while(stLen<N){
-    stLen*=2;
-  }
-  vector<int> segTree(stLen*2);
-  BK2104_buildSegTree(arr,segTree,0,0,N);
-  //Algo
-  cout<<BK2104_getMaxRating(arr,cache_Sum,segTree,0,N);
+  vector<int> arr;
+  BK2104_input(N,arr);
+  cout<<BK2104_Sol_DivideConquer(N,arr);
+  cout<<BK2104_Sol_Stack(N,arr);
 }
 
 int main(){
