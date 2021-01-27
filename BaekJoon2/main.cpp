@@ -75,12 +75,12 @@ long long BK2104_Pop(vector<int>& arr, vector<long long>& cache_Sum, vector<int>
   //pushIdx==arr.size() means Pop everything
   int pushValue=(pushIdx==arr.size()) ? -1 : arr[pushIdx];
   //pop
-  int popIdx(stack.back()),popValue(arr[popIdx]);
+  int popValue(arr[stack.back()]);
   stack.pop_back();
-  int backIdx((stack.size()==0)? -1 : stack.back()),backValue((backIdx==-1)? -1 : arr[backIdx]);
+  int backIdx((stack.size()==0)? -1 : stack.back());
   long long result=(cache_Sum[pushIdx]-cache_Sum[backIdx+1])*popValue;
   //another pop chk
-  if(stack.size()!=0 && arr[stack.back()]<pushValue){
+  if(stack.size()!=0 && arr[stack.back()]>=pushValue){
     result=max(result,BK2104_Pop(arr,cache_Sum,stack,pushIdx));
   }
   //ret
@@ -97,7 +97,7 @@ long long BK2104_Sol_Stack(int& N,vector<int>& arr){
   vector<int> stack;
   stack.push_back(0);
   for(int i=1;i<N;i++){
-    if(arr[i]<arr[stack.back()]){
+    if(arr[i]<=arr[stack.back()]){
       result=max(result,BK2104_Pop(arr,cache_Sum,stack,i));
     }
     stack.push_back(i);
@@ -106,6 +106,13 @@ long long BK2104_Sol_Stack(int& N,vector<int>& arr){
   return max(result,BK2104_Pop(arr,cache_Sum,stack,N));
 }
 //main
+void BK2104_randInput(int& N, vector<int>& arr){
+  N=rand()%100000+1;
+  arr=vector<int>(N);
+  for(auto& ele:arr){
+    ele=rand()%1000000+1;
+  }
+}
 void BK2104_input(int& N,vector<int>& arr){
   cin>>N;
   arr=vector<int>(N);
@@ -136,9 +143,20 @@ void BK2104(){
   */
   int N;
   vector<int> arr;
-  BK2104_input(N,arr);
-  cout<<BK2104_Sol_DivideConquer(N,arr);
-  cout<<BK2104_Sol_Stack(N,arr);
+  //BK2104_input(N,arr);
+  //cout<<BK2104_Sol_DivideConquer(N,arr);
+  //cout<<BK2104_Sol_Stack(N,arr);
+  while(true){
+    BK2104_randInput(N,arr);
+    if(BK2104_Sol_Stack(N,arr)!=BK2104_Sol_DivideConquer(N,arr)){
+      break;
+    }
+    cout<<".";
+  }
+  cout<<N<<endl;
+  // for(auto& ele: arr){
+  //   cout<<ele<<"\n";
+  // }
 }
 
 int main(){
