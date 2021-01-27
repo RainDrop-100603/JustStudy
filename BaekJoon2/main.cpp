@@ -71,12 +71,20 @@ long long BK2104_Sol_DivideConquer(int N, vector<int> arr){
 }
 
 //stack
-long long BK2104_Pop(vector<int>& arr, vector<int>& cache_Sum, vector<int>& stack, int nowIdx){
-  //nowIdx==-1 means Pop everything
-  int nowValue=(nowIdx==arr.size()) ? -1 : arr[nowIdx];
-  long long result;
+long long BK2104_Pop(vector<int>& arr, vector<long long>& cache_Sum, vector<int>& stack, int pushIdx){
+  //pushIdx==arr.size() means Pop everything
+  int pushValue=(pushIdx==arr.size()) ? -1 : arr[pushIdx];
   //pop
-  int backIdx=stack.back();
+  int popIdx(stack.back()),popValue(arr[popIdx]);
+  stack.pop_back();
+  int backIdx((stack.size()==0)? -1 : stack.back()),backValue((backIdx==-1)? -1 : arr[backIdx]);
+  long long result=(cache_Sum[pushIdx]-cache_Sum[backIdx+1])*popValue;
+  //another pop chk
+  if(stack.size()!=0 && arr[stack.back()]<pushValue){
+    result=max(result,BK2104_Pop(arr,cache_Sum,stack,pushIdx));
+  }
+  //ret
+  return result;
 }
 long long BK2104_Sol_Stack(int& N,vector<int>& arr){
   //Sum(a)=sum of [0,a)
@@ -94,6 +102,7 @@ long long BK2104_Sol_Stack(int& N,vector<int>& arr){
     }
     stack.push_back(i);
   }
+  //ret
   return max(result,BK2104_Pop(arr,cache_Sum,stack,N));
 }
 //main
