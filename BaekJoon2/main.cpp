@@ -69,20 +69,21 @@ long long BK2104_Sol_DivideConquer(int N, vector<int> arr){
   //Algo
   return BK2104_getMaxRating(arr,cache_Sum,segTree,0,N);
 }
-
 //stack
 long long BK2104_Pop(vector<int>& arr, vector<long long>& cache_Sum, vector<int>& stack, int pushIdx){
   //pushIdx==arr.size() means Pop everything
   int pushValue=(pushIdx==arr.size()) ? -1 : arr[pushIdx];
+  //기저
+  if(stack.size()==0||arr[stack.back()]<pushValue){
+    return 0;
+  }
   //pop
   int popValue(arr[stack.back()]);
   stack.pop_back();
   int backIdx((stack.size()==0)? -1 : stack.back());
   long long result=(cache_Sum[pushIdx]-cache_Sum[backIdx+1])*popValue;
-  //another pop chk
-  if(stack.size()!=0 && arr[stack.back()]>=pushValue){
-    result=max(result,BK2104_Pop(arr,cache_Sum,stack,pushIdx));
-  }
+  //pop again
+  result=max(result,BK2104_Pop(arr,cache_Sum,stack,pushIdx));
   //ret
   return result;
 }
@@ -93,7 +94,7 @@ long long BK2104_Sol_Stack(int& N,vector<int>& arr){
     cache_Sum[i+1]=cache_Sum[i]+arr[i];
   }
   //stack, push, or pop&push
-  long long result;
+  long long result(0);
   vector<int> stack;
   stack.push_back(0);
   for(int i=1;i<N;i++){
@@ -143,20 +144,20 @@ void BK2104(){
   */
   int N;
   vector<int> arr;
-  //BK2104_input(N,arr);
+  BK2104_input(N,arr);
   //cout<<BK2104_Sol_DivideConquer(N,arr);
-  //cout<<BK2104_Sol_Stack(N,arr);
-  while(true){
-    BK2104_randInput(N,arr);
-    if(BK2104_Sol_Stack(N,arr)!=BK2104_Sol_DivideConquer(N,arr)){
-      break;
-    }
-    cout<<".";
-  }
-  cout<<N<<endl;
-  // for(auto& ele: arr){
-  //   cout<<ele<<"\n";
+  cout<<BK2104_Sol_Stack(N,arr);
+  // while(true){
+  //   BK2104_randInput(N,arr);
+  //   if(BK2104_Sol_Stack(N,arr)!=BK2104_Sol_DivideConquer(N,arr)){
+  //     break;
+  //   }
+  //   cout<<".";
   // }
+  // cout<<N<<endl;
+  // // for(auto& ele: arr){
+  // //   cout<<ele<<"\n";
+  // // }
 }
 
 int main(){
