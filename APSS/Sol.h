@@ -14,6 +14,7 @@ using namespace std;
 void BoggleRandInput(vector<char>& probTable, vector<string>& wordArr);
 void BoggleInput(vector<char>& probTable, vector<string>& wordArr);
 vector<int> BoggleAlgo(vector<char>& probTable, vector<string>& wordArr);
+vector<int> Boggle_Algo2(vector<char>& probTable, vector<string>& wordArr);
 void BoggleGame();
 
 //picnic, BruteForce, 조합에서의 중복 제거 방법 
