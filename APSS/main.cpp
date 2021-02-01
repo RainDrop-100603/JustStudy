@@ -38,44 +38,71 @@ void Dragon_example(){
 void Dragon_Input(int& nthGen,int& skip,int& len){
   cin>>nthGen>>skip>>len;
 }
-int Dragon_getDragonLen(vector<vector<int>>& cache_DragonLen,int xOrY,int nthGen){
-  int& result=cache_DragonLen[xOrY][nthGen];
+int Dragon_getDragonLen(vector<int>& cache_DragonLen,int nthGen){
+  int& result=cache_DragonLen[nthGen];
   if(result!=-1){
     return result;
   }
   if(nthGen==0){
     return 4;
   }
-  //Algo
-  result=Dragon_getDragonLen(cache_DragonLen,)
+  //Algo 
+  result=Dragon_getDragonLen(cache_DragonLen,nthGen-1)*2+2;
+  //chk Overflow
+  if(result<0){
+    return -2;
+  }
+  //return
+  return result;
 }
-pair<string,int> Dragon_removeSkip(vector<vector<int>>& cache_DragonLen, int nthGen, int skip, string nowDragon){
+pair<string,int> Dragon_removeSkip(vector<int>& cache_DragonLen, int nthGen, int skip, string nowDragon){
   //기저
   if(skip==0){
     return {nowDragon,nthGen};
   }
   //get numOfCases
   int numOfCases(1);
-  string nextDragon=nowDragon.substr(1);
+  string lowerGenDragon;
   if(nowDragon[0]=='X'){
-    numOfCases=Dragon_getDragonLen(cache_DragonLen,0,nthGen);
-    nextDragon="X+YF";
+    numOfCases=Dragon_getDragonLen(cache_DragonLen,nthGen);
+    lowerGenDragon="X+YF";
   }else if(nowDragon[0]=='Y'){
-    numOfCases=Dragon_getDragonLen(cache_DragonLen,1,nthGen);
-    nextDragon="FX-Y";
+    numOfCases=Dragon_getDragonLen(cache_DragonLen,nthGen);
+    lowerGenDragon="FX-Y";
   }
   //recursive Algo
   if(skip<numOfCases||numOfCases==-2){
-    return Dragon_removeSkip(cache_DragonLen,nthGen-1,skip,nextDragon);
+    return Dragon_removeSkip(cache_DragonLen,nthGen-1,skip,lowerGenDragon);
   }else{
-    return Dragon_removeSkip(cache_DragonLen,nthGen,skip-numOfCases,nextDragon);
+    return Dragon_removeSkip(cache_DragonLen,nthGen,skip-numOfCases,nowDragon.substr(1));
   }
+}
+string Dragon_getDragon(string tmpDragon, int gen, int lenCap){
+  if(lenCap==0){
+    return tmpDragon;
+  }
+  string result;
+  for(auto& ele:tmpDragon){
+    if(ele=='X'){
+      result+=Dragon_getDragon("X+YF",gen-1,lenCap-result.size());
+    }else if(ele=='Y'){
+      result+=Dragon_getDragon("FX-Y",gen-1,lenCap-result.size());
+    }else{
+      result.push_back(ele);
+    }
+    if(result.size()==lenCap){
+      return result;
+    }
+  }
+  return result;
 }
 string Dragon_Algo(int nthGen,int skip,int len){
   string nowDragon="FX";
   //remove skip
-  vector<vector<int>> cache_DragonLen(2,vector<int>(nthGen+1,-1)); //0 for 'X', 1 for 'Y'
-  auto dragonInfo=Dragon_removeSkip(cache_DragonLen,nthGen,skip,nowDragon);
+  vector<int> cache_DragonLen(nthGen+1,-1); //0 for 'X', 1 for 'Y'
+  auto dragonInfo=Dragon_removeSkip(cache_DragonLen,nthGen,skip,nowDragon); //string, Gen
+  //get Dragon [skip,skip+len)
+  return Dragon_getDragon(dragonInfo.first,dragonInfo.second,len);
 }
 void Dragon(){
   //Dragon Curve
@@ -101,7 +128,7 @@ void Dragon(){
         len을 구할때는, 규칙을 이용해 순서대로 출력한다.
   */
   //example for 
-  Dragon_example();
+  //Dragon_example();
   //Sol
   int testCase;
   cin>>testCase;
