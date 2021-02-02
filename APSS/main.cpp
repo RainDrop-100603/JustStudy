@@ -44,13 +44,13 @@ int Dragon_getDragonLen(vector<int>& cache_DragonLen,int nthGen){
     return result;
   }
   if(nthGen==0){
-    return 4;
+    return 1;
   }
   //Algo 
   result=Dragon_getDragonLen(cache_DragonLen,nthGen-1)*2+2;
   //chk Overflow
   if(result<0){
-    return -2;
+    result=-2;
   }
   //return
   return result;
@@ -79,13 +79,13 @@ pair<string,int> Dragon_removeSkip(vector<int>& cache_DragonLen, int nthGen, int
 }
 string Dragon_getDragon(string tmpDragon, int gen, int lenCap){
   if(lenCap==0){
-    return tmpDragon;
+    return string();
   }
   string result;
   for(auto& ele:tmpDragon){
-    if(ele=='X'){
+    if(ele=='X'&&gen!=0){
       result+=Dragon_getDragon("X+YF",gen-1,lenCap-result.size());
-    }else if(ele=='Y'){
+    }else if(ele=='Y'&&gen!=0){
       result+=Dragon_getDragon("FX-Y",gen-1,lenCap-result.size());
     }else{
       result.push_back(ele);
@@ -97,11 +97,12 @@ string Dragon_getDragon(string tmpDragon, int gen, int lenCap){
   return result;
 }
 string Dragon_Algo(int nthGen,int skip,int len){
-  string nowDragon="FX";
+  skip--;
   //remove skip
   vector<int> cache_DragonLen(nthGen+1,-1); //0 for 'X', 1 for 'Y'
-  auto dragonInfo=Dragon_removeSkip(cache_DragonLen,nthGen,skip,nowDragon); //string, Gen
+  auto dragonInfo=Dragon_removeSkip(cache_DragonLen,nthGen,skip,"FX"); //string, Gen
   //get Dragon [skip,skip+len)
+  cout<<"--------"<<dragonInfo.first<<"    "<<dragonInfo.second<<"------------\n";
   return Dragon_getDragon(dragonInfo.first,dragonInfo.second,len);
 }
 void Dragon(){
