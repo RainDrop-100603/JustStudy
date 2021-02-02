@@ -55,55 +55,56 @@ int Dragon_getDragonLen(vector<int>& cache_DragonLen,int nthGen){
   //return
   return result;
 }
-pair<string,int> Dragon_removeSkip(vector<int>& cache_DragonLen, int nthGen, int skip, string nowDragon){
-  //기저
-  if(skip==0){
-    return {nowDragon,nthGen};
-  }
-  //get numOfCases
-  int numOfCases(1);
-  string lowerGenDragon;
-  if(nowDragon[0]=='X'){
-    numOfCases=Dragon_getDragonLen(cache_DragonLen,nthGen);
-    lowerGenDragon="X+YF";
-  }else if(nowDragon[0]=='Y'){
-    numOfCases=Dragon_getDragonLen(cache_DragonLen,nthGen);
-    lowerGenDragon="FX-Y";
-  }
-  //recursive Algo
-  if(skip<numOfCases||numOfCases==-2){
-    return Dragon_removeSkip(cache_DragonLen,nthGen-1,skip,lowerGenDragon);
-  }else{
-    return Dragon_removeSkip(cache_DragonLen,nthGen,skip-numOfCases,nowDragon.substr(1));
-  }
-}
-string Dragon_getDragon(string tmpDragon, int gen, int lenCap){
-  if(lenCap==0){
-    return string();
-  }
+string Dragon_getDragon(vector<int>& cache_DragonLen, int nthGen, int skip, string nowDragon, int len){
+  //remove skip and get dragon
   string result;
-  for(auto& ele:tmpDragon){
-    if(ele=='X'&&gen!=0){
-      result+=Dragon_getDragon("X+YF",gen-1,lenCap-result.size());
-    }else if(ele=='Y'&&gen!=0){
-      result+=Dragon_getDragon("FX-Y",gen-1,lenCap-result.size());
-    }else{
-      result.push_back(ele);
+  //get numOfCases
+  if(skip!=0){
+    int numOfCases(1);
+    string lowerGenDragon;
+    if(nowDragon[0]=='X'){
+      numOfCases=Dragon_getDragonLen(cache_DragonLen,nthGen);
+      lowerGenDragon="X+YF";
+    }else if(nowDragon[0]=='Y'){
+      numOfCases=Dragon_getDragonLen(cache_DragonLen,nthGen);
+      lowerGenDragon="FX-Y";
     }
-    if(result.size()==lenCap){
-      return result;
+    //recursive Algo
+    if(skip<numOfCases||numOfCases==-2){
+      result=Dragon_getDragon(cache_DragonLen,nthGen-1,skip,lowerGenDragon,len);
+    }else{
+      result=Dragon_getDragon(cache_DragonLen,nthGen,skip-numOfCases,nowDragon.substr(1),len);
+    }
+  }
+  //get Dragon
+  if(skip==0){
+    //기저
+    if(len==0){
+      return string();
+    }
+    //Algo
+    string result;
+    for(auto& ele:nowDragon){
+      if(ele=='X'&&nthGen!=0){
+        result+=Dragon_getDragon(cache_DragonLen,nthGen-1,0,"X+YF",len-result.size());
+      }else if(ele=='Y'&&nthGen!=0){
+        result+=Dragon_getDragon(cache_DragonLen,nthGen-1,0,"FX-Y",len-result.size());
+      }else{
+        result.push_back(ele);
+      }
+      if(result.size()==len){
+        return result;
+      }
     }
   }
   return result;
 }
+
 string Dragon_Algo(int nthGen,int skip,int len){
   skip--;
-  //remove skip
+  //remove skip and get Dragon
   vector<int> cache_DragonLen(nthGen+1,-1); //0 for 'X', 1 for 'Y'
-  auto dragonInfo=Dragon_removeSkip(cache_DragonLen,nthGen,skip,"FX"); //string, Gen
-  //get Dragon [skip,skip+len)
-  cout<<"--------"<<dragonInfo.first<<"    "<<dragonInfo.second<<"------------\n";
-  return Dragon_getDragon(dragonInfo.first,dragonInfo.second,len);
+  return Dragon_getDragon(cache_DragonLen,nthGen,skip,"FX",len); //string, Gen
 }
 void Dragon(){
   //Dragon Curve
