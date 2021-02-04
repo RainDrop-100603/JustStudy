@@ -1,7 +1,11 @@
 현재진도
 #2.6, 6:21
 2.7, 2.8 꼭 학습
+href vs src??
 
+browsing html, css, JS, put mdn
+    ex) html tags mdn (mozilla)
+    w3schools 는 사용하지 말 것
 
 html-css
 1. website can be made of min 1(html), max 3(html-css-js) language
@@ -9,58 +13,59 @@ html-css
 3. css is design language, tell how the content of our website looks like
 4. JS is programming language, make our website interactive
 
-
 html tip
 
-1.browser는 단순한 출력기계. code가 적절하게 사용되면 해당 기능을 포함하여 출력하지만, 부적절하게 사용되도 (기능만 제외되었을 뿐)내용은 출력한다. 
-    즉 code를 부적절하게 사용했더라도, error가 뜨거나 하지 않는다.
-Tag and Attributes
-    <tag attributes="data">content</tag>
-    tag: content의 종류를 알려주는 역할
-        </tag>를 통해 닫아주어야 한다.
-    self-closing tag: text content가 없는 경우 (ex: img) 
+1.browser는 단순한 출력기계. code의 문제가 있다면, 기능이 적절하게 작동하지 않을 뿐이며 출력 자체는 error없이 된다. 
+2.Tag and Attributes
+    tag: 기능의 대분류
+        <tag attributes="data">txt content</tag>
+    self-closing tag: txt content가 필요치 않은 경우
+        <tag attributes="data" /> 
     attributes: tag에 추가하는 부가적인 정보
-        특정 tag에서만 작동하는 attributes가 있다.(ex: href)
+        tag가 여러 atrribute를 가지고 있다고 생각하자. 
+        "data"부분은 대체로 규약에 따라 작성되지만, 자유롭게 작성하거나 아예 생략되기도 한다. 
     적절한 Place에 적절한 tag, attributes를 이용해야 brwoser가 인식한다.
+3.html 작성 규약
+    1.<!DOCTYPE html> 로 시작 - 브라우저에게 html임을 알려준다.
+    2. <html> all code </html> - code는 html태그 사이에 넣는다.
+    3. head-body 구조: head, body 두개의 tag 사이에 code를 작성한다.
+        head: browser에 직접적으료 표시되지 않는 부분을 설정한다.
+        body: broswer에 직접적으로 표시되는, 즉 사용자에게 보여지는 부분을 설정한다.  
 
-3.self-closing 
-4.html 형식(규칙)
-    1. <!DOCTYPE html> 로 시작 - 브라우저에게 html임을 알려줌 
-    2. <html> all code </html> - all code는 html태그 사이에 넣는다.
-        head-body 구조
-            head: 외부적으로 보여지지 않는 설정, head에 있는 모든 tag들은 보여지지 않는다? 
-                homepage가 아닌 다른 부분(상단 title부분, 검색시 meta 부분 등등)에서 보여진다는 의미인듯 
-            body: 사용자가 볼 수 있는 content
-        meta: 사이트에 대한 여러 정보, 설정, 추가정보등  
+자주 사용하는 tag
+    head 
+        title: website의 title
+        meta: 사이트에 대한 여러 추가정보들 
+    body 
+        ul: unordered list
+        ol: ordered list
+        li: list item
+        a: anchor - make link 
+    general 
 
-    <!DOCTYPE html>
-    <html lang="kr">    ->사이트의  주 사용 언어가 kr임을 나타냄 -> 검색엔진에 도움 
-        <head>
-            <title> First Homapage </title>         -> tab에 나오는 부분, 검색시 나오는 이름 
-            <meta charset="utf-8" />        -> 문자 인코딩 방식 -> 해당 인코딩이 지원하지 않는 문자는 깨지게 된다.
-            <meta name="description" content="This is my first website" />      ->검색시 title아래 나오는 content 부분 
-                title과 description은 구글 검색에서 중요한 비중을 차지한다.
-                    이때 description은 contest attribute를 말하는가? content attribute를 말하는가?
-                    -> google은 meta 에서 description 이라는 name을 찾아서, content를 표시한다.
-                        즉 "따옴표의 내용물" 또한 약속된 규칙을 따라서 작성해야한다. ex: utf-8, kr ,description, 혹은 자유작성(content)
-                        이 따옴표의 내용물이 약속된 형식과 다르면, 의도했던대로 동작할 것이다.
-        </head>
-        <body>
-            <h1>
-                hello!
-            </h1>
-            <a href="https://google.com" tagert="_blank">go to Google</a>
-            <img src="img/google logo.png" />
-        </body>
-    </html>
+자주 사용하는 attribute
+    html 
+        lang: website의 주 언어 표시, "kr"
+    head 
+        charset: website의 문자 인코딩 방식, (meta)
+        name: 해당 tag의 기능에 이름을 붙여줌, 브라우저등이 정보를 찾아서 표시할 때 유용 (meta, )
+    body 
+        href: hyperlink(html) ref
+            target: href가 열리는 위치, _self or _blank
+        src: src of content, such as img, video ...
+    general 
 
+예시
+<!DOCTYPE html>
+<html lang="kr">
+    <head>
+        <link rel="shortcut icon" href="https://nomadcoders.co/m.png" /> <!--tab등에 있는 shortcut icon-->
+        <title>website example</title> <!--website의 이름, tab과 검색시 나오는 이름-->
+        <meta charset="utf-8" /> <!--uft-8 인코딩-->
+        <meta name="description" content="basic website structure" /> <!--web site의 description-->
+    </head>
+    <body>
+        <h1>Hello!, this is basic structure of website!</h1><!--주제, 머릿말 등으로 사용되는 큰 글자-->
+    </body>
+</html>
 
-html-tag 
-    h1 (header 1) ~ h6 : header(주제 등)을 보여주는데 이용 
-    ul (unordered list)
-    li (list item)
-    ol (ordered list)
-    a (anchor) : link
-Tag Attributes
-    href(html ref or hyperlink ref) : 링크를 지정 
-    target : 링크가 열리는 위치 지정(_self는 이 탭, _blank는 다른 탭)
