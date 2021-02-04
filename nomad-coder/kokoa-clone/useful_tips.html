@@ -18,13 +18,13 @@ html tip
 1.browser는 단순한 출력기계. code의 문제가 있다면, 기능이 적절하게 작동하지 않을 뿐이며 출력 자체는 error없이 된다. 
 2.Tag and Attributes
     tag: 기능의 대분류
-        <tag attributes="data">txt content</tag>
+        <tag attrname="attrvalue">txt content</tag>
     self-closing tag: txt content가 필요치 않은 경우
-        <tag attributes="data" /> 
+        <tag attrname="attrvalue" /> 
     attributes: tag에 추가하는 부가적인 정보
-        tag가 여러 atrribute를 가지고 있다고 생각하자. 
-        "data"부분은 대체로 규약에 따라 작성되지만, 자유롭게 작성하거나 아예 생략되기도 한다. 
-    적절한 Place에 적절한 tag, attributes를 이용해야 brwoser가 인식한다.
+        tag마다 이용가능한 attribute는 정해져 있다.
+        "attrvalue"부분도 규약에 따라 작성되며, 자유롭게 작성하거나 생략 가능한 경우도 존재한다.
+    적절한 Place에 적절한 tag, attribute를 이용해야 brwoser가 인식한다.
 3.html 작성 규약
     1.<!DOCTYPE html> 로 시작 - 브라우저에게 html임을 알려준다.
     2. <html> all code </html> - code는 html태그 사이에 넣는다.
