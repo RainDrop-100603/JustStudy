@@ -35,6 +35,25 @@ html tip
     3. head-body 구조: head, body 두개의 tag 사이에 code를 작성한다.
         head: browser에 직접적으료 표시되지 않는 부분을 설정한다.
         body: broswer에 직접적으로 표시되는, 즉 사용자에게 보여지는 부분을 설정한다.  
+4.div는 큰 의미없이 내용물은 "box"로 구분하는 역할, 한 줄에는 한 box만 들어갈 수 있다. non-semantic 인듯
+    header: div와 같이 box로 묶는 역할, semantic 
+    div vs header: div와 header는 같은 기능을 가진다. 하지만 code를 보는 입장에서, header는 보자마자 "header의 역할"을 한다는 것을 알 수 있고, 검색엔진 등도 이해할 수 있다.
+        header, main, footer, address, ... 
+    so, semantic vs not semantic: non semantic과 같은 기능을 가지나, attrname을 통해 어떤 역할(머릿말, 본문 등등)을 하는지 알려주는 것이 semantic이다. 
+        기능 + 의미 vs only 기능
+        이는 code를 이해하는 입장에서도 편하다는것이 첫번째 장점, 검색엔진등이 특정 구문(title,description등)을 찾는데 도움을 주는것이 두번째 장점(물론 non-semantic+id로 해결 가능하긴하다.)
+5.form은 submit등이 사용될 때 묶이는 단위? div의 semantic tag? 
+7.semantic: 문서를 보기만 해도 내용이 짐작 가능한 것 
+8.class : with css 
+9.what is rel 
+
+css 
+1. styling은 "head"에 "style" tag를 추가해서 할 수도, <link href=:"style.css" rel="stylesheet" /> 와 같이 css file을 include하여 할 수도 있다. 
+2. attrname{ 
+        stylename: stylevalue ; 
+        stylename2: stylevalue2 ;
+    } 
+    위와 같은 방식으로 사용 가능하다. 
 
 자주 사용하는 tag
     head 
@@ -56,7 +75,7 @@ html tip
     body 
         href: hyperlink(html) ref
             target: href가 열리는 위치, _self or _blank
-        src: src of content, such as img, video ...
+        src: only image use it
     general 
 
 예시
