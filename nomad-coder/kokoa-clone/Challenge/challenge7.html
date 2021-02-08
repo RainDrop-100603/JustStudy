@@ -18,27 +18,53 @@
         align-items: center;
       }
       .base{
-        position: absolute;
-        top:20vh;
-        position:fixed;
-        background-color: red;
         height:60vh;
         width:40vh;
+        background-color: red;
+        position:fixed;
+        display:flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-wrap:wrap;
       }
-      div
+      .base div{
+        height:40%;
+        width:40%;
+        background-color: wheat;
+      }
+      .base div div{
+        height:40%;
+        width:100%;
+        margin:10% 0 0 0;
+        background-color: darkblue;
+      }
+      footer div{
+        height:100vh;
+      }
     </style>
   </head>
   <body>
-    <header>
-      <h1>The Best Colors</h1>
-    </header>
     <main>
       <div class="base">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div>
+          <div></div>
+        </div>
+        <div>
+          <div></div>
+        </div>
+        <div>
+          <div></div>
+        </div>
+        <div>
+          <div></div>
+        </div>
       </div>
     </main>
+    <footer>
+      <div>1</div>
+      <div>2</div>
+      <div></div>
+      <div></div>
+    </footer>
   </body>
 </html>

@@ -10,20 +10,20 @@ main{
   background-color:antiquewhite;
   width: 40vh;
   height:40vh;
-  padding:5vh;
+  padding: 2vh;
   display:flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   border: black solid;
 }
 div{
   background-color: teal;
   border: solid white;
-  width: 10vh;
-  height:10vh;
+  width: 25%;
+  height:25%;
 }
 #middle{
   border-style: dashed;
-  width: 40vh;
+  width: 80%;
 }
