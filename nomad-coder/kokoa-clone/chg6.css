@@ -1,0 +1,29 @@
+body{
+  background-color:tomato;
+  display:flex;
+  margin: 0vh 10vh;
+  height:100vh;
+  justify-content: center;
+  align-items: center;
+}
+main{
+  background-color:antiquewhite;
+  width: 40vh;
+  height:40vh;
+  padding:5vh;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border: black solid;
+}
+div{
+  background-color: teal;
+  border: solid white;
+  width: 10vh;
+  height:10vh;
+}
+#middle{
+  border-style: dashed;
+  width: 40vh;
+}

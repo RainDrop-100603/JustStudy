@@ -47,6 +47,16 @@ html tip
 8.class : with css 
 9.what is rel 
 10.block: 옆에 다른 요소가 올 수 없다. 대부분 block. inline: 옆에 다른 요소가 올 수 있다.
+11.display: inline (or block) - 속성 변경 가능 
+inline은 height와 width를 가질 수 없다.
+    즉 block은 공간+내용물을, inline은 only내용물만 가진다고 생각하면 될 듯 하다.
+box:
+    margin: border밖에 있는 공간
+    border: 경계
+    padding: border안쪽에 있는 공간 
+    collapsing margin  
+        두 box의 border(상하)가 겹칠 때 발생 
+        두 box의 상하 margin이 동일하게 취급된다.(20 & 80 -> 80)
 
 css 
 1. styling은 "head"에 "style" tag를 추가해서 할 수도, <link href=:"style.css" rel="stylesheet" /> 와 같이 css file을 include하여 할 수도 있다. 
@@ -54,6 +64,13 @@ css
         stylename: stylevalue ; 
         stylename2: stylevalue2 ;
     } 
+    selector{
+        property:value;
+    }
+    selector: attrname or #id 
+        attrname: 해당 attr에 공통적인 적용
+        #id: 해당 id에만 적용 
+        *: everything 
     위와 같은 방식으로 사용 가능하다. 위에서부터 차례로 적용 
 
 
