@@ -1,0 +1,80 @@
+TO DO
+1. 이 파일 정리
+2. 정답 보고 분석 
+
+요소에 속성이 중복되어 적용되면, 위에서 아래로 적용됨을 기억하자.(나중에 적용된 것만 적용)
+
+요소의 종류: display를 통해 변경 가능
+  block
+  inline
+  inline-block: margin을 가질수 있고, width와 height도 가질 수 있으면서, 한 줄에 여러개 이용 가능한 block형질을 가진 inline. 문제가 많아 flexblock으로 대체
+                responsive design 불가능(화면 크기에 따라 디자인이 변화함), block사이에 존재하는 빈공간  
+  flex: flex block, 
+
+요소의 구조
+  margin: 경계 외부의 공간, block과 다른 것의 경계 생성
+    collapsing margin: 두 block의 border가 겹칠 때, 두 block의 margin이 하나로 통일되어 적용됨-> padding으로 해결 
+    inline: 상하 margin이 존재하지 않음 
+  border: 경계
+    border-radius: 둥근모서리
+  padding: 경계와 내용 사이의 공간, blcok자체의 크기가 커지는 효과
+  content
+    block: width와 height를 가짐
+    inline: text등 content에 따라 자동으로 정해짐 
+
+요소를 선택하는 방법: ,를 통해 여러 요소를 한번에 선택 가능 (다른 종류의 요소도 가능)
+  *: 모든 요소 전체 선택
+  tag: 해당 tag 전체 선택
+  #id: 해당 id만 선택, 각 요소에는 1개의 id만 이용가능, 각 id는 1개의 요소에만 사용가능
+  .class: 해당 class 전체 선택, 각 요소에는 여러개의 class 이용가능, 각 class는 여러개의 요소에서 사용 가능 
+  pseudo: 특정 조건을 만족하는 ele를 선택 (ex: 가장 마지막에 오는 class)
+      tag가 아닌 class도 될 것 같다?
+    tag: pseudoSelector
+    tag: attrName           
+    attribute Selectors 
+      https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors/Attribute_selectors 참고
+      pseudo selector에 포함되는가?
+      tag[attrname]="attrvalue"]
+      tag[attrname~="attrvalue"] --> attrvalue가 "포함"되면 선택. 단, attrvalue가 단독적으로 있어야 한다. (if attrvalue==name, myname would not be selected)
+      tag[attrname*="attrvalue"] --> attrvalue가 "포함"되면 선택. ~=와 다르게 단독적이지 않아도 된다.
+    tag: optional   -> 이건 뭐지? #3.16 3:44 
+  combinators: tag 안의 tag를 선택 (parent 갯수 제한 없음)
+    parent2 parent child{  } 
+      직계 child가 아니어도 선택이 된다. parent2 child
+      즉, parent를 생략해도 parent2-parent-child는 선택이 된다는 것이다.
+      그러나, parent2-anotherparent-child또한 선택이 될 것이다.
+    parent > child  
+      직계 child에 대해서만 선택
+    sibling1 + sibling2
+      sibling1 바로 다음에 오는(child 아님!) 다른 sibling2를 선택 
+    sibling1 ~ sibling2 
+      sibling1과 형제관계인 sibling2(순서 상관 x) 선택 
+
+flex
+  부모가 자식 요소를 통제한다. (only 위치 or 다른 요소까지도?, 일단은 위치만 )
+  주축, 교차축 존재
+    주축에 따라 요소들을 배치, dafault는 수직, flex-direction을 통한 주축 변경 가능, justify-content로 특성 설정
+    교차축의 특성은 align-items를 통해 설정
+  자식 요소들의 크기는 임의로 줄어들기도 한다(그러나 커지지는 않는듯)
+  flex-wrap: 요소들이 강제로 한 줄에 배치되게 할 것인지, 여러줄에 나눠 배치할 것인지 설정
+
+position
+    top, right, left, bottom
+  static: 기본상태
+  relative: static 위치를 기준으로, 위치를 옮긴다. 
+  absolute: 가장 가까운 relative 부모를 기준으로, 위치를 옮긴다.
+    body는 가장 바깥의 relative 
+  fixed: 화면상에서 위치가 고정된다. 위아래로 스크롤해도 보이는 위치는 변하지 않는다. 모든 레이어의 위에 있다(다른 content를 가린다).
+  고정되는 위치는 바꿀 수 있다. 
+
+
+
+단위
+  px: pixel 
+  vh: viewport, 사이트의 보이는 화면 크기, responsive design을 가능케 해줌
+
+기타
+  opacity: 투명도
+
+vs code 단축키
+  ctrl D: 동일한 이름을 하나씩 추가하며 동시선택 
