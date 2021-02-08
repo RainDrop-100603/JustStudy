@@ -1,0 +1,42 @@
+TO DO
+1. 이 파일 정리
+2. 정답 보고 분석 
+
+요소에 속성이 중복되어 적용되면, 위에서 아래로 적용됨을 기억하자.(나중에 적용된 것만 적용)
+
+요소의 종류: display를 통해 변경 가능
+  block
+  inline
+  inline-block: margin을 가질수 있고, width와 height도 가질 수 있으면서, 한 줄에 여러개 이용 가능한 block형질을 가진 inline. 문제가 많아 flexblock으로 대체
+                responsive design 불가능(화면 크기에 따라 디자인이 변화함), block사이에 존재하는 빈공간  
+  flex: flex block, 
+
+요소의 구조
+  margin: 경계 외부의 공간, block과 다른 것의 경계 생성
+    collapsing margin: 두 block의 border가 겹칠 때, 두 block의 margin이 하나로 통일되어 적용됨-> padding으로 해결 
+    inline: 상하 margin이 존재하지 않음 
+  border: 경계
+  padding: 경계와 내용 사이의 공간, blcok자체의 크기가 커지는 효과
+  content
+    block: width와 height를 가짐
+    inline: text등 content에 따라 자동으로 정해짐 
+
+요소를 선택하는 방법: ,를 통해 여러 요소를 한번에 선택 가능 (다른 종류의 요소도 가능? 아마도 가능 )
+  *: 모든 요소 전체 선택
+  tag: 해당 tag 전체 선택
+  #id: 해당 id만 선택, 각 요소에는 1개의 id만 이용가능, 각 id는 1개의 요소에만 사용가능
+  .class: 해당 class 전체 선택, 각 요소에는 여러개의 class 이용가능, 각 class는 여러개의 요소에서 사용 가능 
+
+flex
+  부모가 자식 요소를 통제한다. (only 위치 or 다른 요소까지도?)
+  주축, 교차축 존재
+    주축에 따라 요소들을 배치, dafault는 수직, flex-direction을 통한 주축 변경 가능, justify-content로 특성 설정
+    교차축의 특성은 align-items를 통해 설정
+
+단위
+  px: pixel 
+  vh: viewport, 사이트의 보이는 화면 크기, responsive design을 가능케 해줌
+
+
+vs code 단축키
+  ctrl D: 동일한 이름을 하나씩 추가하며 동시선택 
