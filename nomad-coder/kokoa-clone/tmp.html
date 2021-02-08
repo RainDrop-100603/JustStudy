@@ -32,11 +32,23 @@ flex
   주축, 교차축 존재
     주축에 따라 요소들을 배치, dafault는 수직, flex-direction을 통한 주축 변경 가능, justify-content로 특성 설정
     교차축의 특성은 align-items를 통해 설정
+  자식 요소들의 크기는 임의로 줄어들기도 한다(그러나 커지지는 않는듯)
+  flex-wrap: 요소들이 강제로 한 줄에 배치되게 할 것인지, 여러줄에 나눠 배치할 것인지 설정
 
+position
+    top, right, left, bottom
+  static: 기본상태
+  relative: static 위치를 기준으로, 위치를 옮긴다. 
+  absolute: 가장 가까운 relative 부모를 기준으로, 위치를 옮긴다.
+    body는 가장 바깥의 relative 
+  fixed: 화면상에서 위치가 고정된다. 위아래로 스크롤해도 보이는 위치는 변하지 않는다. 모든 레이어의 위에 있다(다른 content를 가린다).
+  고정되는 위치는 바꿀 수 있다. 
 단위
   px: pixel 
   vh: viewport, 사이트의 보이는 화면 크기, responsive design을 가능케 해줌
 
+기타
+  opacity: 투명도
 
 vs code 단축키
   ctrl D: 동일한 이름을 하나씩 추가하며 동시선택 

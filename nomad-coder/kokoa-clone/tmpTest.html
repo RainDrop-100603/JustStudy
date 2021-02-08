@@ -10,11 +10,21 @@
         <meta charset="utf-8" />
         <meta name="description" content="This is my first website" />
         <style>
-            header,#testId,.testClass{
-              width:10vh;
-              height:20vh;
-              margin:10px;
-              background-color: red;
+            .base{
+              background-color: rosybrown;
+              display:flex;
+              height:100vh;
+              flex-direction: column;
+              justify-content: space-around;
+              align-items: center;
+            }
+            .inside{
+              background-color: salmon;
+              width:10px;
+              height:10px;
+            }
+            #middle{
+              background-color: aqua;
             }
         </style>
     </head>
@@ -22,8 +32,11 @@
         <header>
         </header>
         <main>
-            <div id="testId"></div>
-            <div class="testClass"></div>
+            <div class="base">
+              <div class="inside"></div>
+              <div class="inside" id="middle";></div>
+              <div class="inside"></div>
+            </div>
         </main>
         <footer>
         </footer>
