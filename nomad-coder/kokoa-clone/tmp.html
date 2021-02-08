@@ -28,7 +28,16 @@ TO DO
   #id: 해당 id만 선택, 각 요소에는 1개의 id만 이용가능, 각 id는 1개의 요소에만 사용가능
   .class: 해당 class 전체 선택, 각 요소에는 여러개의 class 이용가능, 각 class는 여러개의 요소에서 사용 가능 
   pseudo: 특정 조건을 만족하는 ele를 선택 (ex: 가장 마지막에 오는 class)
-    tag: 특정 조건 
+      tag가 아닌 class도 될 것 같다?
+    tag: pseudoSelector
+    tag: attrName           
+    attribute Selectors 
+      https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors/Attribute_selectors 참고
+      pseudo selector에 포함되는가?
+      tag[attrname]="attrvalue"]
+      tag[attrname~="attrvalue"] --> attrvalue가 "포함"되면 선택. 단, attrvalue가 단독적으로 있어야 한다. (if attrvalue==name, myname would not be selected)
+      tag[attrname*="attrvalue"] --> attrvalue가 "포함"되면 선택. ~=와 다르게 단독적이지 않아도 된다.
+    tag: optional   -> 이건 뭐지? #3.16 3:44 
   combinators: tag 안의 tag를 선택 (parent 갯수 제한 없음)
     parent2 parent child{  } 
       직계 child가 아니어도 선택이 된다. parent2 child
@@ -37,7 +46,9 @@ TO DO
     parent > child  
       직계 child에 대해서만 선택
     sibling1 + sibling2
-      sibling1 아래에 있는(child 아님!) 다른 sibling2를 선택 
+      sibling1 바로 다음에 오는(child 아님!) 다른 sibling2를 선택 
+    sibling1 ~ sibling2 
+      sibling1과 형제관계인 sibling2(순서 상관 x) 선택 
 
 flex
   부모가 자식 요소를 통제한다. (only 위치 or 다른 요소까지도?, 일단은 위치만 )
