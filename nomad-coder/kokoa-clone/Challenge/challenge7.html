@@ -32,11 +32,26 @@
         width:40%;
         background-color: wheat;
       }
+      .base:nth-child(1){
+        background-color: tomato;
+      }
+      .base:nth-child(2){
+        background-color: teal;
+      }
+      .base:nth-child(3){
+        background-color: burlywood;
+      }
+      .base:nth-child(4){
+        background-color: thistle;
+      }
       .base div div{
         height:40%;
         width:100%;
         margin:10% 0 0 0;
         background-color: darkblue;
+      }
+      .base div div:first-child{
+        color:white;
       }
       footer div{
         height:100vh;
@@ -47,24 +62,36 @@
     <main>
       <div class="base">
         <div>
-          <div></div>
+          <div>
+            <span>Tomato</span>
+            <span>#FF6347</span>
+          </div>
         </div>
         <div>
-          <div></div>
+          <div>
+            <span>Teal</span>
+            <span>#008080</span>
+          </div>
         </div>
         <div>
-          <div></div>
+          <div>
+            <span>Burlywood</span><br>
+            <span>#DEB887</span>
+          </div>
         </div>
         <div>
-          <div></div>
+          <div>
+            <span>Thistle</span><br>
+            <span>#D7BFD7</span>
+          </div>
         </div>
       </div>
     </main>
     <footer>
       <div>1</div>
       <div>2</div>
-      <div></div>
-      <div></div>
+      <div>3</div>
+      <div>4</div>
     </footer>
   </body>
 </html>
