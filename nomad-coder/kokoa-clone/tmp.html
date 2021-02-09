@@ -97,20 +97,36 @@ color
   chrome: color picker
 
 animation
-
+    https://animista.net/
+  선언
+    @keyframes aniName{
+      from{
+      }
+      to{
+      }
+    }
+  사용  
+    animation: aniName time effect
+  option 1: 
+    from(0%) ~ to(100%)
+    0% ~ ... ~ 100%
+  transition과 달리 조건이 없다.
 transformation
+    transform mdn
+  sibling에 영향을 주지 않는다.(browser는 selector의 변화를 인지하지 못한다고 생각하자 )
+    box등 구조를 변화시키지 않는다. 보이는 것만 변화 
 
 transition
+    transition: selector time effect, selector2 time2 effect2, ...
+      selector: all(변화하는 모든 것), anyone else(배운 selector 들)
+      effect: https://matthewlein.com/tools/ceaser 
   어떤 상태에서 다른 상태로의 "변화"를 애니메이션으로 만듦
+  state에 기재된 것, 즉 변화하는 것만 적용된다.
   state가 아니라 selector에 적용한다.
     state에 적용하면, state가 적용되는 상태일때만 transition이 작동
       ex) hover의 경우, background-color 10s ease-in-out
             selector: 마우스를 올리면 10초에 걸쳐 변화, 내리면 10초에 걸쳐 되돌아감
             state: 마우스를 올리면 10초에 걸쳐 변화, 내리면 바로 되돌아감 
-  state에 기재된 것, 즉 변화하는 것만 적용된다.
-    ex) transition: background-color 10s ease-in-out, color 5s ease-in-out
-                    all 10s ease-in-out
-    all: 변화하는 모든것 선택
 
 단위
   px: pixel 
@@ -118,6 +134,7 @@ transition
 
 기타
   opacity: 투명도
+  border-radius:50% -> 원 
 
 vs code 단축키
   ctrl D: 동일한 이름을 하나씩 추가하며 동시선택 
