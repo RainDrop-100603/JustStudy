@@ -1,0 +1,71 @@
+:root{
+  --animeSize:40vh;
+  --circleSize:5vh;
+  --squareWidth:5vh;
+  --squareHeight:20vh;
+  --squareHeight2X:40vh;
+}
+#base{
+  display: flex;
+  height:100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color:aqua;
+}
+#anime1,#anime2{
+  height: var(animeSize);
+  width: var(animeSize);
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@keyframes rotate-center{
+  0%{
+    transform: rotate(0);
+  }
+  50%{
+    transform: rotate(180deg);
+  }
+  100%{
+    transform: rotate(180deg);
+  }
+}
+#anime1{
+  animation: rotate-center 1s ease-in-out infinite ;
+}
+@keyframes popping{
+  0%{
+    height:var(--squareHeight);
+  }
+  25%{
+    height: var(--squareHeight2X);
+  }
+  50%{
+    height: var(--squareHeight);
+  }
+}
+.circle{
+  height: var(--circleSize);
+  width: var(--circleSize);
+  background-color: white;
+  border-radius: 50%;
+}
+.square{
+  height: var(--squareHeight);
+  width:var(--squareWidth);
+  background-color: white;
+  animation: popping 1s ease-in-out infinite;
+}
+#anime2 > div:nth-child(2){
+  animation-delay: 0.1s;
+}
+#anime2 > div:nth-child(3){
+  animation-delay: 0.2s;
+}
+#anime2 > div:nth-child(4){
+  animation-delay: 0.3s;
+}
+#anime2 > div:nth-child(5){
+  animation-delay: 0.4s;
+}
