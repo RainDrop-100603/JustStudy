@@ -1,0 +1,16 @@
+main{
+  
+}
+
+p::selection{
+  background-color: green;
+  color:aliceblue;
+}
+span::selection{
+  background-color: green;
+  color:aliceblue;
+}
+#test::selection{
+  background-color: green;
+  color:aliceblue;
+}
