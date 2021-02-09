@@ -96,6 +96,22 @@ color
   rgb, rgba, color code, variable
   chrome: color picker
 
+animation
+
+transformation
+
+transition
+  어떤 상태에서 다른 상태로의 "변화"를 애니메이션으로 만듦
+  state가 아니라 selector에 적용한다.
+    state에 적용하면, state가 적용되는 상태일때만 transition이 작동
+      ex) hover의 경우, background-color 10s ease-in-out
+            selector: 마우스를 올리면 10초에 걸쳐 변화, 내리면 10초에 걸쳐 되돌아감
+            state: 마우스를 올리면 10초에 걸쳐 변화, 내리면 바로 되돌아감 
+  state에 기재된 것, 즉 변화하는 것만 적용된다.
+    ex) transition: background-color 10s ease-in-out, color 5s ease-in-out
+                    all 10s ease-in-out
+    all: 변화하는 모든것 선택
+
 단위
   px: pixel 
   vh: viewport, 사이트의 보이는 화면 크기, responsive design을 가능케 해줌
