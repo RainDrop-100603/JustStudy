@@ -1,0 +1,60 @@
+
+header{
+  display: flex;
+  justify-content: center;
+}
+header h1{
+  font-size:2vw;
+  position:absolute;
+  top:0%;
+}
+body{
+  background-color: whitesmoke;
+}
+main{
+  display: flex;
+  height:100vh;
+  justify-content: center;
+  align-items: center;
+}
+.base{
+  height:60vh;
+  width:40vh;
+  display:flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap:wrap;
+  position:fixed;
+}
+.base > div{
+  height:40%;
+  width:40%;
+  border: white 1vh solid;
+}
+.base > div:nth-child(1){
+  background-color: tomato;
+}
+.base > div:nth-child(2){
+  background-color: teal;
+}
+.base > div:nth-child(3){
+  background-color: burlywood;
+}
+.base > div:nth-child(4){
+  background-color: thistle;
+}
+.base div div{
+  height:50%;
+  width:102%;
+  position:relative;
+  left:-1px;
+  margin:10% 0 0 0;
+  background-color: white;
+}
+.base span{
+  display:block;
+  color:black;
+  font-weight: bold;
+  font-style:italic;
+  font-size:1vw;
+}

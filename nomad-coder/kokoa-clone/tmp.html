@@ -67,7 +67,14 @@ position
   fixed: 화면상에서 위치가 고정된다. 위아래로 스크롤해도 보이는 위치는 변하지 않는다. 모든 레이어의 위에 있다(다른 content를 가린다).
   고정되는 위치는 바꿀 수 있다. 
 
-
+states:
+    active: 마우스가 요소를 클릭하고 있을 때
+    hover: 마우스가 요소위에 있을 때
+    focus: 키보드로 요소를 선택했을 때
+    visited: link에만 적용됨, 링크를 방문하면 visited상태로 바뀜(색깔등의 변화)
+    focus-within: child가 focus일때, parent의 상태 
+  parent:state child{} : parent가 state일때 child의 상태 
+  parent:state1 child:state2: parent가 state1이고 child가 state2일때 child의 상태
 
 단위
   px: pixel 
