@@ -1,7 +1,8 @@
 :root{
-  --animeSize:40vh;
-  --circleSize:5vh;
-  --squareWidth:5vh;
+  --animeheight:40vh;
+  --animewidth:40vw;
+  --circleradius:5vw;
+  --squareWidth:5vw;
   --squareHeight:20vh;
   --squareHeight2X:40vh;
 }
@@ -14,11 +15,12 @@
   background-color:aqua;
 }
 #anime1,#anime2{
-  height: var(--animeSize);
-  width: var(--animeSize);
+  height: var(--animeheight);
+  width: var(--animewidth);
   display:flex;
   justify-content: space-between;
   align-items: center;
+  background-color: red;
 }
 @keyframes rotate-center{
   0%{
@@ -46,8 +48,8 @@
   }
 }
 .circle{
-  height: var(--circleSize);
-  width: var(--circleSize);
+  height: var(--circleradius);
+  width: var(--circleradius);
   background-color: white;
   border-radius: 50%;
 }
