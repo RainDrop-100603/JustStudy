@@ -14,8 +14,8 @@
   background-color:aqua;
 }
 #anime1,#anime2{
-  height: var(animeSize);
-  width: var(animeSize);
+  height: var(--animeSize);
+  width: var(--animeSize);
   display:flex;
   justify-content: space-between;
   align-items: center;
