@@ -1,6 +1,8 @@
 TO DO
 1. 이 파일 정리
 2. 정답 보고 분석 
+3. chg 8 통통튀는 버그 원인 분석, ani를 하나씩 킬때는 안 튀는데, 두개를 키면 튄다.
+
 
 요소에 속성이 중복되어 적용되면, 위에서 아래로 적용됨을 기억하자.(나중에 적용된 것만 적용)
 
@@ -87,8 +89,8 @@ styling
   else ...
 
 variables
-  이용법: var(varName)
-    항상 root에 선언?
+  이용법: var(--varName)
+    항상 root에 선언? : 테스트 결과는 일단 아닌듯 
   선언: --varName: any value
     color, px, border style, ...
 
@@ -128,13 +130,23 @@ transition
             selector: 마우스를 올리면 10초에 걸쳐 변화, 내리면 10초에 걸쳐 되돌아감
             state: 마우스를 올리면 10초에 걸쳐 변화, 내리면 바로 되돌아감 
 
+media queries
+  화면 모드에 따라 다르게 보이게 하는 방법
+    아이폰, 태블릿, 가로모드, 세로모드, 모니터 ...
+  @media 조건1 and 조건2 and 조건 3 ...{ }: 조건에 부합할 때 보여줄 화면 
+    @media screen and (min-width: 400px) and (max-witdh: 600px){ } 
 단위
   px: pixel 
-  vh: viewport, 사이트의 보이는 화면 크기, responsive design을 가능케 해줌
+  vh: viewport height, 사이트의 보이는 화면 크기, responsive design을 가능케 해줌
+  vw: viewport width
 
 기타
   opacity: 투명도
   border-radius:50% -> 원 
+  chrome/edge-inspect-toggle device toolbar: 핸드폰에서 보는것처럼 확인 가능 
 
 vs code 단축키
   ctrl D: 동일한 이름을 하나씩 추가하며 동시선택 
+
+viewport
+  https://developer.mozilla.org/ko/docs/Mozilla/Mobile/Viewport_meta_tag
