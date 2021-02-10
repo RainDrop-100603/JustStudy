@@ -1,5 +1,12 @@
 대부분의 웹 서버가 default로 index.html을 찾아보도록 설정되어 있다.
 
+BEM(Block Element Modifier) css
+    https://css-tricks.com/bem-101/
+  class naming (and use only class, not id)
+    .btn: block component, general 한 button
+    .btn__price: element that depends upon the block, price라는 정보에 대한 button
+    .btn--orange: Modifier that changes the style of the block, button의 색상을 orange로 modify 할 경우 
+
 vs code 단축키
   alt + shift + 아래(위): 해당 줄 복붙
   ctrl + /: 주석처리
@@ -11,3 +18,15 @@ css 단축키
 
   div class="name"은 div.name으로
   div id="id"는 div#id하시면 자동완성 됩니다 :^)
+
+SVG: Scalable Vector Graphics: 가변 가능한 벡터 그래픽 
+  https://heroicons.com/
+  https://fontawesome.com/ , 아래 script를 head에 추가해야 한다.(기존에는 body 마지막 이었으나 바뀐듯)
+    <script
+    src="https://kit.fontawesome.com/6478f529f2.js"
+    crossorigin="anonymous"
+    ></script>
+    이전버전 무료로 사용 가능?
+
+//sign up링크 버튼을 만들자 
+anchor vs link 비교
