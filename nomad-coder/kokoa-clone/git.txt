@@ -1,0 +1,7 @@
+github 도움말
+
+.gitignore 파일 : github가 무시할 파일을 지정한다.
+
+ex) 
+.DS_Store를 파일에 적어주면, 해당 학장자를 가진 파일을 무시한다.
+/screenshots : 스크린샷 폴더 
