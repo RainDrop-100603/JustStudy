@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Challenge10</title>
+  <link rel="stylesheet" href="chg10.css">
+  <script
+    src="https://kit.fontawesome.com/6478f529f2.js"
+    crossorigin="anonymous"
+  ></script>
+</head>
+<body>
+  <div class="library">
+    <div class="top-bar">
+      <i class="fas fa-bars"></i>
+      <div>library</div>
+      <i class="fas fa-shopping-bag"></i>
+    </div>
+    <div class="search-bar">
+      <div>
+        <input type="text" placeholder="Search books...">
+        <i class="fas fa-search"></i>
+      </div>
+    </div>
+    <div class="content-header">Book of the day</div>
+    <div class="bookoftheDay">
+      <img src="https://images-na.ssl-images-amazon.com/images/I/51FpM1jpyML._SX324_BO1,204,203,200_.jpg">
+      <div class="info">
+        <div class="name">No Fixed Abode</div>
+        <div class="description">Journey Through</div>
+        <div class="ratings">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="far fa-star"></i>
+        </div>
+        <div class="tags">
+          <div>Journey</div>
+          <div>Biography</div>
+        </div>
+        <div class="option">
+          <div>
+            <i class="fas fa-bookmark"></i>
+          </div>
+          <div>Book Now</div>
+        </div>
+      </div>
+    </div>
+    <div class="content-header">Top Adventures</div>
+    <div class="topAdventures">
+      <div class="imgAndRating">
+        <img src="http://image.yes24.com/Goods/66898663/L" >
+        <div class="ratings">
+          <i class="fas fa-star fa-xs"></i>
+          <i class="fas fa-star fa-xs"></i>
+          <i class="fas fa-star fa-xs"></i>
+          <i class="fas fa-star fa-xs"></i>
+          <i class="far fa-star fa-xs"></i>
+        </div>
+      </div>
+      <div class="imgAndRating">
+        <img src="https://m.media-amazon.com/images/I/616WDNl2NaL._SL500_.jpg" >
+        <div class="ratings">
+          <i class="fas fa-star fa-xs"></i>
+          <i class="fas fa-star fa-xs"></i>
+          <i class="fas fa-star fa-xs"></i>
+          <i class="fas fa-star fa-xs"></i>
+          <i class="far fa-star fa-xs"></i>
+        </div>
+      </div>
+      <div class="imgAndRating">
+        <img src="http://img.etoday.co.kr/pto_db/2021/01/700/20210115013135_1569218_1200_1766.jpg" >
+        <div class="ratings">
+          <i class="fas fa-star fa-xs"></i>
+          <i class="fas fa-star fa-xs"></i>
+          <i class="fas fa-star fa-xs"></i>
+          <i class="fas fa-star fa-xs"></i>
+          <i class="fas fa-star fa-xs"></i>
+        </div>
+      </div>
+    </div>
+    <div class="content-header">Popular authors</div>
+    <div class="popularAuthors">
+      <img src="data:image/jpeg;base64,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">
+      <div>
+        <div class="name">George Raymond Richard Martin</div>
+        <div class="description">Modern American science fiction writer, 
+          screenwriter, producer and editor, winner of many literary awards.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
