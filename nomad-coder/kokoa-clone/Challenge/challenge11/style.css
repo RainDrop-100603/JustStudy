@@ -10,10 +10,8 @@
 
 body {
   font-family: "Open Sans", sans-serif;
-  display:flex;
-  height: 100vh;
-  justify-content: space-around;
   background-color: #F3F3F5;
+  display:flex;
 }
 main{
   width:370px;
@@ -22,4 +20,5 @@ main{
   border-radius: 25px;
   background-color: #FFFFFF;
   padding:50px 30px;
+  margin:30px;
 }
