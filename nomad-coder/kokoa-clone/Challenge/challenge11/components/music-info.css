@@ -1,16 +1,15 @@
 .music-info{
   height:50px;
-  width: 100%;
+  width: 270px;
   display: flex;
-  justify-content: flex-between;
+  justify-content: space-between;
   align-items: center;
-  margin:20px 0px;
+  margin:20px 20px;
 }
 .music-info img{
   width:50px;
   height:50px;
   border-radius: 20%;
-  margin-right: 20px;
 }
 .music-info > div{
   display: flex;
@@ -25,7 +24,7 @@
 }
 .music-info span{
   margin: 5px 0px;
-  font-size:15px;
+  font-size:13px;
   font-weight: 600;
   color:black;
 }
@@ -33,5 +32,5 @@
   color:var(--color-grey);
 }
 .music-info i{
-  margin-left: 30px;
+  margin-left: 110px;
 }

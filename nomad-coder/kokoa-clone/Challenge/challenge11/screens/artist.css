@@ -15,7 +15,7 @@
 }
 .artist-info span:nth-child(2){
   font-weight: 600;
-  font-size:20px;
+  font-size:25px;
 }
 .artist-info span:last-child{
   font-size: 15px;
@@ -24,9 +24,9 @@
 }
 .buttons{
   display:flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
-  margin: 40px 0px;
+  margin: 40px 20px;
 }
 .buttons div{
   width:125px;
@@ -50,4 +50,35 @@
   margin-right: 10px;
   color:red;
   font-size: 20px;
+}
+.play-box{
+  width:110%;
+  height:70px;
+  background-color: black;
+  border-radius: 60px;
+  position:relative;
+  left:-5%;
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.play-box >div:first-child{
+  margin-left: 30px;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+.play-box span{
+  color:white;
+  margin:3px 0px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.play-box span:first-child{
+  color:grey;
+}
+.play-box i{
+  color: white;
+  margin-right: 30px;
 }
