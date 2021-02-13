@@ -13,7 +13,6 @@ body {
   display:flex;
   height: 100vh;
   justify-content: space-around;
-  align-items: center;
   background-color: #F3F3F5;
 }
 main{
