@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
+@import "reset.css";
+@import "variables.css";
+/* Components */
+@import "components/top-bar.css";
+@import "components/music-info.css";
+/* Screens */
+@import "screens/artist.css";
+@import "screens/music-play.css";
+
+body {
+  font-family: "Open Sans", sans-serif;
+  display:flex;
+  height: 100vh;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #F3F3F5;
+}
+main{
+  width:370px;
+  height:800px;
+  box-sizing: border-box;
+  border-radius: 25px;
+  background-color: #FFFFFF;
+  padding:50px 30px;
+}
