@@ -3,6 +3,7 @@
 @import "variables.css";
 /* Components */
 @import "components/status-bar.css";
+@import "components/nav.css";
 /* Screens */
 @import "screens/loading.css";
 @import "screens/login.css";
@@ -21,4 +22,5 @@ main{
   box-sizing: border-box;
   background-color: white;
   margin:10px;
+  position: relative;
 }
