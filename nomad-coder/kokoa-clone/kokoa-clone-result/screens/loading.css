@@ -1,0 +1,10 @@
+.loading{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-yellow);
+  color:var(--color-brown);
+}
+.loading i{
+  font-size: 80px;
+}
