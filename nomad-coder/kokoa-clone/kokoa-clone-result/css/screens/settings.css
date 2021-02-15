@@ -1,0 +1,25 @@
+.settings-menu{
+  width:var(--content-maxlen-w);
+  height:Var(--content-size1-h);
+  margin: 5px var(--content-maxlen-margin);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.settings-info span{
+  margin:0px 5px 0px 10px;
+}
+.settings-info i:last-child{
+  width:var(--font-title1);
+  height:var(--font-title1);
+  border-radius: 50%;
+  background-color: tomato;
+  color:white;
+  font-size: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.settings-additional{
+  color:var(--color-font-grey);
+}

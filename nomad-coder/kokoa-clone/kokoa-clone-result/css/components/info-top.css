@@ -32,3 +32,22 @@
 .info-top a:visited{
   color:var(--color-font-black);
 }
+.info-top--ver2 > span,
+.info-top--ver2 > a,
+.info-top--ver2 > i{
+  display: flex;
+  width:33%;
+  height: 100%;
+  align-items: center;
+}
+.info-top--ver2 span{
+  justify-content: center;
+  font-size: var(--font-title1);
+}
+.info-top--ver2 i{
+  justify-content: flex-end;
+  margin: 0;
+}
+.info-top--ver2 > a{
+  justify-content: flex-start;
+}
