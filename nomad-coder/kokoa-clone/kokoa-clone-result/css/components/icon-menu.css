@@ -46,3 +46,19 @@
 .icon-menu--margin-top2{
   margin-top: 15px;
 }
+.icon-menu__dot{
+  position: relative;
+}
+.icon-menu__dot span{
+  top:-5px;
+  right:-5px;
+  height: 5px;
+}
+.icon-menu__img-icon{
+  width:var(--icon-img-1);
+  height:var(--icon-img-1);
+  border-radius: 25%;
+}
+.icon-menu__img-icon ~ span{
+  font-size: 9px;
+}
