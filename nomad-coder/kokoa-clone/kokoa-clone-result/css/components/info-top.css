@@ -1,0 +1,12 @@
+.info-top{
+  width:var(--content-maxlen-w);
+  height:var(--content-size1-h);
+  margin:0px var(--content-maxlen-margin);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top:5px;
+}
+.info-top i{
+  margin-left: 10px;
+}

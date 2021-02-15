@@ -5,23 +5,27 @@
 /* Components */
 @import "components/status-bar.css";
 @import "components/nav.css";
+@import "components/info-top.css";
 /* Screens */
 @import "screens/loading.css";
 @import "screens/login.css";
+@import "screens/friends.css";
+@import "screens/chats.css";
+@import "screens/find.css";
+@import "screens/more.css";
+@import "screens/settings.css";
 
 body{
   font-family: "Open Sans", sans-serif;
   font-weight: 600;
   background-color: whitesmoke;
-  color:var(--color-font-black);
-  display:flex;
-  flex-wrap: wrap;
 }
 main{
   width:270px;
   height:600px;
   box-sizing: border-box;
   background-color: var(--theme-c-bground);
+  color:var(--color-font-black);
   margin:10px;
   position: relative;
 }

@@ -24,8 +24,8 @@
   
 }
 .login-form input,a{
-  width:90%;
-  height:var(--btn-size1-h);
+  width:var(--content-maxlen-w);
+  height:var(--content-size1-h);
   box-sizing: border-box;
   font-size: var(--font-login);
 }

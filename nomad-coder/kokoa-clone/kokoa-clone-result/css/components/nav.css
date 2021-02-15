@@ -1,6 +1,6 @@
 .nav{
   width: 100%;
-  height: var(--btn-size1-h);
+  height: var(--content-size1-h);
   background-color: var(--theme-c-main);
   position: absolute;
   bottom: 0px;

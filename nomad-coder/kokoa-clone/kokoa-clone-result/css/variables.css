@@ -7,6 +7,9 @@
   --font-title1:17px;
   --font-subtitle1:12px;
   --font-login:14px;
-  /*button size*/
-  --btn-size1-h:40px;
+  /*content size*/
+  --content-maxlen-w:90%;
+  --content-maxlen-margin:5%;
+  --content-size1-h:40px;
+
 }
