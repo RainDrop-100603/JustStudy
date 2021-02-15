@@ -13,6 +13,7 @@
 }
 .info-top i{
   margin-left: 10px;
+  font-size: var(--font-title1);
 }
 .info-top__dot{
   position: relative;
@@ -20,4 +21,14 @@
 .info-top__dot span{
   top:-5px;
   right:-5px;
+}
+.info-top > a{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+}
+.info-top a:link,
+.info-top a:visited{
+  color:var(--color-font-black);
 }
