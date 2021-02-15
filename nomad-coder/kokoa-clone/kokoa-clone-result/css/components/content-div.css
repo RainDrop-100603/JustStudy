@@ -9,3 +9,10 @@
   font-size: 7px;
   color:var(--color-font-grey);
 }
+.content-div--margin-top{
+  margin-top:20px;
+}
+.content-div--bigtxt{
+  font-size: var(--font-subtitle1);
+  color:var(--color-font-black);
+}

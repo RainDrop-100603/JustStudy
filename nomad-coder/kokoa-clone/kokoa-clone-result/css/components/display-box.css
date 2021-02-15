@@ -57,3 +57,11 @@
   position: relative;
   top:5px;
 }
+.display-box__subtxt i{
+  color:tomato;
+  margin-left: 3px;
+}
+.display-box__icon{
+  font-size: 20px;
+  color:var(--color-font-black);
+}

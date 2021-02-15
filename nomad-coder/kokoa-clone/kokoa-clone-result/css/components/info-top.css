@@ -14,3 +14,10 @@
 .info-top i{
   margin-left: 10px;
 }
+.info-top__dot{
+  position: relative;
+}
+.info-top__dot span{
+  top:-5px;
+  right:-5px;
+}
