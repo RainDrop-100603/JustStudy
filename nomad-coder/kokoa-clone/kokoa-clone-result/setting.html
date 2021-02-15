@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>kokoa-login</title>
+  <title>kokoa-setting</title>
   <link rel="stylesheet" href="css/style.css">
   <script
     src="https://kit.fontawesome.com/6478f529f2.js"
@@ -11,7 +11,7 @@
   ></script>
 </head>
 <body>
-  <main class="login">
+  <main class="chat">
     <div class="status-bar">
       <div class="status-bar__col">
         <span>No Service</span>
@@ -27,17 +27,28 @@
         <i class="fas fa-bolt"></i>
       </div>
     </div>
-    <div class="welcome-message">
-      <span>Welcome to KokoaClone</span>
-      <p>if you have a Kakao Account,<br> log in with your email or phone number</p>
+    <div class="nav">
+      <a href="main.html">
+        <i class="fas fa-user">
+          <!-- <span class="nav__alarmdot"></span> -->
+        </i>
+      </a>
+      <a href="chat.html">
+        <i class="fas fa-comment">
+          <span class="nav__alarm">1</span>
+        </i>
+      </a>
+      <a href="search.html">
+        <i class="fas fa-search">
+          <!-- <span class="nav__alarmdot"></span> -->
+        </i>
+      </a>
+      <a href="setting.html">
+        <i class="fas fa-ellipsis-h nav--now">
+          <span class="nav__alarmdot"></span>
+        </i>
+      </a>
     </div>
-    <form action="main.html" class="login-form" method="GET">
-      <input type="text" name="id" placeholder="Email or phone number">
-      <input type="password" name="passwd" placeholder="Password">
-      <input type="submit" value="Log In">
-      <a href="#">Sign Up</a>
-      <a href="#">Find Kakao Account or Password</a>
-    </form>
   </main>
 </body>
 </html>
