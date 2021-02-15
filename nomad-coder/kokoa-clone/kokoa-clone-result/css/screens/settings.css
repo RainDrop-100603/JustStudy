@@ -6,16 +6,20 @@
   justify-content: space-between;
   align-items: center;
 }
-.settings-info span{
+.settings-info{
+  display: flex;
+  align-items: center;
+}
+.settings-info span:nth-child(2){
   margin:0px 5px 0px 10px;
 }
-.settings-info i:last-child{
-  width:var(--font-title1);
-  height:var(--font-title1);
+.settings-info span:last-child{
+  width:var(--font-login);
+  height:var(--font-login);
   border-radius: 50%;
   background-color: tomato;
   color:white;
-  font-size: 10px;
+  font-size: 9px;
   display: flex;
   justify-content: center;
   align-items: center;
