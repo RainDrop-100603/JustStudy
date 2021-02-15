@@ -1,0 +1,103 @@
+:root{
+  --keyboard-btn-w:23px;
+  --keyboard-btn-w2:30px;
+  --keyboard-btn-h:29px;
+  --keyboard-btn-r:5px;
+  --keyboard-btn-margin:2px;
+  --keyboard-btn-font:13px;
+  --keyboard-btn-color:white;
+  --keyboard-btn-color2:#abb1ba;
+  --keyboard-bground-color:#d1d4d9;
+  --keyboard-bar-color:#f8f8f8;
+}
+.keyboard{
+  box-sizing: border-box;
+  width: 270px;
+  height:187px;
+  padding-bottom: var(--keyboard-btn-margin);
+  background-color: var(--keyboard-bground-color);
+  position: absolute;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.keyboard__row{
+  width: 100%;
+  height:var(--keyboard-btn-h);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.keyboard__bar{
+  box-sizing: border-box;
+  padding:0px var(--content-maxlen-margin);
+  background-color: white;
+  justify-content: space-between;
+  font-size: var(--keyboard-btn-font);
+}
+.keyboard__bar > i,
+.keyboard__row-form > i:nth-child(2){
+  font-size: 18px;
+}
+.keyboard__row-form{
+  box-sizing: border-box;
+  padding: 0px 3px 0px 10px;
+  width: 90%;
+  height: 85%;
+  border-radius: 25px;
+  background-color: var(--keyboard-bar-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--keyboard-bground-color);
+}
+.keyboard__row-form input{
+  width: 70%;
+  border:none;
+  background-color: var(--keyboard-bar-color);
+}
+.keyboard__row-icon{
+  width:20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--theme-c-main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.keyboard__row-form input:focus{
+  outline: none;
+}
+.keyboard__btn{
+  width: var(--keyboard-btn-w);
+  height: var(--keyboard-btn-h);
+  border-radius: var(--keyboard-btn-r);
+  background-color: var(--keyboard-btn-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size:var(--keyboard-btn-font);
+  margin:0px var(--keyboard-btn-margin);
+}
+.keyboard__btn--grey{
+  background-color: var(--keyboard-btn-color2);
+}
+.keyboard__btn--ver2{
+  width: var(--keyboard-btn-w2);
+}
+.keyboard__btn--ver2:first-child{
+  margin-right: 7.5px;
+}
+.keyboard__btn--ver2:last-child{
+  margin-left: 7.5px;
+}
+.keyboard__btn--return{
+  width: 61.5px;
+}
+.keyboard__btn--space{
+  width:105px;
+}
+.keyboard__btn--ver3{
+  width:29.25px;
+}
