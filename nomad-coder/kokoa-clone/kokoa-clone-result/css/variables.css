@@ -12,5 +12,8 @@
   --content-maxlen-margin:5%;
   --content-size1-h:40px;
   --content-size2-h:60px;
+  --content-size3-h:80px;
+  /*icon size*/
+  --icon-size-1:35px;
 
 }

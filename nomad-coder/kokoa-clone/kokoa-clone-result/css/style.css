@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;800&display=swap');
 @import "reset.css";
 @import "variables.css";
 @import "theme.css";
@@ -7,6 +7,8 @@
 @import "components/nav.css";
 @import "components/info-top.css";
 @import "components/display-box.css";
+@import "components/content-div.css";
+@import "components/icon-menu.css";
 /* Screens */
 @import "screens/loading.css";
 @import "screens/login.css";

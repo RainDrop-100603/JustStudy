@@ -21,11 +21,39 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  font-size:15px;
 }
 .display-box--big{
   height:var(--content-size2-h);
+  font-weight: 800;
 }
 .display-box--big img{
   height: var(--content-size2-h);
   width: var(--content-size2-h);
+}
+.display-box__row{
+  font-size: var(--font-subtitle1);
+  color:var(--color-font-grey);
+}
+.display-box__row i{
+  margin-left: 2px;
+}
+.display-box__col{
+  height: var(--content-size1-h);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.display-box__subtxt,
+.display-box__subtxt2{
+  font-size:var(--font-subtitle1);
+  color:var(--color-font-grey);
+}
+.display-box .nav__alarm{
+  position:relative;
+  right:-7px;
+}
+.display-box__subtxt2{
+  position: relative;
+  top:5px;
 }
