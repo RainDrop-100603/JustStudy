@@ -34,7 +34,8 @@
 }
 .info-top--ver2 > span,
 .info-top--ver2 > a,
-.info-top--ver2 > i{
+.info-top--ver2 > i,
+.info-top--ver2 > div{
   display: flex;
   width:33%;
   height: 100%;
@@ -50,4 +51,14 @@
 }
 .info-top--ver2 > a{
   justify-content: flex-start;
+}
+.info-top--ver2 > div{
+  justify-content: flex-end;
+}
+.info-top--ver2 > div > i{
+  margin-left:15px;
+}
+.info-top--minHeight{
+  height:var(--content-size1-h);
+  margin-top: 0px;
 }

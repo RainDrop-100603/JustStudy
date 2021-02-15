@@ -9,6 +9,7 @@
 @import "components/display-box.css";
 @import "components/content-div.css";
 @import "components/icon-menu.css";
+@import "components/keyboard.css";
 /* Screens */
 @import "screens/loading.css";
 @import "screens/login.css";
@@ -17,6 +18,7 @@
 @import "screens/find.css";
 @import "screens/more.css";
 @import "screens/settings.css";
+@import "screens/chat-room.css";
 
 body{
   font-family: "Open Sans", sans-serif;
