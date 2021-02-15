@@ -1,0 +1,16 @@
+:root{
+  /*kokoa theme*/
+  --theme-c-bground:white;
+  --theme-c-main:#FAE100;
+  --theme-c-sub:yellow;
+  --icon-c-main:#3c1e1e;
+  --icon-c-sub:black;
+  /*blueming theme*/
+  /*
+  --theme-c-bground:white;
+  --theme-c-main:#FAE100;
+  --theme-c-sub:yellow;
+  --icon-c-main:#3c1e1e;
+  --icon-c-sub:black;
+  */
+}

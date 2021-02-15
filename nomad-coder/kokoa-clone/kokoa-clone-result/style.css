@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
 @import "reset.css";
 @import "variables.css";
+@import "theme.css";
 /* Components */
 @import "components/status-bar.css";
 @import "components/nav.css";
@@ -20,7 +21,7 @@ main{
   width:270px;
   height:600px;
   box-sizing: border-box;
-  background-color: white;
+  background-color: var(--theme-c-bground);
   margin:10px;
   position: relative;
 }

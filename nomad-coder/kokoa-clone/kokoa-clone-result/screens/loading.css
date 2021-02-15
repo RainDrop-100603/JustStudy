@@ -2,9 +2,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--color-yellow);
-  color:var(--color-brown);
+  background-color: var(--theme-c-main);
+}
+.loading a{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
 }
 .loading i{
+  color:var(--icon-c-main);
   font-size: 80px;
 }

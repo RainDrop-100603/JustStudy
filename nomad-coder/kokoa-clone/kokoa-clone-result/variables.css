@@ -1,8 +1,5 @@
 :root{
   /*color*/
-  --color-yellow:#FAE100;
-  --color-yellow-light:rgba(250,255,0,0.1);
-  --color-brown:#3c1e1e;
   --color-font-black:#0E0E0E;
   --color-font-grey:rgba(0,0,0,0.3);
   --color-border:#808080;
@@ -10,4 +7,6 @@
   --font-title1:17px;
   --font-subtitle1:12px;
   --font-login:14px;
+  /*button size*/
+  --btn-size1-h:40px;
 }
