@@ -16,3 +16,7 @@
   font-size: var(--font-subtitle1);
   color:var(--color-font-black);
 }
+.content-div--notxt{
+  height:10px;
+  margin-top:10px;
+}
