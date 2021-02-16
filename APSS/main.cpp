@@ -38,7 +38,7 @@ void Dragon_example(){
 void Dragon_Input(int& nthGen,int& skip,int& len){
   cin>>nthGen>>skip>>len;
 }
-int Dragon_getDragonLen(vector<int>& cache_DragonLen,int nthGen){
+int Dragon_getCases(vector<int>& cache_DragonLen,int nthGen){
   int& result=cache_DragonLen[nthGen];
   if(result!=-1){
     return result;
@@ -46,16 +46,14 @@ int Dragon_getDragonLen(vector<int>& cache_DragonLen,int nthGen){
   if(nthGen==0){
     return 1;
   }
-  //Algo 
-  result=Dragon_getDragonLen(cache_DragonLen,nthGen-1)*2+2;
-  //chk Overflow
-  if(result<0){
-    result=-2;
-  }
+  //Algo
+  double tmp=static_cast<double>(Dragon_getDragonLen(cache_DragonLen,nthGen-1))*2+2;
+  //chk overflow
+  result= (tmp>INT32_MAX) ? -2 : tmp;
   //return
   return result;
 }
-string Dragon_getDragon(vector<int>& cache_DragonLen, int nthGen, int skip, string nowDragon, int len){
+string tarsh__Dragon_getDragon(vector<int>& cache_DragonLen, int nthGen, int skip, string nowDragon, int len){
   //remove skip and get dragon
   string result;
   //remove skip
@@ -107,12 +105,46 @@ string Dragon_getDragon(vector<int>& cache_DragonLen, int nthGen, int skip, stri
   }
   return result;
 }
-
+void Dragon_del_skip_make_history(vector<int>& cache_DragonLen, int nthGen, int skip,vector<string>& history){
+  //기저 
+  if(skip==0){
+    return;
+  }
+  //get #cases and next_string(in case of X or Y)
+  string& last_string=history.back();
+  int cases(1);  // + or - or F, cases == 1
+  string next_string;
+  if(last_string.front()=='X'){
+    cases=Dragon_getCases(cache_DragonLen,nthGen);
+    next_string="X+YF";
+  }else if(last_string.front()=='Y'){
+    cases=Dragon_getCases(cache_DragonLen,nthGen);
+    next_string="FX-Y";
+  }
+  //history update
+  if(last_string.size()==1){
+    history.pop_back()
+  }else{
+    last_string=last_string.substr(1);
+  }
+  //compare with skip
+  if(cases>skip||cases==-2){
+    history.push_back(next_string);
+    Dragon_del_skip_make_history(cache_DragonLen,nthGen-1,skip,history);
+  }else if(cases<skip){
+    Dragon_del_skip_make_history(cache_DragonLen,nthGen,skip-cases,history);
+  }else{
+    return; //cases-skip==0
+  }
+}
 string Dragon_Algo(int nthGen,int skip,int len){
   skip--;
+  //remove skip and get history
   vector<int> cache_DragonLen(nthGen,-1);
-  string result=Dragon_getDragon(cache_DragonLen, nthGen,skip,"FX",len); //string, Gen
-  return result;
+  vector<string> history(1,"FX");
+  Dragon_del_skip_make_history(cache_DragonLen, nthGen,skip,history); //string, Gen
+  //make result from history
+  return Dragon_getDragon(history,len);
 }
 void Dragon(){
   //Dragon Curve
