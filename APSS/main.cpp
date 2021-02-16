@@ -38,21 +38,24 @@ void Dragon_example(){
 void Dragon_Input(int& nthGen,int& skip,int& len){
   cin>>nthGen>>skip>>len;
 }
-int Dragon_getDragonLen(int nthGen){
-  //F X Y + - 중 유효한 값은 X, Y뿐이며 이는 두배씩 늘어난다.
-  //전체 길이는 유효한 값*3(F, + or -)-1 (마지막에는 + or -가 없다.) 
-  if(nthGen==0){ // 이미 바닥인경우, 분할이 불가능
-    return 1;
-  }else{
-    if(double valid=pow(2,nthGen)*3-1>INT32_MAX){
-      //overflow
-      return -2;
-    }else{
-      return valid;
-    }
+int Dragon_getDragonLen(vector<int>& cache_DragonLen,int nthGen){
+  int& result=cache_DragonLen[nthGen];
+  if(result!=-1){
+    return result;
   }
+  if(nthGen==0){
+    return 1;
+  }
+  //Algo 
+  result=Dragon_getDragonLen(cache_DragonLen,nthGen-1)*2+2;
+  //chk Overflow
+  if(result<0){
+    result=-2;
+  }
+  //return
+  return result;
 }
-string Dragon_getDragon(int nthGen, int skip, string nowDragon, int len){
+string Dragon_getDragon(vector<int>& cache_DragonLen, int nthGen, int skip, string nowDragon, int len){
   //remove skip and get dragon
   string result;
   //remove skip
@@ -61,20 +64,22 @@ string Dragon_getDragon(int nthGen, int skip, string nowDragon, int len){
     int numOfCases(1);  // + or - or F
     string lowerGenDragon;
     if(nowDragon[0]=='X' &&nthGen!=0){
-      numOfCases=Dragon_getDragonLen(nthGen);
+      numOfCases=Dragon_getDragonLen(cache_DragonLen, nthGen);
       lowerGenDragon="X+YF";
     }else if(nowDragon[0]=='Y' &&nthGen!=0){
-      numOfCases=Dragon_getDragonLen(nthGen);
+      numOfCases=Dragon_getDragonLen(cache_DragonLen, nthGen);
       lowerGenDragon="FX-Y";
     }
     //remove skip
     if(skip<numOfCases||numOfCases==-2){  //-2 means overflow, means larger than skip
     //this result is not full result, at least result[0]
-      result=Dragon_getDragon(nthGen-1,skip,lowerGenDragon,len);
+      result=Dragon_getDragon(cache_DragonLen, nthGen-1,skip,lowerGenDragon,len);
       //front of nowDragon is used in prev section
-      nowDragon=nowDragon.substr(1);
+      if(nowDragon.size()==1){
+        return result;
+      }
     }else{
-      Dragon_getDragon(nthGen,skip-numOfCases,nowDragon.substr(1),len);
+      Dragon_getDragon(cache_DragonLen, nthGen,skip-numOfCases,nowDragon.substr(1),len);
     }
   }
   //get Dragon, result.size()!=0 means, result is part of full result
@@ -89,9 +94,9 @@ string Dragon_getDragon(int nthGen, int skip, string nowDragon, int len){
     //Algo
     for(auto& ele:nowDragon){
       if(ele=='X'&&nthGen!=0){
-        result+=Dragon_getDragon(nthGen-1,0,"X+YF",len-result.size());
+        result+=Dragon_getDragon(cache_DragonLen, nthGen-1,0,"X+YF",len-result.size());
       }else if(ele=='Y'&&nthGen!=0){
-        result+=Dragon_getDragon(nthGen-1,0,"FX-Y",len-result.size());
+        result+=Dragon_getDragon(cache_DragonLen, nthGen-1,0,"FX-Y",len-result.size());
       }else{
         result.push_back(ele);
       }
@@ -105,7 +110,9 @@ string Dragon_getDragon(int nthGen, int skip, string nowDragon, int len){
 
 string Dragon_Algo(int nthGen,int skip,int len){
   skip--;
-  return Dragon_getDragon(nthGen,skip,"FX",len); //string, Gen
+  vector<int> cache_DragonLen(nthGen,-1);
+  string result=Dragon_getDragon(cache_DragonLen, nthGen,skip,"FX",len); //string, Gen
+  return result;
 }
 void Dragon(){
   //Dragon Curve
@@ -130,6 +137,11 @@ void Dragon(){
         skip을 구할때는 경우의 수만 DP를 이용하여 구한다.
         len을 구할때는, 규칙을 이용해 순서대로 출력한다.
   */
+ /*전략
+    (실패) skip삭제와 정답을 동시해 구하려니 답이 없어졌다.
+    history를 이용해서 답은 따로 구하자 
+      history: low Generation으로 이동할 때, 현재 Dragon의 남은 값들을 저장하는 것.
+ */
   //example for 
   //Dragon_example();
   //Sol
