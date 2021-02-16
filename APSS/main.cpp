@@ -38,22 +38,19 @@ void Dragon_example(){
 void Dragon_Input(int& nthGen,int& skip,int& len){
   cin>>nthGen>>skip>>len;
 }
-int Dragon_getDragonLen(vector<int>& cache_DragonLen,int nthGen){
-  int& result=cache_DragonLen[nthGen];
-  if(result!=-1){
-    return result;
-  }
-  if(nthGen==0){
+int Dragon_getDragonLen(int nthGen){
+  //F X Y + - 중 유효한 값은 X, Y뿐이며 이는 두배씩 늘어난다.
+  //전체 길이는 유효한 값*3(F, + or -)-1 (마지막에는 + or -가 없다.) 
+  if(nthGen==0){ // 이미 바닥인경우, 분할이 불가능
     return 1;
+  }else{
+    if(double valid=pow(2,nthGen)*3-1>INT32_MAX){
+      //overflow
+      return -2;
+    }else{
+      return valid;
+    }
   }
-  //Algo 
-  result=Dragon_getDragonLen(cache_DragonLen,nthGen-1)*2+2;
-  //chk Overflow
-  if(result<0){
-    result=-2;
-  }
-  //return
-  return result;
 }
 string Dragon_getDragon(vector<int>& cache_DragonLen, int nthGen, int skip, string nowDragon, int len){
   //remove skip and get dragon
