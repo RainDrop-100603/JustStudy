@@ -38,75 +38,21 @@ void Dragon_example(){
 void Dragon_Input(int& nthGen,int& skip,int& len){
   cin>>nthGen>>skip>>len;
 }
-int Dragon_getCases(vector<int>& cache_DragonLen,int nthGen){
-  int& result=cache_DragonLen[nthGen];
-  if(result!=-1){
-    return result;
-  }
+int Dragon_getCases(int nthGen){
   if(nthGen==0){
     return 1;
   }
-  //Algo
-  double tmp=static_cast<double>(Dragon_getCases(cache_DragonLen,nthGen-1))*2+1;
-  tmp= (tmp==-3) ? -2 : tmp; 
+  //2^nthGen== x+y의 개수, -2: 앞부분 F하나 빼기, 뒷부분 +(-) 하나 빼기 
+  //3배수: 구조가  F  X(or Y) +(or -)
+  double result=pow(2,nthGen)*3-2; 
   //chk overflow
-  result= (tmp>INT32_MAX) ? -2 : tmp;
+  if(result>INT32_MAX){
+    result=-2;
+  }
   //return
   return result;
 }
-// string tarsh__Dragon_getDragon(vector<int>& cache_DragonLen, int nthGen, int skip, string nowDragon, int len){
-//   //remove skip and get dragon
-//   string result;
-//   //remove skip
-//   if(skip!=0){
-//     //get num of cases of nowDragon[0]
-//     int numOfCases(1);  // + or - or F
-//     string lowerGenDragon;
-//     if(nowDragon[0]=='X' &&nthGen!=0){
-//       numOfCases=Dragon_getDragonLen(cache_DragonLen, nthGen);
-//       lowerGenDragon="X+YF";
-//     }else if(nowDragon[0]=='Y' &&nthGen!=0){
-//       numOfCases=Dragon_getDragonLen(cache_DragonLen, nthGen);
-//       lowerGenDragon="FX-Y";
-//     }
-//     //remove skip
-//     if(skip<numOfCases||numOfCases==-2){  //-2 means overflow, means larger than skip
-//     //this result is not full result, at least result[0]
-//       result=Dragon_getDragon(cache_DragonLen, nthGen-1,skip,lowerGenDragon,len);
-//       //front of nowDragon is used in prev section
-//       if(nowDragon.size()==1){
-//         return result;
-//       }
-//     }else{
-//       Dragon_getDragon(cache_DragonLen, nthGen,skip-numOfCases,nowDragon.substr(1),len);
-//     }
-//   }
-//   //get Dragon, result.size()!=0 means, result is part of full result
-//   if(skip==0||result.size()!=0){
-//     //기저
-//     if(len==0){
-//       return string();
-//     }
-//     if(result.size()==len){
-//       return result;
-//     }
-//     //Algo
-//     for(auto& ele:nowDragon){
-//       if(ele=='X'&&nthGen!=0){
-//         result+=Dragon_getDragon(cache_DragonLen, nthGen-1,0,"X+YF",len-result.size());
-//       }else if(ele=='Y'&&nthGen!=0){
-//         result+=Dragon_getDragon(cache_DragonLen, nthGen-1,0,"FX-Y",len-result.size());
-//       }else{
-//         result.push_back(ele);
-//       }
-//       if(result.size()==len){
-//         return result;
-//       }
-//     }
-//   }
-//   return result;
-// }
-void Dragon_del_skip_make_history(vector<int>& cache_DragonLen, int nthGen, int skip,vector<pair<string,int>>& history){
+void Dragon_del_skip_make_history(int nthGen, int skip,vector<pair<string,int>>& history){
   //기저 
   if(skip==0){
     return;
@@ -118,10 +64,10 @@ void Dragon_del_skip_make_history(vector<int>& cache_DragonLen, int nthGen, int 
    //nthGen > 0 아직 string이 분리되어야함 
   if(nthGen>0){
     if(last_string.front()=='X'){
-      cases=Dragon_getCases(cache_DragonLen,nthGen);
+      cases=Dragon_getCases(nthGen);
       next_string="X+YF";
     }else if(last_string.front()=='Y'){
-      cases=Dragon_getCases(cache_DragonLen,nthGen);
+      cases=Dragon_getCases(nthGen);
       next_string="FX-Y";
     }
   }
@@ -134,9 +80,9 @@ void Dragon_del_skip_make_history(vector<int>& cache_DragonLen, int nthGen, int 
   //compare with skip
   if(cases>skip||cases==-2){
     history.push_back({next_string,nthGen-1});  //#cases > skip 이라면, 반드시 낮은 Gen이 있을 수밖에 없다.
-    Dragon_del_skip_make_history(cache_DragonLen,nthGen-1,skip,history);
+    Dragon_del_skip_make_history(nthGen-1,skip,history);
   }else if(cases<skip){
-    Dragon_del_skip_make_history(cache_DragonLen,nthGen,skip-cases,history);
+    Dragon_del_skip_make_history(nthGen,skip-cases,history);
   }else{
     return; //cases-skip==0
   }
@@ -177,14 +123,20 @@ string Dragon_getDragon(vector<pair<string,int>>& history, int len){
         return result;
       }
     }
+    //last_string에 대해 완료, 그러나 result의 길이가 부족하다
+    //처음 시작한 nthGen의 child를 모두 포함시켰음에도 result의 길이가 부족할 때
+    //nthGen+1의 위치에서 result조각을 더 구해온다.
+    history.pop_back();
+    result+=Dragon_getDragon(history, len-result.size());
+    return result;
   }
+  
 } 
 string Dragon_Algo(int nthGen,int skip,int len){
   skip--;
   //remove skip and get history
-  vector<int> cache_DragonLen(nthGen,-1);
   vector<pair<string,int>> history(1,{"FX",nthGen});
-  Dragon_del_skip_make_history(cache_DragonLen, nthGen,skip,history); //string, Gen
+  Dragon_del_skip_make_history(nthGen,skip,history); //string, Gen
   //make result from history
   return Dragon_getDragon(history,len);
 }
