@@ -108,29 +108,30 @@ string Dragon_getDragon(vector<pair<string,int>>& history, int len){
   }
   //nthGen > 0 아직 string이 분리되어야함 
   if(nthGen>0){
-    for(auto& ele: last_string){
-      if(ele=='X'){
-        history.push_back({"X+YF", nthGen-1});
-        result+=Dragon_getDragon(history, len-result.size());
-      }else if(ele=='Y'){
-        history.push_back({"FX-Y", nthGen-1});
-        result+=Dragon_getDragon(history, len-result.size());
-      }else{
-        result.push_back(ele);
-      }
-      //input마다 확인, 왜냐하면 len은 50개 이하라 최대 50번만 확인하는 반면, 확인하지 않으면 모든 dragonCurve를 돌게된다.
-      if(result.size()==len){
-        return result;
-      }
+    char ele=last_string.front();
+    //history update
+    if(last_string.size()>1){
+      last_string=last_string.substr(1);
+    }else{
+      history.pop_back();
     }
-    //last_string에 대해 완료, 그러나 result의 길이가 부족하다
-    //처음 시작한 nthGen의 child를 모두 포함시켰음에도 result의 길이가 부족할 때
-    //nthGen+1의 위치에서 result조각을 더 구해온다.
-    history.pop_back();
-    result+=Dragon_getDragon(history, len-result.size());
-    return result;
+    //push element to result
+    if(ele=='X'){
+      history.push_back({"X+YF", nthGen-1});
+      result+=Dragon_getDragon(history, len-result.size());
+    }else if(ele=='Y'){
+      history.push_back({"FX-Y", nthGen-1});
+      result+=Dragon_getDragon(history, len-result.size());
+    }else{
+      result.push_back(ele);
+    }
   }
-  
+  //result 길이에 따라 차이 
+  if(result.size()==len){
+    return result;
+  }else{
+    return result+Dragon_getDragon(history, len-result.size());
+  }
 } 
 string Dragon_Algo(int nthGen,int skip,int len){
   skip--;
