@@ -44,10 +44,10 @@ int Dragon_getCases(int nthGen){
   }
   //2^nthGen== x+y의 개수, -2: 앞부분 F하나 빼기, 뒷부분 +(-) 하나 빼기 
   //3배수: 구조가  F  X(or Y) +(or -)
-  double result=pow(2,nthGen)*3-2; 
+  long long result=pow(2,nthGen)*3-2; 
   //chk overflow
-  if(result>INT32_MAX){
-    result=-2;
+  if(result>123456789){
+    result=123456789;
   }
   //return
   return result;
@@ -78,7 +78,7 @@ void Dragon_del_skip_make_history(int nthGen, int skip,vector<pair<string,int>>&
     last_string=last_string.substr(1);
   }
   //compare with skip
-  if(cases>skip||cases==-2){
+  if(cases>skip){
     history.push_back({next_string,nthGen-1});  //#cases > skip 이라면, 반드시 낮은 Gen이 있을 수밖에 없다.
     Dragon_del_skip_make_history(nthGen-1,skip,history);
   }else if(cases<skip){
