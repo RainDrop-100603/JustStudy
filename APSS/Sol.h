@@ -130,3 +130,12 @@ vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& cac
 void KLIS_funcTest(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases);
 vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array);
 void KLIS();
+
+// @*@*@* 지나친 수학적 접근이 문제, 프로그래밍적으로 접근필요, overflow의 다양한 처리법, 함수내에서 한번에 하나의 행동만 
+void Dragon_example();
+void Dragon_Input(int& nthGen,int& skip,int& len);
+int Dragon_getCases(int nthGen);
+void Dragon_del_skip_make_history(int nthGen, int skip,vector<pair<string,int>>& history);
+string Dragon_getDragon(vector<pair<string,int>>& history, int len);
+string Dragon_Algo(int nthGen,int skip,int len);
+void Dragon(){

@@ -514,1515 +514,1670 @@
 //   }
 // }
 
-void FenceInput(vector<int>& fenceData){
-  int fenceNum,tmp;
-  cin>>fenceNum;
-  fenceData.reserve(fenceNum);
-  for(int i=0;i<fenceNum;i++){
-    cin>>tmp;
-    fenceData.push_back(tmp);
-  }
-}
-int FenceAlgo(vector<int>& fenceData,int left, int right){
-  /*
-  제한시간 1초
-  제한메모리 2^16kb=64MB
-  전략1
-    기저: left==right일 때, max=leftmax=rightmax=fenceData[left];
-    재귀: L(left,mid), R(mid+1,right) 재귀
-    반환: max, leftmax, right max
-      leftmax= L's leftmax
-      rightmax= R's right max
-      newMax=if(fenceData[mid]<fenceData[mid+1])
-        L's rightmax + R's leftmax*fenceData[mid]/fenceData[mid+1]
-        else: vice versa
-      max=max(newMax, L's max, R's max);
-    time complexity
-      O(NlgN): lgN 번 호출, O(n) 비교
-    mem complexity
-      O(N)
-  전략2
-    앞에서부터 뒤로 search
-      key, prev, now 존재
-        key 왼쪽으로는 모두 key보다 크거나 같다
-        prev는 now 직전
-          now가 prev보다 작다면,
-    stack을 이용하는 건데 헷갈려
-  전략 3
-    quick sort 전략을 이용한다.
-      가장 작은 pivot을 구한다
-        분할: (left,pivot-1), (pivot+1,right)로 분리
-        반환: result= max(pivot*(right-left),func(left,pivot-1),func(pivot+1,right));
-        기저: right=left -> return fenceData[left];
-      총 lgN번 구한다
-      time complexity: NlgN
-      mem complexity: N
-  */
-  //기저
-  if(right<left){
-    return 0;
-  }
-  //Algo, 
-  int pivot,minValue(12345);
-  for(int i=left;i<=right;i++){
-    if(fenceData[i]<minValue){
-      minValue=fenceData[i];
-      pivot=i;
-    }
-  }
-  int leftMax=FenceAlgo(fenceData,left,pivot-1);
-  int rightMax=FenceAlgo(fenceData,pivot+1,right);
-  return max(minValue*(right-left+1),max(leftMax,rightMax));
-}
-void Fence(){
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    vector<int> fenceData;
-    FenceInput(fenceData);
-    cout<<FenceAlgo(fenceData,0,fenceData.size()-1)<<"\n";
-  }
-}
-// void FanmeetingInput(longNum& member,longNum& fan){
-//   string memberTmp,fanTmp;
-//   cin>>memberTmp>>fanTmp;
-//   vector<int> memberV,fanV;
-//   memberV.reserve(memberTmp.length());
-//   for(auto& ele: memberTmp){
-//     if(ele=='M'){
-//       memberV.push_back(1);
-//     }else{
-//       memberV.push_back(0);
-//     }
+// void FenceInput(vector<int>& fenceData){
+//   int fenceNum,tmp;
+//   cin>>fenceNum;
+//   fenceData.reserve(fenceNum);
+//   for(int i=0;i<fenceNum;i++){
+//     cin>>tmp;
+//     fenceData.push_back(tmp);
 //   }
-//   fanV.reserve(fanTmp.length());
-//   for(auto& ele: fanTmp){
-//     if(ele=='M'){
-//       fanV.push_back(1);
-//     }else{
-//       fanV.push_back(0);
-//     }
-//   }
-//   member=move(memberV);
-//   fan=move(fanV);
 // }
-// int FanmeetingAlgo(longNum& member, longNum& fan){
+// int FenceAlgo(vector<int>& fenceData,int left, int right){
 //   /*
-//   제한시간 10초
+//   제한시간 1초
 //   제한메모리 2^16kb=64MB
 //   전략1
-//     모든 멤버와 모든팬은 만난다.
-//     한 줄의 모든 멤버들이 포옹하는 경우 -> M & M 이없는 경우 
-//       M=1, F=0으로 하고 bit and(&) -> if (0)-> 모든멤버 포옹
-//     곱셈을 이용, abc 123 각 숫자가 있다 가정하자.
-//       cba*123= a3+(a2+b3)10+(a1+b2+c3)10^2+(b1+c2)10^3+(c1)10^4
-//       악수하는 경우 -> c1, b1+c2, a1+b2+c3, a2+b3, a3
-//         두 숫자중 한 수를 뒤집고 곱한것의 계수와 같다.
-//         이떄 계수가 10을 초과할 수 있으므로 normalize하면 안된다.
-//         karatsuba를 수정해서, normalize를 하지 않도록 수정한다.
-//         모든 멤버가 포옹해야 한다 -> member수~fan의수
+//     기저: left==right일 때, max=leftmax=rightmax=fenceData[left];
+//     재귀: L(left,mid), R(mid+1,right) 재귀
+//     반환: max, leftmax, right max
+//       leftmax= L's leftmax
+//       rightmax= R's right max
+//       newMax=if(fenceData[mid]<fenceData[mid+1])
+//         L's rightmax + R's leftmax*fenceData[mid]/fenceData[mid+1]
+//         else: vice versa
+//       max=max(newMax, L's max, R's max);
 //     time complexity
-//       karatsuba Time + ele 세기 = n^lg3 + n = O(n^lg3)
+//       O(NlgN): lgN 번 호출, O(n) 비교
 //     mem complexity
-//       O(n)
+//       O(N)
+//   전략2
+//     앞에서부터 뒤로 search
+//       key, prev, now 존재
+//         key 왼쪽으로는 모두 key보다 크거나 같다
+//         prev는 now 직전
+//           now가 prev보다 작다면,
+//     stack을 이용하는 건데 헷갈려
+//   전략 3
+//     quick sort 전략을 이용한다.
+//       가장 작은 pivot을 구한다
+//         분할: (left,pivot-1), (pivot+1,right)로 분리
+//         반환: result= max(pivot*(right-left),func(left,pivot-1),func(pivot+1,right));
+//         기저: right=left -> return fenceData[left];
+//       총 lgN번 구한다
+//       time complexity: NlgN
+//       mem complexity: N
 //   */
-//   member.reverse();
-//   longNum result(fan.karatsuba_notNorm(member));
-//   int ans(0),start(member.length()-1),end(fan.length());
-//   for(int i=start;i<end;i++){
-//     if(result[i]==0){
-//       ans++;
+//   //기저
+//   if(right<left){
+//     return 0;
+//   }
+//   //Algo, 
+//   int pivot,minValue(12345);
+//   for(int i=left;i<=right;i++){
+//     if(fenceData[i]<minValue){
+//       minValue=fenceData[i];
+//       pivot=i;
 //     }
 //   }
-//   return ans;
+//   int leftMax=FenceAlgo(fenceData,left,pivot-1);
+//   int rightMax=FenceAlgo(fenceData,pivot+1,right);
+//   return max(minValue*(right-left+1),max(leftMax,rightMax));
 // }
-// void Fanmeeting(){
+// void Fence(){
 //   int testCase;
 //   cin>>testCase;
 //   while(testCase--){
-//     longNum member,fan;
-//     FanmeetingInput(member,fan);
-//     cout<<FanmeetingAlgo(member,fan)<<"\n";
+//     vector<int> fenceData;
+//     FenceInput(fenceData);
+//     cout<<FenceAlgo(fenceData,0,fenceData.size()-1)<<"\n";
+//   }
+// }
+// // void FanmeetingInput(longNum& member,longNum& fan){
+// //   string memberTmp,fanTmp;
+// //   cin>>memberTmp>>fanTmp;
+// //   vector<int> memberV,fanV;
+// //   memberV.reserve(memberTmp.length());
+// //   for(auto& ele: memberTmp){
+// //     if(ele=='M'){
+// //       memberV.push_back(1);
+// //     }else{
+// //       memberV.push_back(0);
+// //     }
+// //   }
+// //   fanV.reserve(fanTmp.length());
+// //   for(auto& ele: fanTmp){
+// //     if(ele=='M'){
+// //       fanV.push_back(1);
+// //     }else{
+// //       fanV.push_back(0);
+// //     }
+// //   }
+// //   member=move(memberV);
+// //   fan=move(fanV);
+// // }
+// // int FanmeetingAlgo(longNum& member, longNum& fan){
+// //   /*
+// //   제한시간 10초
+// //   제한메모리 2^16kb=64MB
+// //   전략1
+// //     모든 멤버와 모든팬은 만난다.
+// //     한 줄의 모든 멤버들이 포옹하는 경우 -> M & M 이없는 경우 
+// //       M=1, F=0으로 하고 bit and(&) -> if (0)-> 모든멤버 포옹
+// //     곱셈을 이용, abc 123 각 숫자가 있다 가정하자.
+// //       cba*123= a3+(a2+b3)10+(a1+b2+c3)10^2+(b1+c2)10^3+(c1)10^4
+// //       악수하는 경우 -> c1, b1+c2, a1+b2+c3, a2+b3, a3
+// //         두 숫자중 한 수를 뒤집고 곱한것의 계수와 같다.
+// //         이떄 계수가 10을 초과할 수 있으므로 normalize하면 안된다.
+// //         karatsuba를 수정해서, normalize를 하지 않도록 수정한다.
+// //         모든 멤버가 포옹해야 한다 -> member수~fan의수
+// //     time complexity
+// //       karatsuba Time + ele 세기 = n^lg3 + n = O(n^lg3)
+// //     mem complexity
+// //       O(n)
+// //   */
+// //   member.reverse();
+// //   longNum result(fan.karatsuba_notNorm(member));
+// //   int ans(0),start(member.length()-1),end(fan.length());
+// //   for(int i=start;i<end;i++){
+// //     if(result[i]==0){
+// //       ans++;
+// //     }
+// //   }
+// //   return ans;
+// // }
+// // void Fanmeeting(){
+// //   int testCase;
+// //   cin>>testCase;
+// //   while(testCase--){
+// //     longNum member,fan;
+// //     FanmeetingInput(member,fan);
+// //     cout<<FanmeetingAlgo(member,fan)<<"\n";
+// //   }
+// // }
+
+// void WildcardInput(string& wildcard,vector<string>& fileArr){
+//   int fileNum;
+//   string tmp;
+//   cin>>wildcard>>fileNum;
+//   fileArr.reserve(fileNum);
+//   for(int i=0;i<fileNum;i++){
+//     cin>>tmp;
+//     fileArr.push_back(move(tmp));
+//   }
+// }
+// bool Wildcard_match(string& wildcard,string& file, int w_idx,int f_idx,vector<vector<char>>& DP){
+//   //wildcard의 w_idx, file의 f_idx부터 비교한다.
+//   char& result=DP[w_idx][f_idx];
+//   //답이 이미 있을경우
+//   if(result!=-1){
+//     return result;
+//   }
+//   //w_idx==w_len까지, wildcard를 모두 비교하는것이 목표
+//   int w_len(wildcard.length()),f_len(file.length());;
+//   while(w_idx<w_len&&f_idx<f_len){
+//     char w_char=wildcard[w_idx];
+//     if(w_char==file[f_idx]||w_char=='?'){
+//       w_idx++;f_idx++;
+//       continue;
+//     }
+//     if(w_char=='*'){
+//       //*에 하나이상 대응
+//       if(Wildcard_match(wildcard,file,w_idx,f_idx+1,DP)){
+//         return result;
+//       }
+//       //*에 0개 대응
+//       w_idx++;
+//       continue;
+//     }
+//     //*도 아니고, 두 문자도 다른경우 false;
+//     result=0;
+//     return result;
+//   }
+//   //f_len은 반드시 모두 매칭되어야 하며, w_len은 마지막 부분이 모두 *라면 모두 매칭되지 않아도 괜찮다.
+//   if(f_len==f_idx){
+//     if(w_len>w_idx){
+//       for(int i=w_idx;i<w_len;i++){
+//         if(wildcard[i]!='*'){
+//           result=0;
+//           return result;
+//         }
+//       }
+//     }
+//     result=1;
+//   }else{
+//     result=0;
+//   }
+//   return result;
+// }
+// bool Wildcard_match2(string& wildcard,string& file, int w_idx,int f_idx,vector<vector<char>>& DP){
+//   //답이 이미 있을경우
+//   char& result=DP[w_idx][f_idx];
+//   if(result!=-1){
+//     return result;
+//   }
+//   //1:1 대응시 다음 idx로 넘어간다.
+//   int w_len(wildcard.length()),f_len(file.length());
+//   if(w_idx<w_len&&f_idx<f_len&&(wildcard[w_idx]==file[f_idx]||wildcard[w_idx]=='?')){
+//     return result=Wildcard_match2(wildcard,file,w_idx+1,f_idx+1,DP);
+//   }
+//   //wildcard search가 끝났을 경우, file search도 끝났어야 match가 된 것이다.
+//   if(w_idx==w_len){
+//     return result=(f_idx==f_len);
+//   }
+//   // *이 있을 경우, *와 대응되는것의 길이가 0인 경우(w_idx+1)와 1이상인 경우(f_idx+1)로 구분, 이때 match함수에는 f_idx==file_len에 대한 조건이 없으므로, 제한조건에 추가한다.
+//   if(wildcard[w_idx]=='*'){
+//     if(Wildcard_match2(wildcard,file,w_idx+1,f_idx,DP)||(f_idx<f_len&&Wildcard_match2(wildcard,file,w_idx,f_idx+1,DP))){
+//       return result=1;
+//     }
+//   }
+//   //나머지 경우에는 문자열과 wildcard가 대응되지 않는다.
+//   return result=0;
+// }
+// vector<string> WildcardAlgo(string& wildcard,vector<string>& fileArr){
+//   /*
+//   제한시간 2초
+//   제한메모리 2^16kb=64MB
+//   문자열의 길이는 1~100, 알파벳 대소문자, ?, *로 구성, 공백 없음 
+//   ?는 문자 하나를 대응, *는 길이 0이상의 문자열 대응
+//   파일명의 수 1~50개
+//   전략1
+//     brtue force
+//       1:1 비교 원칙: 같으면 continue, 다르면 return false
+//       ?의 경우: 항상 continue
+//       *의 경우: 
+//         *의 다음 문자가 있을경우: 해당 문자를 찾을 때까지 continue -------Problem-------
+//             다음 문자가 없을경우: return true
+//     Problem 
+//       *의 다음문자가 l이라 하자, l이 여러개 있을경우 그만큼 분기를 생성해줘야 한다.
+//         분기-> 재귀, 재귀: 중복 생성 가능, 중복: DP로 해결
+//     time complexity
+//       wildCardLen(N)*#fileArr(50)*fileNameLen(M)^numOf*(L)=50N*M^L
+//     mem complexity
+//       100+50*100
+//   전략 2
+//     Dynamic Programming
+//       Wildcard_match(string& wildcard,string& file, int w_idx,int f_idx)
+//         wildcard의 w_idx와 file의 f_idx 비교
+//       재귀를 통한 완전 탐색을 기준으로 한다.
+//         1:1 비교 원칙: 같으면 continue, 다르면 return false
+//         ?의 경우: 항상 continue
+//         *의 경우: f_idx+1로 재귀 or w_idx+1로 loop 이어서
+//       반환 경우의 수
+//         w_idx와 f_idx가 마무리 -> return true;
+//         w_idx만 마무리-> return false;
+//         f_idx만 마무리-> w_idx에 남은것이 *뿐이라면 true, 다른것도 있다면 false; 
+//       DP
+//         반환하기 전에 DP[w_idx][f_idx]에 1(true) 0(false)저장, -1(not initialized)
+//         DP여부 맨 처음에 확인 
+//     time complexity
+//       wildCardLen(100)*fileLen(100)*loopInMatch(100) = O(n^3);
+//     mem complexity
+//       wildcard(100)+DP(100*100)+fileArr(100*50) = O(n);
+//   전략 3
+//     Dynamic Programming
+//       전략2에서 함수 내 재귀를 없앤다. -> O(n^2)
+//     time complexity
+//       wildCardLen*fileLen=O(n^2);
+//     mem complexity
+//       same as 전략 2
+//   */
+//   vector<string> result;
+//   for(int i=0;i<fileArr.size();i++){
+//     string& file=fileArr[i];
+//     vector<vector<char>> DP(wildcard.length()+1,vector<char>(file.length()+1,-1));
+//     if(Wildcard_match(wildcard,file,0,0,DP)){
+//       result.push_back(file);
+//     }
+//   }
+//   return result;
+// }
+// void Wildcard(){
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     string wildcard;
+//     vector<string> fileArr;
+//     WildcardInput(wildcard,fileArr);
+//     vector<string> result(WildcardAlgo(wildcard,fileArr));
+//     sort(result.begin(),result.end());
+//     for(auto& ele:result){
+//         cout<<ele<<"\n";
+//     }
 //   }
 // }
 
-void WildcardInput(string& wildcard,vector<string>& fileArr){
-  int fileNum;
-  string tmp;
-  cin>>wildcard>>fileNum;
-  fileArr.reserve(fileNum);
-  for(int i=0;i<fileNum;i++){
-    cin>>tmp;
-    fileArr.push_back(move(tmp));
-  }
-}
-bool Wildcard_match(string& wildcard,string& file, int w_idx,int f_idx,vector<vector<char>>& DP){
-  //wildcard의 w_idx, file의 f_idx부터 비교한다.
-  char& result=DP[w_idx][f_idx];
-  //답이 이미 있을경우
-  if(result!=-1){
-    return result;
-  }
-  //w_idx==w_len까지, wildcard를 모두 비교하는것이 목표
-  int w_len(wildcard.length()),f_len(file.length());;
-  while(w_idx<w_len&&f_idx<f_len){
-    char w_char=wildcard[w_idx];
-    if(w_char==file[f_idx]||w_char=='?'){
-      w_idx++;f_idx++;
-      continue;
-    }
-    if(w_char=='*'){
-      //*에 하나이상 대응
-      if(Wildcard_match(wildcard,file,w_idx,f_idx+1,DP)){
-        return result;
-      }
-      //*에 0개 대응
-      w_idx++;
-      continue;
-    }
-    //*도 아니고, 두 문자도 다른경우 false;
-    result=0;
-    return result;
-  }
-  //f_len은 반드시 모두 매칭되어야 하며, w_len은 마지막 부분이 모두 *라면 모두 매칭되지 않아도 괜찮다.
-  if(f_len==f_idx){
-    if(w_len>w_idx){
-      for(int i=w_idx;i<w_len;i++){
-        if(wildcard[i]!='*'){
-          result=0;
-          return result;
-        }
-      }
-    }
-    result=1;
-  }else{
-    result=0;
-  }
-  return result;
-}
-bool Wildcard_match2(string& wildcard,string& file, int w_idx,int f_idx,vector<vector<char>>& DP){
-  //답이 이미 있을경우
-  char& result=DP[w_idx][f_idx];
-  if(result!=-1){
-    return result;
-  }
-  //1:1 대응시 다음 idx로 넘어간다.
-  int w_len(wildcard.length()),f_len(file.length());
-  if(w_idx<w_len&&f_idx<f_len&&(wildcard[w_idx]==file[f_idx]||wildcard[w_idx]=='?')){
-    return result=Wildcard_match2(wildcard,file,w_idx+1,f_idx+1,DP);
-  }
-  //wildcard search가 끝났을 경우, file search도 끝났어야 match가 된 것이다.
-  if(w_idx==w_len){
-    return result=(f_idx==f_len);
-  }
-  // *이 있을 경우, *와 대응되는것의 길이가 0인 경우(w_idx+1)와 1이상인 경우(f_idx+1)로 구분, 이때 match함수에는 f_idx==file_len에 대한 조건이 없으므로, 제한조건에 추가한다.
-  if(wildcard[w_idx]=='*'){
-    if(Wildcard_match2(wildcard,file,w_idx+1,f_idx,DP)||(f_idx<f_len&&Wildcard_match2(wildcard,file,w_idx,f_idx+1,DP))){
-      return result=1;
-    }
-  }
-  //나머지 경우에는 문자열과 wildcard가 대응되지 않는다.
-  return result=0;
-}
-vector<string> WildcardAlgo(string& wildcard,vector<string>& fileArr){
-  /*
-  제한시간 2초
-  제한메모리 2^16kb=64MB
-  문자열의 길이는 1~100, 알파벳 대소문자, ?, *로 구성, 공백 없음 
-  ?는 문자 하나를 대응, *는 길이 0이상의 문자열 대응
-  파일명의 수 1~50개
-  전략1
-    brtue force
-      1:1 비교 원칙: 같으면 continue, 다르면 return false
-      ?의 경우: 항상 continue
-      *의 경우: 
-        *의 다음 문자가 있을경우: 해당 문자를 찾을 때까지 continue -------Problem-------
-            다음 문자가 없을경우: return true
-    Problem 
-      *의 다음문자가 l이라 하자, l이 여러개 있을경우 그만큼 분기를 생성해줘야 한다.
-        분기-> 재귀, 재귀: 중복 생성 가능, 중복: DP로 해결
-    time complexity
-      wildCardLen(N)*#fileArr(50)*fileNameLen(M)^numOf*(L)=50N*M^L
-    mem complexity
-      100+50*100
-  전략 2
-    Dynamic Programming
-      Wildcard_match(string& wildcard,string& file, int w_idx,int f_idx)
-        wildcard의 w_idx와 file의 f_idx 비교
-      재귀를 통한 완전 탐색을 기준으로 한다.
-        1:1 비교 원칙: 같으면 continue, 다르면 return false
-        ?의 경우: 항상 continue
-        *의 경우: f_idx+1로 재귀 or w_idx+1로 loop 이어서
-      반환 경우의 수
-        w_idx와 f_idx가 마무리 -> return true;
-        w_idx만 마무리-> return false;
-        f_idx만 마무리-> w_idx에 남은것이 *뿐이라면 true, 다른것도 있다면 false; 
-      DP
-        반환하기 전에 DP[w_idx][f_idx]에 1(true) 0(false)저장, -1(not initialized)
-        DP여부 맨 처음에 확인 
-    time complexity
-      wildCardLen(100)*fileLen(100)*loopInMatch(100) = O(n^3);
-    mem complexity
-      wildcard(100)+DP(100*100)+fileArr(100*50) = O(n);
-  전략 3
-    Dynamic Programming
-      전략2에서 함수 내 재귀를 없앤다. -> O(n^2)
-    time complexity
-      wildCardLen*fileLen=O(n^2);
-    mem complexity
-      same as 전략 2
-  */
-  vector<string> result;
-  for(int i=0;i<fileArr.size();i++){
-    string& file=fileArr[i];
-    vector<vector<char>> DP(wildcard.length()+1,vector<char>(file.length()+1,-1));
-    if(Wildcard_match(wildcard,file,0,0,DP)){
-      result.push_back(file);
-    }
-  }
-  return result;
-}
-void Wildcard(){
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    string wildcard;
-    vector<string> fileArr;
-    WildcardInput(wildcard,fileArr);
-    vector<string> result(WildcardAlgo(wildcard,fileArr));
-    sort(result.begin(),result.end());
-    for(auto& ele:result){
-        cout<<ele<<"\n";
-    }
-  }
-}
+// void JoinedLISInput(vector<int>& arrA,vector<int>& arrB){
+//   int lenA,lenB;
+//   scanf("%d",&lenA);scanf("%d",&lenB);
+//   arrA=vector<int>(lenA);
+//   for(int i=0;i<lenA;i++){
+//     scanf("%d",&arrA[i]);
+//   }
+//   arrB=vector<int>(lenB);
+//   for(int i=0;i<lenB;i++){
+//     scanf("%d",&arrB[i]);
+//   }
+// }
+// bool joinedLIS_Afirst(vector<int>& arrA,vector<int>& arrB,int idxA,int idxB){
+//   //out of idx 처리
+//   if(idxA==arrA.size()){
+//     return false;
+//   }else if(idxB==arrB.size()){
+//     return true;
+//   }
+//   //비교
+//   if(arrA[idxA]!=arrB[idxB]){
+//     return arrA[idxA]<arrB[idxB];
+//   }else{
+//     return arrA[idxA+1]<arrB[idxB+1];
+//   }
+// }
+// int JoinedLISAlgo_1(vector<int>& arrA,vector<int>& arrB){
+//   vector<long long> result;
+//   int idxA(0),idxB(0);
+//   //result의 맨 처음 값 설정
+//   if(joinedLIS_Afirst(arrA,arrB,idxA,idxB)){
+//     result.push_back(arrA[idxA]);
+//     idxA++;
+//   }else{
+//     result.push_back(arrB[idxB]);
+//     idxB++;
+//   }
+//   //남은 값에 대해
+//   int input; 
+//   while(idxA<arrA.size()||idxB<arrB.size()){
+//     if(joinedLIS_Afirst(arrA,arrB,idxA,idxB)){
+//       input=arrA[idxA];
+//       idxA++;
+//     }else{
+//       input=arrB[idxB];
+//       idxB++;
+//     }
+//     if(result.back()<input){
+//       result.push_back(input);
+//     }else{
+//       *lower_bound(result.begin(),result.end(),input)=input;
+//     }
+//   }
+//   return result.size();
+// }
+// int JoinedLISAlgo_3(vector<int>& arrA,vector<int>& arrB){
+//   vector<int> result1;
+//   vector<int> result2;
+//   result1.push_back(arrA.front());
+//   result2.push_back(arrB.front());
+//   //전략 1, 각 arr에 대해 LIS를 만든다
+//   for(auto& ele:arrA){
+//     if(result1.back()<ele){
+//       result1.push_back(ele);
+//     }else{
+//       *lower_bound(result1.begin(),result1.end(),ele)=ele;
+//     }
+//   }
+//   for(auto& ele:arrA){
+//     if(result2.back()<ele){
+//       result2.push_back(ele);
+//     }else{
+//       *lower_bound(result2.begin(),result2.end(),ele)=ele;
+//     }
+//   }
+//   //전략 2, 각 결과에 대해 앞에서부터 greedy
+//   vector<int> result;
+//   return result.size();
+// }
+// int JoinedLISAlgo_2(vector<int>& arrA,vector<int>& arrB,int idxA, int idxB,vector<vector<int>>& DP){
+//   /*
+//   제한시간 2초
+//   제한메모리 2^16kb=64MB
+//   각 arr의 원소의 개수는 1~100, 자료형 int
+//   전략1
+//     Dynamic Programming
+//       substructure
+//         idxA, idxB
+//       기존 LIS 전략을 쓰되, 입력을 양쪽 arr의 head중 더 작은값을 넣는다.
+//       LIS 전략
+//         input이 tail보다 크면 push_back, tail보다 작으면 lower_bound를 찾아서 해당 값을 input으로 변경
+//       input
+//         각 arr의 head 중 작은 값을 input, 값이 같다면 바로 다음 값을 비교하여 더 작은 값을 input, 둘이 같다면 그냥 첫번째 input
+//     Problem
+//       (10 20 30 1 2), (10 20 30)의 길이는 5 이지만, 이 Algo를 이용하면 3이 나온다.
+//     time complexity
+//       #arr(n)*lower_bound(lgn)=O(nlgn)
+//     mem complexity
+//       #arr(n)=O(n)
+//   전략2
+//     Dynamic Programming
+//       substructure
+//         idxA, idxB를 입력으로 받는 부분함수
+//         substructure(idxA,idxB)는 idxA와 idxB가 각 Arr에서 (이전까지)마지막 수 이며, 두 중 큰 수가 JLIS에서 마지막일 것이다.
+//         DP=n^2
+//       LIS 전략
+//         마지막 값 max(arrA[idxA],arrB[idxB])보다 큰 값을 찾아 재귀, 이때 arrA에대해 한번, arrB에 대해서도 한번 한다.
+//     time complexity
+//       재귀 n^2* 반복문 n: O(n^3)
+//     mem complexity
+//       DP(n^2)+ arrA and B(n): O(n^2)
+//   전략3
+//     Stack
+//       각 arr에 전략 1 적용후(vector 형식으로 생성), 적용한 것들을 가지고 greedy(전략 2)
+//       LIS 전략:1
+//         input이 tail보다 크면 push_back, tail보다 작으면 lower_bound를 찾아서 해당 값을 input으로 변경
+//       전략 2
+//         결과값은 정렬되어 있다 -> 앞에서부터 작은 값을 input
+//     Problem
+//       10 20 40 100 400 에서 10 20 30 100 400 으로 변한 결과1
+//       15 25 30 200 300 인 결과 2가 있다고 하자
+//       결과 1의 3번째가 40일때가 30일때보다 1 긴데, 30이 최종 값이다. 즉 실제 결과보다 길이가 짧다.
+//     time complexity
+//       (arrA(n)+arrB(n))*lower_bound(lgn)=O(nlgn)
+//     mem complexity
+//       arrA(n)+arrB(n)+result(2n)=O(n)
+//   */
+//   //-1부터 시작해서 각 idx에 1을 더했다.
+//   int& result=DP[idxA+1][idxB+1];
+//   if(result!=-1){
+//     return result;
+//   }
+//   //마지막 value를 찾는다.
+//   long long valueA=(idxA==-1? -9876543210:arrA[idxA]);
+//   long long valueB=(idxB==-1? -9876543210:arrB[idxB]);
+//   long long lastEle(max(valueA,valueB));
+//   //A와 B에 대해 substructure
+//   result=0;
+//   for(int i=idxA+1;i<arrA.size();i++){
+//     if(arrA[i]>lastEle){
+//       result=max(result,JoinedLISAlgo_2(arrA,arrB,i,idxB,DP));
+//     }
+//   }
+//   for(int i=idxB+1;i<arrB.size();i++){
+//     if(arrB[i]>lastEle){
+//       result=max(result,JoinedLISAlgo_2(arrA,arrB,idxA,i,DP));
+//     }
+//   }
+//   result++;
+//   return result;
+// }
+// void JoinedLIS(){
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     vector<int> arrA,arrB;
+//     JoinedLISInput(arrA,arrB);
+//     //vector<vector<int>> DP(arrA.size()+1,vector<int>(arrB.size()+1,-1));
+//     printf("%d\n",JoinedLISAlgo_3(arrA,arrB));
+//   }
+// }
 
-void JoinedLISInput(vector<int>& arrA,vector<int>& arrB){
-  int lenA,lenB;
-  scanf("%d",&lenA);scanf("%d",&lenB);
-  arrA=vector<int>(lenA);
-  for(int i=0;i<lenA;i++){
-    scanf("%d",&arrA[i]);
-  }
-  arrB=vector<int>(lenB);
-  for(int i=0;i<lenB;i++){
-    scanf("%d",&arrB[i]);
-  }
-}
-bool joinedLIS_Afirst(vector<int>& arrA,vector<int>& arrB,int idxA,int idxB){
-  //out of idx 처리
-  if(idxA==arrA.size()){
-    return false;
-  }else if(idxB==arrB.size()){
-    return true;
-  }
-  //비교
-  if(arrA[idxA]!=arrB[idxB]){
-    return arrA[idxA]<arrB[idxB];
-  }else{
-    return arrA[idxA+1]<arrB[idxB+1];
-  }
-}
-int JoinedLISAlgo_1(vector<int>& arrA,vector<int>& arrB){
-  vector<long long> result;
-  int idxA(0),idxB(0);
-  //result의 맨 처음 값 설정
-  if(joinedLIS_Afirst(arrA,arrB,idxA,idxB)){
-    result.push_back(arrA[idxA]);
-    idxA++;
-  }else{
-    result.push_back(arrB[idxB]);
-    idxB++;
-  }
-  //남은 값에 대해
-  int input; 
-  while(idxA<arrA.size()||idxB<arrB.size()){
-    if(joinedLIS_Afirst(arrA,arrB,idxA,idxB)){
-      input=arrA[idxA];
-      idxA++;
-    }else{
-      input=arrB[idxB];
-      idxB++;
-    }
-    if(result.back()<input){
-      result.push_back(input);
-    }else{
-      *lower_bound(result.begin(),result.end(),input)=input;
-    }
-  }
-  return result.size();
-}
-int JoinedLISAlgo_3(vector<int>& arrA,vector<int>& arrB){
-  vector<int> result1;
-  vector<int> result2;
-  result1.push_back(arrA.front());
-  result2.push_back(arrB.front());
-  //전략 1, 각 arr에 대해 LIS를 만든다
-  for(auto& ele:arrA){
-    if(result1.back()<ele){
-      result1.push_back(ele);
-    }else{
-      *lower_bound(result1.begin(),result1.end(),ele)=ele;
-    }
-  }
-  for(auto& ele:arrA){
-    if(result2.back()<ele){
-      result2.push_back(ele);
-    }else{
-      *lower_bound(result2.begin(),result2.end(),ele)=ele;
-    }
-  }
-  //전략 2, 각 결과에 대해 앞에서부터 greedy
-  vector<int> result;
+// void PImem_Input(string& s){
+//   cin>>s;
+// }
+// int PImem_hard(string& numbers,int start,int len){
+//   //기저
+//   if(start+len>numbers.size()) return 12345;
+//   int begin(start+1),end(start+len);
+//   //난이도 1
+//   bool result(true);
+//   for(int i=begin;i<end;i++){
+//     if(numbers[i]!=numbers[i-1]) result=false;
+//   }
+//   if(result) return 1;
+//   //난이도 2
+//   result=true;
+//   int gap=numbers[start+1]-numbers[start];
+//   if(gap!=1&&gap!=-1) result=false;
+//   for(int i=begin;i<end;i++){
+//     if(numbers[i]-numbers[i-1]!=gap) result=false;
+//   }
+//   if(result) return 2;
+//   //난이도 4
+//   result=true;
+//   for(int i=start+2;i<end;i++){
+//     if(numbers[i]!=numbers[i-2]) result=false;
+//   }
+//   if(result) return 4;
+//   //난이도 5
+//   result=true;
+//   gap=numbers[start+1]-numbers[start];
+//   for(int i=begin;i<end;i++){
+//     if(numbers[i]-numbers[i-1]!=gap) result=false;
+//   }
+//   if(result) return 5;
+//   //나머지
+//   return 10;
+// }
+// int PImem_Algo(string& numbers, vector<int>& DP, int start){
+//   /*
+//   제한시간 1초
+//   제한메모리 2^16kb=64MB
+//   테스트 케이스 50개
+//   각 숫자들의 길이는 8~10000, 0~9
+//   전략1
+//     Dynamic Programming
+//       substructure
+//         Algo(DP,start)=min(hard(s,start,3)+Algo(DP,start+3),hard(s,start,4)+Algo(DP,start+4),hard(s,start,5)+Algo(DP,start+5));
+//           Algo(DP,start)=start에서 마지막까지 외울때의 값,DP이용
+//           hard(s,start,len)=string s에서 start부터 길이 len인 조각의 난이도
+//         제한조건
+//           최대값은 10000/3*10이므로, search완료는 0 반환, out of idx와 같은 것은 12,345 반환
+//     time complexity
+//       #Algo(n)*Algo(1)*hard(1)
+//     mem complexity
+//       #arr(n)=O(n)
+//   */
+//   //기저, search 완료, out of idx
+//   if(start==numbers.size()) return 0;
+//   if(start>numbers.size()) return 12345;
+//   //메모제이션
+//   int& result=DP[start];
+//   if(result!=0) return result;
+//   //substructure
+//   int sub3=PImem_hard(numbers,start,3)+PImem_Algo(numbers,DP,start+3);
+//   int sub4=PImem_hard(numbers,start,4)+PImem_Algo(numbers,DP,start+4);
+//   int sub5=PImem_hard(numbers,start,5)+PImem_Algo(numbers,DP,start+5);
+//   return result=min(sub3,min(sub4,sub5));
+// }
+// void PImem(){
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     string numbers;
+//     PImem_Input(numbers);
+//     vector<int> DP(numbers.size());
+//     printf("%d\n",PImem_Algo(numbers,DP,0));
+//   }
+// }
 
-  return result.size();
-}
-int JoinedLISAlgo_2(vector<int>& arrA,vector<int>& arrB,int idxA, int idxB,vector<vector<int>>& DP){
-  /*
-  제한시간 2초
-  제한메모리 2^16kb=64MB
-  각 arr의 원소의 개수는 1~100, 자료형 int
-  전략1
-    Dynamic Programming
-      substructure
-        idxA, idxB
-      기존 LIS 전략을 쓰되, 입력을 양쪽 arr의 head중 더 작은값을 넣는다.
-      LIS 전략
-        input이 tail보다 크면 push_back, tail보다 작으면 lower_bound를 찾아서 해당 값을 input으로 변경
-      input
-        각 arr의 head 중 작은 값을 input, 값이 같다면 바로 다음 값을 비교하여 더 작은 값을 input, 둘이 같다면 그냥 첫번째 input
-    Problem
-      (10 20 30 1 2), (10 20 30)의 길이는 5 이지만, 이 Algo를 이용하면 3이 나온다.
-    time complexity
-      #arr(n)*lower_bound(lgn)=O(nlgn)
-    mem complexity
-      #arr(n)=O(n)
-  전략2
-    Dynamic Programming
-      substructure
-        idxA, idxB를 입력으로 받는 부분함수
-        substructure(idxA,idxB)는 idxA와 idxB가 각 Arr에서 (이전까지)마지막 수 이며, 두 중 큰 수가 JLIS에서 마지막일 것이다.
-        DP=n^2
-      LIS 전략
-        마지막 값 max(arrA[idxA],arrB[idxB])보다 큰 값을 찾아 재귀, 이때 arrA에대해 한번, arrB에 대해서도 한번 한다.
-    time complexity
-      재귀 n^2* 반복문 n: O(n^3)
-    mem complexity
-      DP(n^2)+ arrA and B(n): O(n^2)
-  전략3
-    Stack
-      각 arr에 전략 1 적용후(vector 형식으로 생성), 적용한 것들을 가지고 greedy(전략 2)
-      LIS 전략:1
-        input이 tail보다 크면 push_back, tail보다 작으면 lower_bound를 찾아서 해당 값을 input으로 변경
-      전략 2
-        결과값은 정렬되어 있다 -> 앞에서부터 작은 값을 input
-    Problem
-      10 20 40 100 400 에서 10 20 30 100 400 으로 변한 결과1
-      15 25 30 200 300 인 결과 2가 있다고 하자
-      결과 1의 3번째가 40일때가 30일때보다 1 긴데, 30이 최종 값이다. 즉 실제 결과보다 길이가 짧다.
-    time complexity
-      (arrA(n)+arrB(n))*lower_bound(lgn)=O(nlgn)
-    mem complexity
-      arrA(n)+arrB(n)+result(2n)=O(n)
-  */
-  //-1부터 시작해서 각 idx에 1을 더했다.
-  int& result=DP[idxA+1][idxB+1];
-  if(result!=-1){
-    return result;
-  }
-  //마지막 value를 찾는다.
-  long long valueA=(idxA==-1? -9876543210:arrA[idxA]);
-  long long valueB=(idxB==-1? -9876543210:arrB[idxB]);
-  long long lastEle(max(valueA,valueB));
-  //A와 B에 대해 substructure
-  result=0;
-  for(int i=idxA+1;i<arrA.size();i++){
-    if(arrA[i]>lastEle){
-      result=max(result,JoinedLISAlgo_2(arrA,arrB,i,idxB,DP));
-    }
-  }
-  for(int i=idxB+1;i<arrB.size();i++){
-    if(arrB[i]>lastEle){
-      result=max(result,JoinedLISAlgo_2(arrA,arrB,idxA,i,DP));
-    }
-  }
-  result++;
-  return result;
-}
-void JoinedLIS(){
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    vector<int> arrA,arrB;
-    JoinedLISInput(arrA,arrB);
-    //vector<vector<int>> DP(arrA.size()+1,vector<int>(arrB.size()+1,-1));
-    printf("%d\n",JoinedLISAlgo_3(arrA,arrB));
-  }
-}
+// void Quantization_Input(vector<int>& number,int& quantRange){
+//   int numSize;
+//   cin>>numSize>>quantRange;
+//   number.resize(numSize);
+//   for(auto& ele:number){
+//     scanf("%d",&ele);
+//   }
+// }
+// void Quantization_DP_A(vector<int>& number, vector<vector<int>>& DP_A){
+//   for(int i=0;i<number.size();i++){
+//     for(int j=i;j<number.size();j++){
+//       int sum(0),avg(0),len(j-i+1),result(0);
+//       for(int k=i;k<=j;k++){
+//         sum+=number[k];
+//       }
+//       //반올림
+//       avg=int(0.5+static_cast<double>(sum)/len);
+//       //제곱합
+//       for(int k=i;k<=j;k++){
+//         result+=(number[k]-avg)*(number[k]-avg);
+//       }
+//       DP_A[i][j]=result;
+//     }
+//   }
+// }
+// void Quantization_DP_A_2(vector<int>& number, vector<vector<int>>& DP_A){
+//   //부분합을 이용해 계산시간을 줄인다. 합, 제곱합을 n에서 1로 최적화
+//   int numLen=number.size();
+//   vector<int> DP_pSum(numLen); //A(i)=for(x=0~i)sum(number[x])
+//   vector<int> DP_pSqSum(numLen);//A(i)=for(x=0~i)sum(number[x]^2)
+//   DP_pSum[0]=number[0];DP_pSqSum[0]=number[0]*number[0];
+//   for(int i=1;i<numLen;i++){
+//     DP_pSum[i]=DP_pSum[i-1]+number[i];
+//     DP_pSqSum[i]=DP_pSqSum[i-1]+number[i]*number[i];
+//   }
+//   //DP_A 계산
+//   for(int i=0;i<numLen;i++){
+//     for(int j=i;j<numLen;j++){
+//       int sum=DP_pSum[j]-(i==0? 0 : DP_pSum[i-1]);
+//       int sqSum=DP_pSqSum[j]-(i==0? 0 : DP_pSqSum[i-1]);
+//       //반올림
+//       int avg=int(0.5+static_cast<double>(sum)/(j-i+1));
+//       //제곱합최소값
+//       DP_A[i][j]=sqSum-2*avg*sum+avg*avg*(j-i+1);
+//     }
+//   }
+// }
+// int Quantization_DP_B(vector<int>& number, vector<vector<int>>& DP_A,vector<vector<int>>& DP_B,int start,int depth){
+//   //기저, 모든 숫자를 양자화, 숫자는 남았는데 더 양자화 할 수 없을때
+//   if(start==number.size()) return 0;
+//   if(depth==0) return 123456789;
+//   //메모제이션
+//   int& result=DP_B[start][depth];
+//   if(result!=-1) return result;
+//   //substructure
+//   result=123456789;
+//   for(int i=0;start+i<number.size();i++){
+//     result=min(result,DP_A[start][start+i]+Quantization_DP_B(number,DP_A,DP_B,start+i+1,depth-1));
+//   }
+//   return result;
+// }
+// int Quantization_Algo(vector<int>& number,int quantRange){
+//   /*
+//   제한시간 2초
+//   제한메모리 64MB
+//   테스트 케이스 50개
+//   수열의 길이 1~100, 사용할 숫자의 수 1~10
+//   전략1
+//     Dynamic Programming
+//       두개의 DP 배열
+//         첫번째 DP_A
+//           수열 오름차순 정렬
+//           수열의 길이 * 수열의 길이
+//           A(ij)=i~j를 한 숫자로 양자화 했을때의 제곱합 최소치 
+//         두번째 DP_A
+//           수열의 길이 * 양자화에 사용할 숫자의 수
+//           B(i,j)=i번째 숫자부터 j번째 양자화 수를 사용할 때, i번째 숫자부터 제곱합최소치
+//       A(i,j)
+//         arr[i]~arr[j]범위의 양자화 값 하나를 이용할 때, 제곱합 최소치를 구한다.
+//           양자화 값은 arr[i]~arr[j]의 평균
+//             증명: 평균보다 a만큼 차이가 나면, (gap1-a)^2+(gap2+a)^2+... > gap1^2+gap2^2+...
+//             미분을 이용해서도 증명 가능
+//         A(ij)=sum((x-avg)^2), x=i~j
+//       substructure  
+//         B(i,j)= for(k=i~ last) 
+//           B(i,j)=C(i~k-1)+B(k,j+1)
+//           오름차순 정렬이기 때문에, optimal substructure가 성립한다.
+//         제한조건
+//           최대값=1000^2*100=100,000,000, INF=123456789
+//           j가 10이면 return 0
+//           i가 last를 벗어나면 return INF
+//     time complexity
+//       sorting(nlgn)+#A(1)*A(n^3)+#B(n^2)*B(n) = O(n^3)
+//         optimize: #A2(1)*A2(n^2)
+//     mem complexity
+//       #arr(n)=O(n)
+//   */
+//   //정렬
+//   sort(number.begin(),number.end());
+//   //DP_A, i~j를 한 숫자로 양자화 했을때의 제곱합 최소치
+//   vector<vector<int>> DP_A(number.size(),vector<int>(number.size(),-1));
+//   Quantization_DP_A_2(number,DP_A);
+//   //DP_B
+//   vector<vector<int>> DP_B(number.size(),vector<int>(quantRange+1,-1));
+//   return Quantization_DP_B(number,DP_A,DP_B,0,quantRange);
+// }
+// void Quantization(){
+//   int testCase;
+//   cin>>testCase;
+//   vector<int> result;
+//   while(testCase--){
+//     vector<int> number;
+//     int quantRange;
+//     Quantization_Input(number,quantRange);
+//     cout<<Quantization_Algo(number,quantRange)<<'\n';
+//   }
+// }
 
-void PImem_Input(string& s){
-  cin>>s;
-}
-int PImem_hard(string& numbers,int start,int len){
-  //기저
-  if(start+len>numbers.size()) return 12345;
-  int begin(start+1),end(start+len);
-  //난이도 1
-  bool result(true);
-  for(int i=begin;i<end;i++){
-    if(numbers[i]!=numbers[i-1]) result=false;
-  }
-  if(result) return 1;
-  //난이도 2
-  result=true;
-  int gap=numbers[start+1]-numbers[start];
-  if(gap!=1&&gap!=-1) result=false;
-  for(int i=begin;i<end;i++){
-    if(numbers[i]-numbers[i-1]!=gap) result=false;
-  }
-  if(result) return 2;
-  //난이도 4
-  result=true;
-  for(int i=start+2;i<end;i++){
-    if(numbers[i]!=numbers[i-2]) result=false;
-  }
-  if(result) return 4;
-  //난이도 5
-  result=true;
-  gap=numbers[start+1]-numbers[start];
-  for(int i=begin;i<end;i++){
-    if(numbers[i]-numbers[i-1]!=gap) result=false;
-  }
-  if(result) return 5;
-  //나머지
-  return 10;
-}
-int PImem_Algo(string& numbers, vector<int>& DP, int start){
-  /*
-  제한시간 1초
-  제한메모리 2^16kb=64MB
-  테스트 케이스 50개
-  각 숫자들의 길이는 8~10000, 0~9
-  전략1
-    Dynamic Programming
-      substructure
-        Algo(DP,start)=min(hard(s,start,3)+Algo(DP,start+3),hard(s,start,4)+Algo(DP,start+4),hard(s,start,5)+Algo(DP,start+5));
-          Algo(DP,start)=start에서 마지막까지 외울때의 값,DP이용
-          hard(s,start,len)=string s에서 start부터 길이 len인 조각의 난이도
-        제한조건
-          최대값은 10000/3*10이므로, search완료는 0 반환, out of idx와 같은 것은 12,345 반환
-    time complexity
-      #Algo(n)*Algo(1)*hard(1)
-    mem complexity
-      #arr(n)=O(n)
-  */
-  //기저, search 완료, out of idx
-  if(start==numbers.size()) return 0;
-  if(start>numbers.size()) return 12345;
-  //메모제이션
-  int& result=DP[start];
-  if(result!=0) return result;
-  //substructure
-  int sub3=PImem_hard(numbers,start,3)+PImem_Algo(numbers,DP,start+3);
-  int sub4=PImem_hard(numbers,start,4)+PImem_Algo(numbers,DP,start+4);
-  int sub5=PImem_hard(numbers,start,5)+PImem_Algo(numbers,DP,start+5);
-  return result=min(sub3,min(sub4,sub5));
-}
-void PImem(){
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    string numbers;
-    PImem_Input(numbers);
-    vector<int> DP(numbers.size());
-    printf("%d\n",PImem_Algo(numbers,DP,0));
-  }
-}
+// void AsymTiling_Input(int& tileLen){
+//   cin>>tileLen;
+// }
+// int AsymTiling_DP(vector<int>& DP,int tileLen){
+//   int& result=DP[tileLen];
+//   if(result!=0) return result;
+//   return result=(AsymTiling_DP(DP,tileLen-1)+AsymTiling_DP(DP,tileLen-2))%1000000007;
+// }
+// int AsymTiling_Algo(int tileLen){
+//   /*
+//   1초, 64MB, 테스트케이스 50개
+//   사각형의 너비 1~100, mod 1,000,000,007
+//   전략1
+//     Dynamic Programming
+//       모든 사각형의 수 - 대칭인 사각형의 수
+//       뺄셈에서 mod는 항등이다(음수일경우 mod를 더해준다.)
+//       모든 사각형
+//         substructure: func(len)=func(len-1)+func(len-2)
+//         기저: if len<=1, return 1; -> DP[0], DP[1]을 1로 미리 정하면 됨
+//       대칭 사각형
+//         if(len%2==1) func2(len)=func(len/2)
+//         if(len%2==0) func2(len)=func(len/2)+func(len/2-1)
+//     time complexity
+//       #func(n)*func(1)+#func2(1)*func2(1)=O(n)
+//     mem complexity
+//       #DP_A(n)=O(n)
+//   */
+//   //모든 사각형의 경우의 수
+//   vector<int> DP(tileLen+1);DP[0]=1;DP[1]=1;
+//   int result=AsymTiling_DP(DP,tileLen);
+//   //정답
+//   int modValue=1000000007;
+//   if(tileLen%2==0)
+//     result=(result-(DP[tileLen/2]+DP[tileLen/2-1])%modValue+modValue)%modValue;
+//   else
+//     result=(result-DP[tileLen/2]+modValue)%modValue;
+//   return result;
+// }
+// void AsymTiling(){
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     int tileLen;
+//     AsymTiling_Input(tileLen);
+//     cout<<AsymTiling_Algo(tileLen)<<'\n';
+//   }
+// }
 
-void Quantization_Input(vector<int>& number,int& quantRange){
-  int numSize;
-  cin>>numSize>>quantRange;
-  number.resize(numSize);
-  for(auto& ele:number){
-    scanf("%d",&ele);
-  }
-}
-void Quantization_DP_A(vector<int>& number, vector<vector<int>>& DP_A){
-  for(int i=0;i<number.size();i++){
-    for(int j=i;j<number.size();j++){
-      int sum(0),avg(0),len(j-i+1),result(0);
-      for(int k=i;k<=j;k++){
-        sum+=number[k];
-      }
-      //반올림
-      avg=int(0.5+static_cast<double>(sum)/len);
-      //제곱합
-      for(int k=i;k<=j;k++){
-        result+=(number[k]-avg)*(number[k]-avg);
-      }
-      DP_A[i][j]=result;
-    }
-  }
-}
-void Quantization_DP_A_2(vector<int>& number, vector<vector<int>>& DP_A){
-  //부분합을 이용해 계산시간을 줄인다. 합, 제곱합을 n에서 1로 최적화
-  int numLen=number.size();
-  vector<int> DP_pSum(numLen); //A(i)=for(x=0~i)sum(number[x])
-  vector<int> DP_pSqSum(numLen);//A(i)=for(x=0~i)sum(number[x]^2)
-  DP_pSum[0]=number[0];DP_pSqSum[0]=number[0]*number[0];
-  for(int i=1;i<numLen;i++){
-    DP_pSum[i]=DP_pSum[i-1]+number[i];
-    DP_pSqSum[i]=DP_pSqSum[i-1]+number[i]*number[i];
-  }
-  //DP_A 계산
-  for(int i=0;i<numLen;i++){
-    for(int j=i;j<numLen;j++){
-      int sum=DP_pSum[j]-(i==0? 0 : DP_pSum[i-1]);
-      int sqSum=DP_pSqSum[j]-(i==0? 0 : DP_pSqSum[i-1]);
-      //반올림
-      int avg=int(0.5+static_cast<double>(sum)/(j-i+1));
-      //제곱합최소값
-      DP_A[i][j]=sqSum-2*avg*sum+avg*avg*(j-i+1);
-    }
-  }
-}
-int Quantization_DP_B(vector<int>& number, vector<vector<int>>& DP_A,vector<vector<int>>& DP_B,int start,int depth){
-  //기저, 모든 숫자를 양자화, 숫자는 남았는데 더 양자화 할 수 없을때
-  if(start==number.size()) return 0;
-  if(depth==0) return 123456789;
-  //메모제이션
-  int& result=DP_B[start][depth];
-  if(result!=-1) return result;
-  //substructure
-  result=123456789;
-  for(int i=0;start+i<number.size();i++){
-    result=min(result,DP_A[start][start+i]+Quantization_DP_B(number,DP_A,DP_B,start+i+1,depth-1));
-  }
-  return result;
-}
-int Quantization_Algo(vector<int>& number,int quantRange){
-  /*
-  제한시간 2초
-  제한메모리 64MB
-  테스트 케이스 50개
-  수열의 길이 1~100, 사용할 숫자의 수 1~10
-  전략1
-    Dynamic Programming
-      두개의 DP 배열
-        첫번째 DP_A
-          수열 오름차순 정렬
-          수열의 길이 * 수열의 길이
-          A(ij)=i~j를 한 숫자로 양자화 했을때의 제곱합 최소치 
-        두번째 DP_A
-          수열의 길이 * 양자화에 사용할 숫자의 수
-          B(i,j)=i번째 숫자부터 j번째 양자화 수를 사용할 때, i번째 숫자부터 제곱합최소치
-      A(i,j)
-        arr[i]~arr[j]범위의 양자화 값 하나를 이용할 때, 제곱합 최소치를 구한다.
-          양자화 값은 arr[i]~arr[j]의 평균
-            증명: 평균보다 a만큼 차이가 나면, (gap1-a)^2+(gap2+a)^2+... > gap1^2+gap2^2+...
-            미분을 이용해서도 증명 가능
-        A(ij)=sum((x-avg)^2), x=i~j
-      substructure  
-        B(i,j)= for(k=i~ last) 
-          B(i,j)=C(i~k-1)+B(k,j+1)
-          오름차순 정렬이기 때문에, optimal substructure가 성립한다.
-        제한조건
-          최대값=1000^2*100=100,000,000, INF=123456789
-          j가 10이면 return 0
-          i가 last를 벗어나면 return INF
-    time complexity
-      sorting(nlgn)+#A(1)*A(n^3)+#B(n^2)*B(n) = O(n^3)
-        optimize: #A2(1)*A2(n^2)
-    mem complexity
-      #arr(n)=O(n)
-  */
-  //정렬
-  sort(number.begin(),number.end());
-  //DP_A, i~j를 한 숫자로 양자화 했을때의 제곱합 최소치
-  vector<vector<int>> DP_A(number.size(),vector<int>(number.size(),-1));
-  Quantization_DP_A_2(number,DP_A);
-  //DP_B
-  vector<vector<int>> DP_B(number.size(),vector<int>(quantRange+1,-1));
-  return Quantization_DP_B(number,DP_A,DP_B,0,quantRange);
-}
-void Quantization(){
-  int testCase;
-  cin>>testCase;
-  vector<int> result;
-  while(testCase--){
-    vector<int> number;
-    int quantRange;
-    Quantization_Input(number,quantRange);
-    cout<<Quantization_Algo(number,quantRange)<<'\n';
-  }
-}
+// void Poly_Input(int& block){
+//   cin>>block;
+// }
+// int Poly_DP(vector<vector<int>>& DP,int blockNum,int topNum){
+//   int& result=DP[blockNum][topNum];
+//   if(result!=-1) return result;
+//   //substructrue, preTop=꼭대기 직전 블록의 갯수
+//   result=0;
+//   for(int preTop=1;preTop<=blockNum-topNum;preTop++){
+//     result=(result+(topNum+preTop-1)*Poly_DP(DP,blockNum-topNum,preTop))%10000000;
+//   }
+//   return result;
+// }
+// int Poly_Algo(int block){
+//   /*
+//   1초, 64MB, 테스트케이스 50개
+//   사각형의 개수 1~100, mod 10,000,000
+//   전략1
+//     Dynamic Programming
+//       func(사용한 정사각형의 개수, 높이), x는 가장 위에 쌓을 개수
+//         substructure: for(height=1~n) func(n,height)= for(x=1~n-height+1) sum(x*func(n-x,height-1))
+//         기저: func(i.i)=1;func(i,1)=1;
+//         정답: for(i=1~n) sum(func(n,i))
+//     Problem
+//       top*func(...)가 아니고, (top+직전 높이의 가로 개수-1)*func(...)이다.
+//     time complexity
+//       #func(n^2)*func(n)+=O(n^3)
+//     mem complexity
+//       #DP_A(n^2)=O(n^2)
+//   전략2
+//     Dynamic Programming
+//       func(사용한 정사각형의 개수, 가장 높은 위치(top)의 블록갯수)
+//         substructure: for(topNum=1~n) func(n,topNum)=for(x=1~n-topNum) sum((topNum+x-1)*func(n-topNum,x))
+//         기저: func(i,i)=1;
+//         정답: for(i=1~n) sum(func(n,i))
+//     time complexity
+//       #func(n^2)*func(n)+=O(n^3)
+//     mem complexity
+//       #DP_A(n^2)=O(n^2)
+//   */
+//   //DP 생성 및 계산
+//   vector<vector<int>> DP(block+1,vector<int>(block+1,-1));
+//   //기저
+//   for(int i=1;i<=block;i++){
+//     DP[i][i]=1;
+//   } 
+//   int result=0;
+//   for(int i=1;i<=block;i++)
+//     result+=Poly_DP(DP,block,i);
+//   return result%10000000;
+// }
+// void Poly(){
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     int block;
+//     Poly_Input(block);
+//     cout<<Poly_Algo(block)<<'\n';
+//   }
+// }
 
-void AsymTiling_Input(int& tileLen){
-  cin>>tileLen;
-}
-int AsymTiling_DP(vector<int>& DP,int tileLen){
-  int& result=DP[tileLen];
-  if(result!=0) return result;
-  return result=(AsymTiling_DP(DP,tileLen-1)+AsymTiling_DP(DP,tileLen-2))%1000000007;
-}
-int AsymTiling_Algo(int tileLen){
-  /*
-  1초, 64MB, 테스트케이스 50개
-  사각형의 너비 1~100, mod 1,000,000,007
-  전략1
-    Dynamic Programming
-      모든 사각형의 수 - 대칭인 사각형의 수
-      뺄셈에서 mod는 항등이다(음수일경우 mod를 더해준다.)
-      모든 사각형
-        substructure: func(len)=func(len-1)+func(len-2)
-        기저: if len<=1, return 1; -> DP[0], DP[1]을 1로 미리 정하면 됨
-      대칭 사각형
-        if(len%2==1) func2(len)=func(len/2)
-        if(len%2==0) func2(len)=func(len/2)+func(len/2-1)
-    time complexity
-      #func(n)*func(1)+#func2(1)*func2(1)=O(n)
-    mem complexity
-      #DP_A(n)=O(n)
-  */
-  //모든 사각형의 경우의 수
-  vector<int> DP(tileLen+1);DP[0]=1;DP[1]=1;
-  int result=AsymTiling_DP(DP,tileLen);
-  //정답
-  int modValue=1000000007;
-  if(tileLen%2==0)
-    result=(result-(DP[tileLen/2]+DP[tileLen/2-1])%modValue+modValue)%modValue;
-  else
-    result=(result-DP[tileLen/2]+modValue)%modValue;
-  return result;
-}
-void AsymTiling(){
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    int tileLen;
-    AsymTiling_Input(tileLen);
-    cout<<AsymTiling_Algo(tileLen)<<'\n';
-  }
-}
+// void Numb3rs_Input(int& dayPast,int& prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
+//   int townNum;
+//   cin>>townNum>>dayPast>>prison;
+//   townGraph=vector<vector<int>>(townNum,vector<int>(townNum));
+//   for(auto& ele:townGraph)
+//     for(auto& ele2:ele)
+//       scanf("%d",&ele2);
+//   int chkTownNum;
+//   cin>>chkTownNum;
+//   chkTown=vector<int>(chkTownNum);
+//   for(auto& ele:chkTown)
+//     scanf("%d",&ele);
+// }
+// double Numb3rs_DP(vector<vector<int>>& townGraph,vector<int>& degree,vector<vector<double>>& DP, int dayPast, int town){
+//   double& result=DP[dayPast][town];
+//   if(result>-0.5) return result;
+//   //substructrue, preTop=꼭대기 직전 블록의 갯수
+//   result=0;
+//   for(int preTown=0;preTown<townGraph.size();preTown++){
+//     if(townGraph[preTown][town])
+//       result+=Numb3rs_DP(townGraph,degree,DP,dayPast-1,preTown)/degree[preTown];
+//   }
+//   return result;
+// }
+// vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
+//   /*
+//   2초, 64MB, 테스트케이스 50개
+//   마을의 수(n)2~50, 지난 일수(d) 1~100, 교도소 위치(마을 중 하나), 마을 이름=0~n-1,확률을 계산할 마을의 수(1~n)
+//   전략1
+//     Dynamic Programming
+//       func(지난 날짜, 마을)= 마을을 방문한 경우의 수
+//         substructure: for(town=0~n-1) func(dayPast,town)=for(preTown=인접마을 of town, from townGraph) sum(func(dayPast-1,preTown))
+//         기저: prison이 정해져 있으므로, prison인접 마을은 1, prison마을 및 비인접마을은 0으로 초기화,
+//         정답: 마지막 날짜, 마을의 경우의 수/전체 경우의 수
+//     Problem 
+//       경우의 수로 구하는것이 불가능하다.
+//     time complexity
+//       #func(nd)*func(n)+=O(d*n^2)
+//     mem complexity
+//       #DP_A(nd)=O(nd)
+//   전략2
+//     전략1과 같은데 경우의 수가 아닌 확률 계산
+//   */
+//   //DP 생성, degree[town]=town에서 갈 수 있는 마을의 경우의 수
+//   int townNum=townGraph.size();
+//   vector<vector<double>> DP(dayPast+1,vector<double>(townNum,-1));
+//   vector<int> degree(townNum);
+//   for(int i=0;i<townNum;i++){
+//     for(auto& ele:townGraph[i]){
+//       degree[i]+=ele;
+//     }
+//   }
+//   //기저 생성
+//   for(int i=0;i<townNum;i++){
+//     if(townGraph[prison][i]) DP[1][i]=(double)1/degree[prison];
+//     else DP[1][i]=0;
+//   }
+//   //정답 생성
+//   vector<double> result;
+//   for(auto& ele:chkTown)
+//     result.push_back(Numb3rs_DP(townGraph,degree,DP,dayPast,ele));
+//   return result;
+// }
+// void Numb3rs(){
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     int dayPast,prison;
+//     vector<vector<int>> townGraph;
+//     vector<int> chkTown;
+//     Numb3rs_Input(dayPast,prison,townGraph,chkTown);
+//     for(auto& ele:Numb3rs_Algo(dayPast,prison,townGraph,chkTown))
+//       printf("%.8f ",ele);
+//     cout<<"\n";
+//   }
+// }
+// void Packing_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,vector<int>& itemDesp){
+//   int itemNum;
+//   cin>>itemNum>>weight;
+//   itemName=vector<string>(itemNum);
+//   itemWeight=itemDesp=vector<int>(itemNum);
+//   for(int i=0;i<itemNum;i++)
+//     cin>>itemName[i]>>itemWeight[i]>>itemDesp[i];
+// }
+// int Packing_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& itemDesp,int nowChoice,int weightRemain){
+//   //기저, nowChoice==N
+//   if(nowChoice==itemDesp.size()) return 0;
+//   int& result=DP_desp[nowChoice][weightRemain];
+//   if(result!=-1) return result;
+//   //substructrue, 선택하지 않았을경우, 선택했을경우
+//   result=Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain);
+//   if(weightRemain>=itemWeight[nowChoice])
+//     result=max(result,itemDesp[nowChoice]+Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain-itemWeight[nowChoice]));
+//   return result;
+// }
+// vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp){
+//   /*
+//   2초, 64MB, 테스트케이스 50개
+//   입력:물건의 수(N)1~100, 캐리어의 용량(W)1~1000, N개의 물건을 이름,부피,절박도 순서로 각 줄에 주어짐, 이름:공백없는 알파벳 대소문자 1~20, 부피와절박도는 1~1000
+//   출력:첫 줄에는 최대 절박도 합과 가져갈 물건들의 개수 출력, 이후 한 줄마다 각 물건들의 이름을 출력, 조합이 여러개일 경우 하나만 출력한다.
+//   제한: 절박도 최대=100*1000=100000
+//   전략1
+//     Dynamic Programming
+//       func(직전에 선택한 물건, 남은 캐리어 용량)= 절박도의 합
+//         DP: size 100*1000, 물건은 순서대로만 선택 가능
+//         substructure: func(nowChoice,weightRemain)=for(i=nowChoice+1~N), max, func(i,weightRemain-i_weight)
+//         기저: weightRemain<0
+//         정답: 경로를 저장한 DP를 이용하여 출력
+//     개선1
+//       func내부의 loop를 제거하여 수행시간을 줄인다.
+//       다음 물건을 선택하느냐/선택하지 않느냐로 구분
+//         func(이번에 선택할 물건, 남은 캐리어 용량)= 절박도의 합
+//         기저:이번에 선택할 물건==N
+//       선택지가 두개뿐이다 -> 이전 기록과 비교하여 선택이 됐는지 비교 가능, 기록 DP 삭제
+//     time complexity
+//       #func(NW)*func(1)+=O(NW)
+//     mem complexity
+//       #DP(NW)=O(NW)
+//   */
+//   //DP 생성
+//   vector<vector<int>> DP_desp(itemWeight.size(),vector<int>(weight+1,-1));
+//   //DP 채우기
+//   int tmp=Packing_DP(DP_desp,itemWeight,itemDesp,0,weight);
+//   //정답 생성
+//   vector<int> result;
+//   result.push_back(tmp);
+//   int nowPick(0),weightRemain(weight);
+//   while(nowPick<itemWeight.size()-1){
+//     //선택했다면, 절박도가 다를것이다.
+//     if(DP_desp[nowPick][weightRemain]!=DP_desp[nowPick+1][weightRemain]){
+//       result.push_back(nowPick);
+//       weightRemain-=itemWeight[nowPick];
+//     }
+//     nowPick++;
+//   }
+//   if(DP_desp[nowPick][weightRemain]>0)
+//     result.push_back(nowPick);
+//   return result;
+// }
+// void Packing(){
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     int weight;
+//     vector<string> itemName;
+//     vector<int> itemWeight,itemDesp;
+//     Packing_Input(weight,itemName,itemWeight,itemDesp);
+//     vector<int> result=Packing_Algo(weight,itemWeight,itemDesp);
+//     cout<<result.front()<<' '<<result.size()-1<<'\n';
+//     for(auto iter=++result.begin();iter!=result.end();iter++){
+//       cout<<itemName[*iter]<<'\n';
+//     }
+//   }
+// }
 
-void Poly_Input(int& block){
-  cin>>block;
-}
-int Poly_DP(vector<vector<int>>& DP,int blockNum,int topNum){
-  int& result=DP[blockNum][topNum];
-  if(result!=-1) return result;
-  //substructrue, preTop=꼭대기 직전 블록의 갯수
-  result=0;
-  for(int preTop=1;preTop<=blockNum-topNum;preTop++){
-    result=(result+(topNum+preTop-1)*Poly_DP(DP,blockNum-topNum,preTop))%10000000;
-  }
-  return result;
-}
-int Poly_Algo(int block){
-  /*
-  1초, 64MB, 테스트케이스 50개
-  사각형의 개수 1~100, mod 10,000,000
-  전략1
-    Dynamic Programming
-      func(사용한 정사각형의 개수, 높이), x는 가장 위에 쌓을 개수
-        substructure: for(height=1~n) func(n,height)= for(x=1~n-height+1) sum(x*func(n-x,height-1))
-        기저: func(i.i)=1;func(i,1)=1;
-        정답: for(i=1~n) sum(func(n,i))
-    Problem
-      top*func(...)가 아니고, (top+직전 높이의 가로 개수-1)*func(...)이다.
-    time complexity
-      #func(n^2)*func(n)+=O(n^3)
-    mem complexity
-      #DP_A(n^2)=O(n^2)
-  전략2
-    Dynamic Programming
-      func(사용한 정사각형의 개수, 가장 높은 위치(top)의 블록갯수)
-        substructure: for(topNum=1~n) func(n,topNum)=for(x=1~n-topNum) sum((topNum+x-1)*func(n-topNum,x))
-        기저: func(i,i)=1;
-        정답: for(i=1~n) sum(func(n,i))
-    time complexity
-      #func(n^2)*func(n)+=O(n^3)
-    mem complexity
-      #DP_A(n^2)=O(n^2)
-  */
-  //DP 생성 및 계산
-  vector<vector<int>> DP(block+1,vector<int>(block+1,-1));
-  //기저
-  for(int i=1;i<=block;i++){
-    DP[i][i]=1;
-  } 
-  int result=0;
-  for(int i=1;i<=block;i++)
-    result+=Poly_DP(DP,block,i);
-  return result%10000000;
-}
-void Poly(){
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    int block;
-    Poly_Input(block);
-    cout<<Poly_Algo(block)<<'\n';
-  }
-}
+// void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+//                 vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
+//   cin>>wordNum>>sentenceNum;  //wordNum:1~500, sentenceNum:1~20
+//   for(int i=0;i<wordNum;i++){
+//     string tmp;cin>>tmp;
+//     wordArrMap.insert({tmp,i});
+//     wordArr.push_back(tmp);
+//   }
+//   firstPoss.resize(wordNum);
+//   for(auto& ele: firstPoss)
+//     scanf("%lf",&ele);
+//   classifiPoss=nextPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
+//   for(auto& ele: nextPoss)
+//     for(auto& ele2: ele)
+//       scanf("%lf",&ele2);
+//   for(auto& ele: classifiPoss)
+//     for(auto& ele2: ele)
+//       scanf("%lf",&ele2);
+//   sentenceArr.resize(sentenceNum);
+//   cin.ignore();
+//   for(auto& ele: sentenceArr)
+//     getline(cin,ele);
+// }
+// void Ocr_Input_test(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+//                 vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
+//   cout<<"wordNum: "<<wordNum<<"\n";
+//   cout<<"sentenceNum: "<<sentenceNum<<"\n";
+//   cout<<"wordArr----------\n";
+//   for(auto& ele: wordArr)
+//     cout<<ele<<" ";
+//   cout<<"\n";
+//   cout<<"wordArrMap----------\n";
+//   for(auto& ele:wordArrMap)
+//     cout<<"("<<ele.first<<", "<<ele.second<<") ";
+//   cout<<"\n";
+//   cout<<"firstPoss----------\n";
+//   for(auto& ele: firstPoss)
+//     cout<<ele<<" ";
+//   cout<<"\n";
+//   cout<<"nextPoss----------\n";
+//   for(auto& ele:nextPoss){
+//     for(auto& ele2:ele)
+//       cout<<ele2<<" ";
+//     cout<<"\n";
+//   }
+//   cout<<"classifiPoss----------\n";
+//   for(auto& ele:classifiPoss){
+//     for(auto& ele2:ele)
+//       cout<<ele2<<" ";
+//     cout<<"\n";
+//   }
+//   cout<<"sentenceArr----------\n";
+//   for(auto& ele:sentenceArr)
+//     cout<<ele<<"END\n";
+// }
+// void Ocr_randInput(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+//                 vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
+//   wordNum=rand()%500+1; //1~500
+//   sentenceNum=rand()%20+1;  //1~20
+//   wordArr.resize(wordNum);
+//   //wordArr, wordArrMap
+//   int idx=0;
+//   for(auto& ele:wordArr){ //each word=1~10, only lowercase
+//     while(true){
+//       int len=rand()%10+1;
+//       string tmpStr;
+//       for(int i=0;i<len;i++){
+//         tmpStr.push_back(rand()%26+97);  //a~z: #26, 97~122
+//       }
+//       if(wordArrMap.insert({tmpStr,idx}).second){
+//         wordArr[idx]=tmpStr;
+//         break;
+//       }
+//     }
+//     idx++;
+//   }
+//   //firstPoss
+//   firstPoss.resize(wordNum);
+//   int tmpsum(0);
+//   for(auto& ele:firstPoss){
+//     ele=rand()%100;
+//     tmpsum+=ele;
+//   }
+//   for(auto& ele:firstPoss){
+//     ele/=tmpsum;
+//   }
+//   //classifiPoss, nextPoss
+//   classifiPoss=nextPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
+//   for(auto& ele: classifiPoss){
+//     tmpsum=0;
+//     for(auto& ele2:ele){
+//       ele2=rand()%100;
+//       tmpsum+=ele2;
+//     }
+//     for(auto& ele2:ele){
+//       ele2/=tmpsum;
+//     }
+//   }
+//   for(auto& ele: nextPoss){
+//     tmpsum=0;
+//     for(auto& ele2:ele){
+//       ele2=rand()%100;
+//       tmpsum+=ele2;
+//     }
+//     for(auto& ele2:ele){
+//       ele2/=tmpsum;
+//     }
+//   }
+//   //sentence
+//   sentenceArr.resize(sentenceNum);
+//   for(auto& sentence:sentenceArr){
+//     int sentenceLen=rand()%100+1; //1~100
+//     sentence+=to_string(sentenceLen)+' ';
+//     for(int i=0;i<sentenceLen;i++){
+//       int tmp=rand()%wordNum;
+//       sentence+=wordArr[tmp]+' ';
+//     }
+//     sentence.pop_back();
+//   }   
+// }
+// void Ocr_input_simpleT(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
+//                 vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
+//   cout<<"wordNum: "<<wordNum<<"___"<<wordArr.size()<<"___"<<wordArrMap.size()<<"___"<<firstPoss.size()<<"___"<<nextPoss.size()<<"___"<<classifiPoss.size()<<endl;
+//   cout<<"sentenceNum: "<<sentenceNum<<"___"<<sentenceArr.size()<<endl;
+//   //wordArr
+//   for(auto& ele:wordArr)
+//     cout<<ele<<' ';
+//   cout<<endl;
+//   //firstPoss
+//   double tmpSum(0);
+//   for(auto& ele:firstPoss)
+//     tmpSum+=ele;
+//   cout<<"firstPoss Sum: "<<tmpSum<<endl;
+//   //nextPoss,classifiPoss
+//   cout<<"nextPoss Sum: ";
+//   for(auto& ele: nextPoss){
+//     tmpSum=0;
+//     for(auto& ele2: ele){
+//       tmpSum+=ele2;
+//     }
+//     cout<<tmpSum;
+//   }
+//   cout<<endl;
+//   cout<<"classifiPoss Sum: ";
+//   for(auto& ele: classifiPoss){
+//     tmpSum=0;
+//     for(auto& ele2: ele){
+//       tmpSum+=ele2;
+//     }
+//     cout<<tmpSum;
+//   }
+//   cout<<endl;
+//   //sentence
+//   cout<<"----sentence----\n";
+//   for(auto& ele:sentenceArr)
+//     cout<<ele<<'\n';
+// }
+// double Ocr1_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,int now, int nextGuess){
+//   double& result=DP_Ocr1[now][nextGuess];
+//   if(result>-0.5)
+//     return result;
+//   result=0.0;
+//   for(int i=0;i<nextPoss[0].size();i++)
+//     result+=nextPoss[now][i]*classifiPoss[i][nextGuess];
+//   return result;
+// }
+// double Ocr1_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
+//                   vector<vector<double>>& DP_Poss,vector<vector<int>>& DP_Path, vector<int>& wordOfSentence,int idx,int nowWord){
+//   //기저, 범위 밖, 이미 값이 있는경우
+//   if(idx==wordOfSentence.size()-1)
+//     return 1.0;
+//   double& result=DP_Poss[idx+1][nowWord];
+//   if(result>-0.5) 
+//     return result;
+//   //함수 진행
+//   int wordNum=firstPoss.size();
+//   result=0.0;
+//   int& path=DP_Path[idx+1][nowWord];
+//   //맨처음, idx==-1인 경우
+//   if(idx==-1){
+//     double nextGuessPoss=0.0;
+//     for(int i=0;i<wordNum;i++)  //실제 다음위치가 i 값인데, 이를 wordOfSentence[0] 으로 인식했을 확률
+//       nextGuessPoss+=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]];
+//     for(int i=0;i<wordNum;i++){
+//       double tmp=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr1_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,idx+1,i)/nextGuessPoss;
+//       if(cmpDouble_AbsRel(tmp,result)==1){
+//         result=tmp;
+//         path=i;
+//       }
+//     }
+//     return result;
+//   }
+//   //함수
+//   double nextGuessPoss=Ocr1_DP1(DP_Ocr1,nextPoss,classifiPoss,nowWord,wordOfSentence[idx+1]);
+//   if(cmpDouble_AbsRel(0.0,nextGuessPoss)==0){
+//     return 0.0;
+//   }
+//   for(int i=0;i<wordNum;i++){
+//     double tmp=nextPoss[nowWord][i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr1_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,idx+1,i)/nextGuessPoss;
+//     if(cmpDouble_AbsRel(tmp,result)==1){
+//       result=tmp;
+//       path=i;
+//     }
+//   }
+//   return result;
+// }
+// vector<string> Ocr1_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,
+//                         vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
+//   //DP 생성
+//   vector<vector<double>> DP_Ocr1(wordNum,vector<double>(wordNum,-1.0));
+//   //정답 생성
+//   vector<string> result;
+//   for(auto& ele: sentenceArr){
+//     //sentence의 각 word 분리, idx로 치환하여저장
+//     vector<int> wordOfSentence;
+//     string sentence=ele.substr(2); //앞에 두개는 sentence의 word 갯수, 공백(스페이스바)
+//     string tmpWord;
+//     for(auto iter=sentence.begin();iter!=sentence.end();iter++){
+//       if(*iter==' '){
+//         wordOfSentence.push_back(wordArrMap.find(tmpWord)->second);
+//         tmpWord.clear();
+//       }else{
+//         tmpWord.push_back(*iter);
+//       }
+//     }
+//     wordOfSentence.push_back(wordArrMap.find(tmpWord)->second);
+//     //조건부 출현확률 최대치 도출
+//     vector<vector<double>> DP_Poss(wordOfSentence.size()+1,vector<double>(wordNum,-1.0));
+//     vector<vector<int>> DP_Path(wordOfSentence.size()+1,vector<int>(wordNum,-1));
+//     Ocr1_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,-1,0);
+//     //경로 도출
+//     vector<int> path;
+//     int frag=DP_Path[0][0];
+//     for(int i=0;i<wordOfSentence.size();i++){
+//       path.push_back(frag);
+//       frag=DP_Path[i+1][frag];
+//     }
+//     string tmpResult;
+//     for(auto& ele: path){
+//       tmpResult+=wordArr[ele]+' ';
+//     }
+//     tmpResult.pop_back(); //마지막 공백 제거 
+//     //result에 정답 입력
+//     result.push_back(move(tmpResult));
+//   }
+//   return result;
+// }
+// double Ocr2_possQ(const vector<vector<double>>& DP, int prev, int now){
+//   return DP[prev+1][now];
+// }
+// double Ocr2_DPposs(const vector<vector<double>>& DP_possQ,const vector<vector<double>>& DP_RgivenQ,vector<vector<double>>& DP_Poss,
+//                     vector<vector<int>>& DP_Path,const vector<int>& wordOfSentence,int nextIdx,int nowWord){
+//   //기저, 
+//   if(nextIdx==wordOfSentence.size()){
+//     return 0.0;
+//   }
+//   double& result=DP_Poss[nextIdx][nowWord];
+//   if(result<0.5){
+//     return result;
+//   }
+//   //Algo
+//   int& path=DP_Path[nextIdx][nowWord];
+//   if(nextIdx==0){
+//     nowWord=-1;
+//   }
+//   result=-1e200;
+//   for(int nextWord=0;nextWord<DP_RgivenQ.size();nextWord++){
+//     double tmp=Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,nextIdx+1,nextWord);
+//     tmp+=DP_RgivenQ[nextWord][wordOfSentence[nextIdx]]+Ocr2_possQ(DP_possQ,nowWord,nextWord);
+//     //double tmp=Ocr2_possQ(DP_possQ,nowWord,nextWord)+DP_RgivenQ[nextWord][wordOfSentence[nextIdx]]+Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,nextIdx+1,nextWord);
+//     if(cmpDouble_AbsRel(tmp,result)==1){
+//       result=tmp;
+//       path=nextWord;
+//     }
+//   }
+//   return result;
+// }
+// vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordArr,const map<string,int>& wordArrMap,const vector<double>& firstPoss,
+//                         const vector<vector<double>>& nextPoss,const vector<vector<double>>& classifiPoss,const vector<string>& sentenceArr){
+//   // log값으로 변횐하고, firstPoss와 nextPoss를 통합한 P(R|Q)를 만든다. 
+//   // Ocr2_possQ를 이용하여 값을 받자.
+//   // DP[prev][now] 값, first라서 prev가 없는경우 -1로 적어준다.
+//   vector<vector<double>> DP_possQ(wordNum+1);
+//   for(auto& ele:firstPoss){
+//     DP_possQ[0].push_back(log(ele));
+//   }
+//   for(int i=1;i<=wordNum;i++){
+//     for(auto& ele:nextPoss[i-1]){
+//       DP_possQ[i].push_back(log(ele));
+//     }
+//   }
+//   //classifiPoss를 log형식으로 변환한 함수 생성
+//   vector<vector<double>> DP_RgivenQ=classifiPoss;
+//   for(auto& ele:DP_RgivenQ){
+//     for(auto& ele2:ele){
+//       ele2=log(ele2);
+//     }
+//   }
+//   //정답 생성
+//   vector<string> result;
+//   for(auto& ele: sentenceArr){
+//     //sentence의 각 word 분리, idx로 치환하여저장
+//     vector<int> wordOfSentence;
+//     string::size_type sz;
+//     int sentenceLen=stoi(ele,&sz);  //각 sentence의 단어의 길이는 1~100이다.
+//     //int sentenceLen=ele.front() - '0'; // sentence의 단어의 길이가 1~9일때만 성립한다.
+//     string sentence=ele.substr(sz+1); // sentence의 길이와, 첫 단어 사이에는 공백이 있기 때문에 제거 
+//     int from(0), len(0);
+//     for(auto iter=sentence.begin();iter!=sentence.end();iter++){
+//       if(*iter==' '){
+//         wordOfSentence.push_back(wordArrMap.find(sentence.substr(from,len))->second);
+//         from+=len+1;
+//         len=0;
+//       }else{
+//         len++;
+//       }
+//     }
+//     wordOfSentence.push_back(wordArrMap.find(sentence.substr(from,len))->second);
+//     //조건부 출현확률 최대치 도출
+//     vector<vector<double>> DP_Poss(sentenceLen,vector<double>(wordNum,1.0));  //확률은 1이하이기 때문에 항상 음수값, 따라서 기저는 1.0
+//     vector<vector<int>> DP_Path(sentenceLen,vector<int>(wordNum,-1));
+//     int cnt(0);
+//     for(auto& ele:DP_Poss){
+//       for(auto& ele2:ele){
+//         cnt++;
+//       }
+//     }
+//     Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,0,0);
+//     //경로 도출
+//     vector<int> path;
+//     int frag=0;
+//     for(int i=0;i<sentenceLen;i++){
+//       frag=DP_Path[i][frag];
+//       path.push_back(frag);
+//     }
+//     string tmpResult;
+//     for(auto& ele: path){
+//       tmpResult+=wordArr[ele]+' ';
+//     }
+//     tmpResult.pop_back(); //마지막 공백 제거 
+//     //result에 정답 입력
+//     result.push_back(move(tmpResult));
+//   }
+//   return result;
+// }
+// void Ocr(){
+//   /*
+//   10초, 64MB, 테스트케이스=문장의 수 20개
+//   입력: 분석이 끝난 과거 자료의 통계치, 분류기가 인식한 문장으로구성, 자세한 내용은 문제에서 확인
+//   출력: 한 문장마다 한 줄에 주어진 인식 결과에 대해 조건주 출현 확률이 가장 높은 문장을 출력, 같은 확률을 가진 문장이 여러개라면 어떤것을 출력해도 좋다.
+//   전략1
+//     Dynamic Programming
+//       준비: sentenceArr->sentence->word 로 분해
+//       해석: sentence의 word의 길이 n, 등장 가능한 word의 개수 m
+//             sentence X에 대해, 각 word는 x0 x2 ... xn-1 이다 (인식된 결과이므로, 실제 문자와 다를 수 있다.)
+//             이전 문자가 Y일 때, 다음으로 등장한 문자가 Z일 확률 nextPoss[Y][Z]
+//         DP  이전 문자가 Y일 때, 다음으로 인식된 문자가 R일 확률 p(Y,R)=nextPoss[Y][0]*classifiPoss[0][R]+ ... +nextPoss[Y][m-1]*classifiPoss[m-1][R]
+//             이전 문자가 Y이고, 인식된 문자가 R일 때, 실제 등장한 문자가 Z일 가능성 rp(Y,R,Z)=nextPoss[Y][Z]*classifiPoss[Z][R]/p(Y,R)
+//               맨 처음 문자는 이전문자를 -1이라고 가정하고 처리하자
+//       Ocr1_DP1(이전문자 Y,인식된문자 R)=가능성
+//         DP: 500*500
+//       func(sentence 에서 idx 번째 word,실제 word:X)=idx번째 word가 X일 때, idx+1부터 시작하는 sentence의 조건부 확률 최대치
+//           idx부터 시작하는 sentence의 조건부 확률 최대치 = DP[0][0] 
+//         DP: 101*500, idx번째 정보는 idx+1 위치에 저장 
+//         substructure: func(idx,nowWord)=for(nextWord=word range), max, nextPoss[Y][Z]*classifiPoss[Z][R]/Ocr1_DP1(Y,R)*func(idx+1,nextWord)
+//         기저: idx==sentenceLen: return 1, idx==-1: nextPoss 대신 firstPoss 사용 
+//         정답: DP_path를 이용한다
+//     의문점
+//       Ocr_DP2 있는것이 속도 측면에서 유리한가? 경로를 추적해야 하므로 Ocr_DP2 필요한긴 하지만 속도적인 측면에서 어떤지.
+//         -> 함수 실행시간이 1이므로 속도측면에서 유리하지 않다. 경로추적은 전용 DP를 추가하여 해결하자
+//     개선점
+//       확률 자체보다 확륭리 최대치인 경로를 구하는 것인데, P(R)==DP1의 경우 공통되는 항이므로 없애버리자
+//       확률을 그대로 사용하면 반드시 상대비교만을 사용해야한다(절대비교를 사용할시 오차 발생)
+//       0이하의 확률을 곱하다보면 의미없는 수치로 낮아질 수 있다. log로 변환하여 이용하자
+//     time complexity
+//       #func(n*m)*func(m)+#Ocr_DP2(n*m^2)*Ocr_DP2(1)+#Ocr1_DP1(n*m)*Ocr1_DP1(m)=O(n*m^2)
+//     mem complexity
+//       DP(m*m*m)=O(m^3)
+//   전략1_개선
+//     준비: 확률을 log값으로 변경, firstPoss를 nextPoss에 통합
+//     해석: P(Q|R)=P(QnR)/P(R), P(R)은 모두 동일하므로 삭제
+//             P(QnR)=P(R|Q)*P(Q), P(R|Q)=classifiPoss와 P(Q)=nextPoss 모두 문제에서 주어짐
+//             lg(P_QnR)=lg(P_R|Q)+lg(P_Q), 덧셈으로 변환 가능
+//             double 비교는 상대-절대 혼합비교 이용해도 될듯
+//     func(idx, nowWord): idx번째 word가 nowWord일 때, idx+1번째 부터 시작하는 sentence의 조건부 확률 최대치 에 비례하는 값
+//     DP: sentenceLen*wordNum , idx의 정보는 idx+1 위치에 저장, idx==sentenceLen-1일 경우는 기저로 처리하여 log1(==0)반환
+//     substructure: func(idx,nowWord)=for(nextWord=wordNum range), max, nextPoss[Y][Z]*classifiPoss[Z][R]*func(idx+1,Z)
+//     기저: idx==sentenceLen-1: return 1
+//     time complexity
+//       #func(n*m)*func(m)=O(n*m^2)
+//     mem complexity
+//       DP(n*m)=O(nm)
+//   책의 해답과 나의 해답의 차이: 전략1_개선에서 해결
+//     원문 Q, 인식된 sentence R, Q 후보 Q1, Q2 ... 이라 하면
+//       나는 각 후보 Qn에 대해 P(Qn|R)를 직접 구하여 Q를 구한 것이고
+//         P(Q|R)=P(QnR)/P(R) 에서 P(QnR)을 구했다.
+//       해답은 P(Qn|R)==P(R|Qn)*P(Qn)/P(R)로 수정하여 구했다.
+//         P(R)은 모든 Qn에 대해 동일하다
+//         P(Qn)과 P(R|Qn)은 문제에서 주어진 값을 이용해 쉽게 구할 수 있다.
+//   */
+//   int wordNum,sentenceNum;
+//   vector<string> wordArr,sentenceArr;   //i, am, a, boy, buy 각 단어 저장, i am a boy 각 문장 저장
+//   map<string,int> wordArrMap;
+//   vector<double> firstPoss;    //맨 처음에 각 word가 나올 확률
+//   vector<vector<double>> nextPoss,classifiPoss; //A(ij)=i단어 다음 j단어가 나올 확률, B(ij)=i단어를 j단어로 분류할 확률
+//   Ocr_Input(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
+//   //Ocr_randInput(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
+//   //Ocr_Input_test(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
+//   //Ocr_input_simpleT(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
+//   vector<string> result=Ocr2_Algo(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
+//   for(auto& ele:result){
+//     cout<<ele<<'\n';
+//   }
+// }
 
-void Numb3rs_Input(int& dayPast,int& prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
-  int townNum;
-  cin>>townNum>>dayPast>>prison;
-  townGraph=vector<vector<int>>(townNum,vector<int>(townNum));
-  for(auto& ele:townGraph)
-    for(auto& ele2:ele)
-      scanf("%d",&ele2);
-  int chkTownNum;
-  cin>>chkTownNum;
-  chkTown=vector<int>(chkTownNum);
-  for(auto& ele:chkTown)
-    scanf("%d",&ele);
-}
-double Numb3rs_DP(vector<vector<int>>& townGraph,vector<int>& degree,vector<vector<double>>& DP, int dayPast, int town){
-  double& result=DP[dayPast][town];
-  if(result>-0.5) return result;
-  //substructrue, preTop=꼭대기 직전 블록의 갯수
-  result=0;
-  for(int preTown=0;preTown<townGraph.size();preTown++){
-    if(townGraph[preTown][town])
-      result+=Numb3rs_DP(townGraph,degree,DP,dayPast-1,preTown)/degree[preTown];
-  }
-  return result;
-}
-vector<double> Numb3rs_Algo(int dayPast,int prison,vector<vector<int>>& townGraph,vector<int>& chkTown){
-  /*
-  2초, 64MB, 테스트케이스 50개
-  마을의 수(n)2~50, 지난 일수(d) 1~100, 교도소 위치(마을 중 하나), 마을 이름=0~n-1,확률을 계산할 마을의 수(1~n)
-  전략1
-    Dynamic Programming
-      func(지난 날짜, 마을)= 마을을 방문한 경우의 수
-        substructure: for(town=0~n-1) func(dayPast,town)=for(preTown=인접마을 of town, from townGraph) sum(func(dayPast-1,preTown))
-        기저: prison이 정해져 있으므로, prison인접 마을은 1, prison마을 및 비인접마을은 0으로 초기화,
-        정답: 마지막 날짜, 마을의 경우의 수/전체 경우의 수
-    Problem 
-      경우의 수로 구하는것이 불가능하다.
-    time complexity
-      #func(nd)*func(n)+=O(d*n^2)
-    mem complexity
-      #DP_A(nd)=O(nd)
-  전략2
-    전략1과 같은데 경우의 수가 아닌 확률 계산
-  */
-  //DP 생성, degree[town]=town에서 갈 수 있는 마을의 경우의 수
-  int townNum=townGraph.size();
-  vector<vector<double>> DP(dayPast+1,vector<double>(townNum,-1));
-  vector<int> degree(townNum);
-  for(int i=0;i<townNum;i++){
-    for(auto& ele:townGraph[i]){
-      degree[i]+=ele;
-    }
-  }
-  //기저 생성
-  for(int i=0;i<townNum;i++){
-    if(townGraph[prison][i]) DP[1][i]=(double)1/degree[prison];
-    else DP[1][i]=0;
-  }
-  //정답 생성
-  vector<double> result;
-  for(auto& ele:chkTown)
-    result.push_back(Numb3rs_DP(townGraph,degree,DP,dayPast,ele));
-  return result;
-}
-void Numb3rs(){
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    int dayPast,prison;
-    vector<vector<int>> townGraph;
-    vector<int> chkTown;
-    Numb3rs_Input(dayPast,prison,townGraph,chkTown);
-    for(auto& ele:Numb3rs_Algo(dayPast,prison,townGraph,chkTown))
-      printf("%.8f ",ele);
-    cout<<"\n";
-  }
-}
-void Packing_Input(int& weight,vector<string>& itemName,vector<int>& itemWeight,vector<int>& itemDesp){
-  int itemNum;
-  cin>>itemNum>>weight;
-  itemName=vector<string>(itemNum);
-  itemWeight=itemDesp=vector<int>(itemNum);
-  for(int i=0;i<itemNum;i++)
-    cin>>itemName[i]>>itemWeight[i]>>itemDesp[i];
-}
-int Packing_DP(vector<vector<int>>& DP_desp,vector<int>& itemWeight,vector<int>& itemDesp,int nowChoice,int weightRemain){
-  //기저, nowChoice==N
-  if(nowChoice==itemDesp.size()) return 0;
-  int& result=DP_desp[nowChoice][weightRemain];
-  if(result!=-1) return result;
-  //substructrue, 선택하지 않았을경우, 선택했을경우
-  result=Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain);
-  if(weightRemain>=itemWeight[nowChoice])
-    result=max(result,itemDesp[nowChoice]+Packing_DP(DP_desp,itemWeight,itemDesp,nowChoice+1,weightRemain-itemWeight[nowChoice]));
-  return result;
-}
-vector<int> Packing_Algo(int weight,vector<int>& itemWeight,vector<int>& itemDesp){
-  /*
-  2초, 64MB, 테스트케이스 50개
-  입력:물건의 수(N)1~100, 캐리어의 용량(W)1~1000, N개의 물건을 이름,부피,절박도 순서로 각 줄에 주어짐, 이름:공백없는 알파벳 대소문자 1~20, 부피와절박도는 1~1000
-  출력:첫 줄에는 최대 절박도 합과 가져갈 물건들의 개수 출력, 이후 한 줄마다 각 물건들의 이름을 출력, 조합이 여러개일 경우 하나만 출력한다.
-  제한: 절박도 최대=100*1000=100000
-  전략1
-    Dynamic Programming
-      func(직전에 선택한 물건, 남은 캐리어 용량)= 절박도의 합
-        DP: size 100*1000, 물건은 순서대로만 선택 가능
-        substructure: func(nowChoice,weightRemain)=for(i=nowChoice+1~N), max, func(i,weightRemain-i_weight)
-        기저: weightRemain<0
-        정답: 경로를 저장한 DP를 이용하여 출력
-    개선1
-      func내부의 loop를 제거하여 수행시간을 줄인다.
-      다음 물건을 선택하느냐/선택하지 않느냐로 구분
-        func(이번에 선택할 물건, 남은 캐리어 용량)= 절박도의 합
-        기저:이번에 선택할 물건==N
-      선택지가 두개뿐이다 -> 이전 기록과 비교하여 선택이 됐는지 비교 가능, 기록 DP 삭제
-    time complexity
-      #func(NW)*func(1)+=O(NW)
-    mem complexity
-      #DP(NW)=O(NW)
-  */
-  //DP 생성
-  vector<vector<int>> DP_desp(itemWeight.size(),vector<int>(weight+1,-1));
-  //DP 채우기
-  int tmp=Packing_DP(DP_desp,itemWeight,itemDesp,0,weight);
-  //정답 생성
-  vector<int> result;
-  result.push_back(tmp);
-  int nowPick(0),weightRemain(weight);
-  while(nowPick<itemWeight.size()-1){
-    //선택했다면, 절박도가 다를것이다.
-    if(DP_desp[nowPick][weightRemain]!=DP_desp[nowPick+1][weightRemain]){
-      result.push_back(nowPick);
-      weightRemain-=itemWeight[nowPick];
-    }
-    nowPick++;
-  }
-  if(DP_desp[nowPick][weightRemain]>0)
-    result.push_back(nowPick);
-  return result;
-}
-void Packing(){
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    int weight;
-    vector<string> itemName;
-    vector<int> itemWeight,itemDesp;
-    Packing_Input(weight,itemName,itemWeight,itemDesp);
-    vector<int> result=Packing_Algo(weight,itemWeight,itemDesp);
-    cout<<result.front()<<' '<<result.size()-1<<'\n';
-    for(auto iter=++result.begin();iter!=result.end();iter++){
-      cout<<itemName[*iter]<<'\n';
-    }
-  }
-}
-
-void Ocr_Input(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
-                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
-  cin>>wordNum>>sentenceNum;  //wordNum:1~500, sentenceNum:1~20
-  for(int i=0;i<wordNum;i++){
-    string tmp;cin>>tmp;
-    wordArrMap.insert({tmp,i});
-    wordArr.push_back(tmp);
-  }
-  firstPoss.resize(wordNum);
-  for(auto& ele: firstPoss)
-    scanf("%lf",&ele);
-  classifiPoss=nextPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
-  for(auto& ele: nextPoss)
-    for(auto& ele2: ele)
-      scanf("%lf",&ele2);
-  for(auto& ele: classifiPoss)
-    for(auto& ele2: ele)
-      scanf("%lf",&ele2);
-  sentenceArr.resize(sentenceNum);
-  cin.ignore();
-  for(auto& ele: sentenceArr)
-    getline(cin,ele);
-}
-void Ocr_Input_test(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
-                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
-  cout<<"wordNum: "<<wordNum<<"\n";
-  cout<<"sentenceNum: "<<sentenceNum<<"\n";
-  cout<<"wordArr----------\n";
-  for(auto& ele: wordArr)
-    cout<<ele<<" ";
-  cout<<"\n";
-  cout<<"wordArrMap----------\n";
-  for(auto& ele:wordArrMap)
-    cout<<"("<<ele.first<<", "<<ele.second<<") ";
-  cout<<"\n";
-  cout<<"firstPoss----------\n";
-  for(auto& ele: firstPoss)
-    cout<<ele<<" ";
-  cout<<"\n";
-  cout<<"nextPoss----------\n";
-  for(auto& ele:nextPoss){
-    for(auto& ele2:ele)
-      cout<<ele2<<" ";
-    cout<<"\n";
-  }
-  cout<<"classifiPoss----------\n";
-  for(auto& ele:classifiPoss){
-    for(auto& ele2:ele)
-      cout<<ele2<<" ";
-    cout<<"\n";
-  }
-  cout<<"sentenceArr----------\n";
-  for(auto& ele:sentenceArr)
-    cout<<ele<<"END\n";
-}
-void Ocr_randInput(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
-                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
-  wordNum=rand()%500+1; //1~500
-  sentenceNum=rand()%20+1;  //1~20
-  wordArr.resize(wordNum);
-  //wordArr, wordArrMap
-  int idx=0;
-  for(auto& ele:wordArr){ //each word=1~10, only lowercase
-    while(true){
-      int len=rand()%10+1;
-      string tmpStr;
-      for(int i=0;i<len;i++){
-        tmpStr.push_back(rand()%26+97);  //a~z: #26, 97~122
-      }
-      if(wordArrMap.insert({tmpStr,idx}).second){
-        wordArr[idx]=tmpStr;
-        break;
-      }
-    }
-    idx++;
-  }
-  //firstPoss
-  firstPoss.resize(wordNum);
-  int tmpsum(0);
-  for(auto& ele:firstPoss){
-    ele=rand()%100;
-    tmpsum+=ele;
-  }
-  for(auto& ele:firstPoss){
-    ele/=tmpsum;
-  }
-  //classifiPoss, nextPoss
-  classifiPoss=nextPoss=vector<vector<double>>(wordNum,vector<double>(wordNum));
-  for(auto& ele: classifiPoss){
-    tmpsum=0;
-    for(auto& ele2:ele){
-      ele2=rand()%100;
-      tmpsum+=ele2;
-    }
-    for(auto& ele2:ele){
-      ele2/=tmpsum;
-    }
-  }
-  for(auto& ele: nextPoss){
-    tmpsum=0;
-    for(auto& ele2:ele){
-      ele2=rand()%100;
-      tmpsum+=ele2;
-    }
-    for(auto& ele2:ele){
-      ele2/=tmpsum;
-    }
-  }
-  //sentence
-  sentenceArr.resize(sentenceNum);
-  for(auto& sentence:sentenceArr){
-    int sentenceLen=rand()%100+1; //1~100
-    sentence+=to_string(sentenceLen)+' ';
-    for(int i=0;i<sentenceLen;i++){
-      int tmp=rand()%wordNum;
-      sentence+=wordArr[tmp]+' ';
-    }
-    sentence.pop_back();
-  }   
-}
-void Ocr_input_simpleT(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,vector<vector<double>>& nextPoss,
-                vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
-  cout<<"wordNum: "<<wordNum<<"___"<<wordArr.size()<<"___"<<wordArrMap.size()<<"___"<<firstPoss.size()<<"___"<<nextPoss.size()<<"___"<<classifiPoss.size()<<endl;
-  cout<<"sentenceNum: "<<sentenceNum<<"___"<<sentenceArr.size()<<endl;
-  //wordArr
-  for(auto& ele:wordArr)
-    cout<<ele<<' ';
-  cout<<endl;
-  //firstPoss
-  double tmpSum(0);
-  for(auto& ele:firstPoss)
-    tmpSum+=ele;
-  cout<<"firstPoss Sum: "<<tmpSum<<endl;
-  //nextPoss,classifiPoss
-  cout<<"nextPoss Sum: ";
-  for(auto& ele: nextPoss){
-    tmpSum=0;
-    for(auto& ele2: ele){
-      tmpSum+=ele2;
-    }
-    cout<<tmpSum;
-  }
-  cout<<endl;
-  cout<<"classifiPoss Sum: ";
-  for(auto& ele: classifiPoss){
-    tmpSum=0;
-    for(auto& ele2: ele){
-      tmpSum+=ele2;
-    }
-    cout<<tmpSum;
-  }
-  cout<<endl;
-  //sentence
-  cout<<"----sentence----\n";
-  for(auto& ele:sentenceArr)
-    cout<<ele<<'\n';
-}
-double Ocr1_DP1(vector<vector<double>>& DP_Ocr1,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,int now, int nextGuess){
-  double& result=DP_Ocr1[now][nextGuess];
-  if(result>-0.5)
-    return result;
-  result=0.0;
-  for(int i=0;i<nextPoss[0].size();i++)
-    result+=nextPoss[now][i]*classifiPoss[i][nextGuess];
-  return result;
-}
-double Ocr1_DPposs(vector<vector<double>>& DP_Ocr1,vector<double>& firstPoss,vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,
-                  vector<vector<double>>& DP_Poss,vector<vector<int>>& DP_Path, vector<int>& wordOfSentence,int idx,int nowWord){
-  //기저, 범위 밖, 이미 값이 있는경우
-  if(idx==wordOfSentence.size()-1)
-    return 1.0;
-  double& result=DP_Poss[idx+1][nowWord];
-  if(result>-0.5) 
-    return result;
-  //함수 진행
-  int wordNum=firstPoss.size();
-  result=0.0;
-  int& path=DP_Path[idx+1][nowWord];
-  //맨처음, idx==-1인 경우
-  if(idx==-1){
-    double nextGuessPoss=0.0;
-    for(int i=0;i<wordNum;i++)  //실제 다음위치가 i 값인데, 이를 wordOfSentence[0] 으로 인식했을 확률
-      nextGuessPoss+=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]];
-    for(int i=0;i<wordNum;i++){
-      double tmp=firstPoss[i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr1_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,idx+1,i)/nextGuessPoss;
-      if(cmpDouble_AbsRel(tmp,result)==1){
-        result=tmp;
-        path=i;
-      }
-    }
-    return result;
-  }
-  //함수
-  double nextGuessPoss=Ocr1_DP1(DP_Ocr1,nextPoss,classifiPoss,nowWord,wordOfSentence[idx+1]);
-  if(cmpDouble_AbsRel(0.0,nextGuessPoss)==0){
-    return 0.0;
-  }
-  for(int i=0;i<wordNum;i++){
-    double tmp=nextPoss[nowWord][i]*classifiPoss[i][wordOfSentence[idx+1]]*Ocr1_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,idx+1,i)/nextGuessPoss;
-    if(cmpDouble_AbsRel(tmp,result)==1){
-      result=tmp;
-      path=i;
-    }
-  }
-  return result;
-}
-vector<string> Ocr1_Algo(int& wordNum,int& sentenceNum,vector<string>& wordArr,map<string,int>& wordArrMap,vector<double>& firstPoss,
-                        vector<vector<double>>& nextPoss,vector<vector<double>>& classifiPoss,vector<string>& sentenceArr){
-  //DP 생성
-  vector<vector<double>> DP_Ocr1(wordNum,vector<double>(wordNum,-1.0));
-  //정답 생성
-  vector<string> result;
-  for(auto& ele: sentenceArr){
-    //sentence의 각 word 분리, idx로 치환하여저장
-    vector<int> wordOfSentence;
-    string sentence=ele.substr(2); //앞에 두개는 sentence의 word 갯수, 공백(스페이스바)
-    string tmpWord;
-    for(auto iter=sentence.begin();iter!=sentence.end();iter++){
-      if(*iter==' '){
-        wordOfSentence.push_back(wordArrMap.find(tmpWord)->second);
-        tmpWord.clear();
-      }else{
-        tmpWord.push_back(*iter);
-      }
-    }
-    wordOfSentence.push_back(wordArrMap.find(tmpWord)->second);
-    //조건부 출현확률 최대치 도출
-    vector<vector<double>> DP_Poss(wordOfSentence.size()+1,vector<double>(wordNum,-1.0));
-    vector<vector<int>> DP_Path(wordOfSentence.size()+1,vector<int>(wordNum,-1));
-    Ocr1_DPposs(DP_Ocr1,firstPoss,nextPoss,classifiPoss,DP_Poss,DP_Path,wordOfSentence,-1,0);
-    //경로 도출
-    vector<int> path;
-    int frag=DP_Path[0][0];
-    for(int i=0;i<wordOfSentence.size();i++){
-      path.push_back(frag);
-      frag=DP_Path[i+1][frag];
-    }
-    string tmpResult;
-    for(auto& ele: path){
-      tmpResult+=wordArr[ele]+' ';
-    }
-    tmpResult.pop_back(); //마지막 공백 제거 
-    //result에 정답 입력
-    result.push_back(move(tmpResult));
-  }
-  return result;
-}
-double Ocr2_possQ(const vector<vector<double>>& DP, int prev, int now){
-  return DP[prev+1][now];
-}
-double Ocr2_DPposs(const vector<vector<double>>& DP_possQ,const vector<vector<double>>& DP_RgivenQ,vector<vector<double>>& DP_Poss,
-                    vector<vector<int>>& DP_Path,const vector<int>& wordOfSentence,int nextIdx,int nowWord){
-  //기저, 
-  if(nextIdx==wordOfSentence.size()){
-    return 0.0;
-  }
-  double& result=DP_Poss[nextIdx][nowWord];
-  if(result<0.5){
-    return result;
-  }
-  //Algo
-  int& path=DP_Path[nextIdx][nowWord];
-  if(nextIdx==0){
-    nowWord=-1;
-  }
-  result=-1e200;
-  for(int nextWord=0;nextWord<DP_RgivenQ.size();nextWord++){
-    double tmp=Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,nextIdx+1,nextWord);
-    tmp+=DP_RgivenQ[nextWord][wordOfSentence[nextIdx]]+Ocr2_possQ(DP_possQ,nowWord,nextWord);
-    //double tmp=Ocr2_possQ(DP_possQ,nowWord,nextWord)+DP_RgivenQ[nextWord][wordOfSentence[nextIdx]]+Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,nextIdx+1,nextWord);
-    if(cmpDouble_AbsRel(tmp,result)==1){
-      result=tmp;
-      path=nextWord;
-    }
-  }
-  return result;
-}
-vector<string> Ocr2_Algo(int wordNum,int sentenceNum,const vector<string>& wordArr,const map<string,int>& wordArrMap,const vector<double>& firstPoss,
-                        const vector<vector<double>>& nextPoss,const vector<vector<double>>& classifiPoss,const vector<string>& sentenceArr){
-  // log값으로 변횐하고, firstPoss와 nextPoss를 통합한 P(R|Q)를 만든다. 
-  // Ocr2_possQ를 이용하여 값을 받자.
-  // DP[prev][now] 값, first라서 prev가 없는경우 -1로 적어준다.
-  vector<vector<double>> DP_possQ(wordNum+1);
-  for(auto& ele:firstPoss){
-    DP_possQ[0].push_back(log(ele));
-  }
-  for(int i=1;i<=wordNum;i++){
-    for(auto& ele:nextPoss[i-1]){
-      DP_possQ[i].push_back(log(ele));
-    }
-  }
-  //classifiPoss를 log형식으로 변환한 함수 생성
-  vector<vector<double>> DP_RgivenQ=classifiPoss;
-  for(auto& ele:DP_RgivenQ){
-    for(auto& ele2:ele){
-      ele2=log(ele2);
-    }
-  }
-  //정답 생성
-  vector<string> result;
-  for(auto& ele: sentenceArr){
-    //sentence의 각 word 분리, idx로 치환하여저장
-    vector<int> wordOfSentence;
-    string::size_type sz;
-    int sentenceLen=stoi(ele,&sz);  //각 sentence의 단어의 길이는 1~100이다.
-    //int sentenceLen=ele.front() - '0'; // sentence의 단어의 길이가 1~9일때만 성립한다.
-    string sentence=ele.substr(sz+1); // sentence의 길이와, 첫 단어 사이에는 공백이 있기 때문에 제거 
-    int from(0), len(0);
-    for(auto iter=sentence.begin();iter!=sentence.end();iter++){
-      if(*iter==' '){
-        wordOfSentence.push_back(wordArrMap.find(sentence.substr(from,len))->second);
-        from+=len+1;
-        len=0;
-      }else{
-        len++;
-      }
-    }
-    wordOfSentence.push_back(wordArrMap.find(sentence.substr(from,len))->second);
-    //조건부 출현확률 최대치 도출
-    vector<vector<double>> DP_Poss(sentenceLen,vector<double>(wordNum,1.0));  //확률은 1이하이기 때문에 항상 음수값, 따라서 기저는 1.0
-    vector<vector<int>> DP_Path(sentenceLen,vector<int>(wordNum,-1));
-    int cnt(0);
-    for(auto& ele:DP_Poss){
-      for(auto& ele2:ele){
-        cnt++;
-      }
-    }
-    Ocr2_DPposs(DP_possQ,DP_RgivenQ,DP_Poss,DP_Path,wordOfSentence,0,0);
-    //경로 도출
-    vector<int> path;
-    int frag=0;
-    for(int i=0;i<sentenceLen;i++){
-      frag=DP_Path[i][frag];
-      path.push_back(frag);
-    }
-    string tmpResult;
-    for(auto& ele: path){
-      tmpResult+=wordArr[ele]+' ';
-    }
-    tmpResult.pop_back(); //마지막 공백 제거 
-    //result에 정답 입력
-    result.push_back(move(tmpResult));
-  }
-  return result;
-}
-void Ocr(){
-  /*
-  10초, 64MB, 테스트케이스=문장의 수 20개
-  입력: 분석이 끝난 과거 자료의 통계치, 분류기가 인식한 문장으로구성, 자세한 내용은 문제에서 확인
-  출력: 한 문장마다 한 줄에 주어진 인식 결과에 대해 조건주 출현 확률이 가장 높은 문장을 출력, 같은 확률을 가진 문장이 여러개라면 어떤것을 출력해도 좋다.
-  전략1
-    Dynamic Programming
-      준비: sentenceArr->sentence->word 로 분해
-      해석: sentence의 word의 길이 n, 등장 가능한 word의 개수 m
-            sentence X에 대해, 각 word는 x0 x2 ... xn-1 이다 (인식된 결과이므로, 실제 문자와 다를 수 있다.)
-            이전 문자가 Y일 때, 다음으로 등장한 문자가 Z일 확률 nextPoss[Y][Z]
-        DP  이전 문자가 Y일 때, 다음으로 인식된 문자가 R일 확률 p(Y,R)=nextPoss[Y][0]*classifiPoss[0][R]+ ... +nextPoss[Y][m-1]*classifiPoss[m-1][R]
-            이전 문자가 Y이고, 인식된 문자가 R일 때, 실제 등장한 문자가 Z일 가능성 rp(Y,R,Z)=nextPoss[Y][Z]*classifiPoss[Z][R]/p(Y,R)
-              맨 처음 문자는 이전문자를 -1이라고 가정하고 처리하자
-      Ocr1_DP1(이전문자 Y,인식된문자 R)=가능성
-        DP: 500*500
-      func(sentence 에서 idx 번째 word,실제 word:X)=idx번째 word가 X일 때, idx+1부터 시작하는 sentence의 조건부 확률 최대치
-          idx부터 시작하는 sentence의 조건부 확률 최대치 = DP[0][0] 
-        DP: 101*500, idx번째 정보는 idx+1 위치에 저장 
-        substructure: func(idx,nowWord)=for(nextWord=word range), max, nextPoss[Y][Z]*classifiPoss[Z][R]/Ocr1_DP1(Y,R)*func(idx+1,nextWord)
-        기저: idx==sentenceLen: return 1, idx==-1: nextPoss 대신 firstPoss 사용 
-        정답: DP_path를 이용한다
-    의문점
-      Ocr_DP2 있는것이 속도 측면에서 유리한가? 경로를 추적해야 하므로 Ocr_DP2 필요한긴 하지만 속도적인 측면에서 어떤지.
-        -> 함수 실행시간이 1이므로 속도측면에서 유리하지 않다. 경로추적은 전용 DP를 추가하여 해결하자
-    개선점
-      확률 자체보다 확륭리 최대치인 경로를 구하는 것인데, P(R)==DP1의 경우 공통되는 항이므로 없애버리자
-      확률을 그대로 사용하면 반드시 상대비교만을 사용해야한다(절대비교를 사용할시 오차 발생)
-      0이하의 확률을 곱하다보면 의미없는 수치로 낮아질 수 있다. log로 변환하여 이용하자
-    time complexity
-      #func(n*m)*func(m)+#Ocr_DP2(n*m^2)*Ocr_DP2(1)+#Ocr1_DP1(n*m)*Ocr1_DP1(m)=O(n*m^2)
-    mem complexity
-      DP(m*m*m)=O(m^3)
-  전략1_개선
-    준비: 확률을 log값으로 변경, firstPoss를 nextPoss에 통합
-    해석: P(Q|R)=P(QnR)/P(R), P(R)은 모두 동일하므로 삭제
-            P(QnR)=P(R|Q)*P(Q), P(R|Q)=classifiPoss와 P(Q)=nextPoss 모두 문제에서 주어짐
-            lg(P_QnR)=lg(P_R|Q)+lg(P_Q), 덧셈으로 변환 가능
-            double 비교는 상대-절대 혼합비교 이용해도 될듯
-    func(idx, nowWord): idx번째 word가 nowWord일 때, idx+1번째 부터 시작하는 sentence의 조건부 확률 최대치 에 비례하는 값
-    DP: sentenceLen*wordNum , idx의 정보는 idx+1 위치에 저장, idx==sentenceLen-1일 경우는 기저로 처리하여 log1(==0)반환
-    substructure: func(idx,nowWord)=for(nextWord=wordNum range), max, nextPoss[Y][Z]*classifiPoss[Z][R]*func(idx+1,Z)
-    기저: idx==sentenceLen-1: return 1
-    time complexity
-      #func(n*m)*func(m)=O(n*m^2)
-    mem complexity
-      DP(n*m)=O(nm)
-  책의 해답과 나의 해답의 차이: 전략1_개선에서 해결
-    원문 Q, 인식된 sentence R, Q 후보 Q1, Q2 ... 이라 하면
-      나는 각 후보 Qn에 대해 P(Qn|R)를 직접 구하여 Q를 구한 것이고
-        P(Q|R)=P(QnR)/P(R) 에서 P(QnR)을 구했다.
-      해답은 P(Qn|R)==P(R|Qn)*P(Qn)/P(R)로 수정하여 구했다.
-        P(R)은 모든 Qn에 대해 동일하다
-        P(Qn)과 P(R|Qn)은 문제에서 주어진 값을 이용해 쉽게 구할 수 있다.
-  */
-  int wordNum,sentenceNum;
-  vector<string> wordArr,sentenceArr;   //i, am, a, boy, buy 각 단어 저장, i am a boy 각 문장 저장
-  map<string,int> wordArrMap;
-  vector<double> firstPoss;    //맨 처음에 각 word가 나올 확률
-  vector<vector<double>> nextPoss,classifiPoss; //A(ij)=i단어 다음 j단어가 나올 확률, B(ij)=i단어를 j단어로 분류할 확률
-  Ocr_Input(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
-  //Ocr_randInput(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
-  //Ocr_Input_test(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
-  //Ocr_input_simpleT(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
-  vector<string> result=Ocr2_Algo(wordNum,sentenceNum,wordArr,wordArrMap,firstPoss,nextPoss,classifiPoss,sentenceArr);
-  for(auto& ele:result){
-    cout<<ele<<'\n';
-  }
-}
-
-
+// KLIS
 //1. overflow -> -2로 처리 
 //2. 연상하는 것을 간단하게 처리, 함수는 되도록 독립적으로 처리(kthLIS 부분)
 //3. error가 발생할경우 return이 항상 발생하는지 확인
-void KLIS_Input(int& arrLen,int& orderK,vector<int>& array){
-  cin>>arrLen>>orderK;
-  array=vector<int>(arrLen);
-  for(auto& ele:array)
-    cin>>ele;
-}
-void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history, vector<int>& tmpLIS, int idx=0){
-  //모든 ele에 대해 검토가 완료됐을때
-  if(idx==array.size()){
-    return;
-  }
-  //Algo, last==임시LIS의 가장 뒤의 원소
-  int now(array[idx]),last(idx==0 ? -1 : tmpLIS.back());
-  if(now>last){
-    tmpLIS.push_back(now);
-    history.push_back(vector<pair<int,int>>(1,make_pair(idx,now)));
-  }else{
-    int pointIdx=distance(tmpLIS.begin(),lower_bound(tmpLIS.begin(),tmpLIS.end(),now));
-    tmpLIS[pointIdx]=now;
-    history[pointIdx].push_back(make_pair(idx,now));
-  }
-  KLIS_getHistory(array, history, tmpLIS, idx+1);
-} 
-int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases, int LISidx, int reverse_Seq){
-  //LISidx번째 숫자가 reverse_Seq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수
-  //기저
-  if(LISidx==history.size()-1){ //마지막 순서인 경우: 경우의 수가 항상 1
-    return 1;
-  }
-  auto nowIter=history[LISidx].rbegin()+reverse_Seq;
-  int& result=cache_numOfCases[nowIter->first];
-  if(result!=-1){
-    return result;
-  }
-  //Algo
-  result=0;
-  auto nextIter=lower_bound(history[LISidx+1].begin(),history[LISidx+1].end(),make_pair(nowIter->first,0));
-  for(;nextIter!=history[LISidx+1].end();nextIter++){
-    //value chk, value is strictly decreasing
-    if(nowIter->second>nextIter->second){
-      break;
-    }
-    int next_RVS_seq=history[LISidx+1].size()-distance(history[LISidx+1].begin(),nextIter)-1;
-    int tmp=KLIS_DP(history,cache_numOfCases,LISidx+1,next_RVS_seq);
-    result+=tmp;
-    //overflow chk
-    if(result<0||tmp==-2){
-      result=-2;
-      return result;
-    }
-  }
-  return result;
-}
-vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& cache_numOfCases,int LISidx, int orderK, pair<int,int> prevPair){
-  //기저
-  if(LISidx==history.size()){
-    return vector<int>();
-  }
-  //Algo, pair: {idx, value}, 
-  for(int reverse_Seq=0;reverse_Seq<history[LISidx].size();reverse_Seq++){
-    auto nowPair=*(history[LISidx].rbegin()+reverse_Seq);
-    //value chk, reverse_Seq가 커질수록 value는 커진다.
-    if(prevPair.second>nowPair.second){
-      continue;
-    }
-    //idx chk는 생략, LIS의 개수>=K이기 때문에, 유효한 idx를 벗어나지 않는다.
-    //Algo
-    int cases=KLIS_DP(history,cache_numOfCases,LISidx,reverse_Seq);
-    if(cases>=orderK||cases==-2){ //-2 means INT32 overflow, always bigger than orderK
-      auto tmp=KLIS_kthLIS(history,cache_numOfCases,LISidx+1,orderK,nowPair);
-      tmp.push_back(nowPair.second);
-      return tmp;
-    }else{
-      orderK-=cases;
-    }
-  }
-}
-void KLIS_funcTest(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases){
-  cout<<"=============Test==============\n";
-  cout<<"----------history--------------\n";
-  for(auto& ele:history){
-    for(auto& ele2:ele){
-      cout<<ele2.second<<"("<<ele2.first<<") ";
-    }
-    cout<<"\n";
-  }
-  cout<<"----------cache_numOfCases--------------\n";
-  for(auto& ele:cache_numOfCases){
-    cout<< ele<<" ";
-  }cout<<"\n";
-  cout<<"==========TestEnd==============\n";
-}
-vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array){
-  //History 생성, History는 유효하지 않은 값(LIS에 포함되지 않는 값)도 포함되어 있다. 이 경우는 경우의수가 0으로 표기
-  vector<vector<pair<int,int>>> history; //history[LISidx][reverse_Seq] = {ArrIdx, value}, reverse_Seq는 뒤에서 부터의 순서, 값이 작은 순서
-  vector<int> tmpLIS;
-  KLIS_getHistory(array,history,tmpLIS);
-  //정답 생성
-  vector<int> cache_numOfCases(arrLen,-1);
-  vector<int> result= KLIS_kthLIS(history,cache_numOfCases,0,orderK,{0,0}); //pair: {prev idx, prev value}
-  reverse(result.begin(),result.end());
-  //KLIS_funcTest(history,cache_numOfCases);
-  return result; 
-}
-void KLIS(){
-  /*실험 조건
-  2초, 64MB, 테스트케이스=50
-  입력: #eleOfAr n: 1~500, k(th LIS): 1~INT32MAX, #LIS >= k
-  출력: 두 줄에 나눠서 K번쨰 LIS 의 길이, 값 출력
-  */
-  /*전략1_fail
-    문제점: 
-      1. overflow -> -2로 처리 
-      2. history의 잡 값이 runtimeError 유발 
-      3. 연상하는것이 너무 어렵다. 수학적으로 증명을 해야하거나, 비 직관적이다.
-    바탕이 되는 최적화 문제를 푼다. : 이때 최적해를 세야한다는 것을 감안하고 문제를 풀자.
-    최적화 문제의 최적해를 세는 문제를 푼다.
-    답의 수를 기반으로 답안을 재구성한다.
-    Dynamic Programming
-      해결법
-        LIS생성 정보를 담는 History를 만든다. H(ij)=arr idx : nlgn
-          arr idx는 arr에서의 idx를 말한다. 즉 ele의 value가 아니라, arr에서의 위치를 History에 저장하는 것이다.
-        arr idx 번째 원소가 사용될 경우, 해당원소이후의 경우의 수를 저장하는 DP배열을 만든다.: 각 lgn, 최대 nlgn
-          어떤 원소가 LIS에서 등장한다면, 해당 원소는 항상 LIS에서 같은 idx번째에 등장한다. 이를 이용한 DP
-          미리 생성하지 않고 이용할 때 호출하도록 만든다.
-          A라는 ele가 등장 했다면, LIS에서 특정위치(A_idx)의 값이 A로 고정되었다는 뜻이다. 이때 A_idx+1의 값은 아직 고정이 아니므로, 경우의 수가 생기게 되는 것이다.
-          DP생성시, arr idx가 더 큰 최초 위치부터 (lower bound를 이용하여 위치찾기) 탐색하여, 값이 arr idx보다 처음으로 더 작아지는 위치에서 끝낸다.
-        History와 DP를 이용하여 KLIS를 탐색한다. 최대 n
-          History의 i행에서, 열이 클 수록 작은 수 이므로, 큰 열 부터 이용하여 탐색한다.
-            currentK=k에서 시작, 열이 큰것부터 탐색해야 하므로 reverse iterator을 이용하여 탐색한다(jIter == R iter).
-            if(DP(H(ij))<currentK) -> H(ij)번째 수는 포함되지 않는다.다음 열을 탐색한다. currentK-=DP(H(ij));, jIter++;
-            else -> H(ij)번째 수는 포함된다.해당 값을 result에 push한 후, History에서 행을 넘어간다. i++; , result.push_back(arr(H(ij)));
-        오버플로우 해결
-          K는 항상 int_MAX이하의 크기이다.
-          오버플로우를 -2로 처리하면, -2인 경우 항상 해당 원소가 포함되어야한다는 것을 알 수 있다.
-      KLIS_GetLIS(arr, History)
-        History[LIS idx][order]=idx of Arr
-          LIS의 길이를 구하는 식을 사용할 때 생성
-          order가 낮으면 사전순으로 더 앞이 되도록 설정하자
-      KLIS_DP(LIS idx, order,History)= #cases
-        DP: LIS len * arr len
-        DP개선: History[LIS idx][order]를 통해 길이를 arrlen(O(n))으로 줄일 수 있다.
-      vector<int> func(LIS idx, order, k) = LIS idx ~ LIS END 범위에 대해, k번째 LIS return
-        substructure: func(LIS idx, order, k), #cases=KLIS_DP(LIS idx, order)
-                  if k==0  -> return arr[History[LIS idx].back()]+func(LIS idx+1,0,0);
-                  if cases>k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,k);
-                  if cases=k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,0); 
-                  if cases<k -> return func(LIS idx, order+1, k-cases);
-        기저: if LIS idx== idx len -> return vector<int>();  
-    time complexity
-      GetLIS(#n*lgn)+DP(#n*lgn)+func(#n*4)
-    mem complexity
-      GetLIS(#n)+DP(#n)
-  */
-  /*전략2
-    특징 
-      LIS를 형성할 때, 각 원소가 가질 수 있는 위치는 하나뿐이다. (stack을 이용한 LIS를 잘 생각하면 이해 가능)
-      LIS를 구성하는 원소가, 원본 arr에서 뒤에 있는 원소일수록, 사전순으로는 앞에 위치하는 LIS다.
-        LIS에서 각 원소가 가질 수 있는 위치는 하나뿐인데, 같은 위치에서 arrIdx가 큰 원소라는 것은, value가 더 작은 원소임을 의미한다. (value가 더 크다면 같은 위치를 가질수가 없다.)
-          증명: 임의의 LIS를 잘라서 LIS A , a , b , LIS B 로 만들었다고 하자.
-                LIS A, alpha, a, LIS B로 대체하였다고 가정하면, alpha < a < b 이므로, LIS A, alpha, a, b, LIS B 라는 새로운 LIS가 생겨난다.
-                따라서 임의의 alpha는 추가될수 없으므로, a 또한 위치를 변경할 수 없으며, 원소의 위치는 고정된다.
-    DynamicProgramming
-      stack을 이용해 LIS의 길이를 구하는 알고리즘을 이용하여, History를 구한다. -> n*lgn
-        History: stack을 이용하여 LIS를 구할때, 각 stack에서의 값이 변하는 것을 history에 기록한다. 
-          의의: LIS를 형성할때, 각 원소가 가질 수 있는 위치는 하나뿐이다. History를 통해 모든 원소를 검사하지 않고도 numOfCases를 구할 수 있다.
-      History를 이용하여, k번째 LIS를 구한다.
-        LIS의 idx번째 원소의 값이 value일 때의, idx부터 시작하는 LIS의 경우의 수 numOfCases에 대해 -> O(1)
-          k>= numOfCases: k번째 LIS의 idx번째 원소의 값은 value이다.  ->  idx+1에 대해 같은 작업 수행
-          k< numOfCases: idx번째 원소가 value인 LIS는 k번째 LIS보다 사전순으로 앞에서 나온다. ->  History에서 value보다 사전순으로 뒤에 있는 값을 가져오도록 한다.
-        nunOfCases: idx-1위치의 {arridx,value}를 가져와서, arridx가 뒤에있고 value가 더 큰 모든 것의 numOfCases를 더한다. -> LIS_len*(n/LIS_len) ~= n 
-  */
-  int testCase;
-  cin>>testCase;
-  while(testCase--){
-    int arrLen,orderK;
-    vector<int> array;
-    KLIS_Input(arrLen,orderK,array);
-    vector<int> result=KLIS_Algo(arrLen,orderK,array);
-    cout<<result.size()<<'\n';
-    for(auto& ele:result)
-      cout<<ele<<' ';
-    cout<<'\n';
-  }
-}
+// void KLIS_Input(int& arrLen,int& orderK,vector<int>& array){
+//   cin>>arrLen>>orderK;
+//   array=vector<int>(arrLen);
+//   for(auto& ele:array)
+//     cin>>ele;
+// }
+// void KLIS_getHistory(vector<int>& array, vector<vector<pair<int,int>>>& history, vector<int>& tmpLIS, int idx=0){
+//   //모든 ele에 대해 검토가 완료됐을때
+//   if(idx==array.size()){
+//     return;
+//   }
+//   //Algo, last==임시LIS의 가장 뒤의 원소
+//   int now(array[idx]),last(idx==0 ? -1 : tmpLIS.back());
+//   if(now>last){
+//     tmpLIS.push_back(now);
+//     history.push_back(vector<pair<int,int>>(1,make_pair(idx,now)));
+//   }else{
+//     int pointIdx=distance(tmpLIS.begin(),lower_bound(tmpLIS.begin(),tmpLIS.end(),now));
+//     tmpLIS[pointIdx]=now;
+//     history[pointIdx].push_back(make_pair(idx,now));
+//   }
+//   KLIS_getHistory(array, history, tmpLIS, idx+1);
+// } 
+// int KLIS_DP(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases, int LISidx, int reverse_Seq){
+//   //LISidx번째 숫자가 reverse_Seq번째로 작은 숫자일 때, LISidx~END 범위에서의 경우의 수
+//   //기저
+//   if(LISidx==history.size()-1){ //마지막 순서인 경우: 경우의 수가 항상 1
+//     return 1;
+//   }
+//   auto nowIter=history[LISidx].rbegin()+reverse_Seq;
+//   int& result=cache_numOfCases[nowIter->first];
+//   if(result!=-1){
+//     return result;
+//   }
+//   //Algo
+//   result=0;
+//   auto nextIter=lower_bound(history[LISidx+1].begin(),history[LISidx+1].end(),make_pair(nowIter->first,0));
+//   for(;nextIter!=history[LISidx+1].end();nextIter++){
+//     //value chk, value is strictly decreasing
+//     if(nowIter->second>nextIter->second){
+//       break;
+//     }
+//     int next_RVS_seq=history[LISidx+1].size()-distance(history[LISidx+1].begin(),nextIter)-1;
+//     int tmp=KLIS_DP(history,cache_numOfCases,LISidx+1,next_RVS_seq);
+//     result+=tmp;
+//     //overflow chk
+//     if(result<0||tmp==-2){
+//       result=-2;
+//       return result;
+//     }
+//   }
+//   return result;
+// }
+// vector<int> KLIS_kthLIS(vector<vector<pair<int,int>>>& history, vector<int>& cache_numOfCases,int LISidx, int orderK, pair<int,int> prevPair){
+//   //기저
+//   if(LISidx==history.size()){
+//     return vector<int>();
+//   }
+//   //Algo, pair: {idx, value}, 
+//   for(int reverse_Seq=0;reverse_Seq<history[LISidx].size();reverse_Seq++){
+//     auto nowPair=*(history[LISidx].rbegin()+reverse_Seq);
+//     //value chk, reverse_Seq가 커질수록 value는 커진다.
+//     if(prevPair.second>nowPair.second){
+//       continue;
+//     }
+//     //idx chk는 생략, LIS의 개수>=K이기 때문에, 유효한 idx를 벗어나지 않는다.
+//     //Algo
+//     int cases=KLIS_DP(history,cache_numOfCases,LISidx,reverse_Seq);
+//     if(cases>=orderK||cases==-2){ //-2 means INT32 overflow, always bigger than orderK
+//       auto tmp=KLIS_kthLIS(history,cache_numOfCases,LISidx+1,orderK,nowPair);
+//       tmp.push_back(nowPair.second);
+//       return tmp;
+//     }else{
+//       orderK-=cases;
+//     }
+//   }
+// }
+// void KLIS_funcTest(vector<vector<pair<int,int>>>& history,vector<int>& cache_numOfCases){
+//   cout<<"=============Test==============\n";
+//   cout<<"----------history--------------\n";
+//   for(auto& ele:history){
+//     for(auto& ele2:ele){
+//       cout<<ele2.second<<"("<<ele2.first<<") ";
+//     }
+//     cout<<"\n";
+//   }
+//   cout<<"----------cache_numOfCases--------------\n";
+//   for(auto& ele:cache_numOfCases){
+//     cout<< ele<<" ";
+//   }cout<<"\n";
+//   cout<<"==========TestEnd==============\n";
+// }
+// vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array){
+//   //History 생성, History는 유효하지 않은 값(LIS에 포함되지 않는 값)도 포함되어 있다. 이 경우는 경우의수가 0으로 표기
+//   vector<vector<pair<int,int>>> history; //history[LISidx][reverse_Seq] = {ArrIdx, value}, reverse_Seq는 뒤에서 부터의 순서, 값이 작은 순서
+//   vector<int> tmpLIS;
+//   KLIS_getHistory(array,history,tmpLIS);
+//   //정답 생성
+//   vector<int> cache_numOfCases(arrLen,-1);
+//   vector<int> result= KLIS_kthLIS(history,cache_numOfCases,0,orderK,{0,0}); //pair: {prev idx, prev value}
+//   reverse(result.begin(),result.end());
+//   //KLIS_funcTest(history,cache_numOfCases);
+//   return result; 
+// }
+// void KLIS(){
+//   /*실험 조건
+//   2초, 64MB, 테스트케이스=50
+//   입력: #eleOfAr n: 1~500, k(th LIS): 1~INT32MAX, #LIS >= k
+//   출력: 두 줄에 나눠서 K번쨰 LIS 의 길이, 값 출력
+//   */
+//   /*전략1_fail
+//     문제점: 
+//       1. overflow -> -2로 처리 
+//       2. history의 잡 값이 runtimeError 유발 
+//       3. 연상하는것이 너무 어렵다. 수학적으로 증명을 해야하거나, 비 직관적이다.
+//     바탕이 되는 최적화 문제를 푼다. : 이때 최적해를 세야한다는 것을 감안하고 문제를 풀자.
+//     최적화 문제의 최적해를 세는 문제를 푼다.
+//     답의 수를 기반으로 답안을 재구성한다.
+//     Dynamic Programming
+//       해결법
+//         LIS생성 정보를 담는 History를 만든다. H(ij)=arr idx : nlgn
+//           arr idx는 arr에서의 idx를 말한다. 즉 ele의 value가 아니라, arr에서의 위치를 History에 저장하는 것이다.
+//         arr idx 번째 원소가 사용될 경우, 해당원소이후의 경우의 수를 저장하는 DP배열을 만든다.: 각 lgn, 최대 nlgn
+//           어떤 원소가 LIS에서 등장한다면, 해당 원소는 항상 LIS에서 같은 idx번째에 등장한다. 이를 이용한 DP
+//           미리 생성하지 않고 이용할 때 호출하도록 만든다.
+//           A라는 ele가 등장 했다면, LIS에서 특정위치(A_idx)의 값이 A로 고정되었다는 뜻이다. 이때 A_idx+1의 값은 아직 고정이 아니므로, 경우의 수가 생기게 되는 것이다.
+//           DP생성시, arr idx가 더 큰 최초 위치부터 (lower bound를 이용하여 위치찾기) 탐색하여, 값이 arr idx보다 처음으로 더 작아지는 위치에서 끝낸다.
+//         History와 DP를 이용하여 KLIS를 탐색한다. 최대 n
+//           History의 i행에서, 열이 클 수록 작은 수 이므로, 큰 열 부터 이용하여 탐색한다.
+//             currentK=k에서 시작, 열이 큰것부터 탐색해야 하므로 reverse iterator을 이용하여 탐색한다(jIter == R iter).
+//             if(DP(H(ij))<currentK) -> H(ij)번째 수는 포함되지 않는다.다음 열을 탐색한다. currentK-=DP(H(ij));, jIter++;
+//             else -> H(ij)번째 수는 포함된다.해당 값을 result에 push한 후, History에서 행을 넘어간다. i++; , result.push_back(arr(H(ij)));
+//         오버플로우 해결
+//           K는 항상 int_MAX이하의 크기이다.
+//           오버플로우를 -2로 처리하면, -2인 경우 항상 해당 원소가 포함되어야한다는 것을 알 수 있다.
+//       KLIS_GetLIS(arr, History)
+//         History[LIS idx][order]=idx of Arr
+//           LIS의 길이를 구하는 식을 사용할 때 생성
+//           order가 낮으면 사전순으로 더 앞이 되도록 설정하자
+//       KLIS_DP(LIS idx, order,History)= #cases
+//         DP: LIS len * arr len
+//         DP개선: History[LIS idx][order]를 통해 길이를 arrlen(O(n))으로 줄일 수 있다.
+//       vector<int> func(LIS idx, order, k) = LIS idx ~ LIS END 범위에 대해, k번째 LIS return
+//         substructure: func(LIS idx, order, k), #cases=KLIS_DP(LIS idx, order)
+//                   if k==0  -> return arr[History[LIS idx].back()]+func(LIS idx+1,0,0);
+//                   if cases>k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,k);
+//                   if cases=k -> return arr[History[LIS idx][order]]+func(LIS idx+1,0,0); 
+//                   if cases<k -> return func(LIS idx, order+1, k-cases);
+//         기저: if LIS idx== idx len -> return vector<int>();  
+//     time complexity
+//       GetLIS(#n*lgn)+DP(#n*lgn)+func(#n*4)
+//     mem complexity
+//       GetLIS(#n)+DP(#n)
+//   */
+//   /*전략2
+//     특징 
+//       LIS를 형성할 때, 각 원소가 가질 수 있는 위치는 하나뿐이다. (stack을 이용한 LIS를 잘 생각하면 이해 가능)
+//       LIS를 구성하는 원소가, 원본 arr에서 뒤에 있는 원소일수록, 사전순으로는 앞에 위치하는 LIS다.
+//         LIS에서 각 원소가 가질 수 있는 위치는 하나뿐인데, 같은 위치에서 arrIdx가 큰 원소라는 것은, value가 더 작은 원소임을 의미한다. (value가 더 크다면 같은 위치를 가질수가 없다.)
+//           증명: 임의의 LIS를 잘라서 LIS A , a , b , LIS B 로 만들었다고 하자.
+//                 LIS A, alpha, a, LIS B로 대체하였다고 가정하면, alpha < a < b 이므로, LIS A, alpha, a, b, LIS B 라는 새로운 LIS가 생겨난다.
+//                 따라서 임의의 alpha는 추가될수 없으므로, a 또한 위치를 변경할 수 없으며, 원소의 위치는 고정된다.
+//     DynamicProgramming
+//       stack을 이용해 LIS의 길이를 구하는 알고리즘을 이용하여, History를 구한다. -> n*lgn
+//         History: stack을 이용하여 LIS를 구할때, 각 stack에서의 값이 변하는 것을 history에 기록한다. 
+//           의의: LIS를 형성할때, 각 원소가 가질 수 있는 위치는 하나뿐이다. History를 통해 모든 원소를 검사하지 않고도 numOfCases를 구할 수 있다.
+//       History를 이용하여, k번째 LIS를 구한다.
+//         LIS의 idx번째 원소의 값이 value일 때의, idx부터 시작하는 LIS의 경우의 수 numOfCases에 대해 -> O(1)
+//           k>= numOfCases: k번째 LIS의 idx번째 원소의 값은 value이다.  ->  idx+1에 대해 같은 작업 수행
+//           k< numOfCases: idx번째 원소가 value인 LIS는 k번째 LIS보다 사전순으로 앞에서 나온다. ->  History에서 value보다 사전순으로 뒤에 있는 값을 가져오도록 한다.
+//         nunOfCases: idx-1위치의 {arridx,value}를 가져와서, arridx가 뒤에있고 value가 더 큰 모든 것의 numOfCases를 더한다. -> LIS_len*(n/LIS_len) ~= n 
+//   */
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     int arrLen,orderK;
+//     vector<int> array;
+//     KLIS_Input(arrLen,orderK,array);
+//     vector<int> result=KLIS_Algo(arrLen,orderK,array);
+//     cout<<result.size()<<'\n';
+//     for(auto& ele:result)
+//       cout<<ele<<' ';
+//     cout<<'\n';
+//   }
+// }
 
+// void Dragon_example(){
+//   vector<char> dragon={'F','X'};
+//   int cnt=10; //you can change
+//   while(cnt!=0){
+//     //print
+//     for(auto& ele: dragon){
+//       cout<<ele;
+//     }
+//     cout<<"\n";
+//     //next gen
+//     vector<char> tmpDragon;
+//     for(auto& ele:dragon){
+//       if(ele=='X'){
+//         tmpDragon.insert(tmpDragon.end(),{'X','+','Y','F'});
+//       }else if(ele=='Y'){
+//         tmpDragon.insert(tmpDragon.end(),{'F','X','-','Y'});
+//       }else{
+//         tmpDragon.push_back(ele);
+//       }
+//     }
+//     dragon=move(tmpDragon);
+//     cnt--;
+//   }
+// }
+// void Dragon_Input(int& nthGen,int& skip,int& len){
+//   cin>>nthGen>>skip>>len;
+// }
+// int Dragon_getCases(int nthGen){
+//   if(nthGen==0){
+//     return 1;
+//   }
+//   //2^nthGen== x+y의 개수, -2: 앞부분 F하나 빼기, 뒷부분 +(-) 하나 빼기 
+//   //3배수: 구조가  F  X(or Y) +(or -)
+//   long long result=pow(2,nthGen)*3-2; 
+//   //chk overflow
+//   if(result>1023456789){
+//     result=1023456789;
+//   }
+//   //return
+//   return result;
+// }
+// void Dragon_del_skip_make_history(int nthGen, int skip,vector<pair<string,int>>& history){
+//   //기저 
+//   if(skip==0){
+//     return;
+//   }
+//   //get #cases and next_string(in case of X or Y)
+//   string& last_string=history.back().first;
+//   int cases(1);  // + or - or F, cases == 1
+//   string next_string;
+//    //nthGen > 0 아직 string이 분리되어야함 
+//   if(nthGen>0){
+//     if(last_string.front()=='X'){
+//       cases=Dragon_getCases(nthGen);
+//       next_string="X+YF";
+//     }else if(last_string.front()=='Y'){
+//       cases=Dragon_getCases(nthGen);
+//       next_string="FX-Y";
+//     }
+//   }
+//   //history update
+//   if(last_string.size()==1){
+//     history.pop_back();
+//   }else{
+//     last_string=last_string.substr(1);
+//   }
+//   //compare with skip
+//   if(cases>skip){
+//     history.push_back({next_string,nthGen-1});  //#cases > skip 이라면, 반드시 낮은 Gen이 있을 수밖에 없다.
+//     Dragon_del_skip_make_history(nthGen-1,skip,history);
+//   }else if(cases<skip){
+//     Dragon_del_skip_make_history(nthGen,skip-cases,history);
+//   }else{
+//     return; //cases-skip==0
+//   }
+// }
+// string Dragon_getDragon(vector<pair<string,int>>& history, int len){
+//   //기저
+//   if(len==0){
+//     return string();
+//   }
+//   //prepare
+//   string& last_string=history.back().first;
+//   int nthGen=history.back().second;
+//   char ele=last_string.front();
+//   //history update
+//   if(last_string.size()>1){
+//     last_string=last_string.substr(1);
+//   }else{  //nthGen>0 : string이 분리가 더 필요한 상태
+//     history.pop_back();
+//   }
+//   //push element to result or history update
+//   string result;
+//   if(nthGen==0){
+//     result.push_back(ele);
+//   }else if(ele=='X'){
+//     history.push_back({"X+YF", nthGen-1});
+//   }else if(ele=='Y'){
+//     history.push_back({"FX-Y", nthGen-1});
+//   }else{
+//     result.push_back(ele);
+//   }
+//   //result 길이가 부족하면 추가작업 
+//   if(result.size()<len){
+//     result+=Dragon_getDragon(history, len-result.size());
+//   }
+//   return result;
+// } 
+// string Dragon_Algo(int nthGen,int skip,int len){
+//   skip--;
+//   //remove skip and get history
+//   vector<pair<string,int>> history(1,{"FX",nthGen});
+//   Dragon_del_skip_make_history(nthGen,skip,history); //string, Gen
+//   //make result from history
+//   return Dragon_getDragon(history,len);
+// }
+// void Dragon(){
+//   //Dragon Curve
+//   /*설명 및 입력
+//   설명
+//     n세대 드래곤 커브 문자열을 구하고 싶습니다. 이 때 문자열 전체를 구하면 너무 기니, 문자열 중 p번째 글자부터 l글자만을 계산하는 프로그램을 작성하세요.
+//     Dragon curve: FX로 시작 -> FX+YF -> FX+YF+FX-YF
+//       X->X+YF, Y-> FX-Y (+,- 는 문자 취급)
+//   입력
+//     입력의 첫 줄에는 테스트 케이스의 수 c (c <=50) 가 주어집니다. 각 테스트 케이스의 첫 줄에는 세 개의 정수로 드래곤 커브의 세대 n (0 <= n <= 50)
+//       그리고 p 와 l (1 <= p <= 1,000,000,000 , 1 <= l <= 50) 이 주어집니다. n세대의 드래곤 커브 문자열의 길이는 항상 p+l 이상이라고 가정해도 좋습니다.
+//     int 범위로 조건부 해결 가능
+//       p는 int 범위이지만, 최대 경우의 수는 2^50이라 표현 불가능, 1,000,000,000 이상은 -2로 처리하여 해결하자.
+//   제한조건
+//     2초, 64MB
+//   */
+//   /*전략
+//     (실패)반복되는 수열이 존재한다 -> DP를 통해 길이와 값을 예상 가능
+//       -> 반복되는 것에 집중하여 문제를 어렵게 풀게됨. 수학적 접근도 중요하지만, 프로그래밍적 접근도 충분히 생각하자.
+//     Dynamic Programming
+//       skip 후 len만큼 길이를 구하는 것이다.
+//         skip을 구할때는 경우의 수만 DP를 이용하여 구한다.
+//         len을 구할때는, 규칙을 이용해 순서대로 출력한다.
+//   */
+//  /*전략
+//     (실패) skip삭제와 정답을 동시해 구하려니 답이 없어졌다.
+//     history를 이용해서 답은 따로 구하자 
+//       history: low Generation으로 이동할 때, 현재 Dragon의 남은 값들을 저장하는 것.
+//  */
+//   //example for 
+//   //Dragon_example();
+//   //Sol
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     int nthGen, skip, len;
+//     Dragon_Input(nthGen, skip, len);
+//     string result=Dragon_Algo(nthGen, skip, len);
+//     cout<<result<<'\n';
+//   }
+// }
