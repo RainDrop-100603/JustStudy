@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// @*@*@* 지나친 수학적 접근이 문제, 프로그래밍적으로 접근필요
+// @*@*@* 지나친 수학적 접근이 문제, 프로그래밍적으로 접근필요, overflow의 다양한 처리법, 함수내에서 한번에 하나의 행동만 
 void Dragon_example(){
   vector<char> dragon={'F','X'};
   int cnt=10; //you can change
@@ -46,8 +46,8 @@ int Dragon_getCases(int nthGen){
   //3배수: 구조가  F  X(or Y) +(or -)
   long long result=pow(2,nthGen)*3-2; 
   //chk overflow
-  if(result>123456789){
-    result=123456789;
+  if(result>1023456789){
+    result=1023456789;
   }
   //return
   return result;
@@ -95,43 +95,29 @@ string Dragon_getDragon(vector<pair<string,int>>& history, int len){
   //prepare
   string& last_string=history.back().first;
   int nthGen=history.back().second;
-  string result;
-  //nthGen == 0 string이 최종 분리된 상태 
-  if(nthGen==0){
-    int inputSize=min(len,static_cast<int>(last_string.size()));
-    for(int i=0;i<inputSize;i++){
-      result.push_back(last_string[i]);
-    }
-    //inputSize==len 인 경우 result 완성, inputSize==last_string_len 인 경우 last_string을 모두 result에 포함시켰으므로 pop_back()
+  char ele=last_string.front();
+  //history update
+  if(last_string.size()>1){
+    last_string=last_string.substr(1);
+  }else{  //nthGen>0 : string이 분리가 더 필요한 상태
     history.pop_back();
-    return result;
   }
-  //nthGen > 0 아직 string이 분리되어야함 
-  if(nthGen>0){
-    char ele=last_string.front();
-    //history update
-    if(last_string.size()>1){
-      last_string=last_string.substr(1);
-    }else{
-      history.pop_back();
-    }
-    //push element to result
-    if(ele=='X'){
-      history.push_back({"X+YF", nthGen-1});
-      result+=Dragon_getDragon(history, len-result.size());
-    }else if(ele=='Y'){
-      history.push_back({"FX-Y", nthGen-1});
-      result+=Dragon_getDragon(history, len-result.size());
-    }else{
-      result.push_back(ele);
-    }
-  }
-  //result 길이에 따라 차이 
-  if(result.size()==len){
-    return result;
+  //push element to result or history update
+  string result;
+  if(nthGen==0){
+    result.push_back(ele);
+  }else if(ele=='X'){
+    history.push_back({"X+YF", nthGen-1});
+  }else if(ele=='Y'){
+    history.push_back({"FX-Y", nthGen-1});
   }else{
-    return result+Dragon_getDragon(history, len-result.size());
+    result.push_back(ele);
   }
+  //result 길이가 부족하면 추가작업 
+  if(result.size()<len){
+    result+=Dragon_getDragon(history, len-result.size());
+  }
+  return result;
 } 
 string Dragon_Algo(int nthGen,int skip,int len){
   skip--;
