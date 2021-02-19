@@ -132,6 +132,7 @@ vector<int> KLIS_Algo(int arrLen,int orderK,vector<int>& array);
 void KLIS();
 
 // @*@*@* 지나친 수학적 접근이 문제, 프로그래밍적으로 접근필요, overflow의 다양한 처리법, 함수내에서 한번에 하나의 행동만 
+//skip번째 ele를 구하는 프로그램을 len번 반복하게 만들어도 큰 무리가 없다. 오히려 내 방법보다 더 간단할 수도 있음(내 방법은 substr을 많이 사용함)
 void Dragon_example();
 void Dragon_Input(int& nthGen,int& skip,int& len);
 int Dragon_getCases(int nthGen);
