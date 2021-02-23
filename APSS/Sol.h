@@ -139,4 +139,4 @@ int Dragon_getCases(int nthGen);
 void Dragon_del_skip_make_history(int nthGen, int skip,vector<pair<string,int>>& history);
 string Dragon_getDragon(vector<pair<string,int>>& history, int len);
 string Dragon_Algo(int nthGen,int skip,int len);
-void Dragon(){
+void Dragon();

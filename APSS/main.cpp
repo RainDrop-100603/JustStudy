@@ -11,165 +11,60 @@
 using namespace std;
 
 // @*@*@* 지나친 수학적 접근이 문제, 프로그래밍적으로 접근필요, overflow의 다양한 처리법, 함수내에서 한번에 하나의 행동만 
-void Dragon_example(){
-  vector<char> dragon={'F','X'};
-  int cnt=10; //you can change
-  while(cnt!=0){
-    //print
-    for(auto& ele: dragon){
-      cout<<ele;
-    }
-    cout<<"\n";
-    //next gen
-    vector<char> tmpDragon;
-    for(auto& ele:dragon){
-      if(ele=='X'){
-        tmpDragon.insert(tmpDragon.end(),{'X','+','Y','F'});
-      }else if(ele=='Y'){
-        tmpDragon.insert(tmpDragon.end(),{'F','X','-','Y'});
-      }else{
-        tmpDragon.push_back(ele);
-      }
-    }
-    dragon=move(tmpDragon);
-    cnt--;
-  }
+void ZIMBABWE_Input(long long& nowPrice,long long&  mFactor){
+  cin>>nowPrice>>mFactor;
 }
-void Dragon_Input(int& nthGen,int& skip,int& len){
-  cin>>nthGen>>skip>>len;
+long long  ZIMBABWE_prevPrice(long long nowPrice){
+  return nowPrice-1;
 }
-int Dragon_getCases(int nthGen){
-  if(nthGen==0){
-    return 1;
-  }
-  //2^nthGen== x+y의 개수, -2: 앞부분 F하나 빼기, 뒷부분 +(-) 하나 빼기 
-  //3배수: 구조가  F  X(or Y) +(or -)
-  long long result=pow(2,nthGen)*3-2; 
-  //chk overflow
-  if(result>1023456789){
-    result=1023456789;
-  }
-  //return
-  return result;
-}
-void Dragon_del_skip_make_history(int nthGen, int skip,vector<pair<string,int>>& history){
-  //기저 
-  if(skip==0){
-    return;
-  }
-  //get #cases and next_string(in case of X or Y)
-  string& last_string=history.back().first;
-  int cases(1);  // + or - or F, cases == 1
-  string next_string;
-   //nthGen > 0 아직 string이 분리되어야함 
-  if(nthGen>0){
-    if(last_string.front()=='X'){
-      cases=Dragon_getCases(nthGen);
-      next_string="X+YF";
-    }else if(last_string.front()=='Y'){
-      cases=Dragon_getCases(nthGen);
-      next_string="FX-Y";
+int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
+  long long result(0);
+  while((nowPrice=ZIMBABWE_prevPrice(nowPrice))!=-1){
+    if(nowPrice%mFactor==0){
+      result++;
     }
   }
-  //history update
-  if(last_string.size()==1){
-    history.pop_back();
-  }else{
-    last_string=last_string.substr(1);
-  }
-  //compare with skip
-  if(cases>skip){
-    history.push_back({next_string,nthGen-1});  //#cases > skip 이라면, 반드시 낮은 Gen이 있을 수밖에 없다.
-    Dragon_del_skip_make_history(nthGen-1,skip,history);
-  }else if(cases<skip){
-    Dragon_del_skip_make_history(nthGen,skip-cases,history);
-  }else{
-    return; //cases-skip==0
-  }
+  return result%1000000007;
 }
-string Dragon_getDragon(vector<pair<string,int>>& history, int len){
-  //기저
-  if(len==0){
-    return string();
-  }
-  //prepare
-  string& last_string=history.back().first;
-  int nthGen=history.back().second;
-  char ele=last_string.front();
-  //history update
-  if(last_string.size()>1){
-    last_string=last_string.substr(1);
-  }else{  //nthGen>0 : string이 분리가 더 필요한 상태
-    history.pop_back();
-  }
-  //push element to result or history update
-  string result;
-  if(nthGen==0){
-    result.push_back(ele);
-  }else if(ele=='X'){
-    history.push_back({"X+YF", nthGen-1});
-  }else if(ele=='Y'){
-    history.push_back({"FX-Y", nthGen-1});
-  }else{
-    result.push_back(ele);
-  }
-  //result 길이가 부족하면 추가작업 
-  if(result.size()<len){
-    result+=Dragon_getDragon(history, len-result.size());
-  }
-  return result;
-} 
-string Dragon_Algo(int nthGen,int skip,int len){
-  skip--;
-  //remove skip and get history
-  vector<pair<string,int>> history(1,{"FX",nthGen});
-  Dragon_del_skip_make_history(nthGen,skip,history); //string, Gen
-  //make result from history
-  return Dragon_getDragon(history,len);
-}
-void Dragon(){
-  //Dragon Curve
+void ZIMBABWE(){
+  //ZIMBABWE
   /*설명 및 입력
   설명
-    n세대 드래곤 커브 문자열을 구하고 싶습니다. 이 때 문자열 전체를 구하면 너무 기니, 문자열 중 p번째 글자부터 l글자만을 계산하는 프로그램을 작성하세요.
-    Dragon curve: FX로 시작 -> FX+YF -> FX+YF+FX-YF
-      X->X+YF, Y-> FX-Y (+,- 는 문자 취급)
+    계란을 사간 손님이 환불을 요청한다. 단, 가격은 모른다.
+      가격표는 플라스틱 판으로 표현한다. 3500 은 3 5 0 0 4개로 표시하는 것이다.
+      가격표의 플라스틱판 구성은 바뀌지 않았다. 계란가격이 오름에 따라 순서만 바뀌었다.
+      손님의 계란은 m의 배수다.
+    현재 계란가격 e와 m이 주어질 때, 손님의 구매했을때의 가격의 경우의 수를 구하라 
+      이전 계란 가격은 e보다 항상 작다.
   입력
-    입력의 첫 줄에는 테스트 케이스의 수 c (c <=50) 가 주어집니다. 각 테스트 케이스의 첫 줄에는 세 개의 정수로 드래곤 커브의 세대 n (0 <= n <= 50)
-      그리고 p 와 l (1 <= p <= 1,000,000,000 , 1 <= l <= 50) 이 주어집니다. n세대의 드래곤 커브 문자열의 길이는 항상 p+l 이상이라고 가정해도 좋습니다.
-    int 범위로 조건부 해결 가능
-      p는 int 범위이지만, 최대 경우의 수는 2^50이라 표현 불가능, 1,000,000,000 이상은 -2로 처리하여 해결하자.
+    입력의 첫 줄에는 테스트 케이스의 수 c (c <= 50) 가 주어집니다. 그 후 c줄에 각각 2개의 자연수 e와 m (1 <= e <= 10^14, 2 <= m <= 20)이 주어집니다. 
+    현재 계란 가격은 0으로 시작하지 않지만, 이전 계란 가격은 0으로 시작할 수 있습니다.
+      long long 범위로 해결 (10^14가 있으므로)
+  출력
+    경우의 수를 1,000,000,007 로 나눈 나머지를 출력하라 
   제한조건
     2초, 64MB
   */
   /*전략
-    (실패)반복되는 수열이 존재한다 -> DP를 통해 길이와 값을 예상 가능
-      -> 반복되는 것에 집중하여 문제를 어렵게 풀게됨. 수학적 접근도 중요하지만, 프로그래밍적 접근도 충분히 생각하자.
-    Dynamic Programming
-      skip 후 len만큼 길이를 구하는 것이다.
-        skip을 구할때는 경우의 수만 DP를 이용하여 구한다.
-        len을 구할때는, 규칙을 이용해 순서대로 출력한다.
+    결국 모든 경우에 대해 구해야 한다.
+      case 1: e에서 시작하여, 다음으로 가장 큰 수를 구하는 함수를 이용한다.
+      case 2: 가장 작은 수에서 시작하여, e와 같아질 때 멈춘다. 
+
+
   */
- /*전략
-    (실패) skip삭제와 정답을 동시해 구하려니 답이 없어졌다.
-    history를 이용해서 답은 따로 구하자 
-      history: low Generation으로 이동할 때, 현재 Dragon의 남은 값들을 저장하는 것.
- */
-  //example for 
-  //Dragon_example();
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int nthGen, skip, len;
-    Dragon_Input(nthGen, skip, len);
-    string result=Dragon_Algo(nthGen, skip, len);
+    long long nowPrice, mFactor;
+    ZIMBABWE_Input(nowPrice, mFactor);
+    int result=ZIMBABWE_Algo(nowPrice, mFactor);
     cout<<result<<'\n';
   }
 }
 
 int main(void){
-  Dragon();
+  ZIMBABWE();
   
   return 0;
 }
