@@ -14,13 +14,23 @@ using namespace std;
 void ZIMBABWE_Input(long long& nowPrice,long long&  mFactor){
   cin>>nowPrice>>mFactor;
 }
-long long  ZIMBABWE_prevPrice(long long nowPrice){
-  return nowPrice-1;
-}
 int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
   long long result(0);
-  while((nowPrice=ZIMBABWE_prevPrice(nowPrice))!=-1){
-    if(nowPrice%mFactor==0){
+  //long long을 arr형식으로 변경 
+  vector<int> arr_nowPrice;
+  while(nowPrice!=0){
+    arr_nowPrice.push_back(nowPrice%10);
+    nowPrice/=10;
+  }
+  reverse(arr_nowPrice.begin(),arr_nowPrice.end());
+  int len_nowPrice(arr_nowPrice.size());
+  //Algo
+  while(prev_permutation(arr_nowPrice.begin(),arr_nowPrice.end())){
+    long long tmp_int_nowPrice(0);
+    for(int i=0;i<len_nowPrice;i++){
+      tmp_int_nowPrice+=static_cast<long long>(pow(10,i))*arr_nowPrice[i];
+    }
+    if(tmp_int_nowPrice%mFactor==0){
       result++;
     }
   }
@@ -46,9 +56,16 @@ void ZIMBABWE(){
     2초, 64MB
   */
   /*전략
-    결국 모든 경우에 대해 구해야 한다.
+    결국 모든 경우에 대해 구해야 한다. 최대한 빠르게 모든 경우를 구하는 방법이 필요 
       case 1: e에서 시작하여, 다음으로 가장 큰 수를 구하는 함수를 이용한다.
+        가장 마지막 수를 pivot, 해당 위치를 end, 처음으로 pivot보다 큰 수의 위치를 start라 하자
+          a[start]와 a[end] 바꾼다.
+          a[ent+1] ~ a[start-1]은 가장 큰 숫자가 앞으로 오도록 sorting
       case 2: 가장 작은 수에서 시작하여, e와 같아질 때 멈춘다. 
+      case 3: mod는 덧셈이 가능함을 이용해 DP계산을 한다.
+        DP가 성립하나? 그냥 mod를 쓰면 되는데?
+      case 4: stack을 이용하면, 특정 숫자보다 작은 모든 숫자를 구할 수 있지 않을까?
+      case 5: std: prev_permutation 이용
 
 
   */
@@ -65,6 +82,5 @@ void ZIMBABWE(){
 
 int main(void){
   ZIMBABWE();
-  
   return 0;
 }
