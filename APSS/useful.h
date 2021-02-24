@@ -38,8 +38,8 @@ using namespace std;
     lexicographical_compare()
   이진 탐색
     lower_bound(), upper_bound()
-  주어진 순열의 다음 순열을 구하는 Algo
-    next_permutation()
+  주어진 순열의 다음(이전) 순열을 구하는 Algo
+    next_permutation(), prev_permutation()
   DP등에서 double로 초기화 할 때 기법
     기대값이 양수라면, -1로 초기화 하고 "ele>-0.5"와 같은 식으로 비교하면, ele가 -1인지 양수인지 알 수 있다.
 ------------------------------
