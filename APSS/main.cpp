@@ -30,7 +30,7 @@ int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long lo
       if(order==-1){
         order=tmp_order;
       }
-      int mod_tmp_remain=(arr_price[tmp_order]*static_cast<long long>(pow(10,order))-mfactor_remain)%modValue;
+      int mod_tmp_remain=(-arr_price[tmp_order]*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
       tmp_result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,used_bitmask|(1<<order),mod_tmp_remain);
     }
   }
@@ -62,18 +62,23 @@ int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vec
     if(ele==prevEle){
       continue;
     }
-    int mod_remain=(ele*static_cast<long long>(pow(10,order))-mfactor_remain)%modValue;
+    int mod_remain=(-ele*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
+    //여기 아래서 bitmask를 갱신해야 하며, DP에서도 bitmask의 1의 개수를 세야한다.
+    //DP에 order도 넘겨버리는 것이 좋을지
+    //    order를 매번 계산하느니 그냥 넘겨버리자 
+    //여기에서 arr_element를 삭제하고, 매번 남은 원소를 모두 확인하는 것은 어떨지-> bitmask 넘기는 것이 편해진다.
+    //   이 경우 최대 경우의 수는 14(원소의 개수)*14 이므로 전혀 문제가 안된다.
     result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,bitmask,mod_remain);
   }
   //ele==value
-  int mod_remain=(value*static_cast<long long>(pow(10,order))-mfactor_remain)%modValue;
+  int mod_remain=(-value*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
   result+=ZIMBABWE_func1(DP_ZIMBABWE,arr_element,arr_price,order-1,mod_remain);
   return result%1000000007;
 }
 int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
   //arr_price(nowPrice를 배열로 변경), arr_element(원소들을 오름차순 정렬)
   vector<int> arr_price;
-  while(nowPrice!=0){
+  while(nowPrice!=0){ //맨 앞자리는 0이 아니므로 문제 없다
     arr_price.push_back(nowPrice%10);
     nowPrice/=10;
   }
