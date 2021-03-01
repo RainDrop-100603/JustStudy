@@ -23,12 +23,19 @@ int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long lo
   }
   //Algo
   long long tmp_result(0);  //long long 형식으로 계산하려고 이렇게 함
-  int order(arr_price.size()-1);
-  for(order;order>=0;order--){
-    if(used_bitmask&(1<<order)){
-      
+  int tmp_order(arr_price.size()-1), order(-1), modValue(DP_ZIMBABWE[0].size());
+  for(tmp_order;tmp_order>=0;tmp_order--){
+    if(used_bitmask&(1<<tmp_order)){
+      //order값, 처음 한번만 적용 
+      if(order==-1){
+        order=tmp_order;
+      }
+      int mod_tmp_remain=(arr_price[tmp_order]*static_cast<long long>(pow(10,order))-mfactor_remain)%modValue;
+      tmp_result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,used_bitmask|(1<<order),mod_tmp_remain);
     }
   }
+  result=tmp_result%1000000007;
+  return result;
 }
 int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vector<int>& arr_price, int order, int mfactor_remain){
   //기저
