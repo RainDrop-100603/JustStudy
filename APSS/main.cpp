@@ -27,9 +27,18 @@ int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE, long long used_bitmask,int mfa
 int ZIMBABWE_getMod(int value, int order, int modValue){
   return (value*static_cast<long long>(pow(10,order)))%modValue;
 }
-int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vector<int>& arr_price, long long used_bitmask,int mfactor_remain){
+int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vector<int>& arr_price, int order, int mfactor_remain){
   //Algo
-  int result(0), order(arr_price.size()-1);
+  int result(0),value(arr_price[order]),modValue(DP_ZIMBABWE[0].size());
+  long long bitmask
+  //ele<value
+  for(auto& ele: arr_element){
+    if(ele==value){
+      break;
+    }
+
+  }
+  //ele==value
   long long chk_bitmask=1<<order;  //차수가 높은순, 즉 왼쪽부터 
   while(chk_bitmask!=0){  //if 0, all element chked
     if((chk_bitmask&used_bitmask)==0){  //0 means not used
@@ -62,7 +71,7 @@ int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
   //DP생성
   vector<vector<int>> DP_ZIMBABWE(1<<arr_element.size(),vector<int>(mFactor,-1));
   //결과 return
-  return ZIMBABWE_func1(DP_ZIMBABWE,arr_element,arr_price,0,0);
+  return ZIMBABWE_func1(DP_ZIMBABWE,arr_element,arr_price,arr_price.size()-1,0);
 }
 void ZIMBABWE(){
   //ZIMBABWE
