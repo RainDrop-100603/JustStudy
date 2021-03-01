@@ -15,28 +15,39 @@ void ZIMBABWE_Input(long long& nowPrice,long long&  mFactor){
   cin>>nowPrice>>mFactor;
 }
 int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE, long long used_bitmask,int mFactor_target){
-
-}
-int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_nowPrice,long long used_bitmask,int mFactor_target){
+  //주어진 원소들을 무작위로 정렬하여 만든수를, mod했을때의 분류 
   //기저
   int& result=DP_ZIMBABWE[used_bitmask][mFactor_target];
   if(result!=-1){
     return result;
   }
+  //Algo
 
 }
+int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vector<int>& arr_price, long long used_bitmask,int mFactor_target){
+  //Algo
+  int result=0;
+  long long chk_bitmask=1<<(arr_element.size()-1);  //차수가 높은순, 즉 왼쪽부터 
+  while(chk_bitmask!=0){  //if 0, all element chked
+    if((chk_bitmask&used_bitmask)==0){  //0 means not used
+
+    }
+  }
+}
 int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
-  //nowPrice를 구성하는 원소를 오름차순으로 정렬
-  vector<int> arr_nowPrice;
+  //arr_price(nowPrice를 배열로 변경), arr_element(원소들을 오름차순 정렬)
+  vector<int> arr_price;
   while(nowPrice!=0){
-    arr_nowPrice.push_back(nowPrice%10);
+    arr_price.push_back(nowPrice%10);
     nowPrice/=10;
   }
-  sort(arr_nowPrice.begin(),arr_nowPrice.end());
+  reverse(arr_price.begin(),arr_price.end());
+  vector<int> arr_element(arr_price);
+  sort(arr_element.begin(),arr_element.end());
   //DP생성
-  vector<vector<int>> DP_ZIMBABWE(1<<arr_nowPrice.size(),vector<int>(mFactor,-1));
+  vector<vector<int>> DP_ZIMBABWE(1<<arr_element.size(),vector<int>(mFactor,-1));
   //결과 return
-  return ZIMBABWE_func1(DP_ZIMBABWE,arr_nowPrice,0,0);
+  return ZIMBABWE_func1(DP_ZIMBABWE,arr_element,arr_price,0,0);
 }
 void ZIMBABWE(){
   //ZIMBABWE
