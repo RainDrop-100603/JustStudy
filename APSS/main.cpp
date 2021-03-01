@@ -14,25 +14,35 @@ using namespace std;
 void ZIMBABWE_Input(long long& nowPrice,long long&  mFactor){
   cin>>nowPrice>>mFactor;
 }
-int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE, long long used_bitmask,int mFactor_target){
+int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE, long long used_bitmask,int mfactor_remain){
   //주어진 원소들을 무작위로 정렬하여 만든수를, mod했을때의 분류 
   //기저
-  int& result=DP_ZIMBABWE[used_bitmask][mFactor_target];
+  int& result=DP_ZIMBABWE[used_bitmask][mfactor_remain];
   if(result!=-1){
     return result;
   }
   //Algo
 
 }
-int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vector<int>& arr_price, long long used_bitmask,int mFactor_target){
+int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vector<int>& arr_price, long long used_bitmask,int mfactor_remain){
   //Algo
-  int result=0;
-  long long chk_bitmask=1<<(arr_element.size()-1);  //차수가 높은순, 즉 왼쪽부터 
+  int result(0), order(arr_price.size()-1);
+  long long chk_bitmask=1<<order;  //차수가 높은순, 즉 왼쪽부터 
   while(chk_bitmask!=0){  //if 0, all element chked
     if((chk_bitmask&used_bitmask)==0){  //0 means not used
-
+      int ele_now(arr_price[order]);
+      for(auto& ele:arr_element){
+        if(ele==ele_now){
+          break;
+        }
+      }
+      result+=ZIMBABWE_func1(DP_ZIMBABWE,arr_element,arr_price,used_bitmask|chk_bitmask,mfactor_remain)
+      break;
     }
+    chk_bitmask>>1;
+    order--;
   }
+  return result;
 }
 int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
   //arr_price(nowPrice를 배열로 변경), arr_element(원소들을 오름차순 정렬)
