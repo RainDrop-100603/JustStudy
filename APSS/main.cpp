@@ -24,6 +24,9 @@ int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE, long long used_bitmask,int mfa
   //Algo
 
 }
+int ZIMBABWE_getMod(int value, int order, int modValue){
+  return (value*static_cast<long long>(pow(10,order)))%modValue;
+}
 int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vector<int>& arr_price, long long used_bitmask,int mfactor_remain){
   //Algo
   int result(0), order(arr_price.size()-1);
@@ -35,7 +38,9 @@ int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vec
         if(ele==ele_now){
           break;
         }
+        
       }
+      mfactor_remain변경 
       result+=ZIMBABWE_func1(DP_ZIMBABWE,arr_element,arr_price,used_bitmask|chk_bitmask,mfactor_remain)
       break;
     }
