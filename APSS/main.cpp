@@ -22,7 +22,13 @@ int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long lo
     return result;
   }
   //Algo
-
+  long long tmp_result(0);  //long long 형식으로 계산하려고 이렇게 함
+  int order(arr_price.size()-1);
+  for(order;order>=0;order--){
+    if(used_bitmask&(1<<order)){
+      
+    }
+  }
 }
 int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vector<int>& arr_price, int order, int mfactor_remain){
   //기저
