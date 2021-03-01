@@ -14,27 +14,29 @@ using namespace std;
 void ZIMBABWE_Input(long long& nowPrice,long long&  mFactor){
   cin>>nowPrice>>mFactor;
 }
+int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE, long long used_bitmask,int mFactor_target){
+
+}
+int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_nowPrice,long long used_bitmask,int mFactor_target){
+  //기저
+  int& result=DP_ZIMBABWE[used_bitmask][mFactor_target];
+  if(result!=-1){
+    return result;
+  }
+
+}
 int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
-  long long result(0);
-  //long long을 arr형식으로 변경 
+  //nowPrice를 구성하는 원소를 오름차순으로 정렬
   vector<int> arr_nowPrice;
   while(nowPrice!=0){
     arr_nowPrice.push_back(nowPrice%10);
     nowPrice/=10;
   }
-  reverse(arr_nowPrice.begin(),arr_nowPrice.end());
-  int len_nowPrice(arr_nowPrice.size());
-  //Algo
-  while(prev_permutation(arr_nowPrice.begin(),arr_nowPrice.end())){
-    long long tmp_int_nowPrice(0);
-    for(int i=0;i<len_nowPrice;i++){
-      tmp_int_nowPrice+=static_cast<long long>(pow(10,i))*arr_nowPrice[i];
-    }
-    if(tmp_int_nowPrice%mFactor==0){
-      result++;
-    }
-  }
-  return result%1000000007;
+  sort(arr_nowPrice.begin(),arr_nowPrice.end());
+  //DP생성
+  vector<vector<int>> DP_ZIMBABWE(1<<arr_nowPrice.size(),vector<int>(mFactor,-1));
+  //결과 return
+  return ZIMBABWE_func1(DP_ZIMBABWE,arr_nowPrice,0,0);
 }
 void ZIMBABWE(){
   //ZIMBABWE
