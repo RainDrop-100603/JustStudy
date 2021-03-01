@@ -14,7 +14,7 @@ using namespace std;
 void ZIMBABWE_Input(long long& nowPrice,long long&  mFactor){
   cin>>nowPrice>>mFactor;
 }
-int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE, long long used_bitmask,int mfactor_remain){
+int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long long used_bitmask,int mfactor_remain){
   //주어진 원소들을 무작위로 정렬하여 만든수를, mod했을때의 분류 
   //기저
   int& result=DP_ZIMBABWE[used_bitmask][mfactor_remain];
@@ -24,39 +24,38 @@ int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE, long long used_bitmask,int mfa
   //Algo
 
 }
-int ZIMBABWE_getMod(int value, int order, int modValue){
-  return (value*static_cast<long long>(pow(10,order)))%modValue;
-}
 int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vector<int>& arr_price, int order, int mfactor_remain){
-  //Algo
-  int result(0),value(arr_price[order]),modValue(DP_ZIMBABWE[0].size());
-  long long bitmask
+  //기저
+  long long result(0),value(arr_price[order]),modValue(DP_ZIMBABWE[0].size());
+  if(order==0){
+    if(value%modValue==mfactor_remain){
+      return 1;
+    }else{
+      return 0;
+    }
+  }
+  //get bitmask
+  long long bitmask(0);
+  for(int i=order;i<arr_price.size();i++){
+    bitmask|=(1<<i);
+  }
   //ele<value
+  int prevEle(-1);
   for(auto& ele: arr_element){
     if(ele==value){
       break;
     }
-
+    //중복방지
+    if(ele==prevEle){
+      continue;
+    }
+    int mod_remain=(ele*static_cast<long long>(pow(10,order))-mfactor_remain)%modValue;
+    result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,bitmask,mod_remain);
   }
   //ele==value
-  long long chk_bitmask=1<<order;  //차수가 높은순, 즉 왼쪽부터 
-  while(chk_bitmask!=0){  //if 0, all element chked
-    if((chk_bitmask&used_bitmask)==0){  //0 means not used
-      int ele_now(arr_price[order]);
-      for(auto& ele:arr_element){
-        if(ele==ele_now){
-          break;
-        }
-        
-      }
-      mfactor_remain변경 
-      result+=ZIMBABWE_func1(DP_ZIMBABWE,arr_element,arr_price,used_bitmask|chk_bitmask,mfactor_remain)
-      break;
-    }
-    chk_bitmask>>1;
-    order--;
-  }
-  return result;
+  int mod_remain=(value*static_cast<long long>(pow(10,order))-mfactor_remain)%modValue;
+  result+=ZIMBABWE_func1(DP_ZIMBABWE,arr_element,arr_price,order-1,mod_remain);
+  return result%1000000007;
 }
 int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
   //arr_price(nowPrice를 배열로 변경), arr_element(원소들을 오름차순 정렬)
