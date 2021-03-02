@@ -14,6 +14,15 @@ using namespace std;
 void ZIMBABWE_Input(long long& nowPrice,long long&  mFactor){
   cin>>nowPrice>>mFactor;
 }
+int ZIMBABWE_bitmaskCount(long long bitmask){
+  //count 1 from bitmask
+  int count(0);
+  while(bitmask!=0){
+    count+=bitmask&1;
+    bitmask>>=1;
+  }
+  return count;
+}
 int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long long used_bitmask,int mfactor_remain){
   //주어진 원소들을 무작위로 정렬하여 만든수를, mod했을때의 분류 
   //기저
@@ -23,22 +32,21 @@ int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long lo
   }
   //Algo
   long long tmp_result(0);  //long long 형식으로 계산하려고 이렇게 함
-  int tmp_order(arr_price.size()-1), order(-1), modValue(DP_ZIMBABWE[0].size());
-  for(tmp_order;tmp_order>=0;tmp_order--){
-    if(used_bitmask&(1<<tmp_order)){
-      //order값, 처음 한번만 적용 
-      if(order==-1){
-        order=tmp_order;
-      }
-      int mod_tmp_remain=(-arr_price[tmp_order]*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
-      tmp_result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,used_bitmask|(1<<order),mod_tmp_remain);
+  int order(ZIMBABWE_bitmaskCount(used_bitmask)), modValue(DP_ZIMBABWE[0].size());
+  vector<int> arr_duplicateChk(10,0); //0~9가 두번 이상 사용되면 안됨
+  for(int idx=0;idx<arr_price.size();idx++){
+    int ele=arr_price[idx];
+    if((used_bitmask&(1<<idx))==0&&arr_duplicateChk[ele]==0){
+      arr_duplicateChk[ele]=1;
+      int mod_tmp_remain=(-ele*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
+      tmp_result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,used_bitmask|(1<<idx),mod_tmp_remain);
     }
   }
   result=tmp_result%1000000007;
   return result;
 }
-int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vector<int>& arr_price, int order, int mfactor_remain){
-  //기저
+int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, int order, int mfactor_remain){
+  //기저, order=현재 처리할 위치 
   long long result(0),value(arr_price[order]),modValue(DP_ZIMBABWE[0].size());
   if(order==0){
     if(value%modValue==mfactor_remain){
@@ -53,42 +61,31 @@ int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_element,vec
     bitmask|=(1<<i);
   }
   //ele<value
-  int prevEle(-1);
-  for(auto& ele: arr_element){
-    if(ele==value){
-      break;
+  vector<int> arr_duplicateChk(10,0); //0~9가 두번 이상 사용되면 안됨
+  for(int idx=0;idx<order;idx++){
+    int ele=arr_price[idx];
+    if(ele<value&&arr_duplicateChk[ele]==0){
+      arr_duplicateChk[ele]=1;
+      int mod_remain=(-ele*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
+      result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,bitmask|(1<<idx),mod_remain);
     }
-    //중복방지
-    if(ele==prevEle){
-      continue;
-    }
-    int mod_remain=(-ele*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
-    //여기 아래서 bitmask를 갱신해야 하며, DP에서도 bitmask의 1의 개수를 세야한다.
-    //DP에 order도 넘겨버리는 것이 좋을지
-    //    order를 매번 계산하느니 그냥 넘겨버리자 
-    //여기에서 arr_element를 삭제하고, 매번 남은 원소를 모두 확인하는 것은 어떨지-> bitmask 넘기는 것이 편해진다.
-    //   이 경우 최대 경우의 수는 14(원소의 개수)*14 이므로 전혀 문제가 안된다.
-    result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,bitmask,mod_remain);
   }
   //ele==value
   int mod_remain=(-value*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
-  result+=ZIMBABWE_func1(DP_ZIMBABWE,arr_element,arr_price,order-1,mod_remain);
+  result+=ZIMBABWE_func1(DP_ZIMBABWE,arr_price,order-1,mod_remain);
   return result%1000000007;
 }
 int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
-  //arr_price(nowPrice를 배열로 변경), arr_element(원소들을 오름차순 정렬)
-  vector<int> arr_price;
+  //arr_price(nowPrice를 배열로 변경)
+  vector<int> arr_price;  //idx==차수, 낮은 idx가 낮은 차수다
   while(nowPrice!=0){ //맨 앞자리는 0이 아니므로 문제 없다
     arr_price.push_back(nowPrice%10);
     nowPrice/=10;
   }
-  reverse(arr_price.begin(),arr_price.end());
-  vector<int> arr_element(arr_price);
-  sort(arr_element.begin(),arr_element.end());
   //DP생성
-  vector<vector<int>> DP_ZIMBABWE(1<<arr_element.size(),vector<int>(mFactor,-1));
+  vector<vector<int>> DP_ZIMBABWE(1<<arr_price.size(),vector<int>(mFactor,-1));
   //결과 return
-  return ZIMBABWE_func1(DP_ZIMBABWE,arr_element,arr_price,arr_price.size()-1,0);
+  return ZIMBABWE_func1(DP_ZIMBABWE,arr_price,arr_price.size()-1,0);
 }
 void ZIMBABWE(){
   //ZIMBABWE
