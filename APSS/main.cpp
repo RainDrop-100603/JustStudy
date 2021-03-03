@@ -30,10 +30,17 @@ int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long lo
   if(result!=-1){
     return result;
   }
+  if(used_bitmask==(1<<arr_price.size())-1){
+    if(mfactor_remain==0){
+      return 1;
+    }else{
+      return 0;
+    }
+  }
   //Algo
   long long tmp_result(0);  //long long 형식으로 계산하려고 이렇게 함
-  int order(ZIMBABWE_bitmaskCount(used_bitmask)), modValue(DP_ZIMBABWE[0].size());
   vector<int> arr_duplicateChk(10,0); //0~9가 두번 이상 사용되면 안됨
+  int order(arr_price.size()-1-ZIMBABWE_bitmaskCount(used_bitmask)), modValue(DP_ZIMBABWE[0].size());
   for(int idx=0;idx<arr_price.size();idx++){
     int ele=arr_price[idx];
     if((used_bitmask&(1<<idx))==0&&arr_duplicateChk[ele]==0){
@@ -49,15 +56,11 @@ int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, int 
   //기저, order=현재 처리할 위치 
   long long result(0),value(arr_price[order]),modValue(DP_ZIMBABWE[0].size());
   if(order==0){
-    if(value%modValue==mfactor_remain){
-      return 1;
-    }else{
-      return 0;
-    }
+    return 0; //now_price> prev_price이므로, 항상 0을 ret 
   }
-  //get bitmask
+  //get bitmask, order자리를 처리해야 하는 것이고, order+1~ 제일 높은 자릿수 까지는 모두 처리되어 있다.
   long long bitmask(0);
-  for(int i=order;i<arr_price.size();i++){
+  for(int i=order+1;i<arr_price.size();i++){
     bitmask|=(1<<i);
   }
   //ele<value
