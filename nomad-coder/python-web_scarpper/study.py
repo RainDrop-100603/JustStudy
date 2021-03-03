@@ -1,0 +1,1 @@
+var: num, float, str, bool, none(NULL과 유사)
