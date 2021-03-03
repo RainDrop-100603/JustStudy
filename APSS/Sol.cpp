@@ -2181,3 +2181,142 @@
 //     cout<<result<<'\n';
 //   }
 // }
+
+// void ZIMBABWE_Input(long long& nowPrice,long long&  mFactor){
+//   cin>>nowPrice>>mFactor;
+// }
+// int ZIMBABWE_bitmaskCount(long long bitmask){
+//   //count 1 from bitmask
+//   int count(0);
+//   while(bitmask!=0){
+//     count+=bitmask&1;
+//     bitmask>>=1;
+//   }
+//   return count;
+// }
+// int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long long used_bitmask,int mfactor_remain){
+//   //주어진 원소들을 무작위로 정렬하여 만든수를, mod했을때의 분류 
+//   //기저
+//   int& result=DP_ZIMBABWE[used_bitmask][mfactor_remain];
+//   if(result!=-1){
+//     return result;
+//   }
+//   if(used_bitmask==(1<<arr_price.size())-1){
+//     if(mfactor_remain==0){
+//       return 1;
+//     }else{
+//       return 0;
+//     }
+//   }
+//   //Algo
+//   long long tmp_result(0);  //long long 형식으로 계산하려고 이렇게 함
+//   vector<int> arr_duplicateChk(10,0); //0~9가 두번 이상 사용되면 안됨
+//   int digit(arr_price.size()-1-ZIMBABWE_bitmaskCount(used_bitmask)), modValue(DP_ZIMBABWE[0].size());
+//   for(int idx=0;idx<arr_price.size();idx++){
+//     int ele=arr_price[idx];
+//     if((used_bitmask&(1<<idx))==0&&arr_duplicateChk[ele]==0){
+//       arr_duplicateChk[ele]=1;
+//       int mod_tmp_remain=(-ele*static_cast<long long>(pow(10,digit))%modValue+mfactor_remain+modValue)%modValue;
+//       tmp_result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,used_bitmask|(1<<idx),mod_tmp_remain);
+//     }
+//   }
+//   result=tmp_result%1000000007;
+//   return result;
+// }
+// int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, int digit, int mfactor_remain){
+//   //기저, digit=현재 처리할 위치 
+//   long long result(0),value(arr_price[digit]),modValue(DP_ZIMBABWE[0].size());
+//   if(digit==0){
+//     return 0; //now_price> prev_price이므로, 항상 0을 ret 
+//   }
+//   //get bitmask, digit자리를 처리해야 하는 것이고, digit+1~ 제일 높은 자릿수 까지는 모두 처리되어 있다.
+//   long long bitmask(0);
+//   for(int i=digit+1;i<arr_price.size();i++){
+//     bitmask|=(1<<i);
+//   }
+//   //ele<value
+//   vector<int> arr_duplicateChk(10,0); //0~9가 두번 이상 사용되면 안됨
+//   for(int idx=0;idx<digit;idx++){
+//     int ele=arr_price[idx];
+//     if(ele<value&&arr_duplicateChk[ele]==0){
+//       arr_duplicateChk[ele]=1;
+//       int mod_remain=(-ele*static_cast<long long>(pow(10,digit))%modValue+mfactor_remain+modValue)%modValue;
+//       result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,bitmask|(1<<idx),mod_remain);
+//     }
+//   }
+//   //ele==value
+//   int mod_remain=(-value*static_cast<long long>(pow(10,digit))%modValue+mfactor_remain+modValue)%modValue;
+//   result+=ZIMBABWE_func1(DP_ZIMBABWE,arr_price,digit-1,mod_remain);
+//   return result%1000000007;
+// }
+// int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
+//   //arr_price(nowPrice를 배열로 변경)
+//   vector<int> arr_price;  //idx==차수, 낮은 idx가 낮은 차수다
+//   while(nowPrice!=0){ //맨 앞자리는 0이 아니므로 문제 없다
+//     arr_price.push_back(nowPrice%10);
+//     nowPrice/=10;
+//   }
+//   //DP생성
+//   vector<vector<int>> DP_ZIMBABWE(1<<arr_price.size(),vector<int>(mFactor,-1));
+//   //결과 return
+//   return ZIMBABWE_func1(DP_ZIMBABWE,arr_price,arr_price.size()-1,0);
+// }
+// void ZIMBABWE(){
+//   //ZIMBABWE
+//   /*설명 및 입력
+//   설명
+//     계란을 사간 손님이 환불을 요청한다. 단, 가격은 모른다.
+//       가격표는 플라스틱 판으로 표현한다. 3500 은 3 5 0 0 4개로 표시하는 것이다.
+//       가격표의 플라스틱판 구성은 바뀌지 않았다. 계란가격이 오름에 따라 순서만 바뀌었다.
+//       손님의 계란은 m의 배수다.
+//     현재 계란가격 e와 m이 주어질 때, 손님의 구매했을때의 가격의 경우의 수를 구하라 
+//       이전 계란 가격은 e보다 항상 작다.
+//   입력
+//     입력의 첫 줄에는 테스트 케이스의 수 c (c <= 50) 가 주어집니다. 그 후 c줄에 각각 2개의 자연수 e와 m (1 <= e <= 10^14, 2 <= m <= 20)이 주어집니다. 
+//     현재 계란 가격은 0으로 시작하지 않지만, 이전 계란 가격은 0으로 시작할 수 있습니다.
+//       long long 범위로 해결 (10^14가 있으므로)
+//   출력
+//     경우의 수를 1,000,000,007 로 나눈 나머지를 출력하라 
+//   제한조건
+//     2초, 64MB
+//   */
+//   /*전략
+//   전략1
+//     결국 모든 경우에 대해 구해야 한다. 최대한 빠르게 모든 경우를 구하는 방법이 필요 
+//         정말 모든 경우에 대해 구해야 할까? 
+//       case 1: e에서 시작하여, 다음으로 가장 큰 수를 구하는 함수를 이용한다.
+//         가장 마지막 수를 pivot, 해당 위치를 end, 처음으로 pivot보다 큰 수의 위치를 start라 하자
+//           a[start]와 a[end] 바꾼다.
+//           a[ent+1] ~ a[start-1]은 가장 큰 숫자가 앞으로 오도록 sorting
+//       case 2: 가장 작은 수에서 시작하여, e와 같아질 때 멈춘다. 
+//       case 3: mod는 덧셈이 가능함을 이용해 DP계산을 한다.
+//         DP가 성립하나? 그냥 mod를 쓰면 되는데?
+//       case 4: stack을 이용하면, 특정 숫자보다 작은 모든 숫자를 구할 수 있지 않을까?
+//       case 5: std: prev_permutation 이용
+//   전략2 
+//     mod는 덧셈이 가능하다. 같은 mod를 가진 것들끼리 하나로 묶고, 한번에 연산하면 연산을 줄일 수 있다.
+//       길이가 x인 문자열의, 나머지가 y인 DP를 만들 수 있다.
+//         DP[x][y] = (DP[x-1][a] + static_cast<long long>(pow(10,x-1)*a))%mod , a=0~ mod -1. mod=modValue, DP[0][a]=0;
+//       근데 처음 가격보다 낮은 건 어떻게 계산하지?
+//         1.분리방법: 맨 앞자리가 처음과 같으면 수동으로 계산하고, 처음과 다르면(작으면) 첫 값을 고정하고 모든 경우 계산
+//           -> 99999876543210과 같은 경우, 최대 13!/4! ~= 2.6억회 
+//   정답(전략 2와 유사)
+//     모든 경우를 계산할 필요는 없음에 유의하자. mod라는 조건이 있으므로, 해당 조건을 이용하여 연산을 줄인다
+//       높은 digit부터 낮은 digit까지, digit의 mod가 정해지면 0~digit-1의 mod도 정해진다는 것을 이용한다. -- DP
+//     특정 순열보다 작은 모든 순열이라는 조건
+//       높은차수(digit)에서 낮은 digit으로 가면서 계산한다
+//         original[digit]=a, another[digit]=b<a 인 another은 항상 original보다 작다.
+//         즉, 0~digit-1은 제한조건이 사라지므로 단순한 계산이 가능하다.
+//     history가 필요한지 파악하자
+//       케이스의 갯수만 구하면 되는 경우는 history가 필요 없으므로, 계산 횟수를 많이 줄일 수 있다. 
+//   */
+//   //Sol
+//   int testCase;
+//   cin>>testCase;
+//   while(testCase--){
+//     long long nowPrice, mFactor;
+//     ZIMBABWE_Input(nowPrice, mFactor);
+//     int result=ZIMBABWE_Algo(nowPrice, mFactor);
+//     cout<<result<<'\n';
+//   }
+// }

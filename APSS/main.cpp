@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// @*@*@* 지나친 수학적 접근이 문제, 프로그래밍적으로 접근필요, overflow의 다양한 처리법, 함수내에서 한번에 하나의 행동만 
+// @*@* 조건을 이용하여 연산을 줄인다. 특정 순열보다 작은 순열에 대한 계산. history의 필요유무에 따라 다른 DP
 void ZIMBABWE_Input(long long& nowPrice,long long&  mFactor){
   cin>>nowPrice>>mFactor;
 }
@@ -40,42 +40,42 @@ int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long lo
   //Algo
   long long tmp_result(0);  //long long 형식으로 계산하려고 이렇게 함
   vector<int> arr_duplicateChk(10,0); //0~9가 두번 이상 사용되면 안됨
-  int order(arr_price.size()-1-ZIMBABWE_bitmaskCount(used_bitmask)), modValue(DP_ZIMBABWE[0].size());
+  int digit(arr_price.size()-1-ZIMBABWE_bitmaskCount(used_bitmask)), modValue(DP_ZIMBABWE[0].size());
   for(int idx=0;idx<arr_price.size();idx++){
     int ele=arr_price[idx];
     if((used_bitmask&(1<<idx))==0&&arr_duplicateChk[ele]==0){
       arr_duplicateChk[ele]=1;
-      int mod_tmp_remain=(-ele*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
+      int mod_tmp_remain=(-ele*static_cast<long long>(pow(10,digit))%modValue+mfactor_remain+modValue)%modValue;
       tmp_result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,used_bitmask|(1<<idx),mod_tmp_remain);
     }
   }
   result=tmp_result%1000000007;
   return result;
 }
-int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, int order, int mfactor_remain){
-  //기저, order=현재 처리할 위치 
-  long long result(0),value(arr_price[order]),modValue(DP_ZIMBABWE[0].size());
-  if(order==0){
+int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, int digit, int mfactor_remain){
+  //기저, digit=현재 처리할 위치 
+  long long result(0),value(arr_price[digit]),modValue(DP_ZIMBABWE[0].size());
+  if(digit==0){
     return 0; //now_price> prev_price이므로, 항상 0을 ret 
   }
-  //get bitmask, order자리를 처리해야 하는 것이고, order+1~ 제일 높은 자릿수 까지는 모두 처리되어 있다.
+  //get bitmask, digit자리를 처리해야 하는 것이고, digit+1~ 제일 높은 자릿수 까지는 모두 처리되어 있다.
   long long bitmask(0);
-  for(int i=order+1;i<arr_price.size();i++){
+  for(int i=digit+1;i<arr_price.size();i++){
     bitmask|=(1<<i);
   }
   //ele<value
   vector<int> arr_duplicateChk(10,0); //0~9가 두번 이상 사용되면 안됨
-  for(int idx=0;idx<order;idx++){
+  for(int idx=0;idx<digit;idx++){
     int ele=arr_price[idx];
     if(ele<value&&arr_duplicateChk[ele]==0){
       arr_duplicateChk[ele]=1;
-      int mod_remain=(-ele*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
+      int mod_remain=(-ele*static_cast<long long>(pow(10,digit))%modValue+mfactor_remain+modValue)%modValue;
       result+=ZIMBABWE_DP(DP_ZIMBABWE,arr_price,bitmask|(1<<idx),mod_remain);
     }
   }
   //ele==value
-  int mod_remain=(-value*static_cast<long long>(pow(10,order))%modValue+mfactor_remain+modValue)%modValue;
-  result+=ZIMBABWE_func1(DP_ZIMBABWE,arr_price,order-1,mod_remain);
+  int mod_remain=(-value*static_cast<long long>(pow(10,digit))%modValue+mfactor_remain+modValue)%modValue;
+  result+=ZIMBABWE_func1(DP_ZIMBABWE,arr_price,digit-1,mod_remain);
   return result%1000000007;
 }
 int ZIMBABWE_Algo(long long nowPrice,long long mFactor){
@@ -129,8 +129,15 @@ void ZIMBABWE(){
       근데 처음 가격보다 낮은 건 어떻게 계산하지?
         1.분리방법: 맨 앞자리가 처음과 같으면 수동으로 계산하고, 처음과 다르면(작으면) 첫 값을 고정하고 모든 경우 계산
           -> 99999876543210과 같은 경우, 최대 13!/4! ~= 2.6억회 
-
-
+  정답(전략 2와 유사)
+    모든 경우를 계산할 필요는 없음에 유의하자. mod라는 조건이 있으므로, 해당 조건을 이용하여 연산을 줄인다
+      높은 digit부터 낮은 digit까지, digit의 mod가 정해지면 0~digit-1의 mod도 정해진다는 것을 이용한다. -- DP
+    특정 순열보다 작은 모든 순열이라는 조건
+      높은차수(digit)에서 낮은 digit으로 가면서 계산한다
+        original[digit]=a, another[digit]=b<a 인 another은 항상 original보다 작다.
+        즉, 0~digit-1은 제한조건이 사라지므로 단순한 계산이 가능하다.
+    history가 필요한지 파악하자
+      케이스의 갯수만 구하면 되는 경우는 history가 필요 없으므로, 계산 횟수를 많이 줄일 수 있다. 
   */
   //Sol
   int testCase;

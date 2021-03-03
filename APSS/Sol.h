@@ -140,3 +140,11 @@ void Dragon_del_skip_make_history(int nthGen, int skip,vector<pair<string,int>>&
 string Dragon_getDragon(vector<pair<string,int>>& history, int len);
 string Dragon_Algo(int nthGen,int skip,int len);
 void Dragon();
+
+// @*@* 조건을 이용하여 연산을 줄인다. 특정 순열보다 작은 순열에 대한 계산. history의 필요유무에 따라 다른 DP
+void ZIMBABWE_Input(long long& nowPrice,long long&  mFactor);
+int ZIMBABWE_bitmaskCount(long long bitmask);
+int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long long used_bitmask,int mfactor_remain);
+int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, int digit, int mfactor_remain);
+int ZIMBABWE_Algo(long long nowPrice,long long mFactor);
+void ZIMBABWE();
