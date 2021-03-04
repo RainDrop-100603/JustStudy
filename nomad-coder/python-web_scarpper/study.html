@@ -4,7 +4,7 @@ python standard library
 
 type
   mutable(수정 가능한 것들) vs immutable(수정 불가능한 것들)
-  var: int, float, str, bool, none(NULL과 유사)
+  var: int, float, str, bool, None(NULL과 유사)
     var 표기 약속
       camel case: 대분자를 이용하여 단어 구분 (superLongVar), js, c++ 
       snake case: "-" 를 이용하여 단어 구분 (super_long_var), py
@@ -22,5 +22,12 @@ type
     value can be any type (or most type)
 
 function
+  run
+    func_name()
   built_in_functions
     var type change: var 형식 변환, var1(var2_name)
+  create function
+    def func_name(arg1,arg2=default):
+      func_body
+      body_must_be_indented(들여쓰기)
+      return anytype (if there's no return, return None)
