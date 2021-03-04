@@ -8,6 +8,8 @@ type
     var 표기 약속
       camel case: 대분자를 이용하여 단어 구분 (superLongVar), js, c++ 
       snake case: "-" 를 이용하여 단어 구분 (super_long_var), py
+    str
+      배열로서 인식된다
   sequence type(열거형)
     list
       list=["var1","var2","var3","var4"]
@@ -31,3 +33,32 @@ function
       func_body
       body_must_be_indented(들여쓰기)
       return anytype (if there's no return, return None)
+  Argument
+    positional argument
+      위치에 의존적인 인자, ex) func1(var1, var2) : arg1=var1, arg2=var2
+    keyward argument
+      keyward로 매칭, ex) func1(arg2=var1, arg1=var2) : arg1=var2, arg2=var1
+  기타
+    string 안에 변수 포함시키기, f와 {} 이용
+      ex) return f"Hello {name}, you're {age} years old"
+      c++style 처럼 "Hello"+name+"you're" ... 처럼 할 수도 있다.
+
+ Comparisons
+  is: object identity
+  is not: negate object identity
+  others: < <= > >= == != 
+
+  module
+    import module
+      일부 import: from module import func1, func2 as sexy_func, func3
+    사용: module.func
+    c/c++과 같은 파일 분할도 가능, 이때 module명은 파일명(.py는 생략)
+    c/c++의 library 같은 것
+
+기타 사용예시
+  for x in days:
+    blabla
+  if type(x) is int or type(x) is float:
+    blabla
+  else:
+    blabla2
