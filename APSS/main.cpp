@@ -18,7 +18,7 @@ void RESTORE_Input(int& strNum,vector<string>& strArr){
     cin>>ele;
   }
 }
-string RESTORE_strMerge(string strShort, string strLong){
+string RESTORE_strMerge(const string strShort,const string strLong){
   if(strShort.size()>strLong.size()){
     return RESTORE_strMerge(strLong,strShort);
   }
@@ -86,7 +86,7 @@ string RESTORE_DP(vector<string>& dp_bitmask,int now_bitmask){
   int strNum=stoi(dp_bitmask[0]);
   int tmp_len=1000; //max=600
   for(int i=0;i<strNum;i++){
-    if((1<<i)&now_bitmask!=0){
+    if((1<<i&now_bitmask)!=0){
       string tmp_str=RESTORE_strMerge(dp_bitmask[1<<i],RESTORE_DP(dp_bitmask,now_bitmask-(1<<i)));
       if(tmp_str.size()<tmp_len){
         result=tmp_str;
