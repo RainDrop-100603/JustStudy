@@ -87,9 +87,13 @@ string RESTORE_DP(vector<string>& dp_bitmask,int now_bitmask){
   int tmp_len=1000; //max=600
   for(int i=0;i<strNum;i++){
     if((1<<i&now_bitmask)!=0){
-      string tmp_str=RESTORE_strMerge(dp_bitmask[1<<i],RESTORE_DP(dp_bitmask,now_bitmask-(1<<i)));
-      if(tmp_str.size()<tmp_len){
-        result=tmp_str;
+      string tmp_str=RESTORE_DP(dp_bitmask,now_bitmask-(1<<i));
+      if(tmp_str.size()>tmp_len){
+        continue;
+      }
+      string tmp_result=RESTORE_strMerge(dp_bitmask[1<<i],tmp_str);
+      if(tmp_result.size()<tmp_len){
+        result=tmp_result;
         tmp_len=result.size();
       }
     }
@@ -122,7 +126,7 @@ void RESTORE(){
   */
   /*전략
   전략1
-    비트마스크DP를 이용한다
+    앞, 뒤를 연결하며 많은 조합을 시도해본다
       DP[bitmask_used]=string: 사용된 원소들 중에 가장 짧은 str을 저장한다
         ex) DP[1101] = minLen(getStr(DP[1100],DP[0001]),getStr(DP[1001],DP[0100]),getStr(...))
     시간:
@@ -132,6 +136,15 @@ void RESTORE(){
     문제
       중간 위치에서, str의 길이가 같다면 두개 모두 고려해야 하지 않을까?
         ex) DP[11000101]= AABBCC or ABCABC
+      위 문제를 해결하지 못함
+  전략2
+    정답에서 하나씩 빼는 방법으로 생각하자
+      f(used_bitamsk,last) = saved_value(절약한 정도)
+        f(used_bitmask,last) = for(x=ele of used_bitmask) min(f(used_bitmask without last,x)+f2(x,last))
+      f2(front,back)=saved_value: front-back로 이어질 때, 절약되는 정도
+    시간
+      f: size(2^16*15)*time(15)
+      f2: size(15*15)*time(40)
   */
   //Sol
   int testCase;
