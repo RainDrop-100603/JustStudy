@@ -121,6 +121,10 @@ string to something
           a.size()-1 == -1 일 때, int로 프로모션 되면 2^32-1이 되어버린다.
           미리 size_t를 int 형식으로 casting 하여 에러 방지 
   Dynamic Programing
+    접근방법
+      brute force에서 중복 삭제
+      작은 단위에서 큰 단위로 합치기
+      큰 단위에서 하나씩 빼기  
     최적화 문제 vs 연산 중복 방지
       최적화 문제: LCS와 같이 여러 가능한 답 중 가장 좋은 답을 찾아내는 방법, optimal substructure
       연산 중복 방지(메모제이션): 조합문제 같이 중복 연산이 많이 이뤄지는 경우 사용, 비둘기집 원리 이용 
