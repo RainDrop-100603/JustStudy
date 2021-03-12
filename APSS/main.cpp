@@ -18,13 +18,62 @@ void RESTORE_Input(int& strNum,vector<string>& strArr){
     cin>>ele;
   }
 }
-vector<string> RESTORE_strOptimize(vector<string> strArr){
-
+int RESTORE_isInValid(string& short,string& long){
+  if(short.size()>long.size()){
+    return -1*RESTORE_isValid(long,short);
+  }
+  for(int i=0;i<long.size()-short.size();i++){
+    bool invalid(true);
+    for(int j=0;j<short.size();i++){
+      if(short[j]!=long[i+j]){
+        valid=false;
+        break;
+      }
+    }
+    if(invalid){
+      return 1;
+    }
+  }
+  return 0;
+}
+vector<string> RESTORE_strOptimize(const vector<string>& strArr){
+  vector<string> strArr_opti;
+  vector<int> valid_arr(strArr.size(),1);
+  for(int i=0;i<strArr.size();i++){
+    //최적화, A가 B를 invalid하게 만들었다면, B가 invalid하게 만드는 모든것은 A가 invalid하게 만든다(포함관계 생각하자)
+    if(valid_arr[i]==0){
+      continue;
+    }
+    //Algo
+    string& ele(strArr[i]);
+    for(int j=i;j<strArr.size();j++){
+      //기저
+      if(valid_arr[j]==0){
+        continue;
+      }
+      //Algo
+      string& ele2(strArr[j]);
+      valid=RESTORE_isInValid(ele,ele2);  //both valid:0, ele invalid: 1, ele2 invalid: -1
+      if(valid==-1){
+        valid_arr[j]=0;
+      }
+      if(valid==1){
+        valid_arr[i]=0;
+        break;  //invalid되면 더이상 비교할 필요가 없다.
+      }
+    }
+  }
+  for(int i=0;i<valid_arr.size();i++){
+    if(valid_arr[i]){
+      strArr_opti.push_back(strArr[i]);
+    }
+  }
+  return strArr_opti;
 }
 RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
 
 }
-int RESTORE_DP(vector<string>& dp_bitmask,int now_bitmask){
+int RESTORE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str){
   //기저
   string& result=dp_bitmask[now_bitmask];
   if(result.size()!=0){
@@ -49,14 +98,14 @@ int RESTORE_DP(vector<string>& dp_bitmask,int now_bitmask){
   return result;
 }
 }
-RESTORE_result(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
+string RESTORE_result(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
 
 }
 string RESTORE_Algo(int strNum,vector<string> strArr){
   //한 문자열이 다른문자열에 온전히 포함되는 경우가 있다면, 제거
   vector<string> strArr_opti=RESTORE_strOptimize(strArr);
   //DP_준비
-  strNum_opti(strArr_opti.size()); 
+  int strNum_opti(strArr_opti.size()); 
   vector<vector<int>> DP_strSaved(1<<strNum_opti,vector<int>(strNum_opti,-1));  //DP(used_bitmask,add_str)=saved str len
   RESTORE_DP_prepare(DP_strSaved,strArr_opti);  //DP(1<<front,back), DP(0,front)
   //result
