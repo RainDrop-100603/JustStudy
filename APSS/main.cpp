@@ -18,65 +18,13 @@ void RESTORE_Input(int& strNum,vector<string>& strArr){
     cin>>ele;
   }
 }
-string RESTORE_strMerge(const string strShort,const string strLong){
-  if(strShort.size()>strLong.size()){
-    return RESTORE_strMerge(strLong,strShort);
-  }
-  int skipped_count=0;
-  //strShort가 왼쪽에 있을 때
-  for(int i=1;i<strShort.size();i++){
-    bool canMerge(true);
-    for(int j=0;j<i;j++){
-      if(strShort[strShort.size()-i+j]!=strLong[j]){
-        canMerge=false;
-        break;
-      }
-    }
-    if(canMerge){
-      skipped_count=i;
-    }
-  }
-  string tmp_result;
-  for(int i=0;i<strShort.size()-skipped_count;i++){
-    tmp_result+=strShort[i];
-  }
-  tmp_result+=strLong;
-  //strShort와 strLong이 겹칠 때
-  for(int i=0;i<strLong.size()-strShort.size();i++){
-    bool canMerge(true);
-    for(int j=0;j<strShort.size();i++){
-      if(strShort[j]!=strLong[i+j]){
-        canMerge=false;
-        break;
-      }
-    }
-    if(canMerge){
-      return strLong;
-    }
-  }
-  //strShort가 오른쪽에 있을 때
-  int skipped_count2(0);
-  for(int i=skipped_count+1;i<strShort.size();i++){
-    bool canMerge(true);
-    for(int j=0;j<i;j++){
-      if(strLong[strLong.size()-i+j]!=strShort[j]){
-        canMerge=false;
-        break;
-      }
-    }
-    if(canMerge){
-      skipped_count2=i;
-    }
-  }
-  if(skipped_count2!=0){
-    tmp_result=strLong;
-    for(int i=skipped_count2;i<strShort.size();i++){
-      tmp_result+=strShort[i];
-    }
-  }
-  return tmp_result;
+vector<string> RESTORE_strOptimize(vector<string> strArr){
+
 }
-string RESTORE_DP(vector<string>& dp_bitmask,int now_bitmask){
+RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
+
+}
+int RESTORE_DP(vector<string>& dp_bitmask,int now_bitmask){
   //기저
   string& result=dp_bitmask[now_bitmask];
   if(result.size()!=0){
@@ -100,15 +48,20 @@ string RESTORE_DP(vector<string>& dp_bitmask,int now_bitmask){
   }
   return result;
 }
+}
+RESTORE_result(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
+
+}
 string RESTORE_Algo(int strNum,vector<string> strArr){
-  //DP생성
-  vector<string> dp_bitmask(1<<strNum);
-  for(int i=0;i<strNum;i++){
-    dp_bitmask[1<<i]=strArr[i];
-  }
-  dp_bitmask[0]=to_string(strNum);  //0은 어차피 사용하지 않으므로, strNum을 넣어준다.
-  //결과 return
-  return RESTORE_DP(dp_bitmask,(1<<strNum)-1);
+  //한 문자열이 다른문자열에 온전히 포함되는 경우가 있다면, 제거
+  vector<string> strArr_opti=RESTORE_strOptimize(strArr);
+  //DP_준비
+  strNum_opti(strArr_opti.size()); 
+  vector<vector<int>> DP_strSaved(1<<strNum_opti,vector<int>(strNum_opti,-1));  //DP(used_bitmask,add_str)=saved str len
+  RESTORE_DP_prepare(DP_strSaved,strArr_opti);  //DP(1<<front,back), DP(0,front)
+  //result
+  RESTORE_DP(DP_strSaved,(1<<strNum_opti)-1,-1); //DP is such a history
+  return RESTORE_result(DP_strSaved,strArr_opti);
 }
 void RESTORE(){
   //RESTORE
@@ -139,9 +92,10 @@ void RESTORE(){
       위 문제를 해결하지 못함
   전략2
     정답에서 하나씩 빼는 방법으로 생각하자
-      f(used_bitamsk,last) = saved_value(절약한 정도)
-        f(used_bitmask,last) = for(x=ele of used_bitmask) min(f(used_bitmask without last,x)+f2(x,last))
+      f(used_bitamsk,add_str) = used_bitamsk+ add_str을 할 때, saved_value(절약한 정도)
+        f(used_bitmask,add_str) = for(x=ele of used_bitmask) min(f(used_bitmask without add_str,x)+f2(x,add_str))
       f2(front,back)=saved_value: front-back로 이어질 때, 절약되는 정도
+        f2(front,back) = f(1<<front,back)
     시간
       f: size(2^16*15)*time(15)
       f2: size(15*15)*time(40)
