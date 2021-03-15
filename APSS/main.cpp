@@ -114,31 +114,37 @@ void RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_
   }
 }
 int RESTORE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str){
-  // //기저
-  // string& result=dp_bitmask[now_bitmask];
-  // if(result.size()!=0){
-  //   return result;
-  // } 
-  // //func
-  // int strNum=stoi(dp_bitmask[0]);
-  // int tmp_len=1000; //max=600
-  // for(int i=0;i<strNum;i++){
-  //   if((1<<i&now_bitmask)!=0){
-  //     string tmp_str=RESTORE_DP(dp_bitmask,now_bitmask-(1<<i));
-  //     if(tmp_str.size()>tmp_len){
-  //       continue;
-  //     }
-  //     string tmp_result=RESTORE_strMerge(dp_bitmask[1<<i],tmp_str);
-  //     if(tmp_result.size()<tmp_len){
-  //       result=tmp_result;
-  //       tmp_len=result.size();
-  //     }
-  //   }
-  // }
-  // return result;
+  int strNum=dp_bitmask[0].size();
+  int& result=dp_bitmask[now_bitmask][add_str];
+  if(result!=-1){
+    return result;
+  }
+  result=0;
+  //정답 chk
+  if(now_bitmask==(1<<strNum)-1){
+    for(int i=0;i<strNum;i++){
+      result=max(result,RESTORE_DP(dp_bitmask,now_bitmask-(1<<i),i));
+    }
+    return result;
+  }
+  //general
+  for(int front=0;front<strNum;front++){
+    if((now_bitmask&1<<front)!=0){
+      result=max(result,RESTORE_DP(dp_bitmask,now_bitmask-(1<<front),front)+dp_bitmask[1<<front][add_str]);
+    }
+  }
+  return result;
 }
 string RESTORE_result(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
+  string result;
+  int strNum=strArr_opti.size();
+  int used_bitmask=(1<<strNum)-1;
+  while(used_bitmask!=0){
+    int idx;
+    for(idx=0;idx<strNum;idx++){
 
+    }
+  }
 }
 string RESTORE_Algo(int strNum,vector<string> strArr){
   //한 문자열이 다른문자열에 온전히 포함되는 경우가 있다면, 제거
@@ -148,7 +154,7 @@ string RESTORE_Algo(int strNum,vector<string> strArr){
   vector<vector<int>> DP_strSaved(1<<strNum_opti,vector<int>(strNum_opti,-1));  //DP(used_bitmask,add_str)=saved str len
   RESTORE_DP_prepare(DP_strSaved,strArr_opti);  //DP(1<<front,back), DP(0,front) 을 미리 저장한다.
   //result
-  RESTORE_DP(DP_strSaved,(1<<strNum_opti)-1,-1); //DP is such a history
+  RESTORE_DP(DP_strSaved,(1<<strNum_opti)-1,0); //DP is such a history
   return RESTORE_result(DP_strSaved,strArr_opti);
 }
 void RESTORE(){
