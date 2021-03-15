@@ -70,8 +70,48 @@ vector<string> RESTORE_strOptimize(const vector<string>& strArr){
   }
   return strArr_opti;
 }
-void RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
+int RESTORE_strSavedCount(const string& shortStr, const string& longStr){
+  if(shortStr.size()>longStr.size()){
+    return RESTORE_strSavedCount(longStr,shortStr);
+  }
+  //완전히 겹치는 경우는 최적화로 없앴다.
+  //short-long 확인
 
+}
+void RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
+  int strNum(strArr_opti.size());
+  //DP(0,front) 
+  for(int front=0;front<strNum;front++){
+    DP_strSaved[0][front]=0;
+  }
+  //DP(front,back)
+  for(int front=0;front<strNum;front++){
+    for(int back=0;back<strNum;back++){
+      if(front==back){
+        continue;
+      }
+      //겹치는 정도 확인
+      int len=min(strArr_opti[front].size(),strArr_opti[back].size());
+      int savedLen=0;
+      const string& frontStr=strArr_opti[front];
+      const string& backStr=strArr_opti[back];
+      for(int i=1;i<len;i++){
+        bool isSaved(true);
+        //하나하나비교 
+        for(int j=0;j<i;j++){
+          if(frontStr[frontStr.size()-i+j]!=backStr[j]){
+            isSaved=false;
+            break;
+          }
+        }
+        //전부 겹치면 saved
+        if(isSaved==true){
+          savedLen=i;
+        }
+      }
+      DP_strSaved[1<<front][back]=savedLen;
+    }
+  }
 }
 int RESTORE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str){
   // //기저
@@ -106,7 +146,7 @@ string RESTORE_Algo(int strNum,vector<string> strArr){
   //DP_준비
   int strNum_opti(strArr_opti.size()); 
   vector<vector<int>> DP_strSaved(1<<strNum_opti,vector<int>(strNum_opti,-1));  //DP(used_bitmask,add_str)=saved str len
-  RESTORE_DP_prepare(DP_strSaved,strArr_opti);  //DP(1<<front,back), DP(0,front)
+  RESTORE_DP_prepare(DP_strSaved,strArr_opti);  //DP(1<<front,back), DP(0,front) 을 미리 저장한다.
   //result
   RESTORE_DP(DP_strSaved,(1<<strNum_opti)-1,-1); //DP is such a history
   return RESTORE_result(DP_strSaved,strArr_opti);
