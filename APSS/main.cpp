@@ -22,7 +22,7 @@ int RESTORE_isInValid(const string& shortStr,const string& longStr){
   if(shortStr.size()>longStr.size()){
     return -1*RESTORE_isInValid(longStr,shortStr);
   }
-  for(int i=0;i<longStr.size()-shortStr.size();i++){
+  for(int i=0;i<=longStr.size()-shortStr.size();i++){
     bool invalid(true);
     for(int j=0;j<shortStr.size();j++){
       if(shortStr[j]!=longStr[i+j]){
@@ -46,7 +46,7 @@ vector<string> RESTORE_strOptimize(const vector<string>& strArr){
     }
     //Algo
     const string& ele(strArr[i]);
-    for(int j=i;j<strArr.size();j++){
+    for(int j=i+1;j<strArr.size();j++){
       //기저
       if(valid_arr[j]==0){
         continue;
@@ -69,14 +69,6 @@ vector<string> RESTORE_strOptimize(const vector<string>& strArr){
     }
   }
   return strArr_opti;
-}
-int RESTORE_strSavedCount(const string& shortStr, const string& longStr){
-  if(shortStr.size()>longStr.size()){
-    return RESTORE_strSavedCount(longStr,shortStr);
-  }
-  //완전히 겹치는 경우는 최적화로 없앴다.
-  //short-long 확인
-
 }
 void RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
   int strNum(strArr_opti.size());
