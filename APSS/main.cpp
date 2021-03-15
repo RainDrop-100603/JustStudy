@@ -24,7 +24,7 @@ int RESTORE_isInValid(const string& shortStr,const string& longStr){
   }
   for(int i=0;i<longStr.size()-shortStr.size();i++){
     bool invalid(true);
-    for(int j=0;j<shortStr.size();i++){
+    for(int j=0;j<shortStr.size();j++){
       if(shortStr[j]!=longStr[i+j]){
         invalid=false;
         break;
@@ -171,14 +171,6 @@ string RESTORE_Algo(int strNum,vector<string> strArr){
   RESTORE_DP_prepare(DP_strSaved,strArr_opti);  //DP(1<<front,back), DP(0,front) 을 미리 저장한다.
   //result
   RESTORE_DP(DP_strSaved,(1<<strNum_opti)-1,0); //DP is such a history
-  cout<<"====================================start=============================\n";
-  for(auto& ele:DP_strSaved){
-    for(auto& ele2:ele){
-      cout<<ele2<<" ";
-    }
-    cout<<"\n";
-  }
-  cout<<"====================================END=============================\n";
   return RESTORE_result(DP_strSaved,strArr_opti);
 }
 void RESTORE(){
