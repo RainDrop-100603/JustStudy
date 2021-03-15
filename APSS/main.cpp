@@ -148,10 +148,10 @@ string RESTORE_result(vector<vector<int>>& DP_strSaved,const vector<string>& str
     }
   }
   while(used_bitmask!=0){
-    int front;
-    for(front=0;front<strNum;front++){
+    for(int front=0;front<strNum;front++){
       if((used_bitmask&1<<front)!=0){
         if(DP_strSaved[used_bitmask][back]==DP_strSaved[used_bitmask-(1<<front)][front]+DP_strSaved[1<<front][back]){
+          used_bitmask-=(1<<front);
           const string& str_front=strArr_opti[front];
           result=str_front.substr(0,str_front.size()-DP_strSaved[1<<front][back])+result;
           back=front;
@@ -171,6 +171,14 @@ string RESTORE_Algo(int strNum,vector<string> strArr){
   RESTORE_DP_prepare(DP_strSaved,strArr_opti);  //DP(1<<front,back), DP(0,front) 을 미리 저장한다.
   //result
   RESTORE_DP(DP_strSaved,(1<<strNum_opti)-1,0); //DP is such a history
+  cout<<"====================================start=============================\n";
+  for(auto& ele:DP_strSaved){
+    for(auto& ele2:ele){
+      cout<<ele2<<" ";
+    }
+    cout<<"\n";
+  }
+  cout<<"====================================END=============================\n";
   return RESTORE_result(DP_strSaved,strArr_opti);
 }
 void RESTORE(){
