@@ -148,3 +148,13 @@ int ZIMBABWE_DP(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, long lo
 int ZIMBABWE_func1(vector<vector<int>>& DP_ZIMBABWE,vector<int>& arr_price, int digit, int mfactor_remain);
 int ZIMBABWE_Algo(long long nowPrice,long long mFactor);
 void ZIMBABWE();
+
+// @*@* 정답에서 하나씩 빼는 DP, boundary 조건 확실히
+void RESTORE_Input(int& strNum,vector<string>& strArr);
+int RESTORE_isInValid(const string& shortStr,const string& longStr);
+vector<string> RESTORE_strOptimize(const vector<string>& strArr);
+void RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti);
+int RESTORE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str);
+string RESTORE_result(vector<vector<int>>& DP_strSaved,const vector<string>& strArr_opti);
+string RESTORE_Algo(int strNum,vector<string> strArr);
+void RESTORE();

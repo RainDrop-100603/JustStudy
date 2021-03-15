@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// @*@* 조건을 이용하여 연산을 줄인다. 특정 순열보다 작은 순열에 대한 계산. history의 필요유무에 따라 다른 DP
+// @*@* 정답에서 하나씩 빼는 DP, boundary 조건 확실히
 void RESTORE_Input(int& strNum,vector<string>& strArr){
   cin>>strNum;
   strArr.resize(strNum);
