@@ -18,15 +18,15 @@ void RESTORE_Input(int& strNum,vector<string>& strArr){
     cin>>ele;
   }
 }
-int RESTORE_isInValid(string& short,string& long){
-  if(short.size()>long.size()){
-    return -1*RESTORE_isValid(long,short);
+int RESTORE_isInValid(const string& shortStr,const string& longStr){
+  if(shortStr.size()>longStr.size()){
+    return -1*RESTORE_isInValid(longStr,shortStr);
   }
-  for(int i=0;i<long.size()-short.size();i++){
+  for(int i=0;i<longStr.size()-shortStr.size();i++){
     bool invalid(true);
-    for(int j=0;j<short.size();i++){
-      if(short[j]!=long[i+j]){
-        valid=false;
+    for(int j=0;j<shortStr.size();i++){
+      if(shortStr[j]!=longStr[i+j]){
+        invalid=false;
         break;
       }
     }
@@ -45,19 +45,19 @@ vector<string> RESTORE_strOptimize(const vector<string>& strArr){
       continue;
     }
     //Algo
-    string& ele(strArr[i]);
+    const string& ele(strArr[i]);
     for(int j=i;j<strArr.size();j++){
       //기저
       if(valid_arr[j]==0){
         continue;
       }
       //Algo
-      string& ele2(strArr[j]);
-      valid=RESTORE_isInValid(ele,ele2);  //both valid:0, ele invalid: 1, ele2 invalid: -1
-      if(valid==-1){
+      const string& ele2(strArr[j]);
+      int inValid=RESTORE_isInValid(ele,ele2);  //both valid:0, ele invalid: 1, ele2 invalid: -1
+      if(inValid==-1){
         valid_arr[j]=0;
       }
-      if(valid==1){
+      if(inValid==1){
         valid_arr[i]=0;
         break;  //invalid되면 더이상 비교할 필요가 없다.
       }
@@ -70,33 +70,32 @@ vector<string> RESTORE_strOptimize(const vector<string>& strArr){
   }
   return strArr_opti;
 }
-RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
+void RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
 
 }
 int RESTORE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str){
-  //기저
-  string& result=dp_bitmask[now_bitmask];
-  if(result.size()!=0){
-    return result;
-  } 
-  //func
-  int strNum=stoi(dp_bitmask[0]);
-  int tmp_len=1000; //max=600
-  for(int i=0;i<strNum;i++){
-    if((1<<i&now_bitmask)!=0){
-      string tmp_str=RESTORE_DP(dp_bitmask,now_bitmask-(1<<i));
-      if(tmp_str.size()>tmp_len){
-        continue;
-      }
-      string tmp_result=RESTORE_strMerge(dp_bitmask[1<<i],tmp_str);
-      if(tmp_result.size()<tmp_len){
-        result=tmp_result;
-        tmp_len=result.size();
-      }
-    }
-  }
-  return result;
-}
+  // //기저
+  // string& result=dp_bitmask[now_bitmask];
+  // if(result.size()!=0){
+  //   return result;
+  // } 
+  // //func
+  // int strNum=stoi(dp_bitmask[0]);
+  // int tmp_len=1000; //max=600
+  // for(int i=0;i<strNum;i++){
+  //   if((1<<i&now_bitmask)!=0){
+  //     string tmp_str=RESTORE_DP(dp_bitmask,now_bitmask-(1<<i));
+  //     if(tmp_str.size()>tmp_len){
+  //       continue;
+  //     }
+  //     string tmp_result=RESTORE_strMerge(dp_bitmask[1<<i],tmp_str);
+  //     if(tmp_result.size()<tmp_len){
+  //       result=tmp_result;
+  //       tmp_len=result.size();
+  //     }
+  //   }
+  // }
+  // return result;
 }
 string RESTORE_result(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
 
