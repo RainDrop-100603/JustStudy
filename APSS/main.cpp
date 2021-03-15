@@ -135,16 +135,32 @@ int RESTORE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str){
   }
   return result;
 }
-string RESTORE_result(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
+string RESTORE_result(vector<vector<int>>& DP_strSaved,const vector<string>& strArr_opti){
   string result;
   int strNum=strArr_opti.size();
   int used_bitmask=(1<<strNum)-1;
-  while(used_bitmask!=0){
-    int idx;
-    for(idx=0;idx<strNum;idx++){
-
+  int back;
+  for(back=0;back<strNum;back++){
+    if(DP_strSaved[used_bitmask][0]==DP_strSaved[used_bitmask-(1<<back)][back]){
+      used_bitmask-=(1<<back);
+      result=strArr_opti[back];
+      break;
     }
   }
+  while(used_bitmask!=0){
+    int front;
+    for(front=0;front<strNum;front++){
+      if((used_bitmask&1<<front)!=0){
+        if(DP_strSaved[used_bitmask][back]==DP_strSaved[used_bitmask-(1<<front)][front]+DP_strSaved[1<<front][back]){
+          const string& str_front=strArr_opti[front];
+          result=str_front.substr(0,str_front.size()-DP_strSaved[1<<front][back])+result;
+          back=front;
+          break;
+        }
+      }
+    }
+  }
+  return result;
 }
 string RESTORE_Algo(int strNum,vector<string> strArr){
   //한 문자열이 다른문자열에 온전히 포함되는 경우가 있다면, 제거
