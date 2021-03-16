@@ -63,6 +63,9 @@ module
   else:
     blabla2
 
+string  
+  strip: 좌우 특정문자 제거 (default: 공백제거)
+
 module 
   requests: Python에서 HTTP요청을 보내는 모듈, 추가 설치 필요 
     https://requests.readthedocs.io/en/master/
