@@ -73,6 +73,7 @@ string to something
   언어마다 차이점이 다소 있을 수 있으니 주의 
 ------------------------------
 간단한 팁
+  처음부터 정답을 찾는것이 아니라, 단서를 정리하고 정답을 찾는것 
   공백 string을 반환하고 싶다면 return string();
   lower_bound를 통해 pair->first만 비교하고 싶다면, make_pair(value,numeric_limits<int>::min())을 비교 인자로 넣으면 된다.
   재귀함수의 경우, 선 재귀 후 확인, 즉 조건을 서두에서 chk하는것이 좋다. (의도하지 않은 동작 방지) \
