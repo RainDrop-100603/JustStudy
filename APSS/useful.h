@@ -151,6 +151,10 @@ string to something
       배낭 문제: knapsack problem
         물건의 cost, value 가 정해져 있으며, 제한 cost내에서 최대 value를 얻도록 물건을 고르는 문제 
         각 물건을 최대 하나만 고르는 0/1 문제, 여러개 고를 수 있는 문제, 쪼개서(분수) 넣을 수 있는 fractional knapsack problem - greedy로 해결 가능(직관적임)
+      조합문제 - 완벽한 수
+        어떤 게임에서 현재 상태가 주어질 때, 이번 차례에 수를 둘 차례인 참가자가 이갈까?
+          대칭게임(impartial game): 베스킨라빈스31
+          비대칭게임: 바둑, 오목   
     memozation: 입력이 정수가 아닐경우, 배열, 실수 등등 
       bijection function(일대일 대응함수)
         입력을 정수로 변환해주는 일대일 대응함수 -> 정수 메모제이션 

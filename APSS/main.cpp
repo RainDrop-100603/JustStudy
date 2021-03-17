@@ -11,16 +11,18 @@
 using namespace std;
 
 // @*@* 정답에서 하나씩 빼는 DP, boundary 조건 확실히
-void RESTORE_Input(int& strNum,vector<string>& strArr){
-  cin>>strNum;
-  strArr.resize(strNum);
-  for(auto& ele: strArr){
-    cin>>ele;
+void TICTACTOE_Input(vector<vector<string>>& board){
+  for(int i=0;i<board.size();i++){
+    string tmp;
+    cin>>tmp;
+    for(int j=0;j<board[0].size();j++){
+      board[i][j]=tmp[j];
+    }
   }
 }
-int RESTORE_isInValid(const string& shortStr,const string& longStr){
+int TICTACTOE_isInValid(const string& shortStr,const string& longStr){
   if(shortStr.size()>longStr.size()){
-    return -1*RESTORE_isInValid(longStr,shortStr);
+    return -1*TICTACTOE_isInValid(longStr,shortStr);
   }
   for(int i=0;i<=longStr.size()-shortStr.size();i++){
     bool invalid(true);
@@ -36,7 +38,7 @@ int RESTORE_isInValid(const string& shortStr,const string& longStr){
   }
   return 0;
 }
-vector<string> RESTORE_strOptimize(const vector<string>& strArr){
+vector<string> TICTACTOE_strOptimize(const vector<string>& strArr){
   vector<string> strArr_opti;
   vector<int> valid_arr(strArr.size(),1);
   for(int i=0;i<strArr.size();i++){
@@ -53,7 +55,7 @@ vector<string> RESTORE_strOptimize(const vector<string>& strArr){
       }
       //Algo
       const string& ele2(strArr[j]);
-      int inValid=RESTORE_isInValid(ele,ele2);  //both valid:0, ele invalid: 1, ele2 invalid: -1
+      int inValid=TICTACTOE_isInValid(ele,ele2);  //both valid:0, ele invalid: 1, ele2 invalid: -1
       if(inValid==-1){
         valid_arr[j]=0;
       }
@@ -70,7 +72,7 @@ vector<string> RESTORE_strOptimize(const vector<string>& strArr){
   }
   return strArr_opti;
 }
-void RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
+void TICTACTOE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
   int strNum(strArr_opti.size());
   //DP(0,front) 
   for(int front=0;front<strNum;front++){
@@ -105,7 +107,7 @@ void RESTORE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_
     }
   }
 }
-int RESTORE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str){
+int TICTACTOE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str){
   int strNum=dp_bitmask[0].size();
   int& result=dp_bitmask[now_bitmask][add_str];
   if(result!=-1){
@@ -115,106 +117,139 @@ int RESTORE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str){
   //정답 chk
   if(now_bitmask==(1<<strNum)-1){
     for(int i=0;i<strNum;i++){
-      result=max(result,RESTORE_DP(dp_bitmask,now_bitmask-(1<<i),i));
+      result=max(result,TICTACTOE_DP(dp_bitmask,now_bitmask-(1<<i),i));
     }
     return result;
   }
   //general
   for(int front=0;front<strNum;front++){
     if((now_bitmask&1<<front)!=0){
-      result=max(result,RESTORE_DP(dp_bitmask,now_bitmask-(1<<front),front)+dp_bitmask[1<<front][add_str]);
+      result=max(result,TICTACTOE_DP(dp_bitmask,now_bitmask-(1<<front),front)+dp_bitmask[1<<front][add_str]);
     }
   }
   return result;
 }
-string RESTORE_result(vector<vector<int>>& DP_strSaved,const vector<string>& strArr_opti){
-  string result;
-  int strNum=strArr_opti.size();
-  int used_bitmask=(1<<strNum)-1;
-  int back;
-  for(back=0;back<strNum;back++){
-    if(DP_strSaved[used_bitmask][0]==DP_strSaved[used_bitmask-(1<<back)][back]){
-      used_bitmask-=(1<<back);
-      result=strArr_opti[back];
-      break;
-    }
+int TICTACTOE_isFinished(vector<vector<string>>& board, string turn){
+
+}
+int TICTACTOE_bijection(vector<vector<string>>& board){
+  int result(0);
+  
+}
+int TICTACTOE_result(vector<vector<string>>& board, vector<int>& cache_result,string turn_last){
+  //기저
+  int& result=cache_result[TICTACTOE_bijection(board)];
+  if(result!=-2){
+    return result;
   }
-  while(used_bitmask!=0){
-    for(int front=0;front<strNum;front++){
-      if((used_bitmask&1<<front)!=0){
-        if(DP_strSaved[used_bitmask][back]==DP_strSaved[used_bitmask-(1<<front)][front]+DP_strSaved[1<<front][back]){
-          used_bitmask-=(1<<front);
-          const string& str_front=strArr_opti[front];
-          result=str_front.substr(0,str_front.size()-DP_strSaved[1<<front][back])+result;
-          back=front;
-          break;
-        }
+  //기저 2, 직전에 상대방이 둔 수로 게임이 끝났는가?
+  string turn_now;
+  if(turn_last=="O"){
+    turn_now="X";
+  }else{
+    turn_now="O";
+  }
+  if(TICTACTOE_isFinished(board,turn_last)){
+    result=-1;
+    return result;
+  }
+  //Algo
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
+      if(board[i][j]=="."){
+        board[i][j]=turn_now;
+        result=max(result,TICTACTOE_result(board,cache_result,turn_now));
+        board[i][j]==".";
+      }
+      if(result==1){
+        return result;
       }
     }
   }
-  return result;
+  //return, -2 는 더 둘 자리가 없고, 승부도 나지 않았음을 의미한다.
+  if(result==-2){
+    result=0;
+    return result;
+  }else if(result==-1||result==0){
+    return result;
+  }
+  cout<<"Error occurs in result";
+  return 10;  //makes error
 }
-string RESTORE_Algo(int strNum,vector<string> strArr){
-  //한 문자열이 다른문자열에 온전히 포함되는 경우가 있다면, 제거
-  vector<string> strArr_opti=RESTORE_strOptimize(strArr);
-  //DP_준비
-  int strNum_opti(strArr_opti.size()); 
-  vector<vector<int>> DP_strSaved(1<<strNum_opti,vector<int>(strNum_opti,-1));  //DP(used_bitmask,add_str)=saved str len
-  RESTORE_DP_prepare(DP_strSaved,strArr_opti);  //DP(1<<front,back), DP(0,front) 을 미리 저장한다.
+string TICTACTOE_Algo(vector<vector<string>>& board){
+  //누구의 turn인지 구하기
+  int used_O(0), used_X(0);
+  string turn_now, turn_last;
+  for(auto& ele:board){
+    for(auto& ele2: ele){
+      if(ele2=="O"){
+        used_O++;
+      }else if(ele2=="X"){
+        used_X++;
+      }
+    }
+  }
+  if(used_X > used_O){
+    turn_now="O";
+    turn_last="X";
+  }else{
+    turn_now="X";
+    turn_last="O"
+  }
   //result
-  RESTORE_DP(DP_strSaved,(1<<strNum_opti)-1,0); //DP is such a history
-  return RESTORE_result(DP_strSaved,strArr_opti);
+  vector<int> cache_result(static_cast<int>(pow(3,9)),-2);
+  int result_int=TICTACTOE_result(board,cache_result,turn_last);
+  if(result_int==1){
+    return turn_last;
+  }else if(result_int==-1){
+    return turn_now;
+  }else if(result_int==0){
+    return string("TIE");
+  }
+  return string("error in TICTACTOE_Algo");
 }
-void RESTORE(){
-  //RESTORE
+void TICTACTOE(){
+  //TICTACTOE
   /*설명 및 입력
   설명
-    여러개의 문자열이 주어진다. 해당 문자열을 모두 포함하는 가장 짧은 문자열 중 하나를 출력하라
+    틱택토 게임. 현재 게임판의 상태가 주어질 때, 게임이 진행되었을 때 승자(패자) 혹은 무승부 여부를 구하여라
   입력
-    입력의 첫 줄에는 테스트 케이스의 수 C(C≤50)가 주어집니다. 
-    각 테스트 케이스의 첫 줄에는 부분 문자열의 수 k(1≤k≤15)가 주어지고, 다음 k줄에 알파벳 소문자로만 구성된 문자열 조각이 주어집니다. 
-    각 문자열 조각의 길이는 1 이상 40 이하입니다.
+    입력의 첫 줄에는 테스트 케이스의 수 C(<= 50)가 주어집니다.
+    각 테스트 케이스는 세 줄에 각 세 글자로 게임판의 각 위치에 쓰인 글자가 주어집니다.
+    글자가 없는 칸은 마침표(.)로 표현합니다.
   출력
-    각 테스트 케이스마다 한 줄로, 해당 문자열을 모두 포함하는 가장 짧은 문자열 중 하나를 출력합니다.
+    각 테스트 케이스마다 한 줄을 출력합니다.
+    두 사람이 모두 최선을 다할 경우 비긴다면 TIE를, 아닌 경우 이기는 사람의 글자를 출력합니다.
   제한조건
-    2초, 64MB
+    1초, 64MB
+  */
+  /*힌트
+    점대칭, 선대칭(좌우상하대각) 되어도 항상 같은 결과가 나온다 -> 최적화 가능 요소
+    3진법으로 치환하면 승자여부 쉽계 계산 가능하다.  
   */
   /*전략
   전략1
-    앞, 뒤를 연결하며 많은 조합을 시도해본다
-      DP[bitmask_used]=string: 사용된 원소들 중에 가장 짧은 str을 저장한다
-        ex) DP[1101] = minLen(getStr(DP[1100],DP[0001]),getStr(DP[1001],DP[0100]),getStr(...))
+      int isFinished(board, turn_last): 직전에 둔 사람(turn_last)로 인해 게임이 끝나면 1, 아니면 0 반호나
+      int bijection(board): "."=0, "O"=1, "X"=2로 치환하여 반환 
+      int bitmask(board, turn_last): 
+        기저: cache chk
+        기저2: isFinished로 확인
+        재귀: 남은 부분에 O또는 X 넣고 재귀
     시간:
-      getStr: O(strlen^2)
-      #DP_func: for(1~n), sum(x(n-x))=n^3
-      Time:O(n^3*strlen^2), n<16, strLen<601
-    문제
-      중간 위치에서, str의 길이가 같다면 두개 모두 고려해야 하지 않을까?
-        ex) DP[11000101]= AABBCC or ABCABC
-      위 문제를 해결하지 못함
-  전략2
-    정답에서 하나씩 빼는 방법으로 생각하자
-      f(used_bitamsk,add_str) = used_bitamsk+ add_str을 할 때, saved_value(절약한 정도)
-        f(used_bitmask,add_str) = for(x=ele of used_bitmask) min(f(used_bitmask without add_str,x)+f2(x,add_str))
-      f2(front,back)=saved_value: front-back로 이어질 때, 절약되는 정도
-        f2(front,back) = f(1<<front,back)
-    시간
-      f: size(2^16*15)*time(15)
-      f2: size(15*15)*time(40)
+
   */
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int strNum;
-    vector<string> strArr;
-    RESTORE_Input(strNum, strArr);
-    string result=RESTORE_Algo(strNum, strArr);
+    vector<vector<string>> board(3,vector<string>(3));
+    TICTACTOE_Input(board);
+    string result=TICTACTOE_Algo(board);
     cout<<result<<'\n';
   }
 }
 
 int main(void){
-  RESTORE();
+  TICTACTOE();
   return 0;
 }
