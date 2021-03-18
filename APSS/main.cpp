@@ -20,120 +20,33 @@ void TICTACTOE_Input(vector<vector<string>>& board){
     }
   }
 }
-int TICTACTOE_isInValid(const string& shortStr,const string& longStr){
-  if(shortStr.size()>longStr.size()){
-    return -1*TICTACTOE_isInValid(longStr,shortStr);
-  }
-  for(int i=0;i<=longStr.size()-shortStr.size();i++){
-    bool invalid(true);
-    for(int j=0;j<shortStr.size();j++){
-      if(shortStr[j]!=longStr[i+j]){
-        invalid=false;
-        break;
-      }
-    }
-    if(invalid){
-      return 1;
-    }
-  }
-  return 0;
-}
-vector<string> TICTACTOE_strOptimize(const vector<string>& strArr){
-  vector<string> strArr_opti;
-  vector<int> valid_arr(strArr.size(),1);
-  for(int i=0;i<strArr.size();i++){
-    //최적화, A가 B를 invalid하게 만들었다면, B가 invalid하게 만드는 모든것은 A가 invalid하게 만든다(포함관계 생각하자)
-    if(valid_arr[i]==0){
-      continue;
-    }
-    //Algo
-    const string& ele(strArr[i]);
-    for(int j=i+1;j<strArr.size();j++){
-      //기저
-      if(valid_arr[j]==0){
-        continue;
-      }
-      //Algo
-      const string& ele2(strArr[j]);
-      int inValid=TICTACTOE_isInValid(ele,ele2);  //both valid:0, ele invalid: 1, ele2 invalid: -1
-      if(inValid==-1){
-        valid_arr[j]=0;
-      }
-      if(inValid==1){
-        valid_arr[i]=0;
-        break;  //invalid되면 더이상 비교할 필요가 없다.
-      }
-    }
-  }
-  for(int i=0;i<valid_arr.size();i++){
-    if(valid_arr[i]){
-      strArr_opti.push_back(strArr[i]);
-    }
-  }
-  return strArr_opti;
-}
-void TICTACTOE_DP_prepare(vector<vector<int>>& DP_strSaved,vector<string>& strArr_opti){
-  int strNum(strArr_opti.size());
-  //DP(0,front) 
-  for(int front=0;front<strNum;front++){
-    DP_strSaved[0][front]=0;
-  }
-  //DP(front,back)
-  for(int front=0;front<strNum;front++){
-    for(int back=0;back<strNum;back++){
-      if(front==back){
-        continue;
-      }
-      //겹치는 정도 확인
-      int len=min(strArr_opti[front].size(),strArr_opti[back].size());
-      int savedLen=0;
-      const string& frontStr=strArr_opti[front];
-      const string& backStr=strArr_opti[back];
-      for(int i=1;i<len;i++){
-        bool isSaved(true);
-        //하나하나비교 
-        for(int j=0;j<i;j++){
-          if(frontStr[frontStr.size()-i+j]!=backStr[j]){
-            isSaved=false;
-            break;
-          }
-        }
-        //전부 겹치면 saved
-        if(isSaved==true){
-          savedLen=i;
-        }
-      }
-      DP_strSaved[1<<front][back]=savedLen;
-    }
-  }
-}
-int TICTACTOE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str){
-  int strNum=dp_bitmask[0].size();
-  int& result=dp_bitmask[now_bitmask][add_str];
-  if(result!=-1){
-    return result;
-  }
-  result=0;
-  //정답 chk
-  if(now_bitmask==(1<<strNum)-1){
-    for(int i=0;i<strNum;i++){
-      result=max(result,TICTACTOE_DP(dp_bitmask,now_bitmask-(1<<i),i));
-    }
-    return result;
-  }
-  //general
-  for(int front=0;front<strNum;front++){
-    if((now_bitmask&1<<front)!=0){
-      result=max(result,TICTACTOE_DP(dp_bitmask,now_bitmask-(1<<front),front)+dp_bitmask[1<<front][add_str]);
+int TICTACTOE_bijection(vector<vector<string>>& board){
+  int result(0);
+  for(int i=0;i<9;i++){
+    result*=3;
+    string tmp=board[i/3][i%3];
+    if(tmp=="O"){
+      result+=1;
+    }else if(tmp=="X"){
+      result+=2;
     }
   }
   return result;
 }
 int TICTACTOE_isFinished(vector<vector<string>>& board, string turn){
-
-}
-int TICTACTOE_bijection(vector<vector<string>>& board){
-  int result(0);
+  //O는 1, X는 2
+  int var_now;
+  if(turn=="O"){
+    var_now=1;
+  }else{
+    var_now=2;
+  }
+  //bijection
+  int bijection=TICTACTOE_bijection(board);
+  //Algo
+  876
+  543
+  210
   
 }
 int TICTACTOE_result(vector<vector<string>>& board, vector<int>& cache_result,string turn_last){
