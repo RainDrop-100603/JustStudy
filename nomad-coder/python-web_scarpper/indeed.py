@@ -3,7 +3,8 @@
 import requests
 from bs4 import BeautifulSoup
 
-INDEED_URL="https://kr.indeed.com/%EC%B7%A8%EC%97%85?q=python&limit=50"
+INDEED_URL="https://kr.indeed.com/jobs?q=python&limit=50"
+INDEED_VIEWJOB="https://kr.indeed.com/viewjob?"
 
 def extract_indeed_pageNum():
   max_page=1
@@ -29,6 +30,7 @@ def extract_indeed_allPage_soup():
   max_page=1
   pages_soup = []
   while now_page <= max_page:
+    print(f"extract soup {now_page}")
     result=requests.get(f"{INDEED_URL}&start={(now_page-1)*50}")
     soup=BeautifulSoup(result.text,"html.parser")
     pages_soup.append(soup)
@@ -47,16 +49,44 @@ def extract_indeed_allPage_soup():
   return pages_soup
 
 def get_jobCard_fromSoup(pages_soup:list):
-  jobCards= []
+  jobs_info= []
+  idx=0
   for soup in pages_soup:
+    print(f"get job_info: {idx}")
+    idx+=1
     jobcard=soup.find("div",{"class":"jobsearch-SerpJobCard"})
-    jobCards.append(jobcard)
-  return jobCards
+    info=get_info_fromJobcard(jobcard)
+    jobs_info.append(info)
+  return jobs_info
+
+def get_info_fromJobcard(jobcard):
+  title=jobcard.find("h2",{"class":"title"}).find("a")
+  if title.string is None:
+    title=str.strip(title["title"])
+  else:
+    title=str.strip(title.string)
+  company=jobcard.find("span",{"class":"company"})
+  if company.find("a") is not None:
+    company=str.strip(company.find("a").string)
+  else:
+    company=str.strip(company.string)
+  location=jobcard.find("div",{"class":"recJobLoc"})["data-rc-loc"]
+  job_id=jobcard["data-jk"]
+  return {
+    "title":title,
+    "company":company,
+    "location":location,
+    "link":f"{INDEED_VIEWJOB}jk={job_id}"
+    }
 
 def extract_test_soup():
   result=requests.get(INDEED_URL)
   soup=BeautifulSoup(result.text,"html.parser")
+  return soup
+
+def extract_test_jobs(soup):
   JobCards=soup.find_all("div",{"class":"jobsearch-SerpJobCard"})
+  jobs=[]
   for jobcard in JobCards:
     title=jobcard.find("h2",{"class":"title"}).find("a")
     if title.string is None:
@@ -68,14 +98,7 @@ def extract_test_soup():
       company=str.strip(company.find("a").string)
     else:
       company=str.strip(company.string)
-    print(f"===title: {str(title)},    company: {str(company)}")
-  return soup
-
-
-# def tmp(soup:BeautifulSoup):
-#   JobCards=soup.find_all("div",{"class":"jobsearch-SerpJobCard"})
-#   for jobcard in JobCards:
-#     title=jobcard.find("h2",{"class":"title"}).find("a")["title"]
-#     company=jobcard.find("div",{"class":"sjc1"}).find("div").find("span").string
-#     print(title)
-#     print(company)
+    location=jobcard.find("div",{"class":"recJobLoc"})["data-rc-loc"]
+    job_id=jobcard["data-jk"]
+    jobs.append({"title":title,"company":company,"location":location,"link":f"{INDEED_VIEWJOB}jk={job_id}"})
+  return jobs
