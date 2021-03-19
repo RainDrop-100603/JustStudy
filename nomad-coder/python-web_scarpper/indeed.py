@@ -102,3 +102,13 @@ def extract_test_jobs(soup):
     job_id=jobcard["data-jk"]
     jobs.append({"title":title,"company":company,"location":location,"link":f"{INDEED_VIEWJOB}jk={job_id}"})
   return jobs
+
+def indeed_test():
+  test_soup=extract_test_soup()
+  test_jobs=extract_test_jobs(test_soup)
+  print(test_jobs)
+
+def indeed_get_jobs():
+  indeed_soups=extract_indeed_allPage_soup()
+  indeed_info_jobs=get_jobCard_fromSoup(indeed_soups)
+  return indeed_info_jobs
