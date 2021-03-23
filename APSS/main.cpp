@@ -25,29 +25,31 @@ int TICTACTOE_bijection(vector<vector<string>>& board){
   for(int i=0;i<9;i++){
     result*=3;
     string tmp=board[i/3][i%3];
-    if(tmp=="O"){
+    if(tmp=="o"){
       result+=1;
-    }else if(tmp=="X"){
+    }else if(tmp=="x"){
       result+=2;
     }
   }
   return result;
 }
-int TICTACTOE_isFinished(vector<vector<string>>& board, string turn){
-  //O는 1, X는 2
-  int var_now;
-  if(turn=="O"){
-    var_now=1;
-  }else{
-    var_now=2;
+bool TICTACTOE_isFinished(vector<vector<string>>& board, string turn){
+  //직접계산
+  if(board[0][0]==turn){
+    if(board[0][1]==turn&&board[0][2]==turn) return true;
+    if(board[1][0]==turn&&board[2][0]==turn) return true;
   }
-  //bijection
-  int bijection=TICTACTOE_bijection(board);
-  //Algo
-  876
-  543
-  210
-  
+  if(board[2][2]==turn){
+    if(board[2][1]==turn&&board[2][0]==turn) return true;
+    if(board[1][2]==turn&&board[0][2]==turn) return true;
+  }
+  if(board[1][1]==turn){
+    if(board[0][0]==turn&&board[2][2]==turn) return true;
+    if(board[2][0]==turn&&board[0][2]==turn) return true;
+    if(board[0][1]==turn&&board[2][1]==turn) return true;
+    if(board[1][0]==turn&&board[1][2]==turn) return true;
+  }
+  return false;
 }
 int TICTACTOE_result(vector<vector<string>>& board, vector<int>& cache_result,string turn_last){
   //기저
@@ -57,13 +59,13 @@ int TICTACTOE_result(vector<vector<string>>& board, vector<int>& cache_result,st
   }
   //기저 2, 직전에 상대방이 둔 수로 게임이 끝났는가?
   string turn_now;
-  if(turn_last=="O"){
-    turn_now="X";
+  if(turn_last=="o"){
+    turn_now="x";
   }else{
-    turn_now="O";
+    turn_now="o";
   }
   if(TICTACTOE_isFinished(board,turn_last)){
-    result=-1;
+    result=1;
     return result;
   }
   //Algo
@@ -71,7 +73,7 @@ int TICTACTOE_result(vector<vector<string>>& board, vector<int>& cache_result,st
     for(int j=0;j<3;j++){
       if(board[i][j]=="."){
         board[i][j]=turn_now;
-        result=max(result,TICTACTOE_result(board,cache_result,turn_now));
+        result=max(result,-1*TICTACTOE_result(board,cache_result,turn_now));
         board[i][j]==".";
       }
       if(result==1){
@@ -95,19 +97,19 @@ string TICTACTOE_Algo(vector<vector<string>>& board){
   string turn_now, turn_last;
   for(auto& ele:board){
     for(auto& ele2: ele){
-      if(ele2=="O"){
+      if(ele2=="o"){
         used_O++;
-      }else if(ele2=="X"){
+      }else if(ele2=="x"){
         used_X++;
       }
     }
   }
   if(used_X > used_O){
-    turn_now="O";
-    turn_last="X";
+    turn_now="o";
+    turn_last="x";
   }else{
-    turn_now="X";
-    turn_last="O"
+    turn_now="x";
+    turn_last="o";
   }
   //result
   vector<int> cache_result(static_cast<int>(pow(3,9)),-2);
@@ -143,7 +145,7 @@ void TICTACTOE(){
   /*전략
   전략1
       int isFinished(board, turn_last): 직전에 둔 사람(turn_last)로 인해 게임이 끝나면 1, 아니면 0 반호나
-      int bijection(board): "."=0, "O"=1, "X"=2로 치환하여 반환 
+      int bijection(board): "."=0, "o"=1, "x"=2로 치환하여 반환 
       int bitmask(board, turn_last): 
         기저: cache chk
         기저2: isFinished로 확인
