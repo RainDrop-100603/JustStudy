@@ -25,7 +25,7 @@ int NUMBERGAME_cache(const vector<int>& board, vector<vector<int>>& DP_cache, in
     return 0;
   }
   //기저 2
-  int result=DP_cache[left][len];
+  int& result=DP_cache[left][len];
   if(result!=-50001){
     return result;
   }
@@ -38,7 +38,7 @@ int NUMBERGAME_cache(const vector<int>& board, vector<vector<int>>& DP_cache, in
   result=max(result,board[left+len-1]-NUMBERGAME_cache(board,DP_cache,left,len-1));  //오른쪽 하나 챙기기
   return result;
 }
-int NUMBERGAME_Algo(vector<int>& board){
+int NUMBERGAME_Algo(const vector<int>& board){
   //DP생성
   int boardLen=board.size();
   vector<vector<int>> DP_cache(boardLen,vector<int>(boardLen+1,-50001));
