@@ -166,3 +166,9 @@ bool TICTACTOE_isFinished(vector<vector<string>>& board, string turn);
 int TICTACTOE_result(vector<vector<string>>& board, vector<int>& cache_result,string turn_last);
 string TICTACTOE_Algo(vector<vector<string>>& board);
 void TICTACTOE();
+
+// 전략 짜는것 완벽했음
+void NUMBERGAME_Input(vector<int>& board);
+int NUMBERGAME_cache(const vector<int>& board, vector<vector<int>>& DP_cache, int left, int len);
+int NUMBERGAME_Algo(const vector<int>& board);
+void NUMBERGAME();
