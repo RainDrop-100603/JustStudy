@@ -11,18 +11,19 @@
 using namespace std;
 
 // 전략 짜는것 완벽했음
-void BLOCKGAME_Input(vector<int>& board){
-  int tmp;
-  cin>>tmp;
-  board.resize(tmp);
-  for(auto& ele: board){
-    cin>>ele;
+void BLOCKGAME_Input(vector<vector<string>>& board){
+  string tmp;
+  for(int i=0;i<5;i++){
+    cin>>tmp;
+    for(int j=0;j<5;j++){
+      board[i][j]=tmp[j];
+    }
   }
 }
-int BLOCKGAME_cache(const vector<int>& board, vector<vector<int>>& DP_cache, int left, int len){
+int BLOCKGAME_cache(vector<vector<string>>& board, vector<int>& DP_cache, int used_bitmask){
   //기저
-  if(len==0){
-    return 0;
+  if(used_bitmask==0){
+    return -1;
   }
   //기저 2
   int& result=DP_cache[left][len];
@@ -38,12 +39,18 @@ int BLOCKGAME_cache(const vector<int>& board, vector<vector<int>>& DP_cache, int
   result=max(result,board[left+len-1]-BLOCKGAME_cache(board,DP_cache,left,len-1));  //오른쪽 하나 챙기기
   return result;
 }
-int BLOCKGAME_Algo(const vector<int>& board){
-  //DP생성
-  int boardLen=board.size();
-  vector<vector<int>> DP_cache(boardLen,vector<int>(boardLen+1,-50001));
-  //Algo, 
-  return BLOCKGAME_cache(board,DP_cache,0,boardLen);
+string BLOCKGAME_Algo(vector<vector<string>>& board){
+  //DP생성, 비트마스크 생성
+  vector<int> DP_cache(1<<25,-2);
+  int used_bitmask=(1<<25)-1;
+  //Algo
+  int result=BLOCKGAME_cache(board,DP_cache,used_bitmask);
+  if(result==1){
+    return string("WINNING");
+  }else if(result==-1){
+    return string("LOSING");
+  }
+  return string("ERROR");
 }
 void BLOCKGAME(){
   //BLOCKGAME
@@ -72,31 +79,27 @@ void BLOCKGAME(){
     board를 bijection하는 함수가 필요하다.
     왼쪽위(0,0)부터 오른쪽아래(4,4)로 진행하며, 확장 위치는 각 블록별로 다르게
       2블록은 우측과 아래측
-      4블록은 밥먹고와서 체킹 (우선 모든 모습을 생각하자 )
+      4블록은 우측 확장후, 위, 아래, 우측위, 우측아래 4방향으로 확장
   */
   /*전략
   전략1
     Dynamic Programing
       정답(큰단위)->작은단위 DP
       f=max(for(모든 나의행동){나의 행동 & f(남은 게임판에서 상대의 승리여부)}) , 나의승리=1, 상대의 승리=-1
-        행동: 25번 반복, 블록 확인은 2개(2블록)+
+        행동: 25번 반복, 블록 확인은 2개(2블록)+4개(3블록) = 6n
         총 연산수(DP_cache크기): bitamsk=2^25 = 2^n
-      DP_cache 표현방법
-        DP_cache[left][len]=left번째 부터 len길이만큼 이어져 있는 board
-        크기=n^2
-        default: -50001
     시간:
-      O(n^2)
+      O(2^n * n)
     크기:
-      O(n^2)
+      O(2^n)
   */
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    vector<int> board;
+    vector<vector<string>> board(5,vector<string>(5));
     BLOCKGAME_Input(board);
-    int result=BLOCKGAME_Algo(board);
+    string result=BLOCKGAME_Algo(board);
     cout<<result<<'\n';
   }
 }
