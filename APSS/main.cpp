@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// @*@* 정답에서 하나씩 빼는 DP, boundary 조건 확실히
+// 연산자 확인, pseudo-code 잘 짜기 
 void TICTACTOE_Input(vector<vector<string>>& board){
   for(int i=0;i<board.size();i++){
     string tmp;
@@ -54,42 +54,37 @@ bool TICTACTOE_isFinished(vector<vector<string>>& board, string turn){
 int TICTACTOE_result(vector<vector<string>>& board, vector<int>& cache_result,string turn_last){
   //기저
   int& result=cache_result[TICTACTOE_bijection(board)];
-  if(result!=-2){
+  if(result!=2){
     return result;
   }
   //기저 2, 직전에 상대방이 둔 수로 게임이 끝났는가?
+  if(TICTACTOE_isFinished(board,turn_last)){
+    result=1;
+    return result;
+  }
+  //Algo
   string turn_now;
   if(turn_last=="o"){
     turn_now="x";
   }else{
     turn_now="o";
   }
-  if(TICTACTOE_isFinished(board,turn_last)){
-    result=1;
-    return result;
-  }
-  //Algo
   for(int i=0;i<3;i++){
     for(int j=0;j<3;j++){
       if(board[i][j]=="."){
         board[i][j]=turn_now;
-        result=max(result,-1*TICTACTOE_result(board,cache_result,turn_now));
-        board[i][j]==".";
-      }
-      if(result==1){
-        return result;
+        result=min(result,-1*TICTACTOE_result(board,cache_result,turn_now));
+        board[i][j]=".";
       }
     }
   }
   //return, -2 는 더 둘 자리가 없고, 승부도 나지 않았음을 의미한다.
-  if(result==-2){
+  if(result==2){
     result=0;
     return result;
-  }else if(result==-1||result==0){
+  }else{
     return result;
   }
-  cout<<"Error occurs in result";
-  return 10;  //makes error
 }
 string TICTACTOE_Algo(vector<vector<string>>& board){
   //누구의 turn인지 구하기
@@ -112,7 +107,7 @@ string TICTACTOE_Algo(vector<vector<string>>& board){
     turn_last="o";
   }
   //result
-  vector<int> cache_result(static_cast<int>(pow(3,9)),-2);
+  vector<int> cache_result(static_cast<int>(pow(3,9)),2);
   int result_int=TICTACTOE_result(board,cache_result,turn_last);
   if(result_int==1){
     return turn_last;

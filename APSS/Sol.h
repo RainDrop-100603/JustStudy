@@ -158,3 +158,11 @@ int RESTORE_DP(vector<vector<int>>& dp_bitmask,int now_bitmask,int add_str);
 string RESTORE_result(vector<vector<int>>& DP_strSaved,const vector<string>& strArr_opti);
 string RESTORE_Algo(int strNum,vector<string> strArr);
 void RESTORE();
+
+// 연산자 확인, pseudo-code 잘 짜기 
+void TICTACTOE_Input(vector<vector<string>>& board);
+int TICTACTOE_bijection(vector<vector<string>>& board);
+bool TICTACTOE_isFinished(vector<vector<string>>& board, string turn);
+int TICTACTOE_result(vector<vector<string>>& board, vector<int>& cache_result,string turn_last);
+string TICTACTOE_Algo(vector<vector<string>>& board);
+void TICTACTOE();
