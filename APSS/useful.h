@@ -214,6 +214,12 @@ string to something
       LValue ref: & , RVlue ref: &&
       다른 형식의 참조이므로 함수 오버로딩이 가능
         func(int& x), func(int&& x) 오버로딩
+  vector
+    vector<bool>은 bool 8개를 1byte에 저장하며, 여러 경우에 의도치 않게 작동할 수 있다.
+      deque에 bool을 담는다.(deque에는 bool 자체 그대로 넣을 수 있다)
+      bool대신 bitset을 이용한다.
+  bitset
+    to be filled
   std::move, std::forward 
     move
       LValue 를 RValue로 캐스팅 해준다.
