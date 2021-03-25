@@ -20,31 +20,79 @@ void BLOCKGAME_Input(vector<vector<string>>& board){
     }
   }
 }
-int BLOCKGAME_cache(vector<vector<string>>& board, vector<int>& DP_cache, int used_bitmask){
+int BLOCKGAME_cache(vector<int>& DP_cache, int can_use_bitmask){
   //기저
-  if(used_bitmask==0){
+  if(can_use_bitmask==0){
     return -1;
   }
   //기저 2
-  int& result=DP_cache[left][len];
-  if(result!=-50001){
+  int& result=DP_cache[can_use_bitmask];
+  if(result!=-2){
     return result;
   }
   //Algo
-  if(len>=2){
-    result=max(result,-1*BLOCKGAME_cache(board,DP_cache,left+2,len-2)); //왼쪽 두개 삭제
-    result=max(result,-1*BLOCKGAME_cache(board,DP_cache,left,len-2)); //오른쪽 두개 삭제
+  for(int idx=0;idx<25;idx++){
+    if((1<<idx)&can_use_bitmask){
+      can_use_bitmask-=(1<<idx);
+      //오른쪽 끝이 아닐경우, 오른쪽으로 확장 가능
+      if((idx%5!=4)&&(1<<(idx+1)&can_use_bitmask)){
+        can_use_bitmask-=(1<<(idx+1));
+        result=max(result,-1*BLOCKGAME_cache(DP_cache,can_use_bitmask));
+        //오른쪽 윗부분 체크
+        if((idx+1-5>0)&&((1<<(idx+1-5))&can_use_bitmask)){
+          can_use_bitmask-=(1<<(idx+1-5));
+          result=max(result,-1*BLOCKGAME_cache(DP_cache,can_use_bitmask));
+          can_use_bitmask+=(1<<(idx+1-5));
+        }
+        //오른쪽 아랫부분 체크
+        if((idx+1+5<25)&&((1<<(idx+1+5))&can_use_bitmask)){
+          can_use_bitmask-=(1<<(idx+1+5));
+          result=max(result,-1*BLOCKGAME_cache(DP_cache,can_use_bitmask));
+          can_use_bitmask+=(1<<(idx+1+5));
+        }
+        //왼쪽 아랫부분 체크
+        if((idx+5<25)&&((1<<(idx+5))&can_use_bitmask)){
+          can_use_bitmask-=(1<<(idx+5));
+          result=max(result,-1*BLOCKGAME_cache(DP_cache,can_use_bitmask));
+          can_use_bitmask+=(1<<(idx+5));
+        }
+        //왼쪽 윗부분 체크
+        if((idx-5>=0)&&((1<<(idx-5))&can_use_bitmask)){
+          can_use_bitmask-=(1<<(idx-5));
+          result=max(result,-1*BLOCKGAME_cache(DP_cache,can_use_bitmask));
+          can_use_bitmask+=(1<<(idx-5));
+        }
+        can_use_bitmask+=(1<<(idx+1));
+      }
+      //맨아래가 아닐경우, 아래로 확장 가능 
+      if((idx+5<25)&&((1<<(idx+5))&can_use_bitmask)){
+        can_use_bitmask-=(1<<(idx+5));
+        result=max(result,-1*BLOCKGAME_cache(DP_cache,can_use_bitmask));
+        can_use_bitmask+=(1<<(idx+5));
+      }
+      can_use_bitmask+=(1<<idx);
+    }
   }
-  result=max(result,board[left]-BLOCKGAME_cache(board,DP_cache,left+1,len-1));  //왼쪽 하나 챙기기
-  result=max(result,board[left+len-1]-BLOCKGAME_cache(board,DP_cache,left,len-1));  //오른쪽 하나 챙기기
-  return result;
+  //결과값 return, 아무런 블록도 놓지 못하면(ret==-2) 진 것임 
+  if(result==-2){
+    return -1;
+  }else{
+    return result;
+  }
 }
 string BLOCKGAME_Algo(vector<vector<string>>& board){
   //DP생성, 비트마스크 생성
   vector<int> DP_cache(1<<25,-2);
-  int used_bitmask=(1<<25)-1;
+  int can_use_bitmask=0;
+  for(int i=0;i<5;i++){
+    for(int j=0;j<5;j++){
+      if(board[i][j]=="."){
+        can_use_bitmask+=1<<(5*i+j);
+      }
+    }
+  }
   //Algo
-  int result=BLOCKGAME_cache(board,DP_cache,used_bitmask);
+  int result=BLOCKGAME_cache(DP_cache,can_use_bitmask);
   if(result==1){
     return string("WINNING");
   }else if(result==-1){
@@ -75,8 +123,9 @@ void BLOCKGAME(){
     대칭게임이므로, 두 사용자가 DP_cache를 공유한다.
     f=max(for(모든 나의행동){나의 행동 & f(남은 게임판에서 상대의 승리여부)}) , 나의승리=1, 상대의 승리=-1
     DP_default: -1
-    25칸이므로 bitmask를 사용할 수 있다.
-    board를 bijection하는 함수가 필요하다.
+    board를 사용하거나, board를 bitmask로 바꾸어 사용하거나, 둘 중 하나만 하면 된다.
+      25칸이므로 bitmask를 사용할 수 있다.
+      board를 bijection하는 함수가 필요하다.
     왼쪽위(0,0)부터 오른쪽아래(4,4)로 진행하며, 확장 위치는 각 블록별로 다르게
       2블록은 우측과 아래측
       4블록은 우측 확장후, 위, 아래, 우측위, 우측아래 4방향으로 확장
