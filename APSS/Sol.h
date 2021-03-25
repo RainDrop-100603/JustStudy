@@ -178,3 +178,8 @@ void BLOCKGAME_Input(vector<vector<string>>& board);
 char BLOCKGAME_cache(vector<char>& DP_cache, int can_use_bitmask);
 string BLOCKGAME_Algo(vector<vector<string>>& board);
 void BLOCKGAME();
+
+// silding-window 적용. 수행시간을 줄일 수 있을까? 
+void SUSHI_Input(vector<pair<int,int>>& menu, int& budget);
+int SUSHI_Algo(vector<pair<int,int>> menu,int budget);
+void SUSHI();
