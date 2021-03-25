@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// memOver 대비 필요, 특정 조건을 만족하면 바로 ret하게 만들기 
+// memOver 대비 필요, 특정 조건을 만족하면 바로 ret하게 만들어 수행시간 향상 
 void BLOCKGAME_Input(vector<vector<string>>& board){
   string tmp;
   for(int i=0;i<5;i++){

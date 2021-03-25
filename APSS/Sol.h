@@ -172,3 +172,9 @@ void NUMBERGAME_Input(vector<int>& board);
 int NUMBERGAME_cache(const vector<int>& board, vector<vector<int>>& DP_cache, int left, int len);
 int NUMBERGAME_Algo(const vector<int>& board);
 void NUMBERGAME();
+
+// memOver 대비 필요, 특정 조건을 만족하면 바로 ret하게 만들어 수행시간 향상 
+void BLOCKGAME_Input(vector<vector<string>>& board);
+char BLOCKGAME_cache(vector<char>& DP_cache, int can_use_bitmask);
+string BLOCKGAME_Algo(vector<vector<string>>& board);
+void BLOCKGAME();
