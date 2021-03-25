@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// 전략 짜는것 완벽했음
+// memOver 대비 필요, 특정 조건을 만족하면 바로 ret하게 만들기 
 void BLOCKGAME_Input(vector<vector<string>>& board){
   string tmp;
   for(int i=0;i<5;i++){
@@ -158,7 +158,7 @@ void BLOCKGAME(){
       O(2^n)
     sol유의사항
       int로 DP를 만들면 memover가 떠서, char로 바꾸어주었다.
-        bitset 배열 두개를 이용하여 
+        vector<bitset<1>> 2줄을 이용할 수도 있다.(vector<bool>은 사용하지 않는다) 
   */
   //Sol
   int testCase;
