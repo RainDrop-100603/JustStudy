@@ -124,7 +124,10 @@ void GENIUS(){
     크기:
       O(N), 50*9=450
     sol 유의사항
-      
+      time Over
+  전략2
+    Dynamic Programming
+      행렬곱
   */
   //Sol
   int testCase;
