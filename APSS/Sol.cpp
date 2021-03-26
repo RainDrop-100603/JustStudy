@@ -2923,6 +2923,37 @@
 //     cin>>ele.first>>ele.second;
 //   }
 // }
+// int SUSHI_Algo2(vector<pair<int,int>> menu,int budget){
+//   //budget과 menu 100 나누기, menu sort
+//   for(auto& ele:menu){
+//     ele.first/=100;
+//   }
+//   budget/=100;
+//   sort(menu.begin(),menu.end());
+//   //DP생성, 초기화
+//   vector<int> tmp_cache(201,0);
+//   for(auto& ele:menu){
+//     if(ele.first<=budget){
+//       tmp_cache[ele.first]=ele.second;
+//     }
+//   }
+//   //Algo
+//   for(int cost=0;cost<=budget;cost++){
+//     int cand=0;
+//     for(auto& ele: menu){
+//       if(cost>=ele.first){
+//         cand=max(cand,tmp_cache[(cost-ele.first)%201]+ele.second);
+//       }
+//     }
+//     tmp_cache[cost%201]=cand;
+//   }
+//   //result
+//   int result=0;
+//   for(auto& ele:tmp_cache){
+//     result=max(result,ele);
+//   }
+//   return result;
+// }
 // int SUSHI_Algo(vector<pair<int,int>> menu,int budget){
 //   //budget과 menu 100 나누기, menu sort
 //   for(auto& ele:menu){
@@ -2995,6 +3026,27 @@
 //       4억회
 //     크기:
 //       201 byte
+//     sol 유의사항
+//       algo2가 왜 algo보다 빠를까?
+//         우선 tmp_cache[]!=0 부분, 배열이 비어있는지 확인하는 부분은 매우 제한적으로 유효하다.(항상 비어있는 부분이 있을때만 유효)
+//           이 부분을 제거하여도 보편적인 속도에는 큰 차이가 없음을 확인할 수 있다.
+//         그렇다면 두 algorithm의 구조적차이에서 속도의 차이가 발생함을 알 수 있다.
+//           algo: tmp_cache[now]에서 tmp_cache[now+cost]부분을 수정한다.
+//           algo2: tmp_cache[now]부분을 수정하며, tmp_cache[now-cost]에서 값을 불러온다.  
+//           두 알고리즘 모두 캐시 호출 횟수에서는 차이가 없음을 알 수 있다.
+//           두 알고리즘 모두 불러오는 캐시의 위치의 분포가 같다(+cost냐 -cost냐 차이이므로 당연히 같다)
+//           algo의 경우 반복문 호출마다 참조형태로 값을 불러오는데 이는 속도에 큰 영향을 끼치지는 않는다(algo2를 유사한 형식으로 바꿔도 속도차이 x)
+//           남은 차이는, max함수를 여러 부분에 적용하는지, 한 부분에 적용하는지의 차이다.
+//             algo2는 tmp_cache[now]에만 max를 적용하면 된다.
+//             algo는 tmp_cache[now+each cost], 각각의 cost에 대해 max를 적용해야 한다.
+//             algo는 한번의 6개의 위치를 수정하고, algo2는 한번의 1개의 위치를 수정한다.
+//               하드웨어적인 특성에서 기인했다고 본다.
+//           하드웨어적인 특성 
+//             cpu는 cache에서 계산하여 비교적 속도가 느린 mem 혹은 hdd에 저장한다.
+//             algo와 algo2는 cache에서 계산하는 횟수는 동일하다
+//             그러나 algo2는 속도가 느린 저장장치에 1번 접근하는 반면
+//               algo는 속도가 느린 저장장치에 n번(음식의 갯수)만큼 접근하여 저장해야한다.
+//             속도의 느린 저장장치에 접근하는 횟수가 많아져, 시간에 더 오래걸린 것이다. 
 //   */
 //   //Sol
 //   int testCase;
@@ -3007,3 +3059,4 @@
 //     cout<<result<<'\n';
 //   }
 // }
+
