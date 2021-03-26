@@ -37,11 +37,11 @@ int SUSHI_Algo(vector<pair<int,int>> menu,int budget){
   for(int cost=0;cost<=budget;cost++){
     int cand=0;
     for(auto& ele: menu){
-      if(cost>ele.first){
-        cand=max(cand,tmp_cache[cost-ele.first]+ele.second);
+      if(cost>=ele.first){
+        cand=max(cand,tmp_cache[(cost-ele.first)%201]+ele.second);
       }
     }
-    tmp_cache[cost]=cand;
+    tmp_cache[cost%201]=cand;
   }
   //result
   int result=0;
