@@ -56,10 +56,19 @@ vector<double> GENIUS_Algo(int& songNum,int& targetTime,int& favSongNum,vector<i
       DP_cache[now_song][(time)%9]=tmp;
     }  
   }
+  //test
+  cout<<"cache===================\n";
+  for(auto& ele: DP_cache){
+    for(auto& ele2: ele){
+      cout<<ele2<<" ";
+    }
+    cout<<"\n";
+  }
+  cout<<"--------------------------------------\n";
   //result
   vector<double> result;
   for(auto& songIdx:favSongList){
-    double tmp_result;
+    double tmp_result=0;
     for(int i=0;i<songPlaytime[songIdx];i++){
       tmp_result+=DP_cache[songIdx][(targetTime-i)%9];
     }
@@ -135,6 +144,7 @@ void GENIUS(){
     vector<vector<double>> possibility;
     GENIUS_Input(songNum,targetTime,favSongNum,songPlaytime,favSongList,possibility);
     vector<double> result=GENIUS_Algo(songNum,targetTime,favSongNum,songPlaytime,favSongList,possibility);
+    cout<<"result: ";
     for(auto& ele:result){
       cout<<ele<<" ";
     }
