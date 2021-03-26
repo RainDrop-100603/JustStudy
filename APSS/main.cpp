@@ -11,152 +11,138 @@
 using namespace std;
 
 // @* algo와 algo2의 속도차이에 유의하자(하드웨어적 원인). 속도가 느린 장치에 자주 접근할수록, 속도는 느려진다.
-void SUSHI_Input(vector<pair<int,int>>& menu, int& budget){
-  int menuLen;
-  cin>>menuLen>>budget;
-  menu.resize(menuLen);
-  for(auto& ele: menu){
-    cin>>ele.first>>ele.second;
+void GENIUS_Input(int& songNum,int& targetTime,int& favSongNum,vector<int>& songPlaytime,vector<int>& favSongList,vector<vector<double>>& possibility){
+  cin>>songNum>>targetTime>>favSongNum;
+  songPlaytime.resize(songNum);
+  for(auto& ele:songPlaytime){
+    cin>>ele;
+  }
+  possibility.resize(songNum);//열 resize
+  for(auto& ele: possibility){
+    ele.resize(songNum);//행 resize
+    for(auto& ele2: ele){
+      cin>>ele2;
+    }
+  }
+  favSongList.resize(favSongNum);
+  for(auto& ele:favSongList){
+    cin>>ele;
   }
 }
-int SUSHI_Algo2(vector<pair<int,int>> menu,int budget){
-  //budget과 menu 100 나누기, menu sort
-  for(auto& ele:menu){
-    ele.first/=100;
-  }
-  budget/=100;
-  sort(menu.begin(),menu.end());
-  //DP생성, 초기화
-  vector<int> tmp_cache(201,0);
-  for(auto& ele:menu){
-    if(ele.first<=budget){
-      tmp_cache[ele.first]=ele.second;
-    }
-  }
-  //Algo
-  for(int cost=0;cost<=budget;cost++){
-    int cand=0;
-    for(auto& ele: menu){
-      if(cost>=ele.first){
-        cand=max(cand,tmp_cache[(cost-ele.first)%201]+ele.second);
-      }
-    }
-    tmp_cache[cost%201]=cand;
-  }
-  //result
-  int result=0;
-  for(auto& ele:tmp_cache){
-    result=max(result,ele);
-  }
-  return result;
-}
-int SUSHI_Algo(vector<pair<int,int>> menu,int budget){
-  //budget과 menu 100 나누기, menu sort
-  for(auto& ele:menu){
-    ele.first/=100;
-  }
-  budget/=100;
-  sort(menu.begin(),menu.end());
-  //DP생성, 초기화
-  vector<int> tmp_cache(201,0);
-  for(auto& ele:menu){
-    if(ele.first<=budget){
-      tmp_cache[ele.first]=ele.second;
-    }
-  }
-  //Algo
-  for(int cost=0;cost<=budget;cost++){
-    if(tmp_cache[cost%201]!=0){
-      for(auto& ele:menu){
-        if(cost+ele.first<=budget){
-          int& value=tmp_cache[(cost+ele.first)%201];
-          value=max(value,tmp_cache[cost%201]+ele.second);
+vector<double> GENIUS_Algo(int& songNum,int& targetTime,int& favSongNum,vector<int>& songPlaytime,vector<int>& favSongList,vector<vector<double>>& possibility){
+  //DP생성, 0분 초기화
+  vector<vector<double>> DP_cache(songNum,vector<double>(9,0));
+  DP_cache[0][0]=1;
+  //Algo 1~3분 초기화 (if문 없애주기 위함)
+  for(int time=1;time<=min(3,targetTime);time++){
+    for(int now_song=0;now_song<songNum;now_song++){
+      double tmp=0;
+      for(int prev_song=0;prev_song<songNum;prev_song++){
+        int prev_song_time=songPlaytime[prev_song];
+        if(prev_song_time<=time){
+          tmp+=DP_cache[prev_song][time-prev_song_time]*possibility[prev_song][now_song];
         }
       }
-    }
+      DP_cache[now_song][time]=tmp;
+    }  
+  }
+  //Algo, 4 ~ targetTime
+  for(int time=max(4,targetTime);time<=targetTime;time++){
+    for(int now_song=0;now_song<songNum;now_song++){
+      double tmp=0;
+      for(int prev_song=0;prev_song<songNum;prev_song++){
+        tmp+=DP_cache[prev_song][(time-songPlaytime[prev_song])%9]*possibility[prev_song][now_song];
+      }
+      DP_cache[now_song][(time)%9]=tmp;
+    }  
   }
   //result
-  int result=0;
-  for(auto& ele:tmp_cache){
-    result=max(result,ele);
+  vector<double> result;
+  for(auto& songIdx:favSongList){
+    double tmp_result;
+    for(int i=0;i<songPlaytime[songIdx];i++){
+      tmp_result+=DP_cache[songIdx][(targetTime-i)%9];
+    }
+    result.push_back(tmp_result);
   }
   return result;
 }
-void SUSHI(){
-  //SUSHI
+void GENIUS(){
+  //GENIUS
   /*설명 및 입력
   설명
-    회전초밥집에는 n종류의 메뉴가 있는데, 운영진들은 각 메뉴에 대해 선호도를 매겼습니다.
-    운영진들은 주어진 예산 안에서 선호도의 합을 최대한으로 하도록 초밥을 먹고 싶습니다. 
-    각 종류의 초밥은 무한정으로 공급된다고 가정합시다. 이 때 얻을 수 있는 최대한의 선호도는 얼마일까요?
+    지니어스를 사용하면 한 곡 다음에 다음 곡이 재생될 확률은 두 곡의 유사도에 따라 결정됩니다.
+    음악들 간의 유사도를 조사해, i 번 곡 다음에 j 번 곡이 재생될 확률을 나타내는 확률 행렬 T 를 만들었습니다.
+    K 분 30초가 지난 후 태윤이가 좋아하는 곡이 재생되고 있을 확률은 얼마일까요? 
+    MP3 플레이어에 들어 있는 곡들의 길이는 모두 1분, 2분, 3분 혹은 4분입니다.
   입력
-    입력의 첫 줄에는 테스트 케이스의 수 c(1 <= c <= 50)가 주어집니다. 
-    각 테스트 케이스의 첫 줄에는 초밥의 종류 n(1 <= n <= 20)과 운영진들의 예산 m (1 <= m <= 2,147,483,647)이 주어집니다. 
-    그 후 n 줄에 각 초밥의 가격과 선호도가 순서대로 주어집니다. 가격은 20,000 이하의 자연수로, 항상 100 의 배수입니다. 선호도는 20 이하의 자연수입니다.
+    입력의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 50) 가 주어집니다. 
+    각 테스트 케이스의 첫 줄에는 MP3 플레이어에 들어 있는 곡의 수 N (1 <= N <= 50 ) 과 K (1 <= K <= 1,000,000) , 
+      그리고 태윤이가 좋아하는 곡의 수 M (1 <= M <= 10) 이 주어집니다. 
+    그 다음 줄에는 N 개의 정수로 각 곡의 길이 Li 가 분 단위로 주어지고, 그 후 N 줄에는 한 곡이 재생된 후 다음 곡이 재생될 확률을 나타내는 행렬 T 가 주어집니다. 
+    T 의 i 번 줄의 j 번 숫자 (0 <= i,j < N) T[i,j] 는 i 번 곡이 끝난 뒤 j 번 곡을 재생할 확률을 나타냅니다. T 의 각 행의 합은 1 입니다. 
+    각 테스트 케이스의 마지막 줄에는 M 개의 정수로 태윤이가 좋아하는 곡의 번호 Qi 가 주어집니다.
   출력
-    각 테스트 케이스별로 한 줄에 가능한 선호도의 최대 합을 출력합니다.
+    각 테스트 케이스마다 한 줄로 태윤이가 좋아하는 M 개의 곡에 대해 각 곡이 재생되고 있을 확률을 출력합니다. 
+    10^-7 이하의 절대/상대 오차가 있는 답은 정답으로 인정됩니다.
   제한조건
-    8초, 64MB
+    20초, 64MB
   */
   /*힌트
-    예산이 1~int_max이지만, 금액은 항상 100의 배수다. 즉 DP이용시 cache의 크기를 100배 줄일 수 있다.
-    가격은 항상 20000원 이하이다. 현재금액에서 20000원보다 낮은 금액은 이용하지 않으므로, sliding window기법으로 mem 절약이 가능하다.
-      cost 오름차순으로 정렬해야 한다.
-      위 두개를 이용하면, 0~200까지, 총 201만큼의 cache만으로 연산이 가능하다.
-        0~199까지 할 경우, 200이 0에 저장되어 순서가 꼬이는 문제가 발생한다.
-      작은단위에서 큰 단위로 계산해야한다. 0~budget
-      마지막 정해진 금액을 초과할 경우, cache내부에서 가장 큰 값이 정답이다.
-      if(DP[x] != 0) -> for(모든 음식 1~n) DP[x+cost] = max(DP[x+cost],DP[x] + value) 
+    K분 30초가 지난 후의 곡의 확률은 아래 것들의 합이다.
+      K분에 바뀐 {1분,2분,3분,4분} 노래 : K-1 ~ K-4분전에 시작해 K분에 끝나는 노래 * 현재 내가 좋아하는 노래{1,2,3,4}가 등장할 확률
+      K-1분에 {2분,3분,4분} 바뀐 노래: K-2~K-5, same as others
+      K-2분에 {3분,4분} 바뀐 노래: K-3~K-6, same as others
+      K-3분에 {4분} 바뀐 노래: K-4 ~ K-7 분에 시작해 K-3분에 끝나는 노래 * 현재 내가 좋아하는 노래{4}가 등장할 확률
+    DP: sliding window기법을 사용할 수 있다.
+      cache에는 현재시간 -7분 ~ 현재시간 까지 저장해야 한다. 길이는 8+1(여유분)
+      cache에는 모든 노래에 대한 확률이 있어야 한다. 높이는 N
+      cache[song][time%9]=time에 시작한 song을 의미한다. 
+        cache[song][now%9]=for(x=each song) sum(cache[now_song][(now_time-x_time)%9]*possibility[x_song][now_song])
+      초기값은 0번곡으로 시작, cache[0][0]에 저장한다
+    위 두개를 합치면 정답은
+      for(auto& ele: fav song)
+        for(int i=0;i<ele.time;i++)
+          result+=cache[ele.idx][(now-i)%9];
   */
   /*전략
   전략1
     Dynamic Programing
       sliding window 기법을 사용한다.
-      작은단위 -> 큰단위 DP
+      작은단위 -> 큰단위 DP (time 0~K)
       금액과 예산은 모두 100으로 먼저 나눈뒤 사용한다.
-      if(DP[x] != 0) -> for(모든 음식 1~n) DP[x+cost] = max(DP[x+cost],DP[x] + value) 
-        cache 크기: 201
-        연산시간: 20(메뉴의 갯수)
-        연산횟수: 0~21474836 (int_max/100)
+      cache[song][now%9]=for(x=each song) sum(cache[now_song][(now_time-x_time)%9]*possibility[x_song][now_song])
+        cache 크기: 8+1
+        연산시간: N:50 각 노래
+        연산횟수: N:50 * K:1,000,000(지난 시간)
+      정답
+        for(auto& ele: fav song)
+          for(int i=0;i<ele.time;i++)
+            result+=cache[ele.idx][(now-i)%9];
     시간:
-      4억회
+      O(N^2 * K), 50^2 * 1,000,000=2,500,000,000
     크기:
-      201 byte
+      O(N), 50*9=450
     sol 유의사항
-      algo2가 왜 algo보다 빠를까?
-        우선 tmp_cache[]!=0 부분, 배열이 비어있는지 확인하는 부분은 매우 제한적으로 유효하다.(항상 비어있는 부분이 있을때만 유효)
-          이 부분을 제거하여도 보편적인 속도에는 큰 차이가 없음을 확인할 수 있다.
-        그렇다면 두 algorithm의 구조적차이에서 속도의 차이가 발생함을 알 수 있다.
-          algo: tmp_cache[now]에서 tmp_cache[now+cost]부분을 수정한다.
-          algo2: tmp_cache[now]부분을 수정하며, tmp_cache[now-cost]에서 값을 불러온다.  
-          두 알고리즘 모두 캐시 호출 횟수에서는 차이가 없음을 알 수 있다.
-          두 알고리즘 모두 불러오는 캐시의 위치의 분포가 같다(+cost냐 -cost냐 차이이므로 당연히 같다)
-          algo의 경우 반복문 호출마다 참조형태로 값을 불러오는데 이는 속도에 큰 영향을 끼치지는 않는다(algo2를 유사한 형식으로 바꿔도 속도차이 x)
-          남은 차이는, max함수를 여러 부분에 적용하는지, 한 부분에 적용하는지의 차이다.
-            algo2는 tmp_cache[now]에만 max를 적용하면 된다.
-            algo는 tmp_cache[now+each cost], 각각의 cost에 대해 max를 적용해야 한다.
-            algo는 한번의 6개의 위치를 수정하고, algo2는 한번의 1개의 위치를 수정한다.
-              하드웨어적인 특성에서 기인했다고 본다.
-          하드웨어적인 특성 
-            cpu는 cache에서 계산하여 비교적 속도가 느린 mem 혹은 hdd에 저장한다.
-            algo와 algo2는 cache에서 계산하는 횟수는 동일하다
-            그러나 algo2는 속도가 느린 저장장치에 1번 접근하는 반면
-              algo는 속도가 느린 저장장치에 n번(음식의 갯수)만큼 접근하여 저장해야한다.
-            속도의 느린 저장장치에 접근하는 횟수가 많아져, 시간에 더 오래걸린 것이다. 
+      
   */
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int budget;
-    vector<pair<int,int>> menu; 
-    SUSHI_Input(menu,budget);
-    int result=SUSHI_Algo(menu,budget);
-    cout<<result<<'\n';
+    int songNum,targetTime,favSongNum;
+    vector<int> songPlaytime,favSongList;
+    vector<vector<double>> possibility;
+    GENIUS_Input(songNum,targetTime,favSongNum,songPlaytime,favSongList,possibility);
+    vector<double> result=GENIUS_Algo(songNum,targetTime,favSongNum,songPlaytime,favSongList,possibility);
+    for(auto& ele:result){
+      cout<<ele<<" ";
+    }
+    cout<<'\n';
   }
 }
 
 int main(void){
-  SUSHI();
+  GENIUS();
   return 0;
 }
