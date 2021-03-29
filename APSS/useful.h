@@ -302,6 +302,9 @@ int  getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
 pair<long long,long long> euclidAlgo(long long A,long long B);  //유클리드 알고리즘"Ax+By=gcd(A,B)"의 해(x,y), 
 int fastSum(int n); //1~n까지의 합을 구한다. 분할정복방식
 
+//행렬 곱
+
+
 //실수 비교
 int cmpDouble_Abs(double a, double b, double absTolerance=(1.0e-8));
 int cmpDouble_Rel(double a, double b, double relTolerance=__DBL_EPSILON__);

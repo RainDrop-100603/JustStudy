@@ -11,6 +11,25 @@
 using namespace std;
 
 // @* algo와 algo2의 속도차이에 유의하자(하드웨어적 원인). 속도가 느린 장치에 자주 접근할수록, 속도는 느려진다.
+template <class T>
+vector<vector<T>> matrix2_mult(const vector<vector<T>>& m1,const vector<vector<T>>& m2){
+  //간단한 에러체크, 모든 경우를 체크하진 않는다.
+  if(m1.size()==0||m2.size()==0||m1[0].size()==0||m2[0].size()==0||m1[0].size()!=m2.size()){
+    cout<<"matrix2_mult Error!"<<endl;
+    return vector<vector<T>>();
+  }
+  //계산
+  long long row(m1.size()), mid(m2.size()), col(m2[0].size());
+  vector<vector<T>> result(row,vector<T>(col,0));
+  for(int i=0;i<row;i++){
+    for(int j=0;j<col;j++){
+      for(int z=0;z<mid;z++){
+        result[i][j]+=m1[i][z]*m2[z][j];
+      }
+    }
+  }
+  return result;
+}
 void GENIUS_Input(int& songNum,int& targetTime,int& favSongNum,vector<int>& songPlaytime,vector<int>& favSongList,vector<vector<double>>& possibility){
   cin>>songNum>>targetTime>>favSongNum;
   songPlaytime.resize(songNum);
@@ -30,9 +49,8 @@ void GENIUS_Input(int& songNum,int& targetTime,int& favSongNum,vector<int>& song
   }
 }
 vector<double> GENIUS_Algo(int& songNum,int& targetTime,int& favSongNum,vector<int>& songPlaytime,vector<int>& favSongList,vector<vector<double>>& possibility){
-  //열벡터 생성, 초기화, 변수
-  int time=0; //열벡터 = C(time)
-  vector<double> colVector(4*songNum,0);
+  //열벡터 생성, 초기화
+  vector<vector<double>> colVector(4*songNum,vector<double>(1,0));
   colVector[0][0]=1;
   //W: 곱셈 벡터 생성
   vector<vector<double>> wMatrix(4*songNum,vector<double>(4*songNum,0));
@@ -48,42 +66,30 @@ vector<double> GENIUS_Algo(int& songNum,int& targetTime,int& favSongNum,vector<i
       int songIdx=col/4;
       int songLen=songPlaytime[songIdx];
       int timeAgo=col%4+1;  //지나간 시간 
-      if(timeAgo<=songLen){
+      if(timeAgo==songLen){
         wMatrix[row][col]=possibility[songIdx][nextSongIdx];
-      }else{
-        wMatrix[row][col]=0;
       }
     }
   }
-  //Algo 1~3분 초기화 (if문 없애주기 위함)
-  for(int time=1;time<=min(3,targetTime);time++){
-    for(int now_song=0;now_song<songNum;now_song++){
-      double tmp=0;
-      for(int prev_song=0;prev_song<songNum;prev_song++){
-        int prev_song_time=songPlaytime[prev_song];
-        if(prev_song_time<=time){
-          tmp+=DP_cache[prev_song][time-prev_song_time]*possibility[prev_song][now_song];
-        }
-      }
-      DP_cache[now_song][time]=tmp;
-    }  
+  //계산
+  int remainTime=targetTime;
+  vector<vector<double>> wResult=wMatrix;
+  while(remainTime>1){
+    if(remainTime%2==1){
+      remainTime--;
+      wResult=matrix2_mult<double>(wResult,wMatrix);
+    }else{
+      remainTime/=2;
+      wResult=matrix2_mult<double>(wResult,wResult);
+    }
   }
-  //Algo, 4 ~ targetTime
-  for(int time=4;time<=targetTime;time++){
-    for(int now_song=0;now_song<songNum;now_song++){
-      double tmp=0;
-      for(int prev_song=0;prev_song<songNum;prev_song++){
-        tmp+=DP_cache[prev_song][(time-songPlaytime[prev_song])%9]*possibility[prev_song][now_song];
-      }
-      DP_cache[now_song][(time)%9]=tmp;
-    }  
-  }
+  colVector=matrix2_mult<double>(wResult,colVector);
   //result
   vector<double> result;
   for(auto& songIdx:favSongList){
     double tmp_result=0;
     for(int i=0;i<songPlaytime[songIdx];i++){
-      tmp_result+=DP_cache[songIdx][(targetTime-i)%9];
+      tmp_result+=colVector[songIdx*4+i][0];
     }
     result.push_back(tmp_result);
   }
