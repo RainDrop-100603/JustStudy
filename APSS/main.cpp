@@ -30,9 +30,31 @@ void GENIUS_Input(int& songNum,int& targetTime,int& favSongNum,vector<int>& song
   }
 }
 vector<double> GENIUS_Algo(int& songNum,int& targetTime,int& favSongNum,vector<int>& songPlaytime,vector<int>& favSongList,vector<vector<double>>& possibility){
-  //DP생성, 0분 초기화
-  vector<vector<double>> DP_cache(songNum,vector<double>(9,0));
-  DP_cache[0][0]=1;
+  //열벡터 생성, 초기화, 변수
+  int time=0; //열벡터 = C(time)
+  vector<double> colVector(4*songNum,0);
+  colVector[0][0]=1;
+  //W: 곱셈 벡터 생성
+  vector<vector<double>> wMatrix(4*songNum,vector<double>(4*songNum,0));
+  for(int row=0;row<4*songNum;row++){
+    //i-1 ~ i-3 처리
+    if(row%4!=0){
+      wMatrix[row][row-1]=1;
+      continue;
+    }
+    //i 처리
+    int nextSongIdx=row/4;
+    for(int col=0;col<4*songNum;col++){
+      int songIdx=col/4;
+      int songLen=songPlaytime[songIdx];
+      int timeAgo=col%4+1;  //지나간 시간 
+      if(timeAgo<=songLen){
+        wMatrix[row][col]=possibility[songIdx][nextSongIdx];
+      }else{
+        wMatrix[row][col]=0;
+      }
+    }
+  }
   //Algo 1~3분 초기화 (if문 없애주기 위함)
   for(int time=1;time<=min(3,targetTime);time++){
     for(int now_song=0;now_song<songNum;now_song++){
@@ -127,7 +149,20 @@ void GENIUS(){
       time Over
   전략2
     Dynamic Programming
-      행렬곱
+      행렬곱을 이용한다. C(i)=W^(i)C(0), i<0 인부분은 0으로 처리하면 된다(확률이기 때문에)
+      열행렬 C(i): for(x=0~n-1) p(x,i),p(x,i-1),p(x,i-2),p(x,i-3)
+      행렬 W: 4n*4n
+        p(x,i+1)=for(x=1~n) p(x,i)*w(x,i)+..+p(x,i-3)*w(x,i-3) 
+        p(x,i)~p(xi-2): 기존것 그대로 
+      행렬 거듭제곱 
+        시간: M^3 lgN , M=행렬크기, N=거듭제곱할 수
+      정답
+        c(i)를 이용해서 구한다.
+    시간:
+      O((4N)^3 * lgK)=8,000,000*lg(1,000,000) = 110,000,000
+    공간:
+      O(4N + (4N)^2)
+
   */
   //Sol
   int testCase;
