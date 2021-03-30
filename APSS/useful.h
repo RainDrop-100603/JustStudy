@@ -202,6 +202,14 @@ string to something
         DP[x]...[used] = value
           used에 대한 value가 될 것인가, remain(unused)에 대한 value가 될 것인가 
           즉 사용한것에 대한 값을 value에 저장할 것인가, 앞으로의 값을 value에 저장할 것인가 
+  Greedy Algorithm
+    1. 최적해를 구할 수 있는 경우
+      정당성 증명
+        greedy choice property: greedy한 선택이, 항상 최적해로 가는 경로 중 하나임을 증명
+        optimal substructure: 부분 문제의 최적해가 전체문제의 최적해임을 증명 
+    2. 최적해를 구하는것이 어렵거나 오래걸리때, 근사해를 구하는 경우
+      조합 탐색, 메타휴리스틱 알고리즘이 더 좋은 답을 주는 경우가 많아 잘 사용하진 않는다.
+        메타휴리스틱 알고리즘: local search, simulated annealing등,366p 참고
   실수 자료형
     주의사항
       float 보다는 double 지향, double까지는 하드웨어 계산으로 속도가 빠른편 (long double은 느림)
