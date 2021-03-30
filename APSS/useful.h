@@ -308,6 +308,37 @@ pair<long long,long long> euclidAlgo(long long A,long long B);  //유클리드 �
 int fastSum(int n); //1~n까지의 합을 구한다. 분할정복방식
 
 //행렬 곱
+template <class T>
+vector<vector<T>> matrix2_mult(const vector<vector<T>>& m1,const vector<vector<T>>& m2){
+  //간단한 에러체크, 모든 경우를 체크하진 않는다.
+  if(m1.size()==0||m2.size()==0||m1[0].size()==0||m2[0].size()==0||m1[0].size()!=m2.size()){
+    cout<<"matrix2_mult Error!"<<endl;
+    return vector<vector<T>>();
+  }
+  //계산
+  long long row(m1.size()), mid(m2.size()), col(m2[0].size());
+  vector<vector<T>> result(row,vector<T>(col,0));
+  for(int i=0;i<row;i++){
+    for(int j=0;j<col;j++){
+      for(int z=0;z<mid;z++){
+        result[i][j]+=m1[i][z]*m2[z][j];
+      }
+    }
+  }
+  return result;
+}
+template <class T>
+vector<vector<T>> matrix2_pow(const vector<vector<T>>& m1, long long pow){
+  if(pow==1){
+    return m1;
+  }
+  vector<vector<T>> result=matrix2_pow<T>(m1,pow/2);
+  result=matrix2_mult(result,result);
+  if(pow%2==1){
+    result=matrix2_mult<T>(result,m1);
+  }
+  return result;
+}
 
 
 //실수 비교
