@@ -189,3 +189,11 @@ void SUSHI_Input(vector<pair<int,int>>& menu, int& budget);
 int SUSHI_Algo2(vector<pair<int,int>> menu,int budget);
 int SUSHI_Algo(vector<pair<int,int>> menu,int budget);
 void SUSHI();
+
+// @*@*, c(i)=W^(i) * c(0), W는 단순히 확률 관련 부분이고, 실제로 고민할 것은 열벡터 c 부분이다.
+// p(x)=w1p(x-1)+...+wnp(x-n)과 같이 여러 시간대의 항목이 필요할경우, 모두 열벡터에 넣어주면 된다.
+void GENIUS_Input(int& songNum,int& targetTime,int& favSongNum,vector<int>& songPlaytime,
+      vector<int>& favSongList,vector<vector<double>>& possibility);
+vector<double> GENIUS_Algo(int& songNum,int& targetTime,int& favSongNum,vector<int>& songPlaytime,
+      vector<int>& favSongList,vector<vector<double>>& possibility);
+void GENIUS();

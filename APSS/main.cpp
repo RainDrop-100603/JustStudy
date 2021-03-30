@@ -10,7 +10,8 @@
 
 using namespace std;
 
-// @* algo와 algo2의 속도차이에 유의하자(하드웨어적 원인). 속도가 느린 장치에 자주 접근할수록, 속도는 느려진다.
+// @*@*, c(i)=W^(i) * c(0), W는 단순히 확률 관련 부분이고, 실제로 고민할 것은 열벡터 c 부분이다.
+// p(x)=w1p(x-1)+...+wnp(x-n)과 같이 여러 시간대의 항목이 필요할경우, 모두 열벡터에 넣어주면 된다.
 template <class T>
 vector<vector<T>> matrix2_mult(const vector<vector<T>>& m1,const vector<vector<T>>& m2){
   //간단한 에러체크, 모든 경우를 체크하진 않는다.
@@ -27,6 +28,18 @@ vector<vector<T>> matrix2_mult(const vector<vector<T>>& m1,const vector<vector<T
         result[i][j]+=m1[i][z]*m2[z][j];
       }
     }
+  }
+  return result;
+}
+template <class T>
+vector<vector<T>> matrix2_pow(const vector<vector<T>>& m1, long long pow){
+  if(pow==1){
+    return m1;
+  }
+  vector<vector<T>> result=matrix2_pow<T>(m1,pow/2);
+  result=matrix2_mult(result,result);
+  if(pow%2==1){
+    result=matrix2_mult<T>(result,m1);
   }
   return result;
 }
@@ -72,17 +85,7 @@ vector<double> GENIUS_Algo(int& songNum,int& targetTime,int& favSongNum,vector<i
     }
   }
   //계산
-  int remainTime=targetTime;
-  vector<vector<double>> wResult=wMatrix;
-  while(remainTime>1){
-    if(remainTime%2==1){
-      remainTime--;
-      wResult=matrix2_mult<double>(wResult,wMatrix);
-    }else{
-      remainTime/=2;
-      wResult=matrix2_mult<double>(wResult,wResult);
-    }
-  }
+  vector<vector<double>> wResult=matrix2_pow<double>(wMatrix,targetTime);
   colVector=matrix2_mult<double>(wResult,colVector);
   //result
   vector<double> result;
@@ -168,7 +171,6 @@ void GENIUS(){
       O((4N)^3 * lgK)=8,000,000*lg(1,000,000) = 110,000,000
     공간:
       O(4N + (4N)^2)
-
   */
   //Sol
   int testCase;
