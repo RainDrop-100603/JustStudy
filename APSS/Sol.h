@@ -179,12 +179,7 @@ char BLOCKGAME_cache(vector<char>& DP_cache, int can_use_bitmask);
 string BLOCKGAME_Algo(vector<vector<string>>& board);
 void BLOCKGAME();
 
-// silding-window 적용. 수행시간을 줄일 수 있을까? 
-void SUSHI_Input(vector<pair<int,int>>& menu, int& budget);
-int SUSHI_Algo(vector<pair<int,int>> menu,int budget);
-void SUSHI();
-
-// @* algo와 algo2의 속도차이에 유의하자(하드웨어적 원인). 속도가 느린 장치에 자주 접근할수록, 속도는 느려진다.
+// @* sliding window, algo와 algo2의 속도차이에 유의하자(하드웨어적 원인). 속도가 느린 장치에 자주 접근할수록, 속도는 느려진다.
 void SUSHI_Input(vector<pair<int,int>>& menu, int& budget);
 int SUSHI_Algo2(vector<pair<int,int>> menu,int budget);
 int SUSHI_Algo(vector<pair<int,int>> menu,int budget);
