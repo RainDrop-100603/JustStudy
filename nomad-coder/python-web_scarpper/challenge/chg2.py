@@ -1,8 +1,9 @@
 
 #참고할 점
-# 매개변수의 자료형을 정해줄 수 있다.
+'''
+매개변수의 자료형의 default를 사용할 수 있다.
 # ele in list 를 통해, ele가 list에 포함되는지 여부가 True, False로 반환된다.
-
+'''
 #my
 # def is_on_list(list,day):
 #   try:
