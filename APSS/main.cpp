@@ -79,10 +79,10 @@ void LUNCHBOX(){
           greedy하게 선택한다면, m1에 f2를 선택하여 e2, m2에 f1을 선택하여 e1
         최소시간을 T라 하자
         f1과 f2의 데우는 시작시간을 바꾸어 보자 
-          case 1: m1+e1+b1<T, m2+e2+b2<T 일 경우, m1+e2+b2<T (b/c m2+e2+b2<T, m1<m2), m2+(b2-b1)+e1+b1<T (b/c me+e2<T, e1<=e2)
-          case 2: m1+e1=T, m2+e2<T 일 경우, m1+e2<T, m2+e1<T
-          case 3: m1+e1<T, m2+e2=T 일 경우, m1+e2<T, m2+e2<T 
-          case 4: m1+e1=T, m2+e2=T 일 경우, m1+e2<T, m2+e1<=T
+          case 1: m1+e1+b1<T, m2+e2+b2<T 일 경우, m1+e2+b2<T (b/c m2+e2+b2<T, m1<m2), m2+(b2-b1)+e1+b1<T (b/c m2+e2+b2<T, e1<=e2)
+          case 2: m1+e1+b1=T, m2+e2<T 일 경우, m1+e2<T, m2+e1<T
+          case 3: m1+e1+b1<T, m2+e2=T 일 경우, m1+e2<T, m2+e2<T 
+          case 4: m1+e1+b1=T, m2+e2=T 일 경우, m1+e2<T, m2+e1<=T
         즉 어느 경우에도 최대시간 T는 변함이 없으므로, greedy한 선택은 정답 중 하나이다.
       optimal substructure
         부분 영역에서 greedy한 choice는 최적값(최소시간)을 도출한다.(greedy choice property)
