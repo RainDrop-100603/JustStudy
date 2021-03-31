@@ -30,7 +30,7 @@ def add_to_dict(dict={},key="",value=""):
     print(f"{key} is already on the dictionary. Won't add.")
   else:
     dict[key]=value
-    print(f"{key} has been added")
+    print(f"{key} has been added.")
 
 def get_from_dict(dict={},key=""):
   #Error chk
@@ -57,13 +57,27 @@ def update_word(dict={},key="",value=""):
   #Func
   if key in dict:
     dict[key]=value
-    print(f"{key}: {dict[key]}")
+    print(f"{key} has been updated to: {dict[key]}")
   else:
-    print(f"{key} was not found in this dict.")
+    print(f"{key} is not on the dict. Can't update non-existing word.")
 
-def delete_from_dict():
-  pass
+def delete_from_dict(dict={},key=""):
+  #Error chk
+  if type(dict) is not type({}):
+    print(f"You need to send a dictionary. You sent: {type(dict)}")
+    return
+  elif key == "":
+    print("You need to specify a word to delete.")
+    return
+  #Func
+  if key in dict:
+    del dict[key]
+    print(f"{key} has been deleted.")
+  else:
+    print(f"{key} is not in this dict. Won't delete.")
 
+
+#sol
 
 
 
