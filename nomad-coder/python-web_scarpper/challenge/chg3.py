@@ -52,7 +52,7 @@ def update_word(dict={},key="",value=""):
     print(f"You need to send a dictionary. You sent: {type(dict)}")
     return
   elif value == "":
-    print("You need to send a word and a definition to update")
+    print("You need to send a word and a definition to update.")
     return
   #Func
   if key in dict:
