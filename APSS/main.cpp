@@ -81,7 +81,7 @@ void MATCHORDER(){
           즉 greedy한 답 S1이 있는경우 greedy한 선택 S2도 답이라는것을 알 수 있다.
         optimal substructure:
           greedy choice property를 통해 greedy하게 선택된 답 S가있음을 알 수 있고, 
-            greedy한 선택과, 남은 것에서의 답 S2의 합은 S와 같다.
+            S= greedy(x) + S(without x) (greedy(x)==임의의 원소 x에 대해, greedy한 선택을 할 경우의 승, 패) 로 구성되므로 optimal substructure임을 알 수 있다. 
   */
   /*전략
   전략1
