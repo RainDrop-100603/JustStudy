@@ -13,7 +13,7 @@ using namespace std;
 //https://www.youtube.com/watch?v=x7STjpcKZP8 
 //사회복무요원 교육 
 
-// greedy, 증명부분에 더 신경쓰자
+// greedy, 증명부분 괜찮았음, 참고하자 
 void LUNCHBOX_Input(int& number,vector<int>& warmTime,vector<int>& eatingTime){
   cin>>number;
   warmTime.resize(number);
@@ -26,23 +26,18 @@ void LUNCHBOX_Input(int& number,vector<int>& warmTime,vector<int>& eatingTime){
   }
 }
 int LUNCHBOX_Algo(int number,const vector<int>& warmTime,const vector<int>& eatingTime){
-  //pair로 배열 만들고 정렬
+  //pair로 배열 만들고 내림차순 정렬
   vector<pair<int,int>> food;
   for(int i=0;i<number;i++){
-    food.push_back({warmTime[i],eatingTime[i]});
+    food.push_back({eatingTime[i],warmTime[i]});
   }
-  sort(food.begin(),food.end());
+  sort(food.begin(),food.end());  //오름차순
+  reverse(food.begin(),food.end()); //뒤집기
   //계산
-  int result(0),enemyIdx(0);
-  auto lowerValue=warmTime.begin();
-  while(lowerValue!=warmTime.end()){
-    lowerValue=lower_bound(lowerValue,warmTime.end(),eatingTime[enemyIdx]);
-    if(lowerValue==warmTime.end()){
-      break;
-    }
-    lowerValue++;
-    result++;
-    enemyIdx++;
+  int boilBegin(0), result(0);
+  for(auto& ele:food){
+    result=max(result,boilBegin+ele.first+ele.second);
+    boilBegin+=ele.second;
   }
   return result;
 }
@@ -76,13 +71,14 @@ void LUNCHBOX(){
     먹는 시간이 긴 음식을 먼저 데우는것이 유리하다? -> greedy
       greedy choice property:
         정답 S에대해, 음식 f1의 데우기시작시간 m1, 먹는시간 e1, 데우는 시간 b1, f2에 대해서 m2,e2,b2 이때 m1<m2, e1<=e2, b1 ? b2
-          greedy하게 선택한다면, m1에 f2를 선택하여 e2, m2에 f1을 선택하여 e1
+          greedy하게 선택한다면, m1에 f2를 선택하여 e2+b2, m2에 f1을 선택하여 e1+b1
         최소시간을 T라 하자
         f1과 f2의 데우는 시작시간을 바꾸어 보자 
-          case 1: m1+e1+b1<T, m2+e2+b2<T 일 경우, m1+e2+b2<T (b/c m2+e2+b2<T, m1<m2), m2+(b2-b1)+e1+b1<T (b/c m2+e2+b2<T, e1<=e2)
-          case 2: m1+e1+b1=T, m2+e2<T 일 경우, m1+e2<T, m2+e1<T
-          case 3: m1+e1+b1<T, m2+e2=T 일 경우, m1+e2<T, m2+e2<T 
-          case 4: m1+e1+b1=T, m2+e2=T 일 경우, m1+e2<T, m2+e1<=T
+                  m1+e1+b1  m2+e2+b2         m1+e2+b2      m2+(b2-b1)+e1+b1=m2+e1+b2
+          case 1:    <T,      <T 일 경우,    <T (m1<m2)        <T (e1<=e2)
+          case 2:    =T,      <T 일 경우,    <T                <T
+          case 3:    <T,      =T 일 경우,    <T                <=T 
+          case 4:    =T,      =T 일 경우,    <T                <=T
         즉 어느 경우에도 최대시간 T는 변함이 없으므로, greedy한 선택은 정답 중 하나이다.
       optimal substructure
         부분 영역에서 greedy한 choice는 최적값(최소시간)을 도출한다.(greedy choice property)

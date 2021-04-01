@@ -197,3 +197,8 @@ void GENIUS();
 void MATCHORDER_Input(int& number,vector<int>& ourRating,vector<int>& enemyRating);
 int MATCHORDER_Algo(int number,vector<int> ourRating,vector<int> enemyRating);
 void MATCHORDER();
+
+// greedy, 증명부분 괜찮았음, 참고하자 
+void LUNCHBOX_Input(int& number,vector<int>& warmTime,vector<int>& eatingTime);
+int LUNCHBOX_Algo(int number,const vector<int>& warmTime,const vector<int>& eatingTime);
+void LUNCHBOX();
