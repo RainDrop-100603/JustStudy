@@ -192,3 +192,13 @@ void GENIUS_Input(int& songNum,int& targetTime,int& favSongNum,vector<int>& song
 vector<double> GENIUS_Algo(int& songNum,int& targetTime,int& favSongNum,vector<int>& songPlaytime,
       vector<int>& favSongList,vector<vector<double>>& possibility);
 void GENIUS();
+
+// greedy, 증명부분에 더 신경쓰자
+void MATCHORDER_Input(int& number,vector<int>& ourRating,vector<int>& enemyRating);
+int MATCHORDER_Algo(int number,vector<int> ourRating,vector<int> enemyRating);
+void MATCHORDER();
+
+// greedy, 증명부분 괜찮았음, 참고하자 
+void LUNCHBOX_Input(int& number,vector<int>& warmTime,vector<int>& eatingTime);
+int LUNCHBOX_Algo(int number,const vector<int>& warmTime,const vector<int>& eatingTime);
+void LUNCHBOX();

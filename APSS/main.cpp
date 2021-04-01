@@ -10,186 +10,117 @@
 
 using namespace std;
 
-// @*@*, c(i)=W^(i) * c(0), W는 단순히 확률 관련 부분이고, 실제로 고민할 것은 열벡터 c 부분이다.
-// p(x)=w1p(x-1)+...+wnp(x-n)과 같이 여러 시간대의 항목이 필요할경우, 모두 열벡터에 넣어주면 된다.
-template <class T>
-vector<vector<T>> matrix2_mult(const vector<vector<T>>& m1,const vector<vector<T>>& m2){
-  //간단한 에러체크, 모든 경우를 체크하진 않는다.
-  if(m1.size()==0||m2.size()==0||m1[0].size()==0||m2[0].size()==0||m1[0].size()!=m2.size()){
-    cout<<"matrix2_mult Error!"<<endl;
-    return vector<vector<T>>();
-  }
-  //계산
-  long long row(m1.size()), mid(m2.size()), col(m2[0].size());
-  vector<vector<T>> result(row,vector<T>(col,0));
-  for(int i=0;i<row;i++){
-    for(int j=0;j<col;j++){
-      for(int z=0;z<mid;z++){
-        result[i][j]+=m1[i][z]*m2[z][j];
-      }
-    }
-  }
-  return result;
-}
-template <class T>
-vector<vector<T>> matrix2_pow(const vector<vector<T>>& m1, long long pow){
-  if(pow==1){
-    return m1;
-  }
-  vector<vector<T>> result=matrix2_pow<T>(m1,pow/2);
-  result=matrix2_mult(result,result);
-  if(pow%2==1){
-    result=matrix2_mult<T>(result,m1);
-  }
-  return result;
-}
-void GENIUS_Input(int& songNum,int& targetTime,int& favSongNum,vector<int>& songPlaytime,vector<int>& favSongList,vector<vector<double>>& possibility){
-  cin>>songNum>>targetTime>>favSongNum;
-  songPlaytime.resize(songNum);
-  for(auto& ele:songPlaytime){
+//https://www.youtube.com/watch?v=x7STjpcKZP8 
+//사회복무요원 교육 
+
+// greedy, 증명부분 괜찮았음, 참고하자 
+void STRJOIN_Input(int& number,vector<int>& warmTime,vector<int>& eatingTime){
+  cin>>number;
+  warmTime.resize(number);
+  for(auto& ele: warmTime){
     cin>>ele;
   }
-  possibility.resize(songNum);//열 resize
-  for(auto& ele: possibility){
-    ele.resize(songNum);//행 resize
-    for(auto& ele2: ele){
-      cin>>ele2;
-    }
-  }
-  favSongList.resize(favSongNum);
-  for(auto& ele:favSongList){
+  eatingTime.resize(number);
+  for(auto& ele: eatingTime){
     cin>>ele;
   }
 }
-vector<double> GENIUS_Algo(int& songNum,int& targetTime,int& favSongNum,vector<int>& songPlaytime,vector<int>& favSongList,vector<vector<double>>& possibility){
-  //열벡터 생성, 초기화
-  vector<vector<double>> colVector(4*songNum,vector<double>(1,0));
-  colVector[0][0]=1;
-  //W: 곱셈 벡터 생성
-  vector<vector<double>> wMatrix(4*songNum,vector<double>(4*songNum,0));
-  for(int row=0;row<4*songNum;row++){
-    //i-1 ~ i-3 처리
-    if(row%4!=0){
-      wMatrix[row][row-1]=1;
-      continue;
-    }
-    //i 처리
-    int nextSongIdx=row/4;
-    for(int col=0;col<4*songNum;col++){
-      int songIdx=col/4;
-      int songLen=songPlaytime[songIdx];
-      int timeAgo=col%4+1;  //지나간 시간 
-      if(timeAgo==songLen){
-        wMatrix[row][col]=possibility[songIdx][nextSongIdx];
-      }
-    }
+int STRJOIN_Algo(int number,const vector<int>& warmTime,const vector<int>& eatingTime){
+  //pair로 배열 만들고 내림차순 정렬
+  vector<pair<int,int>> food;
+  for(int i=0;i<number;i++){
+    food.push_back({eatingTime[i],warmTime[i]});
   }
+  sort(food.begin(),food.end());  //오름차순
+  reverse(food.begin(),food.end()); //뒤집기
   //계산
-  vector<vector<double>> wResult=matrix2_pow<double>(wMatrix,targetTime);
-  colVector=matrix2_mult<double>(wResult,colVector);
-  //result
-  vector<double> result;
-  for(auto& songIdx:favSongList){
-    double tmp_result=0;
-    for(int i=0;i<songPlaytime[songIdx];i++){
-      tmp_result+=colVector[songIdx*4+i][0];
-    }
-    result.push_back(tmp_result);
+  int boilBegin(0), result(0);
+  for(auto& ele:food){
+    result=max(result,boilBegin+ele.first+ele.second);
+    boilBegin+=ele.second;
   }
   return result;
 }
-void GENIUS(){
-  //GENIUS
+void STRJOIN(){
+  //STRJOIN
   /*설명 및 입력
   설명
-    지니어스를 사용하면 한 곡 다음에 다음 곡이 재생될 확률은 두 곡의 유사도에 따라 결정됩니다.
-    음악들 간의 유사도를 조사해, i 번 곡 다음에 j 번 곡이 재생될 확률을 나타내는 확률 행렬 T 를 만들었습니다.
-    K 분 30초가 지난 후 태윤이가 좋아하는 곡이 재생되고 있을 확률은 얼마일까요? 
-    MP3 플레이어에 들어 있는 곡들의 길이는 모두 1분, 2분, 3분 혹은 4분입니다.
+    n 개의 문자열들의 길이가 주어질 때 필요한 최소 비용을 찾는 프로그램을 작성하세요.
+      문자열을 합치는데 드는 비용: 각 문자열의 길이의 합
   입력
-    입력의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 50) 가 주어집니다. 
-    각 테스트 케이스의 첫 줄에는 MP3 플레이어에 들어 있는 곡의 수 N (1 <= N <= 50 ) 과 K (1 <= K <= 1,000,000) , 
-      그리고 태윤이가 좋아하는 곡의 수 M (1 <= M <= 10) 이 주어집니다. 
-    그 다음 줄에는 N 개의 정수로 각 곡의 길이 Li 가 분 단위로 주어지고, 그 후 N 줄에는 한 곡이 재생된 후 다음 곡이 재생될 확률을 나타내는 행렬 T 가 주어집니다. 
-    T 의 i 번 줄의 j 번 숫자 (0 <= i,j < N) T[i,j] 는 i 번 곡이 끝난 뒤 j 번 곡을 재생할 확률을 나타냅니다. T 의 각 행의 합은 1 입니다. 
-    각 테스트 케이스의 마지막 줄에는 M 개의 정수로 태윤이가 좋아하는 곡의 번호 Qi 가 주어집니다.
+    입력의 첫 줄에는 테스트 케이스의 수 c (c <= 50) 가 주어집니다. 
+    각 테스트 케이스의 첫 줄에는 문자열의 수 n (1 <= n <= 100) 이 주어지며, 다음 줄에는 n 개의 정수로 각 문자열의 길이가 주어집니다. 
+    각 문자열의 길이는 1,000 이하의 자연수입니다.
   출력
-    각 테스트 케이스마다 한 줄로 태윤이가 좋아하는 M 개의 곡에 대해 각 곡이 재생되고 있을 확률을 출력합니다. 
-    10^-7 이하의 절대/상대 오차가 있는 답은 정답으로 인정됩니다.
+    각 테스트 케이스마다 한 줄에 모든 문자열을 합칠 때 필요한 최소 비용을 출력합니다.
   제한조건
-    20초, 64MB
+    1초, 64MB
   */
   /*힌트
-    K분 30초가 지난 후의 곡의 확률은 아래 것들의 합이다.
-      K분에 바뀐 {1분,2분,3분,4분} 노래 : K-1 ~ K-4분전에 시작해 K분에 끝나는 노래 * 현재 내가 좋아하는 노래{1,2,3,4}가 등장할 확률
-      K-1분에 {2분,3분,4분} 바뀐 노래: K-2~K-5, same as others
-      K-2분에 {3분,4분} 바뀐 노래: K-3~K-6, same as others
-      K-3분에 {4분} 바뀐 노래: K-4 ~ K-7 분에 시작해 K-3분에 끝나는 노래 * 현재 내가 좋아하는 노래{4}가 등장할 확률
-    DP: sliding window기법을 사용할 수 있다.
-      cache에는 현재시간 -7분 ~ 현재시간 까지 저장해야 한다. 길이는 8+1(여유분)
-      cache에는 모든 노래에 대한 확률이 있어야 한다. 높이는 N
-      cache[song][time%9]=time에 시작한 song을 의미한다. 
-        cache[song][now%9]=for(x=each song) sum(cache[now_song][(now_time-x_time)%9]*possibility[x_song][now_song])
-      초기값은 0번곡으로 시작, cache[0][0]에 저장한다
-    위 두개를 합치면 정답은
-      for(auto& ele: fav song)
-        for(int i=0;i<ele.time;i++)
-          result+=cache[ele.idx][(now-i)%9];
+    최대한 작은 단위로 합치는것이 유리하다
+      큰 것을 여러번 합치면, 그만큼 비용이 증가한다.
+    한 str에 처음부터 끝까지 합치는 것은 적절하지 못하다
+      한 str에 여러번 합치면 결국 길이가 길어지고 비용이 증가한다.
+    가장 작은 str 2개를 골라 합친 후, 합쳐진 str을 포함하여 가장 작은 str 2개를 다시 골라 합치는 것을 반복한다.
+      합치는 횟수는 n-1로 동일하므로, 합치는 cost를 매번 최소로 하는것이 최적값이다.
+      greedy choice property:
+        n개의 원소에 대해, 각 원소x가 결합에 참여하는 횟수를 times(x)라 하자
+        greedy하게 선택한 경우 len(x1)<len(x2)에 대해, times(x1)>times(x2) 이다.
+        정답 S 중, len(x1)<len(x2)일때 times(x1)<=times(x2)인 선택이 있다고 하자.
+          해당하는 선택을 바꾸어 greedy하게 바꾼 후에도 여전히 정답이라면, greedy한 선택이 정답임을 알 수 있다.
+          정답: l1*t1+l2*t2
+          greedy: l1*t2+l2*t1
+            정답 - greedy = (l1-l2)(t1-t2) >=0 
+          즉 정답 S중에 greedy한 선택이 있음을 알 수 있다.
+      optimal substructure:
+        S(n)= S(x)+S(n-x)
+        
+
+    데우는 시간은 모두 동일하다
+      데우면서 먹을수 있다.
+      즉 데우는 시간은 절약이 불가하지만 ,먹는 시간은 절약이 가능하다.
+      먼저 데울 음식은 오래먹는 음식, 나중에 데울 음식은 빨리 먹는 음식을 경우가 유리하다.
+    먹는 시간이 긴 음식을 먼저 데우는것이 유리하다? -> greedy
+      greedy choice property:
+        정답 S에대해, 음식 f1의 데우기시작시간 m1, 먹는시간 e1, 데우는 시간 b1, f2에 대해서 m2,e2,b2 이때 m1<m2, e1<=e2, b1 ? b2
+          greedy하게 선택한다면, m1에 f2를 선택하여 e2+b2, m2에 f1을 선택하여 e1+b1
+        최소시간을 T라 하자
+        f1과 f2의 데우는 시작시간을 바꾸어 보자 
+                  m1+e1+b1  m2+e2+b2         m1+e2+b2      m2+(b2-b1)+e1+b1=m2+e1+b2
+          case 1:    <T,      <T 일 경우,    <T (m1<m2)        <T (e1<=e2)
+          case 2:    =T,      <T 일 경우,    <T                <T
+          case 3:    <T,      =T 일 경우,    <T                <=T 
+          case 4:    =T,      =T 일 경우,    <T                <=T
+        즉 어느 경우에도 최대시간 T는 변함이 없으므로, greedy한 선택은 정답 중 하나이다.
+      optimal substructure
+        부분 영역에서 greedy한 choice는 최적값(최소시간)을 도출한다.(greedy choice property)
+        부분 영역에서의 최적값의 합은 전체 영역에서의 최적값과 같다.
+        부분 영역에서 greedy한 choice를 하는 것은, 전체 영역의 최적값을 도출한다.
   */
   /*전략
   전략1
-    Dynamic Programing
-      sliding window 기법을 사용한다.
-      작은단위 -> 큰단위 DP (time 0~K)
-      금액과 예산은 모두 100으로 먼저 나눈뒤 사용한다.
-      cache[song][now%9]=for(x=each song) sum(cache[now_song][(now_time-x_time)%9]*possibility[x_song][now_song])
-        cache 크기: 8+1
-        연산시간: N:50 각 노래
-        연산횟수: N:50 * K:1,000,000(지난 시간)
-      정답
-        for(auto& ele: fav song)
-          for(int i=0;i<ele.time;i++)
-            result+=cache[ele.idx][(now-i)%9];
+    Greedy Algorithm
+      음식 먹는 속도로 정렬 nlgn
+      오래 걸리는 순서로 greedy n
+        result=max(result,데우기 시작한 시간 + 해당 음식의 먹는 시간)
     시간:
-      O(N^2 * K), 50^2 * 1,000,000=2,500,000,000
+      O(NlgN + N) 
     크기:
-      O(N), 50*9=450
-    sol 유의사항
-      time Over
-  전략2
-    Dynamic Programming
-      행렬곱을 이용한다. C(i)=W^(i)C(0), i<0 인부분은 0으로 처리하면 된다(확률이기 때문에)
-      열행렬 C(i): for(x=0~n-1) p(x,i),p(x,i-1),p(x,i-2),p(x,i-3)
-      행렬 W: 4n*4n
-        p(x,i+1)=for(x=1~n) p(x,i)*w(x,i)+..+p(x,i-3)*w(x,i-3) 
-        p(x,i)~p(xi-2): 기존것 그대로 
-      행렬 거듭제곱 
-        시간: M^3 lgN , M=행렬크기, N=거듭제곱할 수
-      정답
-        c(i)를 이용해서 구한다.
-    시간:
-      O((4N)^3 * lgK)=8,000,000*lg(1,000,000) = 110,000,000
-    공간:
-      O(4N + (4N)^2)
+      O(N)
   */
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int songNum,targetTime,favSongNum;
-    vector<int> songPlaytime,favSongList;
-    vector<vector<double>> possibility;
-    GENIUS_Input(songNum,targetTime,favSongNum,songPlaytime,favSongList,possibility);
-    vector<double> result=GENIUS_Algo(songNum,targetTime,favSongNum,songPlaytime,favSongList,possibility);
-    cout.precision(10);
-    for(auto& ele:result){
-      cout<<ele<<" ";
-    }
-    cout<<'\n';
+    int number;
+    vector<int> warmTime, eatingTime;
+    STRJOIN_Input(number,warmTime,eatingTime);
+    int result=STRJOIN_Algo(number,warmTime,eatingTime);
+    cout<<result<<'\n';
   }
 }
 
 int main(void){
-  GENIUS();
+  STRJOIN();
   return 0;
 }
