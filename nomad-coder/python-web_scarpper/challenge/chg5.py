@@ -29,7 +29,6 @@ def print_country_code(country_dict):
   print("Hello, please select a country by number: ")
   for idx in country_dict:
     print(f"# {idx} {country_dict[idx][0]}")
-    idx+=1
 
 def get_currency_code(country_dict):
   print_country_code(country_dict)
