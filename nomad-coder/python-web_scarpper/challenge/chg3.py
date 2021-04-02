@@ -2,6 +2,8 @@
 #참고할 점
 '''
   pass: 아무 역할도 하지 않고 지나간다. 내용이 없을떄 임시적으로 넣어두는 함수라고 봐도 무방할듯 
+  if type(a_dict) is not dict:
+    dict자료형을 그냥 바로 표현했다(나는 type({})을 사용했음)
 '''
 
 """
@@ -75,6 +77,7 @@ def delete_from_dict(dict={},key=""):
     print(f"{key} has been deleted.")
   else:
     print(f"{key} is not in this dict. Won't delete.")
+
 
 
 #sol
