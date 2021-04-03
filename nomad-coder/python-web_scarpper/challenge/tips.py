@@ -25,7 +25,7 @@
   if name and code:
     name이나 code가 비어있으면 실행되지 않음
   name.capitalize()
-    첫문자 대문자
+    첫문자 대문자, 나머지 소문자
   try:
     choice = int(input("#: "))
       에러가 나면 except로 가는 것이므로, 아예 input부터 try에 넣어버림
@@ -41,3 +41,35 @@
       countries.append(country)
         list에 dict를 저장, 추후 ele 수정에도 용이하다.
 '''
+
+def input_number(num_from='', num_to=''):
+  #get the number [from,to)
+  #get number
+  try:
+    num=int(input())
+  except:
+    print("That wasn't number")
+    input_number(num_from,num_to)
+  #range check
+  if type(num_from) is str and type(num_to) is str:
+    return num
+  elif type(num_to) is str:
+    if num >= num_from:
+      return num
+    else:
+      print(f"input a number in range [{num_from},inf)")
+  elif type(num_from) is str:
+    if num < num_to:
+      return num
+    else:
+      print(f"input a number in range [-inf,{num_to})")
+  else:
+    if num_to <= num_from:
+      print(f"Oops! the range [{num_from},{num_to}) is not valid, return -1.")
+      return -1
+    if num < num_to and num >= num_from:
+      return num
+    else:
+      print(f"input a number in range [{num_from},{num_to})")
+  input_number(num_from,num_to)
+ 

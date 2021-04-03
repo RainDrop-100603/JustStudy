@@ -14,7 +14,7 @@ url = "https://www.iban.com/currency-codes"
   if name and code:
     name이나 code가 비어있으면 실행되지 않음
   name.capitalize()
-    첫문자 대문자
+    첫문자 대문자, 나머지 소문자 
   try:
     choice = int(input("#: "))
       에러가 나면 except로 가는 것이므로, 아예 input부터 try에 넣어버림
