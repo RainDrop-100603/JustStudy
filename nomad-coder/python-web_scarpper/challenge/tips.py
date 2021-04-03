@@ -34,4 +34,10 @@
       enumerate: idx와 element tuple형태로 반환한다.
         for tmp in enumerate(list) -> tmp = (index, ele)
         for idx,tmp in enumerate(list) -> idx = index, tmp = ele
+  country = {
+        'name':name.capitalize(),
+        'code': code
+      }
+      countries.append(country)
+        list에 dict를 저장, 추후 ele 수정에도 용이하다.
 '''
