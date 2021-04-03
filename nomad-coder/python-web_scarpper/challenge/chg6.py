@@ -44,7 +44,7 @@ def get_currency_code(country_list):
       print("Choose a number from the list.")
   except:
     print("That wasn't a number.")
-  get_currency_code(country_list)
+  return get_currency_code(country_list)
 
 def currency_exchange(currency_from,currency_to):
   #get cost
