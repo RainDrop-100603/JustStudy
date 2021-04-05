@@ -29,8 +29,10 @@ def extract_max_page(link):
 def extract_all_pages(link):
   maxpage=extract_max_page(link)
   jobs=[]
+  if "job/brand/" not in link:
+    link=link+"job/brand/"
   for page in range(1,maxpage+1):
-    req=requests.get(f"{link}job/brand/?page={page}&pagesize=50")
+    req=requests.get(f"{link}?page={page}&pagesize=50")
     soup=BeautifulSoup(req.text,"html.parser")
     jobs.extend(soup.find("tbody").find_all('tr'))
   return jobs
@@ -88,4 +90,3 @@ for brand in brand_list:
   make_csv_from_list(brand['name'],jobs)
   print(f"{brand['name']}'s {len(jobs)} jobs are successfully saved")
 
-https://replit.com/@RainDrop97/Day-Eight-Blueprint#main.py
