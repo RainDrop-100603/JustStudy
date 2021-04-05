@@ -77,3 +77,18 @@ BeautifulSoup
 
 
 https://repl.it/@RainDrop97/NiftyHotpinkDeveloper#main.py
+
+https://story-of-flower.tistory.com/archive/20200830
+동적 크롤링: jsp도 크롤링 하게 해줌
+
+CSV: comma separated values
+  ',': column 구분
+  newline: row 구분
+
+dictionary  
+  dict.keys() : key만 추출
+    type: dict_keys
+  dict.values() : value만 추출
+    type: dict_values
+      list(dict.values())를 통해 list로 변경 가능 
+  
