@@ -40,6 +40,20 @@
       }
       countries.append(country)
         list에 dict를 저장, 추후 ele 수정에도 용이하다.
+  rows = tbody.find_all("tr", {"class": ""})
+    class가 비어있으면, 위와같이 찾을 수 있다. ( <tr class> </tr> 과 같은 경우 )
+  time = time.text.replace(u'\xa0', ' ')
+    u"unicode" 는, unicode 문자열을 의미함, UTF-8
+      python3부터는 기본 문자열이 유니코드이므로 사용하지 않아도 된다.
+  if link and name
+    Nonetype을 걸러주는구문. try, except 보다 나을지도 
+  try except vs if else
+    https://stackoverflow.com/questions/7604636/better-to-try-something-and-catch-the-exception-or-test-if-its-possible-first
+    https://yesarang.tistory.com/371
+      try-except가 이해하기 훨씬간편한다
+      if-else의 경우 if문을 모든 경우에 확인해야하며, 경우에 따라 여러 조건을 확인해야 해 if문이 여러번 사용되거나 길어질 수 있다.->속도 감소
+      except가 발생하지 않을경우, try except가 더 빠르며, except가 발생한경우(예외처리)는 if else가 더 빠르다.
+        except가 지나치게 많이 발생하는 경우가 아니라면, try-except의 사용이 보기도 편하고 좋을듯 하다.  
 '''
 
 def input_number(num_from='', num_to=''):
