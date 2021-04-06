@@ -76,8 +76,9 @@ BeautifulSoup
   <tag>string</tag> 과 같이 인식하는듯 (강의 2.4)
 
 
-https://repl.it/@RainDrop97/NiftyHotpinkDeveloper#main.py
+https://replit.com/@RainDrop97/scrapperindeedSO
 https://replit.com/@RainDrop97/SuperScrapper
+https://replit.com/@RainDrop97/scrapperindeedSO#main.py
 
 https://story-of-flower.tistory.com/archive/20200830
 동적 크롤링: jsp도 크롤링 하게 해줌

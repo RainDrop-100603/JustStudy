@@ -1,4 +1,4 @@
-from flask import Flask, render_template,request
+from flask import Flask, render_template,request, redirect
 app = Flask('SuperScrapper')
 
 #/ 라는 경로(route)에 들어가면, 이 page는 home라 이름짓고, Hello World를 표시한다 
@@ -29,6 +29,10 @@ def placeholder(test):
 @app.route('/report')
 def contact():
   word=request.args.get("word")
+  if word:
+    word=word.lower()  
+  else:
+    return redirect("/")
   return render_template('report.html',searchingBy=word, potato='sexy')
 
 app.run(host='0.0.0.0', port=8080)
