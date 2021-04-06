@@ -81,6 +81,9 @@ https://repl.it/@RainDrop97/NiftyHotpinkDeveloper#main.py
 https://story-of-flower.tistory.com/archive/20200830
 동적 크롤링: jsp도 크롤링 하게 해줌
 
+http://www.open-std.org/jtc1/sc22/wg21/docs/TR18015.pdf
+  Technical Report on C++ Performance
+
 CSV: comma separated values
   ',': column 구분
   newline: row 구분
