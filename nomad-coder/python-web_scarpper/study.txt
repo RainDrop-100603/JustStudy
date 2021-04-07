@@ -96,4 +96,7 @@ dictionary
   dict.values() : value만 추출
     type: dict_values
       list(dict.values())를 통해 list로 변경 가능 
+  dict.get(key) vs dict[key]
+    dict[key] 는 key가 없으면 KeyError 
+    dict.get(key) 는 key가 없으면 None 반환 
   
