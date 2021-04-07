@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Challenge 9 | {{orderby}}</title>
+  <link href="https://andybrewer.github.io/mvp/mvp.css" rel="stylesheet"></link>
+</head>
+
+<body>
+  <header>
+    <h1>Challenge 9</h1>
+    <div>
+      OrderBy:
+      {% if orderby == "New"%}
+        <a href="/?order_by=popular">Popular</a>
+        |
+        <strong>New</strong>
+      {% else %}
+        <strong>Popular</strong>
+        |
+        <a href="/?order_by=new">New</a>
+      {% endif %}
+    </div>
+  </header>
+  <main>
+    {% for data in data_list %}
+    <div>
+      <a href="{{data.objectID}}"><h2>{{data.title}}</h2></a>
+      <a href="{{data.url}}" target="_blank">({{data.url}})</a>
+    </div>
+    <div>
+      {{data.points}} points | By: {{data.author}} | {{data.num_comments}} comments
+    </div>
+    <hr>
+    {% endfor %}
+  </main>
+</body>
+
+</html>

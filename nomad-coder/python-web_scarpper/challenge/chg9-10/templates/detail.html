@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Challenge 9 | {{data_list[0].title}}</title>
+  <link href="https://andybrewer.github.io/mvp/mvp.css" rel="stylesheet"></link>
+</head>
+
+<body>
+  <header>
+    <h1>{{data_list[0].title}}</h1>
+    <div>
+      {{data_list[0].points}} points | By: {{data_list[0].author}} | 
+      <a href="{{data_list[0].url}}">{{data_list[0].url}}</a>
+    </div>
+  </header>
+  <main>
+    {% for data in data_list[1:] %}
+    <div>
+      <strong>{{data.author}}</strong>
+      <p>{{data.text|safe}}</p>
+    </div>
+    <hr>
+    {% endfor %}
+  </main>
+</body>
+
+</html>
