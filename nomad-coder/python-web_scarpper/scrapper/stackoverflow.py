@@ -51,8 +51,8 @@ def get_jobs(keyward,page):
 def SO_jobs(keyward=""):
   max_page=get_maxpage(keyward)
   all_jobs=[]
-  # all_jobs.extend(get_jobs(keyward,0))#for test
-  for page in range(0,max_page):
-    all_jobs.extend(get_jobs(keyward,page))
-    print(f"{keyward} job from SO page{page+1} is finished")
+  all_jobs.extend(get_jobs(keyward,0))#for test
+  # for page in range(0,max_page):
+  #   all_jobs.extend(get_jobs(keyward,page))
+  #   print(f"{keyward} job from SO page{page+1} is finished")
   return all_jobs
