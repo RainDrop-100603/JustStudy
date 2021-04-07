@@ -100,3 +100,6 @@ dictionary
     dict[key] 는 key가 없으면 KeyError 
     dict.get(key) 는 key가 없으면 None 반환 
   
+
+
+https://www.geeksforgeeks.org/get-post-requests-using-python/
