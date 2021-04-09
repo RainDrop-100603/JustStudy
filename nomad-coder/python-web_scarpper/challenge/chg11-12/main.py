@@ -22,20 +22,38 @@ This will give you the top posts in per month.
 """
 
 db = {}
+reddit_url="https://www.reddit.com"
+post_cap=6
+subreddits = [
+    "javascript",
+    "reactjs",
+    "reactnative",
+    "programming",
+    "css",
+    "golang",
+    "flutter",
+    "rust",
+    "django",
+    "pics"
+]
 
 def get_data(subreddit):
   if db.get(subreddit) is None:
-    req=requests.get(f"https://www.reddit.com/r/{subreddit}/top/?t=month", headers=headers)
+    req=requests.get(f"{reddit_url}/r/{subreddit}/top/?t=month", headers=headers)
     soup=BeautifulSoup(req.text,"html.parser")
-    reddit_card=soup.find_all("div",{"class":"scrollerItem"},limit=6)
+    reddit_card=soup.find_all("div",{"class":"scrollerItem"},limit=post_cap)
     print(f"extract {subreddit}")
     data_list=[]
-    del(reddit_card[1])#del promotion 
     for card in reddit_card:
+      #remove ad(promoted post)
+      try:
+        link=reddit_url+card.find("a",{"data-click-id":"body"})["href"]
+      except:
+        continue
       ele={
         "upvote":card.find("div").text,
         "title":card.find("h3").text,
-        "link":card.find("a",{"data-click-id":"body"})["href"],
+        "link":link,
         "keyward":f"r/{subreddit}"
       }
       data_list.append(ele)
@@ -47,29 +65,19 @@ def number(upvote):
     vote=int(upvote)
   except:
     if upvote[-1] == 'k':
-      vote=int(upvote[:-2])*1000
+      vote=int(float(upvote[:-2])*1000)
     elif  upvote[-1] == 'm':
-      vote=int(upvote[:-2])*1000000
+      vote=int(float(upvote[:-2])*1000000)
+    else:
+      vote=0
   return vote
-
-subreddits = [
-    "javascript",
-    "reactjs",
-    "reactnative",
-    "programming",
-    "css",
-    "golang",
-    "flutter",
-    "rust",
-    "django"
-]
 
 app = Flask("DayEleven")
 
 @app.route('/')
 def home():
-  pass
-
+  return render_template("home.html",subreddits=subreddits)
+  
 @app.route('/read')
 def read():
   data_list=[]
@@ -78,9 +86,9 @@ def read():
     is_on=request.args.get(subreddit)
     if is_on == "on":
       data_list.extend(get_data(subreddit))
-    keywards+=f" {subreddit}"
+      keywards+=f" r/{subreddit}"
   data_list=sorted(data_list,reverse=True,key=lambda item:number(item['upvote']))
-  render_template("read.html",keywards=keywards,data_list=data_list)
+  return render_template("read.html",keywards=keywards,data_list=data_list)
   
 app.run(host="0.0.0.0")
 
