@@ -1,3 +1,26 @@
+'''
+order_by = request.args.get('order_by', 'popular')
+  popular은 왜 request?
+내 코드에서 중복된 부분을 삭제하는것도 나쁘진 않을듯
+  코드가 간단해지지만 약간 읽기 어려워진다는 점은 있다.
+db에 data를 가공하지 않고 바로 저장
+  data가 작을경우 나쁘지 않은 선택으로 보임 
+{% if comment.author == None%}
+    [deleted]
+  {% else %}
+    <strong>{{comment.author}}:</strong>
+    <p>{{comment.text | safe}}</p>
+  {% endif %}
+    api를 통해 가져온 데이ㅓㅌ가 잘 정리되어 있기 때문에, 추가적인 정리는 선택적으로 하면 된다.
+      추가적인 정리: extract_data_index(or detail) 함수는 이미 정리된 데이터를 다시 정리하는 것
+        저장공간이 부족하거나 데이터가 너무 크면 유용하다.
+    dict에서 .을 통해 요소에 접근하는 것은 comment['text]와 같은 의미일까?
+      html에서는 위와같이 사용해야 하는것이며, python에서는 적용되지 않는다.
+    추가적인 정리 필요
+'''
+
+
+#my
 import requests
 from flask import Flask, render_template, request
 
@@ -88,3 +111,39 @@ def detail(object_id):
 
 app.run(host="0.0.0.0")
 
+#sol
+import requests
+from flask import Flask, render_template, request
+
+base_url = "http://hn.algolia.com/api/v1"
+new = f"{base_url}/search_by_date?tags=story"
+popular = f"{base_url}/search?tags=story"
+
+def make_detail_url(id):
+  return f"{base_url}/items/{id}"
+
+db = {}
+app = Flask("DayNine")
+
+@app.route("/")
+def home():
+  order_by = request.args.get('order_by', 'popular')
+  if order_by not in db:
+    print("Requesting")
+    if order_by == 'popular':
+      news = requests.get(popular)
+    elif order_by == 'new':
+      news = requests.get(new)
+    results = news.json()['hits']
+    db[order_by] = results
+  results = db[order_by]
+  return render_template("index.html", order_by=order_by, results=results)
+
+
+@app.route("/<id>")
+def detail(id):
+  detail_request = requests.get(make_detail_url(id))
+  result = detail_request.json()
+  return render_template("detail.html",result=result)
+
+app.run(host="0.0.0.0")

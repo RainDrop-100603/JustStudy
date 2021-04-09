@@ -54,6 +54,24 @@
       if-else의 경우 if문을 모든 경우에 확인해야하며, 경우에 따라 여러 조건을 확인해야 해 if문이 여러번 사용되거나 길어질 수 있다.->속도 감소
       except가 발생하지 않을경우, try except가 더 빠르며, except가 발생한경우(예외처리)는 if else가 더 빠르다.
         except가 지나치게 많이 발생하는 경우가 아니라면, try-except의 사용이 보기도 편하고 좋을듯 하다.  
+  order_by = request.args.get('order_by', 'popular')
+    popular은 왜 request?
+  내 코드에서 중복된 부분을 삭제하는것도 나쁘진 않을듯
+    코드가 간단해지지만 약간 읽기 어려워진다는 점은 있다.
+  db에 data를 가공하지 않고 바로 저장
+    data가 작을경우 나쁘지 않은 선택으로 보임 
+  {% if comment.author == None%}
+      [deleted]
+    {% else %}
+      <strong>{{comment.author}}:</strong>
+      <p>{{comment.text | safe}}</p>
+    {% endif %}
+      api를 통해 가져온 데이ㅓㅌ가 잘 정리되어 있기 때문에, 추가적인 정리는 선택적으로 하면 된다.
+        추가적인 정리: extract_data_index(or detail) 함수는 이미 정리된 데이터를 다시 정리하는 것
+          저장공간이 부족하거나 데이터가 너무 크면 유용하다.
+      dict에서 .을 통해 요소에 접근하는 것은 comment['text]와 같은 의미일까?
+        html에서는 위와같이 사용해야 하는것이며, python에서는 적용되지 않는다.
+      추가적인 정리 필요
 '''
 
 def input_number(num_from='', num_to=''):
