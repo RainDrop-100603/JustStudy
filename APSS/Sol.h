@@ -202,3 +202,8 @@ void MATCHORDER();
 void LUNCHBOX_Input(int& number,vector<int>& warmTime,vector<int>& eatingTime);
 int LUNCHBOX_Algo(int number,const vector<int>& warmTime,const vector<int>& eatingTime);
 void LUNCHBOX();
+
+// @*@*@* greedy, Huffman code, 교재 참고, 증명을 생각하기 어려우면 그림을 그려보자 
+void STRJOIN_Input(int& strNum,vector<int>& strLen);
+int STRJOIN_Algo(int strNum,const vector<int>& strLen);
+void STRJOIN();
