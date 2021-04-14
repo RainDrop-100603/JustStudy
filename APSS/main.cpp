@@ -60,7 +60,14 @@ int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr){
   vector<pair<double,double>> pointAngleArr;
   for(auto& ele: pointArr){
     double pointAngle=circleAngle(ele[1],ele[0],8);
-    double oversightAngle=asin(ele[2]/16)*2;
+    double oversightAngle;
+    if(ele[2]<=8.0*sqrt(2)){
+      oversightAngle=asin(ele[2]/16)*2;
+    }else if(ele[2]>=16.0){
+      return 1;
+    }else{
+      oversightAngle=acos((128-ele[2]*ele[2])/128);
+    }
     pointAngleArr.push_back(make_pair(pointAngle-oversightAngle,pointAngle+oversightAngle));
   }
   sort(pointAngleArr.begin(),pointAngleArr.end());
