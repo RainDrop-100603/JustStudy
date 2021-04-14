@@ -25,7 +25,7 @@ void MINASTIRITH_Input(int& pointNum,vector<vector<double>>& pointArr){
   }
 }
 double circleAngle(double pointX, double pointY, double radius){
-  // (0,0) r=radius circle, angle from Y-axis and clockwise direction
+  // (0,0) r=radius circle, angle from Y-axis and clockwise direction, radian
   if(pointX>=0){
     if(pointY>=0){
       //1st quadrant
@@ -44,30 +44,55 @@ double circleAngle(double pointX, double pointY, double radius){
     }
   }
 }
+int MINASTIRITH_func(const vector<pair<double,double>>& pointAngleArr,const vector<int>& cache, int idx){
+  int count(1),correction(pointAngleArr[idx].first);
+  while(idx!=-1){
+    if(pointAngleArr[idx].second>=acos(0)*4+correction){
+      return count;
+    }
+    idx=cache[idx];
+    count++;
+  }
+  return 1000;
+}
 int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr){
   //변환
   vector<pair<double,double>> pointAngleArr;
   for(auto& ele: pointArr){
     double pointAngle=circleAngle(ele[0],ele[1],ele[2]);
-    double oversightAngle=acos(8/(1+ele[2]*ele[2]/64));
+    double oversightAngle=asin(ele[2]/16)*2;
     pointAngleArr.push_back(make_pair(pointAngle-oversightAngle,pointAngle+oversightAngle));
   }
   sort(pointAngleArr.begin(),pointAngleArr.end());
   //cache 생성, n번째 초소에서
   vector<int> cache(pointNum,-1); 
   for(int i=0;i<pointNum;i++){
-    int tmp_correction=pointAngleArr[i].first();
-    int prev_end=pointAngleArr[i].second();
+    double prev_end=pointAngleArr[i].second;
+    double tmp_end=prev_end;
     for(int j=i+1;j<pointNum;j++){
-
+      if(pointAngleArr[j].first>prev_end){
+        break;
+      }
+      if(pointAngleArr[j].second>tmp_end){
+        cache[i]=j;
+        tmp_end=pointAngleArr[j].second;
+      }
     }
   }
-  //
-  int tmp,result(1000);
-  while ((tmp=MINASTIRITH_func(pointAngleArr,cache))!=1000){
+  //algo
+  int tmp,result(1000),idx(0);
+  while ((tmp=MINASTIRITH_func(pointAngleArr,cache,idx))!=1000){
     result=min(tmp,result);
-    pointAngleArr.erase(pointAngleArr.begin());
+    idx++;
   }
+  //debug
+  double rad1=acos(0)/90;
+  for(auto& ele:pointAngleArr){
+    cout<<"("<<(ele.first+ele.second)/2/rad1<<","<<(ele.second-ele.first)/2/rad1<<") ";
+  }cout<<"\n";
+  for(auto& ele: cache){
+    cout<<"["<<ele<<"] ";
+  }cout<<"\n";
   return result;
 }
 void MINASTIRITH(){
@@ -147,7 +172,11 @@ void MINASTIRITH(){
     vector<vector<double>> pointArr;
     MINASTIRITH_Input(pointNum,pointArr);
     auto result=MINASTIRITH_Algo(pointNum,pointArr);
-    cout<<result<<'\n';
+    if(result==1000){
+      cout<<"IMPOSSIBLE"<<"\n";
+    }else{
+      cout<<result<<"\n";
+    }
   }
 }
 
