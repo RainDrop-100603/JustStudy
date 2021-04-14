@@ -53,18 +53,21 @@ int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr){
     pointAngleArr.push_back(make_pair(pointAngle-oversightAngle,pointAngle+oversightAngle));
   }
   sort(pointAngleArr.begin(),pointAngleArr.end());
-  //계산
-  do{
-    double startPoint=correction=pointAngleArr[0].first();
-    double endPoint=pointAngleArr[0].second();
-    int tmp_count=1;
-    for(int i=1;i<pointNum;i++){
-      for(int j=i+1;j<pointNum;j++){
-        
-      }
+  //cache 생성, n번째 초소에서
+  vector<int> cache(pointNum,-1); 
+  for(int i=0;i<pointNum;i++){
+    int tmp_correction=pointAngleArr[i].first();
+    int prev_end=pointAngleArr[i].second();
+    for(int j=i+1;j<pointNum;j++){
+
     }
-  }while(tmp!=0)
-  int result=pointNum+100;
+  }
+  //
+  int tmp,result(1000);
+  while ((tmp=MINASTIRITH_func(pointAngleArr,cache))!=1000){
+    result=min(tmp,result);
+    pointAngleArr.erase(pointAngleArr.begin());
+  }
   return result;
 }
 void MINASTIRITH(){
