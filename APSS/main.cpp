@@ -40,7 +40,7 @@ double circleAngle(double pointX, double pointY, double radius){
       return acos(0)*4-acos(pointY/radius);
     }else{
       //3th quadrant
-      return acos(0)*2+asin(-1*pointX/radius);
+      return acos(0)*2+asin(-1.0*pointX/radius);
     }
   }
 }
@@ -60,14 +60,10 @@ int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr){
   vector<pair<double,double>> pointAngleArr;
   for(auto& ele: pointArr){
     double pointAngle=circleAngle(ele[1],ele[0],8);
-    double oversightAngle;
-    if(ele[2]<=8.0*sqrt(2)){
-      oversightAngle=asin(ele[2]/16)*2;
-    }else if(ele[2]>=16.0){
+    if(ele[2]>=16.0){
       return 1;
-    }else{
-      oversightAngle=acos((128-ele[2]*ele[2])/128);
     }
+    double oversightAngle=acos((128.0-ele[2]*ele[2])/128.0);  //제2 코사인 법칙
     pointAngleArr.push_back(make_pair(pointAngle-oversightAngle,pointAngle+oversightAngle));
   }
   sort(pointAngleArr.begin(),pointAngleArr.end());
@@ -87,10 +83,9 @@ int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr){
     }
   }
   //algo
-  int tmp,result(1000),idx(0);
-  while ((tmp=MINASTIRITH_func(pointAngleArr,cache,idx))!=1000){
-    result=min(tmp,result);
-    idx++;
+  int result(1000);
+  for(int idx=0;idx<pointNum;idx++){
+    result=min(result,MINASTIRITH_func(pointAngleArr,cache,idx));
   }
   //debug
   // double rad1=acos(0)/90;
@@ -185,7 +180,7 @@ void MINASTIRITH(){
     if(result==1000){
       cout<<"IMPOSSIBLE"<<"\n";
     }else{
-      cout<<result<<"\n";
+      cout<<result<<":::::::::\n";
     }
   }
 }
