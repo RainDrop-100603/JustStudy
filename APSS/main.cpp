@@ -14,7 +14,7 @@ using namespace std;
 //https://www.youtube.com/watch?v=x7STjpcKZP8 
 //사회복무요원 교육 
 
-// greedy, Huffman code, 교재 참고, 생각이 어려우면 그림을 그려보자 
+// greedy, atan2 함수, 
 void MINASTIRITH_Input(int& pointNum,vector<vector<double>>& pointArr){
   cin>>pointNum;
   pointArr=vector<vector<double>>(pointNum,vector<double>(3));
@@ -22,26 +22,6 @@ void MINASTIRITH_Input(int& pointNum,vector<vector<double>>& pointArr){
     cin>>ele[0];
     cin>>ele[1];
     cin>>ele[2];
-  }
-}
-double circleAngle(double pointX, double pointY, double radius){
-  // (0,0) r=radius circle, angle from Y-axis and clockwise direction, radian
-  if(pointX>=0){
-    if(pointY>=0){
-      //1st quadrant
-      return asin(pointX/radius);
-    }else{
-      //4nd quadrant
-      return acos(0)+acos(pointX/radius);
-    }
-  }else{
-    if(pointY>=0){
-      //2rd quadrant
-      return acos(0)*4-acos(pointY/radius);
-    }else{
-      //3th quadrant
-      return acos(0)*2+asin(-1.0*pointX/radius);
-    }
   }
 }
 int MINASTIRITH_func(const vector<pair<double,double>>& pointAngleArr,const vector<int>& cache, int idx){
@@ -59,11 +39,11 @@ int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr){
   //변환
   vector<pair<double,double>> pointAngleArr;
   for(auto& ele: pointArr){
-    double pointAngle=circleAngle(ele[1],ele[0],8);
+    double pointAngle=atan2(ele[0],ele[1]);
     if(ele[2]>=16.0){
       return 1;
     }
-    double oversightAngle=acos((128.0-ele[2]*ele[2])/128.0);  //제2 코사인 법칙
+    double oversightAngle=asin(ele[2]/16)*2;  //제2 코사인 법칙
     pointAngleArr.push_back(make_pair(pointAngle-oversightAngle,pointAngle+oversightAngle));
   }
   sort(pointAngleArr.begin(),pointAngleArr.end());
@@ -71,17 +51,17 @@ int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr){
   vector<int> cache(pointNum,-1); 
   for(int i=0;i<pointNum;i++){
     double prev_end=pointAngleArr[i].second;
-    double tmp_end=prev_end;
+    double tmp_now_end=prev_end;
     for(int j=i+1;j<pointNum;j++){
       if(pointAngleArr[j].first>prev_end){
         break;
       }
-      if(pointAngleArr[j].second>tmp_end){
+      if(pointAngleArr[j].second>tmp_now_end){
         cache[i]=j;
-        tmp_end=pointAngleArr[j].second;
+        tmp_now_end=pointAngleArr[j].second;
       }
     }
-  }
+  } 
   //algo
   int result(1000);
   for(int idx=0;idx<pointNum;idx++){
@@ -180,7 +160,7 @@ void MINASTIRITH(){
     if(result==1000){
       cout<<"IMPOSSIBLE"<<"\n";
     }else{
-      cout<<result<<":::::::::\n";
+      cout<<result<<"\n";
     }
   }
 }
