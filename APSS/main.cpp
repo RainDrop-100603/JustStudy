@@ -14,7 +14,7 @@ using namespace std;
 //https://www.youtube.com/watch?v=x7STjpcKZP8 
 //사회복무요원 교육 
 
-// greedy, atan2 함수, 
+// greedy, atan2 함수, 원에서의 각도를 이용할땐, 2pi마다 반복되는것을 고려하고 정규화, 자료형 잘 확인하기  
 void MINASTIRITH_Input(int& pointNum,vector<vector<double>>& pointArr){
   cin>>pointNum;
   pointArr=vector<vector<double>>(pointNum,vector<double>(3));
@@ -25,7 +25,8 @@ void MINASTIRITH_Input(int& pointNum,vector<vector<double>>& pointArr){
   }
 }
 int MINASTIRITH_func(const vector<pair<double,double>>& pointAngleArr,const vector<int>& cache, int idx){
-  int count(1),correction(pointAngleArr[idx].first);
+  int count(1);
+  double correction(pointAngleArr[idx].first);
   while(idx!=-1){
     if(pointAngleArr[idx].second>=acos(0)*4+correction){
       return count;
@@ -38,13 +39,16 @@ int MINASTIRITH_func(const vector<pair<double,double>>& pointAngleArr,const vect
 int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr){
   //변환
   vector<pair<double,double>> pointAngleArr;
+  double pi=acos(0)*2;
   for(auto& ele: pointArr){
     double pointAngle=atan2(ele[0],ele[1]);
     if(ele[2]>=16.0){
       return 1;
     }
-    double oversightAngle=asin(ele[2]/16)*2;  //제2 코사인 법칙
-    pointAngleArr.push_back(make_pair(pointAngle-oversightAngle,pointAngle+oversightAngle));
+    double oversightAngle=asin(ele[2]/16)*2;  
+    double start=fmod(pointAngle-oversightAngle+2*pi,2*pi);
+    double end=start+oversightAngle*2;
+    pointAngleArr.push_back(make_pair(start,end));
   }
   sort(pointAngleArr.begin(),pointAngleArr.end());
   //cache 생성, n번째 초소에서
@@ -67,17 +71,6 @@ int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr){
   for(int idx=0;idx<pointNum;idx++){
     result=min(result,MINASTIRITH_func(pointAngleArr,cache,idx));
   }
-  //debug
-  // double rad1=acos(0)/90;
-  // for(auto& ele:pointAngleArr){
-  //   cout<<"("<<ele.first/rad1<<","<<ele.second/rad1<<") ";
-  // }cout<<"\n";
-  // for(auto& ele:pointAngleArr){
-  //   cout<<"("<<(ele.first+ele.second)/2/rad1<<","<<(ele.second-ele.first)/2/rad1<<") ";
-  // }cout<<"\n";
-  // for(auto& ele: cache){
-  //   cout<<"["<<ele<<"] ";
-  // }cout<<"\n";
   return result;
 }
 void MINASTIRITH(){
@@ -148,6 +141,14 @@ void MINASTIRITH(){
       O(N^3) 
     크기:
       O(N)
+    보완
+      greedy한 선택은 cache로 저장해 둘 수 있다 -> n^2
+        전체시간 o(n^2)으로 단축 
+      atan2함수를 사용하자 
+      시작위치를 0~2pi로 정규화 해야 위 전략을 사용할 수 있다.
+        기존에는 초소가 -pi~pi, 감시각도가 0~pi여서 감시 시작위치는 -2pi~pi
+      시작 위치를 삭제할 필요없이, 다음위치부터 시작하면 된다.
+        idx번째부터 end까지 체크하도록 한다.
   */
   //Sol
   int testCase;

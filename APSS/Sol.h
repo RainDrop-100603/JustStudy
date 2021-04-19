@@ -207,3 +207,10 @@ void LUNCHBOX();
 void STRJOIN_Input(int& strNum,vector<int>& strLen);
 int STRJOIN_Algo(int strNum,const vector<int>& strLen);
 void STRJOIN();
+
+// @* greedy, atan2 함수, 원에서의 각도를 이용할땐, 2pi마다 반복되는것을 고려하고 정규화, 자료형 잘 확인하기  
+void MINASTIRITH_Input(int& pointNum,vector<vector<double>>& pointArr);
+int MINASTIRITH_func(const vector<pair<double,double>>& pointAngleArr,const vector<int>& cache, int idx);
+int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr);
+void MINASTIRITH();
+
