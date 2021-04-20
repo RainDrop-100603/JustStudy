@@ -31,15 +31,112 @@ void BOARDCOVER2_Input(vector<vector<char>>& board, vector<vector<char>>& block)
     }
   }
 }
-void BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<char>>& block,int& result,int row,int col){
-  //각 위치 input 가능한지 확인
-    //각 위치 input
-    //재귀
-    //각 위치 다시 output
-    //result값은 계속 갱신
-  //리턴
+vector<vector<char>> BOARDCOVER2_block_LRreverse(const vector<vector<char>>& block){
+  vector<vector<char>> tmp;
+  for(auto ele:block){
+    reverse(ele.begin(),ele.end());
+    tmp.push_back(ele);
+  }
+  return tmp;
 }
-
+vector<vector<char>> BOARDCOVER2_block_UDreverse(const vector<vector<char>>& block){
+  vector<vector<char>> tmp;
+  for(auto iter=block.rbegin();iter!=block.rend();iter++){
+    tmp.push_back(*iter);
+  }
+  return tmp;
+}
+vector<vector<char>> BOARDCOVER2_block_turn(const vector<vector<char>>& block){
+  vector<vector<char>> block_turn(block[0].size(),vector<char>(block.size()));
+  for(int row=0;row<block_turn.size();row++){
+    for(int col=0;col<block_turn[0].size();col++){
+      block_turn[row][col]=block[col][row];
+    }
+  }
+  return block_turn;
+}
+void BOARDCOVER2_BlockArr_input(vector<vector<vector<char>>>& block_arr, const vector<vector<char>>& block){
+  bool canInput(true);
+  for(auto& ele: block_arr){
+    //row나 col의 길이가 다르면 생략
+    if(block.size()!=ele.size()||block[0].size()!=ele[0].size()){
+      continue;
+    }
+    //중복체크
+    for(int row=0;row<ele.size();row++){
+      for(int col=0;col<ele[0].size();col++){
+        if(block[row][col]!=ele[row][col]){
+          canInput=false;
+          row=ele.size(); //두개의 for문을 탈출하기 위함
+          break;
+        }
+      }
+    }
+    if(!canInput) break;
+  }
+  if(canInput){
+    block_arr.push_back(block);
+  }
+}
+vector<vector<vector<char>>> BOARDCOVER2_BlockArr(const vector<vector<char>>& block){
+  vector<vector<vector<char>>> block_arr,result;
+  block_arr.push_back(block);
+  BOARDCOVER2_BlockArr_input(block_arr,BOARDCOVER2_block_turn(block));
+  for(const auto& ele:block_arr){
+    BOARDCOVER2_BlockArr_input(result,ele);
+    BOARDCOVER2_BlockArr_input(result,BOARDCOVER2_block_LRreverse(ele));
+    BOARDCOVER2_BlockArr_input(result,BOARDCOVER2_block_UDreverse(ele));
+    BOARDCOVER2_BlockArr_input(result,BOARDCOVER2_block_LRreverse(BOARDCOVER2_block_UDreverse(ele)));
+  }
+  return result;
+}
+bool BOARDCOVER2_board_can_input(const vector<vector<char>>& board, const vector<vector<char>>& block,int row,int col){
+  //block이 벗어날 때 
+  if(row+block.size()>board.size()||col+block[0].size()>board[0].size()){
+    return false;
+  }
+  //중복체크
+  for(int i=0;i<block.size();i++){
+    for(int j=0;j<block.size();j++){
+      if(board[row+i][col+j]&block[i][j]){
+        return false;
+      }
+    }
+  }
+  return true;
+}
+bool BOARDCOVER2_board_input(vector<vector<char>>& board, const vector<vector<char>>& block,int row,int col){
+  for(int i=0;i<block.size();i++){
+    for(int j=0;j<block.size();j++){
+      board[row+i][col+j]+=block[i][j];
+    }
+  }
+}
+bool BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<char>>& block,int row,int col){
+  for(int i=0;i<block.size();i++){
+    for(int j=0;j<block.size();j++){
+      board[row+i][col+j]-=block[i][j];
+    }
+  }
+}
+int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr,int result,int row,int col){
+  int result=0;
+  for(const auto& block=block_arr){
+    if(BOARDCOVER2_board_can_input(board,block,row,col)){
+      BOARDCOVER2_board_input(board,block,row,col);
+      if(col==board[0].size()-1){
+        if(row==board.size()-1){
+          break;
+        }
+        result=max(result,1+BOARDCOVER2_func(board,block,row+1,0));
+      }else{
+        result=max(result,1+BOARDCOVER2_func(board,block,row,col+1));
+      }
+      BOARDCOVER2_board_output(board,block,row,col);
+    }
+  }
+  return result;
+}
 int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block){
   //.과 #을 0과 1로 변환
   for(auto& ele: board){
@@ -60,44 +157,11 @@ int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block){
       }
     }
   }
-  //block의 8개의 방향, 중복은 제거
-  vector<vector<vector<char>>> block_arr;
-  block_arr.push_back(block);
-  //블록 뒤집기
-  vector<vector<char>> col_reverse_block;
-  for(auto ele:block){
-    reverse(ele.begin(),ele.end());
-    col_reverse_block.push_back(ele);
-  }
-  vector<vector<char>> row_reverse_block;
-  for(auto iter=block.rbegin();iter!=block.rend();iter++){
-    row_reverse_block.push_back(*iter);
-  }
-  //블록 넣기
-  vector<vector<char>> tmp_block;
-  bool canInput(true);
-  for(auto& ele: block_arr){
-    if(tmp_block.size()!=ele.size()){
-      break;
-    }
-    for(int row=0;row<ele.size();row++){
-      for(int col=0;col<ele[0].size();col++){
-        if(tmp_block[row][col]!=ele[row][col]){
-          canInput=false;
-          row=ele.size(); //두개의 for문을 탈출하기 위함
-          break;
-        }
-      }
-    }
-    if(!canInput) break;
-  }
-  if(canInput){
-    block_arr.push_back(tmp_block);
-  }
-
-
+  //8방향의 블록, 중복제거 
+  auto block_arr=BOARDCOVER2_BlockArr(block);
+  //함수
   int result(1000);
-  BOARDCOVER2_func(board,block,result,0,0);
+  BOARDCOVER2_func(board,block_arr,result,0,0);
   return result;
 }
 void BOARDCOVER2(){
