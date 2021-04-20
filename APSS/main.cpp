@@ -63,10 +63,11 @@ void BOARDCOVER2_BlockArr_input(vector<vector<vector<char>>>& block_arr, const v
       continue;
     }
     //중복체크
+    canInput=false;
     for(int row=0;row<ele.size();row++){
       for(int col=0;col<ele[0].size();col++){
         if(block[row][col]!=ele[row][col]){
-          canInput=false;
+          canInput=true;
           row=ele.size(); //두개의 for문을 탈출하기 위함
           break;
         }
@@ -97,7 +98,7 @@ bool BOARDCOVER2_board_can_input(const vector<vector<char>>& board, const vector
   }
   //중복체크
   for(int i=0;i<block.size();i++){
-    for(int j=0;j<block.size();j++){
+    for(int j=0;j<block[0].size();j++){
       if(board[row+i][col+j]&block[i][j]){
         return false;
       }
@@ -105,22 +106,59 @@ bool BOARDCOVER2_board_can_input(const vector<vector<char>>& board, const vector
   }
   return true;
 }
-bool BOARDCOVER2_board_input(vector<vector<char>>& board, const vector<vector<char>>& block,int row,int col){
+void BOARDCOVER2_board_input(vector<vector<char>>& board, const vector<vector<char>>& block,int row,int col){
   for(int i=0;i<block.size();i++){
-    for(int j=0;j<block.size();j++){
+    for(int j=0;j<block[0].size();j++){
       board[row+i][col+j]+=block[i][j];
     }
   }
 }
-bool BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<char>>& block,int row,int col){
+void BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<char>>& block,int row,int col){
   for(int i=0;i<block.size();i++){
-    for(int j=0;j<block.size();j++){
+    for(int j=0;j<block[0].size();j++){
       board[row+i][col+j]-=block[i][j];
     }
   }
 }
-int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr,int row,int col){
+bool BOARDCOVER2_heuristic1(const vector<vector<char>>& board,const vector<vector<char>>& block,int tmp_max,int row,int col){
+  //block의 크기
+  int block_size=0;
+  for(auto& row:block){
+    for(auto& ele:row){
+      if(ele==1){
+        block_size++;
+      }
+    }
+  }
+  //board에 남은 공간
+  int board_remain(0), board_row(board.size()),board_col(board[0].size())
+  int board_size=(board_row-1)*(board_col-1);
+  while(row<board_row){
+    if(board[row][col]==1){
+      board_remain++;
+    }
+    if(col<board_col-1){
+      col++;
+    }else{
+      row++;
+      col=0;
+    }
+  }
+  //현재 최대갯수
+  if(tmp_max*block_size>board_remain){
+    return true;
+  }else{
+    return false;
+  }
+}
+int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,int row,int col){
   int result=0;
+  //최적화, tmp_max와 current_max 구분해야한다.
+  // 조합 탐색의 경우, return을 통해서만 값을 가져오면 가지치기를 할 수 없다, 현재까지의 값을 알 수 있도록 함수를 수정 
+  if(BOARDCOVER2_heuristic1(board,block[0],tmp_max,row,col)){
+    return 0;
+  }
+  //input을 했을경우
   for(const auto& block:block_arr){
     if(BOARDCOVER2_board_can_input(board,block,row,col)){
       BOARDCOVER2_board_input(board,block,row,col);
@@ -128,12 +166,22 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
         if(row==board.size()-1){
           break;
         }
-        result=max(result,1+BOARDCOVER2_func(board,block_arr,row+1,0));
+        result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,row+1,0));
       }else{
-        result=max(result,1+BOARDCOVER2_func(board,block_arr,row,col+1));
+        result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,row,col+1));
       }
       BOARDCOVER2_board_output(board,block,row,col);
+      tmp_max=max(result,tmp_max);
     }
+  }
+  //input을 안했을경우
+  if(col==board[0].size()-1){
+    if(row==board.size()-1){
+      return result;
+    }
+    result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,row+1,0));
+  }else{
+    result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,row,col+1));
   }
   return result;
 }
@@ -160,7 +208,9 @@ int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block){
   //8방향의 블록, 중복제거 
   auto block_arr=BOARDCOVER2_BlockArr(block);
   //함수
-  return BOARDCOVER2_func(board,block_arr,0,0);
+    //가지치기
+  int tmp_max=0;
+  return BOARDCOVER2_func(board,block_arr,tmp_max,0,0);
 }
 void BOARDCOVER2(){
   //BOARDCOVER2
