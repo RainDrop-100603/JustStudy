@@ -18,8 +18,8 @@ using namespace std;
 void BOARDCOVER2_Input(vector<vector<char>>& board, vector<vector<char>>& block){
   int height,width,row,column;
   cin>>height>>width>>row>>column;
-  board=vector<vector<int>>(height,vector<int>(width));
-  block=vector<vector<int>>(row,vector<int>(column));
+  board=vector<vector<char>>(height,vector<char>(width));
+  block=vector<vector<char>>(row,vector<char>(column));
   for(auto& eleRow:board){
     for(auto& eleCol:eleRow){
       cin>>eleCol;
@@ -119,18 +119,18 @@ bool BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<c
     }
   }
 }
-int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr,int result,int row,int col){
+int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr,int row,int col){
   int result=0;
-  for(const auto& block=block_arr){
+  for(const auto& block:block_arr){
     if(BOARDCOVER2_board_can_input(board,block,row,col)){
       BOARDCOVER2_board_input(board,block,row,col);
       if(col==board[0].size()-1){
         if(row==board.size()-1){
           break;
         }
-        result=max(result,1+BOARDCOVER2_func(board,block,row+1,0));
+        result=max(result,1+BOARDCOVER2_func(board,block_arr,row+1,0));
       }else{
-        result=max(result,1+BOARDCOVER2_func(board,block,row,col+1));
+        result=max(result,1+BOARDCOVER2_func(board,block_arr,row,col+1));
       }
       BOARDCOVER2_board_output(board,block,row,col);
     }
@@ -160,9 +160,7 @@ int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block){
   //8방향의 블록, 중복제거 
   auto block_arr=BOARDCOVER2_BlockArr(block);
   //함수
-  int result(1000);
-  BOARDCOVER2_func(board,block_arr,result,0,0);
-  return result;
+  return BOARDCOVER2_func(board,block_arr,0,0);
 }
 void BOARDCOVER2(){
   //BOARDCOVER2
@@ -209,7 +207,7 @@ void BOARDCOVER2(){
     vector<vector<char>> board,block;
     BOARDCOVER2_Input(board,block);
     auto result=BOARDCOVER2_Algo(board,block);
-    cout<<result<<"\n";
+    cout<<result<<"::::::::::::\n";
   }
 }
 
