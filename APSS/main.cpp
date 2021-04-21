@@ -8,6 +8,7 @@
 #include <cmath>
 #include <map>
 #include <queue>
+#include <ctime>
 
 using namespace std;
 
@@ -228,6 +229,10 @@ void BOARDCOVER2(){
     완전탐색
       좌상단에서 우하단으로 가면서, 각 위치에서 블록을 놓을 수 있는지 확인한다.
       이때 블록은 좌우,상하로 뒤집을 수 있으며, 90도를 돌릴 수 있으므로 8가지의 모양을 가진다.
+    최적화
+      heuristic1: 블록의 크기 * (현재 최대 블록 - 현재 놓은 블록) > 남은 공간 이면 탐색 중단
+      board 자료형 변화: bitset을 이용하면 약간 빨라질수도
+
   */
   /*전략
   전략1
@@ -251,6 +256,10 @@ void BOARDCOVER2(){
 }
 
 int main(void){
+  clock_t start,end;
+  start=clock();
   BOARDCOVER2();
+  end=clock();;
+  cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
