@@ -135,9 +135,9 @@ bool BOARDCOVER2_heuristic1(const vector<vector<char>>& board,const vector<vecto
   }
   //board에 남은 공간
   int board_remain(0), board_row(board.size()),board_col(board[0].size());
-  int board_size=(board_row-1)*(board_col-1);
+  int board_size=(board_row)*(board_col);
   while(now_idx<board_size){
-    if(board[now_idx/board_col][now_idx%board_col]==1){
+    if(board[now_idx/board_col][now_idx%board_col]==0){
       board_remain++;
     }
     now_idx++;
