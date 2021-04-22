@@ -121,9 +121,10 @@ void BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<c
     }
   }
 }
-int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,vector<int>& heuristic2,int prev_value,int now_idx){
-  int row(now_idx/board[0].size()),col(now_idx%board[0].size());
-  if(row==board.size()){
+int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,vector<vector<int>>& heuristic2,int prev_value,int now_idx){
+  int board_row(board_row),board_col(board_col);
+  int row(now_idx/board_col),col(now_idx%board_col);
+  if(row==board_row){
     return 0;
   }
   int result=0;
@@ -132,14 +133,34 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
   if((tmp_max-prev_value)*heuristic1.first>heuristic1.second){
     return 0;
   }
-  //heuristic2, cache[now_idx]이후의 원소들이 초기상태와 같을 때, prev_idx의 최댓값 
-  if(heuristic2[now_idx]>prev_value){
+  //heuristic2, cache[row][col이후의 원소들이 초기상태와 같을 때, prev_idx의 최댓값 
+  if(heuristic2[row][col]>prev_value){
     return 0;
+  }
+  //heuristic2 업데이트
+  int block_row(block_arr[0].size()),block_col(block_arr[0][0].size()),heuristic2_value(prev_value);
+  if(heuristic2_chk) heuristic2_value++;
+  if(row+block_row<board_row){
+    if(col+block_col+1<board_col){
+      int& tmp=heuristic2[row+block_row][col+block_col+1];
+      tmp=max(tmp,heuristic2_value);
+    }
   }
   //탐색
   //block을 놓는 경우
+  bool heuristic2_chk(false);
   for(const auto& block:block_arr){
     if(BOARDCOVER2_board_can_input(board,block,row,col)){
+      if(!heuristic2_chk){
+        heuristic2_chk=true;
+        if(col+block_col+1<board_col){
+          int& tmp=heuristic2[row+block_row][col+block_col+1];
+          tmp=max(tmp,prev_value+1);
+        }else if(row+block_row+1<board_row){
+          int& tmp=heuristic2[row+block_row+1][0];
+          tmp=max(tmp,prev_value+1);
+        }
+      }
       BOARDCOVER2_board_input(board,block,row,col);
       auto next_heuristic=make_pair(heuristic1.first,heuristic1.second-heuristic1.first);
       if(block[0][0]==0){
@@ -153,7 +174,7 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
   if(board[row][col]==0){
      heuristic1.second--;
   }
-  result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,prev_value,now_idx+1));
+  result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,prev_value,heuristic2,now_idx+1));
   //반환 전에 최대값 갱신 
   tmp_max=max(tmp_max,prev_value+result);
   return result;
