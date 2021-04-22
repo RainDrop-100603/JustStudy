@@ -121,7 +121,7 @@ void BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<c
     }
   }
 }
-int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,int prev_value,int now_idx){
+int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,vector<int>& heuristic2,int prev_value,int now_idx){
   int row(now_idx/board[0].size()),col(now_idx%board[0].size());
   if(row==board.size()){
     return 0;
@@ -130,6 +130,10 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
   //최적화, tmp_max와 prev_value를 비교한다.
   //heuristic 1, 남은 공간보다 필요한 공간이 더 많다면, 탐색을 중단한다.
   if((tmp_max-prev_value)*heuristic1.first>heuristic1.second){
+    return 0;
+  }
+  //heuristic2, cache[now_idx]이후의 원소들이 초기상태와 같을 때, prev_idx의 최댓값 
+  if(heuristic2[now_idx]>prev_value){
     return 0;
   }
   //탐색
@@ -141,7 +145,7 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
       if(block[0][0]==0){
         next_heuristic.second--;
       }
-      result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,next_heuristic,prev_value+1,now_idx+1));
+      result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,next_heuristic,heuristic2,prev_value+1,now_idx+1));
       BOARDCOVER2_board_output(board,block,row,col);
     }
   }
