@@ -121,36 +121,7 @@ void BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<c
     }
   }
 }
-bool BOARDCOVER2_heuristic1(const vector<vector<char>>& board,const vector<vector<char>>& block,int blockRequired,int now_idx){
-  if(blockRequired<=0){
-    return false;
-  }
-  //block의 크기
-  int block_size=0;
-  for(auto& row:block){
-    for(auto& ele:row){
-      if(ele==1){
-        block_size++;
-      }
-    }
-  }
-  //board에 남은 공간
-  int board_remain(0), board_row(board.size()),board_col(board[0].size());
-  int board_size=(board_row)*(board_col);
-  while(now_idx<board_size){
-    if(board[now_idx/board_col][now_idx%board_col]==0){
-      board_remain++;
-    }
-    now_idx++;
-  }
-  //현재 최대갯수
-  if(blockRequired*block_size>board_remain){
-    return true;
-  }else{
-    return false;
-  }
-}
-int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,int prev_value,int now_idx){
+int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,int prev_value,int now_idx){
   int row(now_idx/board[0].size()),col(now_idx%board[0].size());
   if(row>board.size()){
     return 0;
@@ -158,20 +129,24 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
   int result=0;
   //최적화, tmp_max와 prev_value를 비교한다.
   //heuristic 1, 남은 공간보다 필요한 공간이 더 많다면, 탐색을 중단한다.
-  if(BOARDCOVER2_heuristic1(board,block_arr[0],tmp_max-prev_value,now_idx)){
+  if((tmp_max-prev_value)*heuristic1.first>heuristic1.second){
     return 0;
   }
   //탐색
-  //input을 했을경우
+  //block을 놓는 경우
   for(const auto& block:block_arr){
     if(BOARDCOVER2_board_can_input(board,block,row,col)){
       BOARDCOVER2_board_input(board,block,row,col);
-      result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,prev_value+1,now_idx+1));
+      auto next_heuristic=heuristic1;
+      if(board[0][0]==0) next_heuristic.second--;
+      result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,next_heuristic,prev_value+1,now_idx+1));
       BOARDCOVER2_board_output(board,block,row,col);
     }
   }
-  //input을 안했을경우
-  result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,prev_value,now_idx+1));
+  //block을 놓지않는 경우
+  auto next_heuristic=make_pair(heuristic1.first,heuristic1.second-1);
+  result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,next_heuristic,prev_value,now_idx+1));
+  //반환 전에 최대값 갱신 
   tmp_max=max(tmp_max,prev_value+result);
   return result;
 }
@@ -199,8 +174,25 @@ int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block){
   auto block_arr=BOARDCOVER2_BlockArr(block);
   //함수
     //가지치기
+    //heuristic 1, block의 크기와 board에 남은 공간 이용
+  int block_size(0),board_remain(0);
+  for(auto& row:block){
+    for(auto& ele:row){
+      if(ele==1){
+        block_size++;
+      }
+    }
+  }
+  for(auto& row: board){
+    for(auto& ele: row){
+      if(ele==0){
+        board_remain++;
+      }
+    }
+  }
+  auto heuristic1=make_pair(block_size,board_remain);
   int tmp_max=0;
-  return BOARDCOVER2_func(board,block_arr,tmp_max,0,0);
+  return BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,0,0);
 }
 void BOARDCOVER2(){
   //BOARDCOVER2
