@@ -123,7 +123,7 @@ void BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<c
 }
 int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,int prev_value,int now_idx){
   int row(now_idx/board[0].size()),col(now_idx%board[0].size());
-  if(row>board.size()){
+  if(row==board.size()){
     return 0;
   }
   int result=0;
@@ -137,15 +137,19 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
   for(const auto& block:block_arr){
     if(BOARDCOVER2_board_can_input(board,block,row,col)){
       BOARDCOVER2_board_input(board,block,row,col);
-      auto next_heuristic=heuristic1;
-      if(board[0][0]==0) next_heuristic.second--;
+      auto next_heuristic=make_pair(heuristic1.first,heuristic1.second-heuristic1.first);
+      if(block[0][0]==0){
+        next_heuristic.second--;
+      }
       result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,next_heuristic,prev_value+1,now_idx+1));
       BOARDCOVER2_board_output(board,block,row,col);
     }
   }
   //block을 놓지않는 경우
-  auto next_heuristic=make_pair(heuristic1.first,heuristic1.second-1);
-  result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,next_heuristic,prev_value,now_idx+1));
+  if(board[row][col]==0){
+     heuristic1.second--;
+  }
+  result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,prev_value,now_idx+1));
   //반환 전에 최대값 갱신 
   tmp_max=max(tmp_max,prev_value+result);
   return result;
@@ -222,9 +226,11 @@ void BOARDCOVER2(){
       좌상단에서 우하단으로 가면서, 각 위치에서 블록을 놓을 수 있는지 확인한다.
       이때 블록은 좌우,상하로 뒤집을 수 있으며, 90도를 돌릴 수 있으므로 8가지의 모양을 가진다.
     최적화
-      heuristic1: 블록의 크기 * (현재 최대 블록 - 현재 놓은 블록) > 남은 공간 이면 탐색 중단
+      heuristic1: 남은 부분에 대한 가지치기
+        블록의 크기 * (현재 최대 블록 - 현재 놓은 블록) > 남은 공간 이면 탐색 중단
       board 자료형 변화: bitset을 이용하면 약간 빨라질수도
-
+      heuristic2: 지나온 부분에 대한 가지치기
+        cache[idx]=board에서 idx번째 부터는 초기 상태(아무런 영향 x)라고 할 때, 그 시점에 prev_idx의 최댓값 
   */
   /*전략
   전략1
