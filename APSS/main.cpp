@@ -133,41 +133,59 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
   if((tmp_max-prev_value)*heuristic1.first>heuristic1.second){
     return 0;
   }
-  //heuristic2, cache[row][col이후의 원소들이 초기상태와 같을 때, prev_idx의 최댓값 
-  // if(heuristic2[row][col]>prev_value){
-  //   return 0;
-  // }
-  // //heuristic2 업데이트
-  // int block_row(block_arr[0].size()),block_col(block_arr[0][0].size());
-  // if(col==0&&row+block_row-1<board_row){
-  //   int& tmp=heuristic2[row+block_row-1][block_col];
-  //   tmp=max(tmp,prev_value);
-  // }else if(row+block_row<board_row){
-  //   if(col+block_col<board_col){
-  //     int& tmp=heuristic2[row+block_row][col+block_col];
-  //     tmp=max(tmp,prev_value);
-  //   }else{
-  //     int& tmp=heuristic2[row+block_row+1][col+block_col-board_col];
-  //     tmp=max(tmp,prev_value);
-  //   }
-  // }
+  //heuristic2, cache[idx]이후의 원소들이 초기상태와 같을 때, prev_idx의 최댓값 
+  if(heuristic2[row][col]>prev_value){
+    return 0;
+  }
   //탐색
   //block을 놓는 경우
+  bool heu2_update(false);
   for(const auto& block:block_arr){
     if(BOARDCOVER2_board_can_input(board,block,row,col)){
       BOARDCOVER2_board_input(board,block,row,col);
+      //heuristic1
       auto next_heuristic=make_pair(heuristic1.first,heuristic1.second-heuristic1.first);
       if(block[0][0]==0){
         next_heuristic.second--;
       }
+      //heuristic2
+      // if(!heu2_update){
+      //   heu2_update=true;
+      //   int heu2_row=row+block.size();
+      //   int heu2_col=col+block[0].size();
+      //   if(heu2_col>board_col){
+      //     heu2_row++;
+      //     heu2_col-=board_col;
+      //   }
+      //   if(heu2_row<board_row&&heu2_col<board_col){
+      //     int& tmp=heuristic2[heu2_row][heu2_col];
+      //     tmp=max(tmp,prev_value+1);
+      //   }
+      // }
+      //recursive
       result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,next_heuristic,heuristic2,prev_value+1,now_idx+1));
       BOARDCOVER2_board_output(board,block,row,col);
     }
   }
   //block을 놓지않는 경우
+    //heuristic1
   if(board[row][col]==0){
      heuristic1.second--;
   }
+    //heuristic2
+  // if(!heu2_update){
+  //   heu2_update=true;
+  //   int heu2_row=row+block_arr[0].size();
+  //   int heu2_col=col+block_arr[0][0].size();
+  //   if(heu2_col>board_col){
+  //     heu2_row++;
+  //     heu2_col-=board_col;
+  //   }
+  //   if(heu2_row<board_row&&heu2_col<board_col){
+  //     int& tmp=heuristic2[heu2_row][heu2_col];
+  //     tmp=max(tmp,prev_value);
+  //   }
+  // }  
   result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,heuristic2,prev_value,now_idx+1));
   //반환 전에 최대값 갱신 
   tmp_max=max(tmp_max,prev_value+result);
@@ -214,8 +232,8 @@ int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block){
     }
   }
   auto heuristic1=make_pair(block_size,board_remain);
-    //heuristic2
-  vector<vector<int>> heuristic2(board.size()+1,vector<int>(board[0].size()+1,0));
+    //heuristic2, 현재까지의 경로가 최적인지 
+  vector<vector<int>> heuristic2(board.size(),vector<int>(board[0].size(),0));
   int tmp_max=0;
   return BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,heuristic2,0,0);
 }
