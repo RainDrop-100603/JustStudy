@@ -124,7 +124,8 @@ void BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<c
 int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,vector<vector<int>>& heuristic2,int prev_value,int now_idx){
   int board_row(board.size()),board_col(board[0].size());
   int row(now_idx/board_col),col(now_idx%board_col);
-  if(row==board_row){
+  int block_row(block_arr[0].size()),block_col(block_arr[0][0].size());
+  if(row+min(block_row,block_col)>board_row){
     return 0;
   }
   int result=0;
@@ -232,8 +233,9 @@ int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block){
     }
   }
   auto heuristic1=make_pair(block_size,board_remain);
-    //heuristic2, 현재까지의 경로가 최적인지 
-  vector<vector<int>> heuristic2(board.size(),vector<int>(board[0].size(),0));
+  //   //heuristic2, 현재까지의 경로가 최적인지 
+  // vector<vector<int>> heuristic2(board.size(),vector<int>(board[0].size(),0));
+  
   int tmp_max=0;
   return BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,heuristic2,0,0);
 }
@@ -270,6 +272,12 @@ void BOARDCOVER2(){
       board 자료형 변화: bitset을 이용하면 약간 빨라질수도
       heuristic2: 지나온 부분에 대한 가지치기
         cache[idx]=board에서 idx번째 부터는 초기 상태(아무런 영향 x)라고 할 때, 그 시점에 prev_idx의 최댓값 
+      heuristic3: 남은 부분에 대한 DP 적용
+        board가 A*A, block이 B*C일 때, 실제로 따져봐야할 공간은 (A-min(B,C))^2 이다.
+        DP를 통해 정해진 구간의 답을 미리 적어두자
+        단, 가로의 길이는 고정되어 있음에 유의하자(세로의 길이는 조절)
+          고려해야 할 공간은 20칸 이내가 되도록 한다.
+        직전에 놓은(특히 바로 윗 행)것들이 영향을 끼치는데, 어떻게 제어할까?
   */
   /*전략
   전략1
