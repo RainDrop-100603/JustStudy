@@ -149,20 +149,6 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
       if(block[0][0]==0){
         next_heuristic.second--;
       }
-      //heuristic2
-      // if(!heu2_update){
-      //   heu2_update=true;
-      //   int heu2_row=row+block.size();
-      //   int heu2_col=col+block[0].size();
-      //   if(heu2_col>board_col){
-      //     heu2_row++;
-      //     heu2_col-=board_col;
-      //   }
-      //   if(heu2_row<board_row&&heu2_col<board_col){
-      //     int& tmp=heuristic2[heu2_row][heu2_col];
-      //     tmp=max(tmp,prev_value+1);
-      //   }
-      // }
       //recursive
       result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,next_heuristic,heuristic2,prev_value+1,now_idx+1));
       BOARDCOVER2_board_output(board,block,row,col);
@@ -173,20 +159,6 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
   if(board[row][col]==0){
      heuristic1.second--;
   }
-    //heuristic2
-  // if(!heu2_update){
-  //   heu2_update=true;
-  //   int heu2_row=row+block_arr[0].size();
-  //   int heu2_col=col+block_arr[0][0].size();
-  //   if(heu2_col>board_col){
-  //     heu2_row++;
-  //     heu2_col-=board_col;
-  //   }
-  //   if(heu2_row<board_row&&heu2_col<board_col){
-  //     int& tmp=heuristic2[heu2_row][heu2_col];
-  //     tmp=max(tmp,prev_value);
-  //   }
-  // }  
   result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,heuristic2,prev_value,now_idx+1));
   //반환 전에 최대값 갱신 
   tmp_max=max(tmp_max,prev_value+result);
@@ -265,19 +237,23 @@ void BOARDCOVER2(){
     흰 칸의 개수는 최대 50개임을 이용하자(게임판은 최대 100칸)
     완전탐색
       좌상단에서 우하단으로 가면서, 각 위치에서 블록을 놓을 수 있는지 확인한다.
-      이때 블록은 좌우,상하로 뒤집을 수 있으며, 90도를 돌릴 수 있으므로 8가지의 모양을 가진다.
+      !!!XXX 이때 블록은 좌우,상하로 뒤집을 수 있으며, 90도를 돌릴 수 있으므로 8가지의 모양을 가진다.
+        블록은 회전만 가능하다.
     최적화
       heuristic1: 남은 부분에 대한 가지치기
         블록의 크기 * (현재 최대 블록 - 현재 놓은 블록) > 남은 공간 이면 탐색 중단
       board 자료형 변화: bitset을 이용하면 약간 빨라질수도
       heuristic2: 지나온 부분에 대한 가지치기
         cache[idx]=board에서 idx번째 부터는 초기 상태(아무런 영향 x)라고 할 때, 그 시점에 prev_idx의 최댓값 
+          실질적으로 어렵다.
       heuristic3: 남은 부분에 대한 DP 적용
         board가 A*A, block이 B*C일 때, 실제로 따져봐야할 공간은 (A-min(B,C))^2 이다.
         DP를 통해 정해진 구간의 답을 미리 적어두자
         단, 가로의 길이는 고정되어 있음에 유의하자(세로의 길이는 조절)
           고려해야 할 공간은 20칸 이내가 되도록 한다.
         직전에 놓은(특히 바로 윗 행)것들이 영향을 끼치는데, 어떻게 제어할까?
+    참고할 점
+      최적화를 할 때는, 각각의 최적화를 적용후 조건에 맞는지 실행해보자. 조건에 맞지 않는다면 추가적인 최적화를 진행하면 된다.
   */
   /*전략
   전략1
