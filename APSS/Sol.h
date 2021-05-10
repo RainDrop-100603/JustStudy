@@ -214,3 +214,14 @@ int MINASTIRITH_func(const vector<pair<double,double>>& pointAngleArr,const vect
 int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr);
 void MINASTIRITH();
 
+// combination, 답이 맞는지부터 확인, 시간조건을 맞추기 위해 최적화 하나씩 추가하면서 확인(한번에 추가 x) 
+void BOARDCOVER2_Input(vector<vector<char>>& board, vector<vector<char>>& block);
+vector<vector<char>> BOARDCOVER2_block_turn(const vector<vector<char>>& block);
+void BOARDCOVER2_BlockArr_input(vector<vector<vector<char>>>& block_arr, const vector<vector<char>>& block);
+vector<vector<vector<char>>> BOARDCOVER2_BlockArr(const vector<vector<char>>& block);
+bool BOARDCOVER2_board_can_input(const vector<vector<char>>& board, const vector<vector<char>>& block,int row,int col);
+void BOARDCOVER2_board_input(vector<vector<char>>& board, const vector<vector<char>>& block,int row,int col);
+void BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<char>>& block,int row,int col);
+int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,int prev_value,int now_idx);
+int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block);
+void BOARDCOVER2();

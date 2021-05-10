@@ -15,7 +15,7 @@ using namespace std;
 //https://www.youtube.com/watch?v=x7STjpcKZP8 
 //사회복무요원 교육 
 
-// greedy, atan2 함수, 원에서의 각도를 이용할땐, 2pi마다 반복되는것을 고려하고 정규화, 자료형 잘 확인하기  
+// combination, 답이 맞는지부터 확인, 시간조건을 맞추기 위해 최적화 하나씩 추가하면서 확인(한번에 추가 x) 
 void BOARDCOVER2_Input(vector<vector<char>>& board, vector<vector<char>>& block){
   int height,width,row,column;
   cin>>height>>width>>row>>column;
@@ -32,26 +32,12 @@ void BOARDCOVER2_Input(vector<vector<char>>& board, vector<vector<char>>& block)
     }
   }
 }
-vector<vector<char>> BOARDCOVER2_block_LRreverse(const vector<vector<char>>& block){
-  vector<vector<char>> tmp;
-  for(auto ele:block){
-    reverse(ele.begin(),ele.end());
-    tmp.push_back(ele);
-  }
-  return tmp;
-}
-vector<vector<char>> BOARDCOVER2_block_UDreverse(const vector<vector<char>>& block){
-  vector<vector<char>> tmp;
-  for(auto iter=block.rbegin();iter!=block.rend();iter++){
-    tmp.push_back(*iter);
-  }
-  return tmp;
-}
 vector<vector<char>> BOARDCOVER2_block_turn(const vector<vector<char>>& block){
-  vector<vector<char>> block_turn(block[0].size(),vector<char>(block.size()));
-  for(int row=0;row<block_turn.size();row++){
-    for(int col=0;col<block_turn[0].size();col++){
-      block_turn[row][col]=block[col][row];
+  int block_row(block.size()),block_col(block[0].size());
+  vector<vector<char>> block_turn(block_col,vector<char>(block_row));
+  for(int row=0;row<block_row;row++){
+    for(int col=0;col<block_col;col++){
+      block_turn[col][block_row-1-row]=block[row][col];
     }
   }
   return block_turn;
@@ -81,14 +67,10 @@ void BOARDCOVER2_BlockArr_input(vector<vector<vector<char>>>& block_arr, const v
   }
 }
 vector<vector<vector<char>>> BOARDCOVER2_BlockArr(const vector<vector<char>>& block){
-  vector<vector<vector<char>>> block_arr,result;
-  block_arr.push_back(block);
-  BOARDCOVER2_BlockArr_input(block_arr,BOARDCOVER2_block_turn(block));
-  for(const auto& ele:block_arr){
-    BOARDCOVER2_BlockArr_input(result,ele);
-    BOARDCOVER2_BlockArr_input(result,BOARDCOVER2_block_LRreverse(ele));
-    BOARDCOVER2_BlockArr_input(result,BOARDCOVER2_block_UDreverse(ele));
-    BOARDCOVER2_BlockArr_input(result,BOARDCOVER2_block_LRreverse(BOARDCOVER2_block_UDreverse(ele)));
+  vector<vector<vector<char>>> result;
+  result.push_back(block);
+  for(int i=0;i<3;i++){
+    BOARDCOVER2_BlockArr_input(result,BOARDCOVER2_block_turn(result.back()));
   }
   return result;
 }
@@ -121,7 +103,7 @@ void BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<c
     }
   }
 }
-int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,vector<vector<int>>& heuristic2,int prev_value,int now_idx){
+int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,int prev_value,int now_idx){
   int board_row(board.size()),board_col(board[0].size());
   int row(now_idx/board_col),col(now_idx%board_col);
   int block_row(block_arr[0].size()),block_col(block_arr[0][0].size());
@@ -130,17 +112,12 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
   }
   int result=0;
   //최적화, tmp_max와 prev_value를 비교한다.
-  //heuristic 1, 남은 공간보다 필요한 공간이 더 많다면, 탐색을 중단한다.
-  if((tmp_max-prev_value)*heuristic1.first>heuristic1.second){
-    return 0;
-  }
-  //heuristic2, cache[idx]이후의 원소들이 초기상태와 같을 때, prev_idx의 최댓값 
-  if(heuristic2[row][col]>prev_value){
+  //heuristic 1, 남은 공간보다 필요한 공간이 더 많거나 같다면, 탐색을 중단한다. first=block에 필요한개수, second=board에 남은 빈 공간의 개수 
+  if((tmp_max-prev_value)*heuristic1.first>=heuristic1.second){
     return 0;
   }
   //탐색
   //block을 놓는 경우
-  bool heu2_update(false);
   for(const auto& block:block_arr){
     if(BOARDCOVER2_board_can_input(board,block,row,col)){
       BOARDCOVER2_board_input(board,block,row,col);
@@ -150,7 +127,7 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
         next_heuristic.second--;
       }
       //recursive
-      result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,next_heuristic,heuristic2,prev_value+1,now_idx+1));
+      result=max(result,1+BOARDCOVER2_func(board,block_arr,tmp_max,next_heuristic,prev_value+1,now_idx+1));
       BOARDCOVER2_board_output(board,block,row,col);
     }
   }
@@ -159,7 +136,7 @@ int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<cha
   if(board[row][col]==0){
      heuristic1.second--;
   }
-  result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,heuristic2,prev_value,now_idx+1));
+  result=max(result,BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,prev_value,now_idx+1));
   //반환 전에 최대값 갱신 
   tmp_max=max(tmp_max,prev_value+result);
   return result;
@@ -184,7 +161,7 @@ int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block){
       }
     }
   }
-  //8방향의 블록, 중복제거 
+  //초기블록과 회전한 블록들
   auto block_arr=BOARDCOVER2_BlockArr(block);
   //함수
     //가지치기
@@ -205,11 +182,8 @@ int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block){
     }
   }
   auto heuristic1=make_pair(block_size,board_remain);
-  //   //heuristic2, 현재까지의 경로가 최적인지 
-  // vector<vector<int>> heuristic2(board.size(),vector<int>(board[0].size(),0));
-  
   int tmp_max=0;
-  return BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,heuristic2,0,0);
+  return BOARDCOVER2_func(board,block_arr,tmp_max,heuristic1,0,0);
 }
 void BOARDCOVER2(){
   //BOARDCOVER2
@@ -238,7 +212,7 @@ void BOARDCOVER2(){
     완전탐색
       좌상단에서 우하단으로 가면서, 각 위치에서 블록을 놓을 수 있는지 확인한다.
       !!!XXX 이때 블록은 좌우,상하로 뒤집을 수 있으며, 90도를 돌릴 수 있으므로 8가지의 모양을 가진다.
-        블록은 회전만 가능하다.
+        블록은 회전만 가능하다.-> 4방향이다.
     최적화
       heuristic1: 남은 부분에 대한 가지치기
         블록의 크기 * (현재 최대 블록 - 현재 놓은 블록) > 남은 공간 이면 탐색 중단
@@ -272,15 +246,15 @@ void BOARDCOVER2(){
     vector<vector<char>> board,block;
     BOARDCOVER2_Input(board,block);
     auto result=BOARDCOVER2_Algo(board,block);
-    cout<<result<<"::::::::::::\n";
+    cout<<result<<"\n";
   }
 }
 
 int main(void){
-  clock_t start,end;
-  start=clock();
+  // clock_t start,end;
+  // start=clock();
   BOARDCOVER2();
-  end=clock();;
-  cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+  // end=clock();;
+  // cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
