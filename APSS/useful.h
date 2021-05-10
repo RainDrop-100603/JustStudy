@@ -58,6 +58,14 @@ using namespace std;
     기대값이 양수라면, -1로 초기화 하고 "ele>-0.5"와 같은 식으로 비교하면, ele가 -1인지 양수인지 알 수 있다.
   bitmask(2진수표현) 에서 1의 개수를 센다, g++ 내장 함수
     __builtin_popcount()
+  unique: vector에서 중복제거
+    작동원리
+      중복 원소가 "붙어있다면", 쓰레기값으로 바꾸어 vector의 가장 뒤로 보낸다.
+        즉 vector에서 모든 중복을 제거하고 싶다면, 먼저 sort를 해야한다.
+      모든 원소에 대해 확인 후, 쓰레기값의 시작 위치를 반환한다.
+    사용례: 
+      sort(vec.begin(),vec.end())
+      vec.erase(unique(vec.begin(),vec.end()),vec.end())
 ------------------------------
 런타임에러
   배열에 할당된 크기를 넘어서 접근했을 때
