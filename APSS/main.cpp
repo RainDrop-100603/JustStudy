@@ -13,103 +13,44 @@
 using namespace std;
 
 // combination, 답이 맞는지부터 확인, 시간조건을 맞추기 위해 최적화 하나씩 추가하면서 확인(한번에 추가 x) 
-void ALLERGY_Input(vector<vector<char>>& board, vector<vector<char>>& block){
-  int height,width,row,column;
-  cin>>height>>width>>row>>column;
-  board=vector<vector<char>>(height,vector<char>(width));
-  block=vector<vector<char>>(row,vector<char>(column));
-  for(auto& eleRow:board){
-    for(auto& eleCol:eleRow){
-      cin>>eleCol;
-    }
+void ALLERGY_Input(vector<string>& friendsName, vector<vector<string>>& foodsInfo){
+  int foodNum,friendNum;
+  cin>>friendNum>>foodNum;
+  friendsName.resize(friendNum);
+  for(auto& ele: friendsName){
+    cin>>ele;
   }
-  for(auto& eleRow:block){
-    for(auto& eleCol:eleRow){
-      cin>>eleCol;
+  foodsInfo.resize(foodNum);
+  for(auto& food:foodsInfo){
+    int count;
+    cin>>count;
+    for(int i=0;i<count;i++){
+      string tmp;
+      cin>>tmp;
+      food.push_back(tmp);
     }
   }
 }
-int ALLERGY_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,int prev_value,int now_idx){
-  int board_row(board.size()),board_col(board[0].size());
-  int row(now_idx/board_col),col(now_idx%board_col);
-  int block_row(block_arr[0].size()),block_col(block_arr[0][0].size());
-  if(row+min(block_row,block_col)>board_row){
-    return 0;
-  }
-  int result=0;
-  //최적화, tmp_max와 prev_value를 비교한다.
-  //heuristic 1, 남은 공간보다 필요한 공간이 더 많거나 같다면, 탐색을 중단한다. first=block에 필요한개수, second=board에 남은 빈 공간의 개수 
-  if((tmp_max-prev_value)*heuristic1.first>=heuristic1.second){
-    return 0;
-  }
-  //탐색
-  //block을 놓는 경우
-  for(const auto& block:block_arr){
-    if(ALLERGY_board_can_input(board,block,row,col)){
-      ALLERGY_board_input(board,block,row,col);
-      //heuristic1
-      auto next_heuristic=make_pair(heuristic1.first,heuristic1.second-heuristic1.first);
-      if(block[0][0]==0){
-        next_heuristic.second--;
-      }
-      //recursive
-      result=max(result,1+ALLERGY_func(board,block_arr,tmp_max,next_heuristic,prev_value+1,now_idx+1));
-      ALLERGY_board_output(board,block,row,col);
-    }
-  }
-  //block을 놓지않는 경우
-    //heuristic1
-  if(board[row][col]==0){
-     heuristic1.second--;
-  }
-  result=max(result,ALLERGY_func(board,block_arr,tmp_max,heuristic1,prev_value,now_idx+1));
-  //반환 전에 최대값 갱신 
-  tmp_max=max(tmp_max,prev_value+result);
-  return result;
-}
-int ALLERGY_Algo(vector<vector<char>> board, vector<vector<char>> block){
-  //.과 #을 0과 1로 변환
-  for(auto& ele: board){
-    for(auto& ele2: ele){
-      if(ele2=='#'){
-        ele2=1;
-      }else{
-        ele2=0;
+int ALLERGY_Algo(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo){
+  //음식 정보를 bitmask로 수정, pair(친구의 수, 친구 정보 bitmask)
+  int friendsNum=friendsName.size();
+  vector<pair<int,double>> foods_bitmask;
+  for(auto& food:foodsInfo){
+    double bitmask(0);
+    for(auto& ele: food){
+      for(int i=0;i<friendsNum;i++){
+        if(ele==friendsName[i]){
+          bitmask+=(1<<i);
+          break;
+        }
       }
     }
+    foods_bitmask.push_back({food.size(),bitmask});
   }
-  for(auto& ele: block){
-    for(auto& ele2: ele){
-      if(ele2=='#'){
-        ele2=1;
-      }else{
-        ele2=0;
-      }
-    }
-  }
-  //초기블록과 회전한 블록들
-  auto block_arr=ALLERGY_BlockArr(block);
-  //함수
-    //가지치기
-    //heuristic 1, block의 크기와 board에 남은 공간 이용
-  int block_size(0),board_remain(0);
-  for(auto& row:block){
-    for(auto& ele:row){
-      if(ele==1){
-        block_size++;
-      }
-    }
-  }
-  for(auto& row: board){
-    for(auto& ele: row){
-      if(ele==0){
-        board_remain++;
-      }
-    }
-  }
-  auto heuristic1=make_pair(block_size,board_remain);
-  int tmp_max=0;
-  return ALLERGY_func(board,block_arr,tmp_max,heuristic1,0,0);
+  //Algo
+  int tmp_max(0);
+  ALLERGY_func(foods_bitmask,friendsNum,tmp_max,)
+  return 0;
 }
 void ALLERGY(){
   //ALLERGY
@@ -143,7 +84,7 @@ void ALLERGY(){
       음식을 선택할 때, 이미 선택된 음식들의 친구목록에 포함된다면 생략 
         음식을 선택한 후에, 음식 목록을 업데이트 하는 방법도 괜찮다고 보임
       가지치기
-        
+        현재값과 최대값의 비교
   */
   /*전략
   전략1
@@ -159,9 +100,10 @@ void ALLERGY(){
   int testCase;
   cin>>testCase;
   while(testCase--){
-    vector<vector<char>> board,block;
-    ALLERGY_Input(board,block);
-    auto result=ALLERGY_Algo(board,block);
+    vector<string> friendsName;
+    vector<vector<string>> foodsInfo;
+    ALLERGY_Input(friendsName,foodsInfo);
+    auto result=ALLERGY_Algo(friendsName,foodsInfo);
     cout<<result<<"\n";
   }
 }
