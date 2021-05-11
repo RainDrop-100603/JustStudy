@@ -31,15 +31,15 @@ void ALLERGY_Input(vector<string>& friendsName, vector<vector<string>>& foodsInf
     }
   }
 }
-int ALLERGY_Algo(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo){
+vector<pair<int,long long>> ALLERGY_food_opti(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo){
   //음식 정보를 bitmask로 수정, pair(친구의 수, 친구 정보 bitmask)
   int friendsNum=friendsName.size();
-  vector<pair<int,double>> foods_bitmask;
+  vector<pair<int,long long>> foods_bitmask;
   for(auto& food:foodsInfo){
-    double bitmask(0);
-    for(auto& ele: food){
+    long long bitmask(0);
+    for(auto& name: food){
       for(int i=0;i<friendsNum;i++){
-        if(ele==friendsName[i]){
+        if(name==friendsName[i]){
           bitmask+=(1<<i);
           break;
         }
@@ -47,10 +47,56 @@ int ALLERGY_Algo(const vector<string>& friendsName, const vector<vector<string>>
     }
     foods_bitmask.push_back({food.size(),bitmask});
   }
+  //정렬, 친구에대해 동일한 음식 제거, 내림차순정렬
+  sort(foods_bitmask.begin(),foods_bitmask.end());
+  foods_bitmask.erase(unique(foods_bitmask.begin(),foods_bitmask.end()),foods_bitmask.end());
+  reverse(foods_bitmask.begin(),foods_bitmask.end());
+  //포함관계 음식 제거
+  vector<pair<int,long long>> result;
+  for(auto& ele: foods_bitmask){
+    bool canInput(true);
+    for(auto& exist:result){
+      if((exist.second|ele.second)==exist.second){
+        canInput=false;
+        break;
+      }
+    }
+    if(canInput){
+      result.push_back(ele);
+    }
+  }
+  //반환
+  return result;
+}
+void ALLERGY_func(const vector<pair<int,long long>>& foods_bitmask,int friendsNum, long long friends_bitmask, int& tmp_min, int prev_count, int food_idx){
+  //모든 친구를 충족시킨경우
+  if((1<<friendsNum)-1==friends_bitmask){
+    tmp_min=min(prev_count,tmp_min);
+    return;
+  }
+  //마지막 음식이지만, 모든 친구를 충족하지 못한경우
+  if(food_idx==foods_bitmask.size()){
+    return;
+  }
+  //tmp_min보다 커진경우
+  if(prev_count>=tmp_min){
+    return;
+  }
+  //음식을 추가하는 경우
+  auto nowFood=foods_bitmask[food_idx];
+  if((friends_bitmask|nowFood.second)!=friends_bitmask){
+    ALLERGY_func(foods_bitmask,friendsNum,friends_bitmask|nowFood.second,tmp_min,prev_count+1,food_idx+1);
+  }
+  //음식을 추가하지않는 경우
+  ALLERGY_func(foods_bitmask,friendsNum,friends_bitmask,tmp_min,prev_count,food_idx+1);
+}
+int ALLERGY_Algo(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo){
+  //음식 정보 최적화
+  vector<pair<int,long long>> foods_bitmask=ALLERGY_food_opti(friendsName,foodsInfo);
   //Algo
-  int tmp_max(0);
-  ALLERGY_func(foods_bitmask,friendsNum,tmp_max,)
-  return 0;
+  int tmp_min(51);
+  ALLERGY_func(foods_bitmask,friendsName.size(),0,tmp_min,0,0);
+  return tmp_min;
 }
 void ALLERGY(){
   //ALLERGY
@@ -77,10 +123,10 @@ void ALLERGY(){
     완전탐색
       음식을 순서대로 고르면서, 모든 친구가 포함되었는지 확인한다.
     최적화
-      최대 50개 이므로 bitmask 사용 가능
-      친구목록: 음식을 먹을 수 있는 친구의 목록을 뜻함
-      많은 인원이 먹을 수 있는 음식대로 내림차순 정렬
-      포함관계에 있는 음식(친구목록) 삭제
+      음식목록 최적화
+        최대 50개 이므로 bitmask 사용 가능
+        많은 인원이 먹을 수 있는 음식대로 내림차순 정렬
+        포함관계에 있는 음식 삭제
       음식을 선택할 때, 이미 선택된 음식들의 친구목록에 포함된다면 생략 
         음식을 선택한 후에, 음식 목록을 업데이트 하는 방법도 괜찮다고 보임
       가지치기
