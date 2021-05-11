@@ -1,0 +1,12 @@
+python tips
+
+https://docs.python.org/3/library/
+검색방법 python "검색어" reference 
+
+csv module
+  데이터를 쓸 때마다 줄바꿈이 생긴다면, 파일을 open할 때 newline을 ""나 "\n"으로설정하자
+    ""과 "\n"이 무슨 차이인지는 잘 모르겠다.
+    f=open(filename,mode="w",newline="")
+
+문자열이 길어질경우 아래와 같이 나눌 수 있다.
+  "150문자열"="75문자열""75문자열" 
