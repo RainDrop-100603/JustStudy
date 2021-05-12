@@ -13,60 +13,42 @@
 using namespace std;
 
 // combination, set cover, 책에 더 최적화 하는 방법들이 있다.
-void KAKURO2_Input(vector<string>& friendsName, vector<vector<string>>& foodsInfo){
-  int foodNum,friendNum;
-  cin>>friendNum>>foodNum;
-  friendsName.resize(friendNum);
-  for(auto& ele: friendsName){
-    cin>>ele;
-  }
-  foodsInfo.resize(foodNum);
-  for(auto& food:foodsInfo){
-    int count;
-    cin>>count;
-    for(int i=0;i<count;i++){
-      string tmp;
-      cin>>tmp;
-      food.push_back(tmp);
+void KAKURO2_Input(vector<vector<int>>& board, vector<vector<int>>& hint){
+  int boardSize,hintSize;
+  cin>>boardSize;
+  board=vector<vector<int>>(boardSize,vector<int>(boardSize));
+  for(auto& row:board){
+    for(auto& ele:row){
+      cin>>ele;
     }
+  }
+  cin>>hintSize;
+  for(int i=0;i<hintSize;i++){
+    vector<int> tmp(4);
+    for(auto& ele:tmp){
+      cin>>ele;
+    }
+    hint.push_back(tmp);
   }
 }
-vector<pair<int,long long>> KAKURO2_food_opti(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo){
-  //음식 정보를 bitmask로 수정, pair(친구의 수, 친구 정보 bitmask)
-  int friendsNum=friendsName.size();
-  vector<pair<int,long long>> foods_bitmask;
-  for(auto& food:foodsInfo){
-    long long bitmask(0);
-    for(auto& name: food){
-      for(int i=0;i<friendsNum;i++){
-        if(name==friendsName[i]){
-          bitmask+=(1LL<<i);
-          break;
-        }
+void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
+  //board 변환, 0: 하얀색, -1: 검은색, -2: 하단힌트, -3: 우측힌트 
+  for(auto& row:board){
+    for(auto& ele:row){
+      if(ele){ //white
+        ele=0;
+      }else{  //black or hint
+        ele=-1;
       }
     }
-    foods_bitmask.push_back({food.size(),bitmask});
   }
-  //정렬, 친구에대해 동일한 음식 제거, 내림차순정렬
-  sort(foods_bitmask.begin(),foods_bitmask.end());
-  foods_bitmask.erase(unique(foods_bitmask.begin(),foods_bitmask.end()),foods_bitmask.end());
-  reverse(foods_bitmask.begin(),foods_bitmask.end());
-  //포함관계 음식 제거
-  vector<pair<int,long long>> result;
-  for(auto& ele: foods_bitmask){
-    bool canInput(true);
-    for(auto& exist:result){
-      if((exist.second|ele.second)==exist.second){
-        canInput=false;
-        break;
-      }
-    }
-    if(canInput){
-      result.push_back(ele);
-    }
+  //board 변환 마무리, hint update(bitmask추가, direction update)
+  for(auto& ele: hint){
+    ele[2]-=3;  //direction update
+    int row(ele[0]),col(ele[1]),direction(ele[2]);
+    board[row][col]=direction;  //board update
+    ele.push_back((1<<9)-1);  //hint 끝에 넣을 수 있는 원소 추가(bitmask)
   }
-  //반환
-  return result;
 }
 void KAKURO2_func(const vector<pair<int,long long>>& foods_bitmask,int friendsNum, long long friends_bitmask, int& tmp_min, int prev_count, int food_idx){
   //모든 친구를 충족시킨경우
@@ -90,13 +72,13 @@ void KAKURO2_func(const vector<pair<int,long long>>& foods_bitmask,int friendsNu
   //음식을 추가하지않는 경우
   KAKURO2_func(foods_bitmask,friendsNum,friends_bitmask,tmp_min,prev_count,food_idx+1);
 }
-int KAKURO2_Algo(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo){
-  //음식 정보 최적화
-  vector<pair<int,long long>> foods_bitmask=KAKURO2_food_opti(friendsName,foodsInfo);
+vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> hint){
+  //전처리
+  KAKURO2_preTreat(board,hint);
   //Algo
-  int tmp_min(51);
-  KAKURO2_func(foods_bitmask,friendsName.size(),0,tmp_min,0,0);
-  return tmp_min;
+  vector<vector<int>> result;
+  //KAKURO2_func(foods_bitmask,friendsName.size(),0,tmp_min,0,0);
+  return result;
 }
 void KAKURO2(){
   //KAKURO2
@@ -133,22 +115,26 @@ void KAKURO2(){
       비어있는 칸부터 숫자를 하나씩 넣는다.
     최적화
       확인해야 하는 원소는 동일하므로, 호출의 깊이를 얕게 만들도록 하자 .
-      접근방법을 각 원소가 아닌 각 줄(가로 or 세로)에 대해서로 바꾼다.
+      접근방법을 각 원소가 아닌 각 줄(가로 or 세로)에 대해서로 바꾼다. -> 
         보드의 크기가 N이라면, (N/2)*N*2가 각 줄의 최대 갯수이다.(N/2: 한 열(행)에 들어갈 수 있는 최대의 줄, N: 각 행(열)의 갯수, 2: 행+열)
           3차원 table:(row,col,direction)을 이용한다. -> 특정 원소를 포함하는 줄(line)에 접근하기 편하다(update가 편하다).
           priority queue를 이용한다. -> 남은 원소의 수가 적은 순서대로 정렬하기 편하다.
+            특정 원소가 어떤 줄과 관련이 있는지 표현하는 N*N table을 통해, priority queue를 업데이트 한다.
         남은 원소의 갯수가 적은 줄을 먼저 처리한다.
-
-      가지치기
-        현재값과 최대값의 비교
+      각 원소에 대해 접근하는 방법
+        흰칸 0, 검은칸 -1, 하단힌트 -2, 우측힌트 -3, 원소 1~9
+        좌상단 부터 시작하여 원소에 접근한다.
+        좌측, 상단에 hint가 있으면, hint에 해당하는 line에 접근한다.
+        두개의 line에서 넣을 수 있는 숫자 목록을 가져온다.
+        숫자를 넣고 board와 line 정보를 업데이트한다.     
   */
   /*전략
   전략1
     combination search
     시간:
-      O(2^N) & optimize 
+      O(9^(N^2)) & optimize 
     크기:
-      O(N)
+      O(N^2)
     보완
       \
   */
@@ -156,11 +142,14 @@ void KAKURO2(){
   int testCase;
   cin>>testCase;
   while(testCase--){
-    vector<string> friendsName;
-    vector<vector<string>> foodsInfo;
-    KAKURO2_Input(friendsName,foodsInfo);
-    auto result=KAKURO2_Algo(friendsName,foodsInfo);
-    cout<<result<<"\n";
+    vector<vector<int>> board,hint;
+    KAKURO2_Input(board,hint);
+    auto result=KAKURO2_Algo(board,hint);
+    for(auto& row:result){
+      for(auto& ele:row){
+        cout<<ele<<" ";
+      }cout<<"\n";
+    }
   }
 }
 
