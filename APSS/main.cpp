@@ -13,7 +13,7 @@
 using namespace std;
 
 // combination, set cover, 책에 더 최적화 하는 방법들이 있다.
-void ALLERGY_Input(vector<string>& friendsName, vector<vector<string>>& foodsInfo){
+void KAKURO2_Input(vector<string>& friendsName, vector<vector<string>>& foodsInfo){
   int foodNum,friendNum;
   cin>>friendNum>>foodNum;
   friendsName.resize(friendNum);
@@ -31,7 +31,7 @@ void ALLERGY_Input(vector<string>& friendsName, vector<vector<string>>& foodsInf
     }
   }
 }
-vector<pair<int,long long>> ALLERGY_food_opti(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo){
+vector<pair<int,long long>> KAKURO2_food_opti(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo){
   //음식 정보를 bitmask로 수정, pair(친구의 수, 친구 정보 bitmask)
   int friendsNum=friendsName.size();
   vector<pair<int,long long>> foods_bitmask;
@@ -68,7 +68,7 @@ vector<pair<int,long long>> ALLERGY_food_opti(const vector<string>& friendsName,
   //반환
   return result;
 }
-void ALLERGY_func(const vector<pair<int,long long>>& foods_bitmask,int friendsNum, long long friends_bitmask, int& tmp_min, int prev_count, int food_idx){
+void KAKURO2_func(const vector<pair<int,long long>>& foods_bitmask,int friendsNum, long long friends_bitmask, int& tmp_min, int prev_count, int food_idx){
   //모든 친구를 충족시킨경우
   if((1LL<<friendsNum)-1==friends_bitmask){
     tmp_min=min(prev_count,tmp_min);
@@ -85,50 +85,60 @@ void ALLERGY_func(const vector<pair<int,long long>>& foods_bitmask,int friendsNu
   //음식을 추가하는 경우
   auto nowFood=foods_bitmask[food_idx];
   if((friends_bitmask|nowFood.second)!=friends_bitmask){
-    ALLERGY_func(foods_bitmask,friendsNum,friends_bitmask|nowFood.second,tmp_min,prev_count+1,food_idx+1);
+    KAKURO2_func(foods_bitmask,friendsNum,friends_bitmask|nowFood.second,tmp_min,prev_count+1,food_idx+1);
   }
   //음식을 추가하지않는 경우
-  ALLERGY_func(foods_bitmask,friendsNum,friends_bitmask,tmp_min,prev_count,food_idx+1);
+  KAKURO2_func(foods_bitmask,friendsNum,friends_bitmask,tmp_min,prev_count,food_idx+1);
 }
-int ALLERGY_Algo(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo){
+int KAKURO2_Algo(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo){
   //음식 정보 최적화
-  vector<pair<int,long long>> foods_bitmask=ALLERGY_food_opti(friendsName,foodsInfo);
+  vector<pair<int,long long>> foods_bitmask=KAKURO2_food_opti(friendsName,foodsInfo);
   //Algo
   int tmp_min(51);
-  ALLERGY_func(foods_bitmask,friendsName.size(),0,tmp_min,0,0);
+  KAKURO2_func(foods_bitmask,friendsName.size(),0,tmp_min,0,0);
   return tmp_min;
 }
-void ALLERGY(){
-  //ALLERGY
+void KAKURO2(){
+  //KAKURO2
   /*설명 및 입력
   설명
-    집들이에 n 명의 친구를 초대하려고 합니다. 
-    할 줄 아는 m 가지의 음식 중 무엇을 대접해야 할까를 고민하는데, 친구들은 각각 알러지 때문에 못 먹는 음식들이 있어서 아무 음식이나 해서는 안 됩니다.
-    친구들의 정보가 주어질 때 최소한 만들어야 하는 요리의 가지수를 계산하는 프로그램을 작성하세요.
+    카쿠로는 흔히 십자말풀이 수학 버전이라고 불리는 논리 퍼즐이다. 
+    카쿠로는 위와 같이 생긴 정사각형의 게임판을 가지고 하는 퍼즐로, 
+      이 게임판의 각 칸은 흰 칸이거나, 검은 칸이거나, 힌트 칸이다. (힌트 칸은, 대각선으로 갈라져 있고 숫자가 씌여 있는 칸을 말한다) 
+    모든 흰 칸에 적절히 숫자를 채워 넣어 규칙을 만족시키는 것이 이 게임의 목표이다.
+    모든 흰 칸에는 1 부터 9 까지의 정수를 써넣어야 한다.
+      이 때 한 줄을 이루는 연속된 흰 칸들에는 같은 수를 두 번 넣을 수 없다. 
+    세로로 연속한 흰 칸들의 수를 모두 더하면, 그 칸들의 바로 위에 있는 힌트 칸의 왼쪽 아래에 씌인 숫자가 나와야 한다.
+    가로로 연속한 흰 칸들의 수를 모두 더하면, 그 칸들의 바로 왼쪽에 있는 힌트 칸의 오른쪽 위에 씌인 숫자가 나와야 한다.
   입력
-    입력의 첫 줄에는 테스트 케이스의 수 T (T <= 50 ) 가 주어집니다. 
-    각 테스트 케이스의 첫 줄에는 친구의 수 n (1 <= n <= 50) 과 할 줄 아는 음식의 수 m (1 <= m <= 50) 이 주어집니다. 
-    다음 줄에는 n 개의 문자열로 각 친구의 이름이 주어집니다. 친구의 이름은 10 자 이하의 알파벳 소문자로만 구성된 문자열입니다. 
-    그 후 m 줄에 하나씩 각 음식에 대한 정보가 주어집니다. 
-    각 음식에 대한 정보는 해당 음식을 먹을 수 있는 친구의 수와 각 친구의 이름으로 주어집니다.
-    모든 친구는 하나 이상의 음식을 먹을 수 있다고 가정해도 좋습니다.
+    The first line of input file has the number of test cases T.
+    In the first line of each test case, the size of the game board N (<= 20) is given. 
+    The next N lines will give a description of the board, from top to bottom. 
+      These lines will have N numbers, where 0 denote black/hint cells, and 1 denote white cells. 
+    In the next line, the number of hint Q is given. 
+      The following Q lines give the hints on the board, each described with four integers: y, x, direction, and sum. 
+      sum is the value of the clue (1 <= sum <= 45), and (y, x) is the 1-based coordinate of the hint cell. 
+      direction is 0 if hint clue is a horizontal sum, 1 if the clue is a vertical sum.
+    You can assume for all test cases, there will be a unique valid solution.
   출력
-    각 테스트 케이스마다 한 줄에 만들어야 할 최소의 음식 수를 출력합니다.
+    For each test case, print out the solved Kakuro board in N lines each with N numbers. 
+    Print 0 for black or hint cells, and print the filled number for white cells.
   제한조건
-    5초, 64MB
+    20초, 64MB
   */
   /*힌트
     조합 풀이법을 사용하자
       완전탐색을 구현한 후 하나씩 최적화를 진행한다.
     완전탐색
-      음식을 순서대로 고르면서, 모든 친구가 포함되었는지 확인한다.
+      비어있는 칸부터 숫자를 하나씩 넣는다.
     최적화
-      음식목록 최적화
-        최대 50개 이므로 bitmask 사용 가능
-        많은 인원이 먹을 수 있는 음식대로 내림차순 정렬
-        포함관계에 있는 음식 삭제
-      음식을 선택할 때, 이미 선택된 음식들의 친구목록에 포함된다면 생략 
-        음식을 선택한 후에, 음식 목록을 업데이트 하는 방법도 괜찮다고 보임 - cost가 많이 들 것으로 예상되서 생략 
+      확인해야 하는 원소는 동일하므로, 호출의 깊이를 얕게 만들도록 하자 .
+      접근방법을 각 원소가 아닌 각 줄(가로 or 세로)에 대해서로 바꾼다.
+        보드의 크기가 N이라면, (N/2)*N*2가 각 줄의 최대 갯수이다.(N/2: 한 열(행)에 들어갈 수 있는 최대의 줄, N: 각 행(열)의 갯수, 2: 행+열)
+          3차원 table:(row,col,direction)을 이용한다. -> 특정 원소를 포함하는 줄(line)에 접근하기 편하다(update가 편하다).
+          priority queue를 이용한다. -> 남은 원소의 수가 적은 순서대로 정렬하기 편하다.
+        남은 원소의 갯수가 적은 줄을 먼저 처리한다.
+
       가지치기
         현재값과 최대값의 비교
   */
@@ -148,8 +158,8 @@ void ALLERGY(){
   while(testCase--){
     vector<string> friendsName;
     vector<vector<string>> foodsInfo;
-    ALLERGY_Input(friendsName,foodsInfo);
-    auto result=ALLERGY_Algo(friendsName,foodsInfo);
+    KAKURO2_Input(friendsName,foodsInfo);
+    auto result=KAKURO2_Algo(friendsName,foodsInfo);
     cout<<result<<"\n";
   }
 }
@@ -157,7 +167,7 @@ void ALLERGY(){
 int main(void){
   // clock_t start,end;
   // start=clock();
-  ALLERGY();
+  KAKURO2();
   // end=clock();;
   // cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
