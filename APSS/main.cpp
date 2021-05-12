@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// combination, 답이 맞는지부터 확인, 시간조건을 맞추기 위해 최적화 하나씩 추가하면서 확인(한번에 추가 x) 
+// combination, set cover, 책에 더 최적화 하는 방법들이 있다.
 void ALLERGY_Input(vector<string>& friendsName, vector<vector<string>>& foodsInfo){
   int foodNum,friendNum;
   cin>>friendNum>>foodNum;
@@ -40,7 +40,7 @@ vector<pair<int,long long>> ALLERGY_food_opti(const vector<string>& friendsName,
     for(auto& name: food){
       for(int i=0;i<friendsNum;i++){
         if(name==friendsName[i]){
-          bitmask+=(1<<i);
+          bitmask+=(1LL<<i);
           break;
         }
       }
@@ -70,7 +70,7 @@ vector<pair<int,long long>> ALLERGY_food_opti(const vector<string>& friendsName,
 }
 void ALLERGY_func(const vector<pair<int,long long>>& foods_bitmask,int friendsNum, long long friends_bitmask, int& tmp_min, int prev_count, int food_idx){
   //모든 친구를 충족시킨경우
-  if((1<<friendsNum)-1==friends_bitmask){
+  if((1LL<<friendsNum)-1==friends_bitmask){
     tmp_min=min(prev_count,tmp_min);
     return;
   }
@@ -128,7 +128,7 @@ void ALLERGY(){
         많은 인원이 먹을 수 있는 음식대로 내림차순 정렬
         포함관계에 있는 음식 삭제
       음식을 선택할 때, 이미 선택된 음식들의 친구목록에 포함된다면 생략 
-        음식을 선택한 후에, 음식 목록을 업데이트 하는 방법도 괜찮다고 보임
+        음식을 선택한 후에, 음식 목록을 업데이트 하는 방법도 괜찮다고 보임 - cost가 많이 들 것으로 예상되서 생략 
       가지치기
         현재값과 최대값의 비교
   */
@@ -136,7 +136,7 @@ void ALLERGY(){
   전략1
     combination search
     시간:
-      O(N^3) 
+      O(2^N) & optimize 
     크기:
       O(N)
     보완

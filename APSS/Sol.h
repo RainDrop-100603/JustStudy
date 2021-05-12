@@ -214,7 +214,7 @@ int MINASTIRITH_func(const vector<pair<double,double>>& pointAngleArr,const vect
 int MINASTIRITH_Algo(int pointNum,const vector<vector<double>>& pointArr);
 void MINASTIRITH();
 
-// combination, 답이 맞는지부터 확인, 시간조건을 맞추기 위해 최적화 하나씩 추가하면서 확인(한번에 추가 x) 
+// combination, 답이 맞는지부터 확인, 시간조건을 맞추기 위해 최적화 하나씩 추가하면서 확인(한번에 추가 x), 함수가 너무 많다
 void BOARDCOVER2_Input(vector<vector<char>>& board, vector<vector<char>>& block);
 vector<vector<char>> BOARDCOVER2_block_turn(const vector<vector<char>>& block);
 void BOARDCOVER2_BlockArr_input(vector<vector<vector<char>>>& block_arr, const vector<vector<char>>& block);
@@ -225,3 +225,10 @@ void BOARDCOVER2_board_output(vector<vector<char>>& board, const vector<vector<c
 int BOARDCOVER2_func(vector<vector<char>>& board, const vector<vector<vector<char>>>& block_arr, int& tmp_max,pair<int,int> heuristic1,int prev_value,int now_idx);
 int BOARDCOVER2_Algo(vector<vector<char>> board, vector<vector<char>> block);
 void BOARDCOVER2();
+
+// combination, set cover, 책에 더 최적화 하는 방법들이 있다.
+void ALLERGY_Input(vector<string>& friendsName, vector<vector<string>>& foodsInfo);
+vector<pair<int,long long>> ALLERGY_food_opti(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo);
+void ALLERGY_func(const vector<pair<int,long long>>& foods_bitmask,int friendsNum, long long friends_bitmask, int& tmp_min, int prev_count, int food_idx);
+int ALLERGY_Algo(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo);
+void ALLERGY();
