@@ -32,53 +32,85 @@ void KAKURO2_Input(vector<vector<int>>& board, vector<vector<int>>& hint){
   }
 }
 void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
-  //board 변환, 0: 하얀색, -1: 검은색, -2: 하단힌트, -3: 우측힌트 
+  //board: -1: 하얀색, 0: 검은색 or 힌트 
   for(auto& row:board){
     for(auto& ele:row){
       if(ele){ //white
-        ele=0;
-      }else{  //black or hint
         ele=-1;
       }
     }
   }
-  //board 변환 마무리, hint update(bitmask추가, direction update)
+  //hint update(bitmask추가)
   for(auto& ele: hint){
-    ele[2]-=3;  //direction update
-    int row(ele[0]),col(ele[1]),direction(ele[2]);
-    board[row][col]=direction;  //board update
-    ele.push_back((1<<9)-1);  //hint 끝에 넣을 수 있는 원소 추가(bitmask)
+    ele.push_back((1<<10)-2);  //hint 끝에 넣을 수 있는 원소 추가(bitmask), default=111,111,111,0
   }
 }
-void KAKURO2_func(const vector<pair<int,long long>>& foods_bitmask,int friendsNum, long long friends_bitmask, int& tmp_min, int prev_count, int food_idx){
-  //모든 친구를 충족시킨경우
-  if((1LL<<friendsNum)-1==friends_bitmask){
-    tmp_min=min(prev_count,tmp_min);
-    return;
+vector<int> KAKURO2_hintChk(const vector<vector<int>>& board,const vector<vector<int>>& hint,int xAxis, int yAxis){
+  //(좌측힌트 idx, 하단힌트 idx, min(clue1,clue2), 입력 가능한 수 bitmask) bitmask_default=111,111,111,0
+  vector<int> result(4);
+  result[3]=(1<<10)-2;  //bitmask default
+  //하단힌트 체크, direction=1
+  int xAxis_1(xAxis),yAxis_1(yAxis),key_1(board[xAxis_1][yAxis_1]),clue_1;
+  while(key_1!=0){
+    yAxis_1--;
+    key=board[xAxis_1][yAxis_1];
   }
-  //마지막 음식이지만, 모든 친구를 충족하지 못한경우
-  if(food_idx==foods_bitmask.size()){
-    return;
+  for(auto& ele: hint){
+    if(ele[1]==yAxis_1&&ele[2]==xAxis_1&&ele[3]==1){
+      clue_1=ele[0];
+      result[3]&=ele[4];
+    }
   }
-  //tmp_min보다 커진경우
-  if(prev_count>=tmp_min){
-    return;
+  //우측힌트 체크, direction=0
+
+}
+bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint){
+  //hint: clue, yAxis, xAxis, direction, bitmask_canInput
+  //board: -1: 하얀색, 0: 검은색 or 힌트 
+  //시작위치(빈공간) 찾기
+  int xAxis(-1),yAxis;
+  for(int i=0;i<board.size();i++){
+    for(int j=0;j<board[0].size();j++){
+      if(board[i][j]==-1){
+        xAxis=i;
+        yAxis=j;
+        i=board.size();
+        break;
+      }
+    }
   }
-  //음식을 추가하는 경우
-  auto nowFood=foods_bitmask[food_idx];
-  if((friends_bitmask|nowFood.second)!=friends_bitmask){
-    KAKURO2_func(foods_bitmask,friendsNum,friends_bitmask|nowFood.second,tmp_min,prev_count+1,food_idx+1);
+  //빈공간이 없다면 true 반환
+  if(xAxis==-1){
+    return true;
   }
-  //음식을 추가하지않는 경우
-  KAKURO2_func(foods_bitmask,friendsNum,friends_bitmask,tmp_min,prev_count,food_idx+1);
+  //(좌측힌트 idx, 하단힌트 idx, min(clue1,clue2), 입력 가능한 수 bitmask)
+  vector<int> tmp_hint=KAKURO2_hintChk(board,hint,xAxis,yAxis);
+  //숫자 입력
+  for(int i=9;i>0;i--){
+    if((tmp_hint[3]&(1<<i))&&tmp_hint[2]>=i){
+      board[xAxis][yAxis]=i;
+      hint[tmp_hint[0]][0]-=i;hint[tmp_hint[0]][4]-=(1<<i);
+      hint[tmp_hint[1]][0]-=i;hint[tmp_hint[1]][4]-=(1<<i);
+      if(KAKURO2_func(board,hint)){
+        return true;
+      }
+      board[xAxis][yAxis]=-1;
+      hint[tmp_hint[0]][0]+=i;hint[tmp_hint[0]][4]+=(1<<i);
+      hint[tmp_hint[1]][0]+=i;hint[tmp_hint[1]][4]+=(1<<i);
+    }
+  }
+  // 적절한 값을 채워넣지 못했다면, 잘못된 것이므로 false 반환 
+  return false;
 }
 vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> hint){
   //전처리
+    //hint: clue, yAxis, xAxis, direction, bitmask_canInput
+    //board: -1: 하얀색, 0: 검은색 or 힌트
   KAKURO2_preTreat(board,hint);
   //Algo
-  vector<vector<int>> result;
-  //KAKURO2_func(foods_bitmask,friendsName.size(),0,tmp_min,0,0);
-  return result;
+  KAKURO2_func(board,hint);
+  //return
+  return board;
 }
 void KAKURO2(){
   //KAKURO2
@@ -114,6 +146,7 @@ void KAKURO2(){
     완전탐색
       비어있는 칸부터 숫자를 하나씩 넣는다.
     최적화
+      숫자를 채워넣을 때, 큰 숫자를 먼저 넣는것이 더 유리할듯
       확인해야 하는 원소는 동일하므로, 호출의 깊이를 얕게 만들도록 하자 .
       접근방법을 각 원소가 아닌 각 줄(가로 or 세로)에 대해서로 바꾼다. -> 
         보드의 크기가 N이라면, (N/2)*N*2가 각 줄의 최대 갯수이다.(N/2: 한 열(행)에 들어갈 수 있는 최대의 줄, N: 각 행(열)의 갯수, 2: 행+열)
@@ -122,11 +155,9 @@ void KAKURO2(){
             특정 원소가 어떤 줄과 관련이 있는지 표현하는 N*N table을 통해, priority queue를 업데이트 한다.
         남은 원소의 갯수가 적은 줄을 먼저 처리한다.
       각 원소에 대해 접근하는 방법
-        흰칸 0, 검은칸 -1, 하단힌트 -2, 우측힌트 -3, 원소 1~9
+        흰칸 -1, 검은칸 or 힌트 0
         좌상단 부터 시작하여 원소에 접근한다.
-        좌측, 상단에 hint가 있으면, hint에 해당하는 line에 접근한다.
-        두개의 line에서 넣을 수 있는 숫자 목록을 가져온다.
-        숫자를 넣고 board와 line 정보를 업데이트한다.     
+        흰칸을 찾으면, 흰칸에 해당하는 hint를 두개 찾고, hint조건에 맞도록 숫자를 선택하고, hint와 board를 업데이트한다.
   */
   /*전략
   전략1
