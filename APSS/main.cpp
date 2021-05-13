@@ -40,19 +40,33 @@ void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
       }
     }
   }
-  //hint update(bitmask추가), x와 y좌표가 0부터 시작하도록 수정
+  //hint update(bitmask추가), x와 y좌표가 0부터 시작하도록 수정, 남은 공간 추가
   for(auto& ele: hint){
     ele[0]--;
     ele[1]--;
     ele.push_back((1<<10)-2);  //hint 끝에 넣을 수 있는 원소 추가(bitmask), default=111,111,111,0
+    int remain(-1),yAxis(ele[0]),xAxis(ele[1]),color(-1);
+    if(ele[2]==0){  //horizontal
+      while(color!=0){
+        remain++;
+        xAxis++;
+        color=board[yAxis][xAxis];
+      }
+    }else{  //vertical
+      while(color!=0){
+        remain++;
+        yAxis++;
+        color=board[yAxis][xAxis];
+      }
+    }
+    ele.push_back(remain);
   }
 }
 pair<int,int> KAKURO2_hintChk(const vector<vector<int>>& board,const vector<vector<int>>& hint,int xAxis, int yAxis){
-  //(좌측힌트 idx, 하단힌트 idx, min(clue1,clue2), 입력 가능한 수 bitmask) bitmask_default=111,111,111,0
-  vector<int> result(4);
-  result[3]=(1<<10)-2;  //bitmask default
+  //좌측힌트 idx, 하단힌트 idx
+  pair<int,int> result;
   //하단힌트 체크, direction=1
-  int xAxis_1(xAxis),yAxis_1(yAxis),key_1(board[yAxis_1][xAxis_1]),clue_1;
+  int xAxis_1(xAxis),yAxis_1(yAxis),key_1(board[yAxis_1][xAxis_1]);
   while(key_1!=0){
     yAxis_1--;
     key_1=board[yAxis_1][xAxis_1];
@@ -60,14 +74,12 @@ pair<int,int> KAKURO2_hintChk(const vector<vector<int>>& board,const vector<vect
   for(int i=0;i<hint.size();i++){
     auto& ele=hint[i];
     if(ele[0]==yAxis_1&&ele[1]==xAxis_1&&ele[2]==1){
-      clue_1=ele[3];
-      result[3]&=ele[4];  //bitmask
-      result[1]=i;  //하단 idx
+      result.second=i;  //하단 idx
       break;
     }
   }
   //우측힌트 체크, direction=0
-  int xAxis_2(xAxis),yAxis_2(yAxis),key_2(board[yAxis_2][xAxis_2]),clue_2;
+  int xAxis_2(xAxis),yAxis_2(yAxis),key_2(board[yAxis_2][xAxis_2]);
   while(key_2!=0){
     xAxis_2--;
     key_2=board[yAxis_2][xAxis_2];
@@ -75,12 +87,9 @@ pair<int,int> KAKURO2_hintChk(const vector<vector<int>>& board,const vector<vect
   for(int i=0;i<hint.size();i++){
     auto& ele=hint[i];
     if(ele[0]==yAxis_2&&ele[1]==xAxis_2&&ele[2]==0){
-      clue_2=ele[3];
-      result[3]&=ele[4];  //bitamsk
-      result[0]=i;  //우측 idx
+      result.first=i;  //우측 idx
     }
   }
-  result[2]=min(clue_1,clue_2);
   return result;
 }
 bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint){
@@ -102,23 +111,34 @@ bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint){
   if(yAxis==-1){
     return true;
   }
-  //(좌측힌트 idx, 하단힌트 idx, min(clue1,clue2), 입력 가능한 수 bitmask)
-  vector<int> tmp_hint=KAKURO2_hintChk(board,hint,xAxis,yAxis);
-  for(auto& ele:tmp_hint){
-    cout<<"::::::::::::::::"<<ele;
-  }cout<<endl;
+  //좌측힌트 idx, 하단힌트 idx
+  pair<int,int> twoHint=KAKURO2_hintChk(board,hint,xAxis,yAxis);
+  auto& hint1(hint[twoHint.first]),hint2(hint[twoHint.second]);
+  int bitmask_canInput=hint1[4]&hint2[4];
+  int inputCap=min(hint1[3],hint2[3]);
   //숫자 입력
   for(int i=9;i>0;i--){
-    if((tmp_hint[3]&(1<<i))&&tmp_hint[2]>=i){
+    if(hint1[5]==1&&hint2[5]==1){
+      if(hint1[3]==hint2[3]){
+        i=hint1[3];
+      }else{
+        break;
+      }
+    }else if(hint1[5]==1){
+      i=hint1[3];
+    }else if(hint2[5]==1){
+      i=hint2[3];
+    }
+    if((bitmask_canInput&(1<<i))&&inputCap>=i){
       board[yAxis][xAxis]=i;
-      hint[tmp_hint[0]][3]-=i;hint[tmp_hint[0]][4]-=(1<<i);
-      hint[tmp_hint[1]][3]-=i;hint[tmp_hint[1]][4]-=(1<<i);
+      hint1[3]-=i;hint1[4]-=(1<<i);
+      hint2[3]-=i;hint2[4]-=(1<<i);
       if(KAKURO2_func(board,hint)){
         return true;
       }
       board[yAxis][xAxis]=-1;
-      hint[tmp_hint[0]][3]+=i;hint[tmp_hint[0]][4]+=(1<<i);
-      hint[tmp_hint[1]][3]+=i;hint[tmp_hint[1]][4]+=(1<<i);
+      hint1[3]+=i;hint1[4]+=(1<<i);
+      hint2[3]+=i;hint2[4]+=(1<<i);
     }
   }
   // 적절한 값을 채워넣지 못했다면, 잘못된 것이므로 false 반환 
