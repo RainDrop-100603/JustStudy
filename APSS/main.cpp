@@ -67,9 +67,9 @@ void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
   }
 }
 pair<int,int> KAKURO2_hintChk(const vector<vector<int>>& board,const vector<vector<int>>& hint,int xAxis, int yAxis){
-  //좌측힌트 idx, 하단힌트 idx
+  //horizontal hint idx, vertical hint idx
   pair<int,int> result;
-  //하단힌트 체크, direction=1
+  //vertical hint 체크, direction=1
   int xAxis_1(xAxis),yAxis_1(yAxis),key_1(board[yAxis_1][xAxis_1]);
   while(key_1!=0){
     yAxis_1--;
@@ -82,7 +82,7 @@ pair<int,int> KAKURO2_hintChk(const vector<vector<int>>& board,const vector<vect
       break;
     }
   }
-  //우측힌트 체크, direction=0
+  //horizontal hint 체크, direction=0
   int xAxis_2(xAxis),yAxis_2(yAxis),key_2(board[yAxis_2][xAxis_2]);
   while(key_2!=0){
     xAxis_2--;
@@ -107,58 +107,152 @@ pair<int,int> KAKURO2_findHint(const vector<vector<int>>& board,const vector<vec
       break;
     }
   }
-    //빈공간이 없다면 true 반환
+    //빈공간이 없다면 반환
   if(tmp_hint==-1){
-    return true;
+    return result;
   }
     //교차하는 line의 reamin도 가장 작은 것을 선택 
   if(hint[tmp_hint][2]==0){ //horizontal
-    hHint=tmp_hint;
-    int tmp_block(0),yAxis(hint[tmp_hint][0]),xAxis(hint[tmp_hint][1]+1);
+    result.first=tmp_hint;
+    int yAxis(hint[tmp_hint][0]),xAxis(hint[tmp_hint][1]+1),remain_min(100);
     for(xAxis;xAxis<board.size();xAxis++){
-
+      if(board[yAxis][xAxis]==-1){
+        break;
+      }else if(board[yAxis][xAxis]==0){
+        int vHint=board_hint[yAxis][xAxis].second;
+        if(hint[vHint][5]<remain_min){
+          remain_min=hint[vHint][5];
+          result.second=vHint;
+        }
+      }
     }
+  }else{  //vertical
+    result.second=tmp_hint;
+    int yAxis(hint[tmp_hint][0]+1),xAxis(hint[tmp_hint][1]),remain_min(100);
+    for(yAxis;yAxis<board.size();yAxis++){
+      if(board[yAxis][xAxis]==-1){
+        break;
+      }else if(board[yAxis][xAxis]==0){
+        int hHint=board_hint[yAxis][xAxis].first;
+        if(hint[hHint][5]<remain_min){
+          remain_min=hint[hHint][5];
+          result.first=hHint;
+        }
+      }
+    }
+  }
+  //ret
+  return result;
+}
+bool KAKURO2_validChk(const vector<int>& hHint,const vector<int>& vHint,int input){
+  //hHint와 vHint에 i를 넣을 수 있는지 체크
+  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
+  //bitamsk chk
+  int v_clue(vHint[3]),v_bitmask(vHint[4]),v_remain(vHint[5]);
+  int h_clue(hHint[3]),h_bitmask(hHint[4]),h_remain(hHint[5]);
+  if((1<<input)&v_bitmask&h_bitmask==0){
+    return false;
+  }
+  //clue chk, clue와 input 비교
+  if(input>v_clue||input>h_clue){
+    return false;
+  }
+  //remain이 1인경우
+  if((v_remain==1&&v_remain!=input)||(h_remain==1&&h_remain!=input)){
+    return false;
+  }
+  //남은 bitmask조합으로 clue를 만들 수 있는지 chk, clue,remain,bitmask 모두 사용해야함
+  return true;
+}
+void KAKURO2_set(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<int>>& hint_remain_arr,pair<int,int> twoHint,int input,int mode){
+  //board를 수정하는 작업, mode 1=input, mode 0=output
+  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
+  vector<int> &vHint(hint[twoHint.second]),&hHint(hint[twoHint.first]);
+  int &v_clue(vHint[3]),&v_bitmask(vHint[4]),&v_remain(vHint[5]);
+  int &h_clue(hHint[3]),&h_bitmask(hHint[4]),&h_remain(hHint[5]);
+  if(mode==1){
+    //hint 변경
+    v_clue-=input;h_clue-=input;
+    v_bitmask-=(1<<input);h_bitmask-=(1<<input);
+    v_remain--;h_remain--;
+    //hint_remain_arr 변경
+      //horizontal, vertical 삭제
+    for(int i=1;i<10;i++){
+      auto& tmp=hint_remain_arr[i];
+      for(auto iter=tmp.begin();iter!=tmp.end();iter++){
+        if(*iter=twoHint.first){
+          tmp.erase(iter);
+          i=10;
+          break;
+        }
+      }
+    }
+    for(int i=1;i<10;i++){
+      auto& tmp=hint_remain_arr[i];
+      for(auto iter=tmp.begin();iter!=tmp.end();iter++){
+        if(*iter=twoHint.second){
+          tmp.erase(iter);
+          i=10;
+          break;
+        }
+      }
+    }
+      //horizontal, vertical 입력
+    hint_remain_arr[h_remain].push_back(twoHint.first);
+    hint_remain_arr[v_remain].push_back(twoHint.second);
+      //board 변경
+    board[hHint[0]][vHint[1]]=input;
+  }else{
+    //hint 변경
+    v_clue+=input;h_clue+=input;
+    v_bitmask+=(1<<input);h_bitmask+=(1<<input);
+    v_remain++;h_remain++;
+    //hint_remain_arr 변경
+      //horizontal, vertical 삭제
+    for(int i=1;i<10;i++){
+      auto& tmp=hint_remain_arr[i];
+      for(auto iter=tmp.begin();iter!=tmp.end();iter++){
+        if(*iter=twoHint.first){
+          tmp.erase(iter);
+          i=10;
+          break;
+        }
+      }
+    }
+    for(int i=1;i<10;i++){
+      auto& tmp=hint_remain_arr[i];
+      for(auto iter=tmp.begin();iter!=tmp.end();iter++){
+        if(*iter=twoHint.second){
+          tmp.erase(iter);
+          i=10;
+          break;
+        }
+      }
+    }
+      //horizontal, vertical 입력
+    hint_remain_arr[h_remain].push_back(twoHint.first);
+    hint_remain_arr[v_remain].push_back(twoHint.second);
+      //board 변경
+    board[hHint[0]][vHint[1]]=0;
   }
 }
 bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<int>>& hint_remain_arr,const vector<vector<pair<int,int>>> board_hint){
-  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간
+  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
   //board: -1: 하얀색, 0: 검은색 or 힌트 
   //remain이 가장 작은 line을 찾고, 해당 line과 교차하는 line중 가장 remain이 작은 것을 선택, 순서는 (h,v), 남은 공간이 없다면 true 반환 
   pair<int,int> twoHint=KAKURO2_findHint(board,hint,hint_remain_arr,board_hint);
   if(twoHint.first==-1){
     return true;
   }
-  //좌측힌트 idx, 하단힌트 idx
-  pair<int,int> twoHint=KAKURO2_hintChk(board,hint,xAxis,yAxis);
-  auto& hint1(hint[twoHint.first]),&hint2(hint[twoHint.second]);
-  int bitmask_canInput=hint1[4]&hint2[4];
-  int inputCap=min(hint1[3],hint2[3]);
+  auto& hHint(hint[twoHint.first]),&vHint(hint[twoHint.second]);
   //숫자 입력
   for(int i=9;i>0;i--){
-    if(hint1[5]==1&&hint2[5]==1){
-      if(hint1[3]==hint2[3]){
-        i=hint1[3];
-      }else{
-        break;
-      }
-    }else if(hint1[5]==1){
-      i=hint1[3];
-    }else if(hint2[5]==1){
-      i=hint2[3];
-    }
-    if(i>9){
-      break;
-    }
-    if((bitmask_canInput&(1<<i))&&inputCap>=i){
-      board[yAxis][xAxis]=i;
-      hint1[3]-=i;hint1[4]-=(1<<i);
-      hint2[3]-=i;hint2[4]-=(1<<i);
-      if(KAKURO2_func(board,hint)){
+    if(KAKURO2_validChk(hHint,vHint,i)){
+      KAKURO2_set(board,hint,hint_remain_arr,twoHint,i,1);  //i를 넣는 과정
+      if(KAKURO2_func(board,hint,hint_remain_arr,board_hint)){
         return true;
       }
-      board[yAxis][xAxis]=-1;
-      hint1[3]+=i;hint1[4]+=(1<<i);
-      hint2[3]+=i;hint2[4]+=(1<<i);
+      KAKURO2_set(board,hint,hint_remain_arr,twoHint,i,0);  //i를 빼는 과정
     }
   }
   // 적절한 값을 채워넣지 못했다면, 잘못된 것이므로 false 반환 
@@ -166,7 +260,7 @@ bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint,vector<ve
 }
 vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> hint){
   //전처리
-    //hint: yAxis, xAxis, direction, clue, bitmask_canInput, 남은 공간(remain)
+    //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
     //board: -1: 하얀색, 0: 검은색 or 힌트
   KAKURO2_preTreat(board,hint);
     //hint_remain_arr: hint를 remain기준으로 정렬
@@ -174,7 +268,7 @@ vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> h
   for(int idx=0;idx<hint.size();idx++){
     hint_remain_arr[(hint[idx][5])].push_back(idx);
   }
-    //board_hint: table[i][j]=(i,j)에 해당하는 hint:pair(가로힌트,세로힌트)
+    //board_hint: table[i][j]=(i,j)에 해당하는 hint:pair(horizontal,vertical)
   vector<vector<pair<int,int>>> board_hint(board.size(),vector<pair<int,int>>(board.size()));
   for(int yAxis=0;yAxis<board.size();yAxis++){
     for(int xAxis=0;xAxis<board.size();xAxis++){
@@ -261,10 +355,10 @@ void KAKURO2(){
 }
 
 int main(void){
-  // clock_t start,end;
-  // start=clock();
+   clock_t start,end;
+   start=clock();
   KAKURO2();
-  // end=clock();;
-  // cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+   end=clock();;
+   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
