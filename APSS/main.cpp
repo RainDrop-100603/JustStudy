@@ -45,24 +45,22 @@ void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
     ele[0]--;
     ele[1]--;
     ele.push_back((1<<10)-2);  //hint 끝에 넣을 수 있는 원소 추가(bitmask), default=111,111,111,0
-    int remain(-1),yAxis(ele[0]),xAxis(ele[1]),color(-1);
+    int remain(0),yAxis(ele[0]),xAxis(ele[1]);
     if(ele[2]==0){  //horizontal
-      while(color!=0){
-        remain++;
-        xAxis++;
-        if(xAxis==board.size()){
+      for(xAxis=ele[1]+1;xAxis<board.size();xAxis++){
+        if(board[yAxis][xAxis]==0){
+          remain++;
+        }else{
           break;
         }
-        color=board[yAxis][xAxis];
       }
     }else{  //vertical
-      while(color!=0){
-        remain++;
-        yAxis++;
-        if(yAxis==board.size()){
+      for(yAxis=ele[0]+1;yAxis<board.size();yAxis++){
+        if(board[yAxis][xAxis]==0){
+          remain++;
+        }else{
           break;
         }
-        color=board[yAxis][xAxis];
       }
     }
     ele.push_back(remain);
@@ -98,23 +96,36 @@ pair<int,int> KAKURO2_hintChk(const vector<vector<int>>& board,const vector<vect
   }
   return result;
 }
-bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint){
-  //hint: yAxis, xAxis, direction, clue, bitmask_canInput, 남은 공간
-  //board: -1: 하얀색, 0: 검은색 or 힌트 
-  //시작위치(빈공간) 찾기
-  int yAxis(-1),xAxis;
-  for(int i=0;i<board.size();i++){
-    for(int j=0;j<board[0].size();j++){
-      if(board[i][j]==-1){
-        yAxis=i;
-        xAxis=j;
-        i=board.size();
-        break;
-      }
+pair<int,int> KAKURO2_findHint(const vector<vector<int>>& board,const vector<vector<int>>& hint,const vector<vector<int>>& hint_remain_arr,const vector<vector<pair<int,int>>> board_hint){
+  //pair(hHint,vHint)
+  auto result=make_pair(-1,-1);
+  //remain이 가장 작은 line 찾기
+  int tmp_hint(-1);
+  for(int i=1;i<10;i++){
+    if(hint_remain_arr[i].size()>0){
+      tmp_hint=hint_remain_arr[i].back();
+      break;
     }
   }
-  //빈공간이 없다면 true 반환
-  if(yAxis==-1){
+    //빈공간이 없다면 true 반환
+  if(tmp_hint==-1){
+    return true;
+  }
+    //교차하는 line의 reamin도 가장 작은 것을 선택 
+  if(hint[tmp_hint][2]==0){ //horizontal
+    hHint=tmp_hint;
+    int tmp_block(0),yAxis(hint[tmp_hint][0]),xAxis(hint[tmp_hint][1]+1);
+    for(xAxis;xAxis<board.size();xAxis++){
+
+    }
+  }
+}
+bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<int>>& hint_remain_arr,const vector<vector<pair<int,int>>> board_hint){
+  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간
+  //board: -1: 하얀색, 0: 검은색 or 힌트 
+  //remain이 가장 작은 line을 찾고, 해당 line과 교차하는 line중 가장 remain이 작은 것을 선택, 순서는 (h,v), 남은 공간이 없다면 true 반환 
+  pair<int,int> twoHint=KAKURO2_findHint(board,hint,hint_remain_arr,board_hint);
+  if(twoHint.first==-1){
     return true;
   }
   //좌측힌트 idx, 하단힌트 idx
@@ -155,11 +166,25 @@ bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint){
 }
 vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> hint){
   //전처리
-    //hint: yAxis, xAxis, direction, clue, bitmask_canInput, 남은 공간
+    //hint: yAxis, xAxis, direction, clue, bitmask_canInput, 남은 공간(remain)
     //board: -1: 하얀색, 0: 검은색 or 힌트
   KAKURO2_preTreat(board,hint);
+    //hint_remain_arr: hint를 remain기준으로 정렬
+  vector<vector<int>> hint_remain_arr(10);
+  for(int idx=0;idx<hint.size();idx++){
+    hint_remain_arr[(hint[idx][5])].push_back(idx);
+  }
+    //board_hint: table[i][j]=(i,j)에 해당하는 hint:pair(가로힌트,세로힌트)
+  vector<vector<pair<int,int>>> board_hint(board.size(),vector<pair<int,int>>(board.size()));
+  for(int yAxis=0;yAxis<board.size();yAxis++){
+    for(int xAxis=0;xAxis<board.size();xAxis++){
+      if(board[yAxis][xAxis]==0){
+        board_hint[yAxis][xAxis]=KAKURO2_hintChk(board,hint,xAxis,yAxis);
+      }
+    }
+  }
   //Algo
-  KAKURO2_func(board,hint);
+  KAKURO2_func(board,hint,hint_remain_arr,board_hint);
   //return
   return board;
 }
