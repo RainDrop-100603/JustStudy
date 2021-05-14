@@ -50,12 +50,18 @@ void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
       while(color!=0){
         remain++;
         xAxis++;
+        if(xAxis==board.size()){
+          break;
+        }
         color=board[yAxis][xAxis];
       }
     }else{  //vertical
       while(color!=0){
         remain++;
         yAxis++;
+        if(yAxis==board.size()){
+          break;
+        }
         color=board[yAxis][xAxis];
       }
     }
@@ -113,7 +119,7 @@ bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint){
   }
   //좌측힌트 idx, 하단힌트 idx
   pair<int,int> twoHint=KAKURO2_hintChk(board,hint,xAxis,yAxis);
-  auto& hint1(hint[twoHint.first]),hint2(hint[twoHint.second]);
+  auto& hint1(hint[twoHint.first]),&hint2(hint[twoHint.second]);
   int bitmask_canInput=hint1[4]&hint2[4];
   int inputCap=min(hint1[3],hint2[3]);
   //숫자 입력
@@ -128,6 +134,9 @@ bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint){
       i=hint1[3];
     }else if(hint2[5]==1){
       i=hint2[3];
+    }
+    if(i>9){
+      break;
     }
     if((bitmask_canInput&(1<<i))&&inputCap>=i){
       board[yAxis][xAxis]=i;
