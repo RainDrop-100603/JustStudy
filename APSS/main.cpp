@@ -40,6 +40,7 @@ void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
       }
     }
   }
+  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
   //hint update(bitmask추가), x와 y좌표가 0부터 시작하도록 수정, 남은 공간 추가
   for(auto& ele: hint){
     ele[0]--;
@@ -48,7 +49,7 @@ void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
     int remain(0),yAxis(ele[0]),xAxis(ele[1]);
     if(ele[2]==0){  //horizontal
       for(xAxis=ele[1]+1;xAxis<board.size();xAxis++){
-        if(board[yAxis][xAxis]==0){
+        if(board[yAxis][xAxis]==-1){
           remain++;
         }else{
           break;
@@ -56,7 +57,7 @@ void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
       }
     }else{  //vertical
       for(yAxis=ele[0]+1;yAxis<board.size();yAxis++){
-        if(board[yAxis][xAxis]==0){
+        if(board[yAxis][xAxis]==-1){
           remain++;
         }else{
           break;
@@ -272,11 +273,42 @@ vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> h
   vector<vector<pair<int,int>>> board_hint(board.size(),vector<pair<int,int>>(board.size()));
   for(int yAxis=0;yAxis<board.size();yAxis++){
     for(int xAxis=0;xAxis<board.size();xAxis++){
-      if(board[yAxis][xAxis]==0){
+      if(board[yAxis][xAxis]==-1){
         board_hint[yAxis][xAxis]=KAKURO2_hintChk(board,hint,xAxis,yAxis);
       }
     }
   }
+  // //debug
+  // cout<<"::::::::::::::::::::::::::::::::::::::\n";
+  // for(auto& row:board){
+  //   for(auto& ele:row){
+  //     cout<<ele<<" ";
+  //   }cout<<"\n";
+  // }
+  // cout<<"::::::::::::::::::::::::::::::::::::::\n";
+  // int iddd=0;
+  // for(auto& ele:hint_remain_arr){
+  //   cout<<iddd<<": ";
+  //   for(auto& ele2:ele){
+  //     cout<< ele2<<" ";
+  //   }
+  //   cout<<"\n";
+  //   iddd++;
+  // }
+  // cout<<"::::::::::::::::::::::::::::::::::::::\n";
+  // for(auto& row:board_hint){
+  //   for(auto& ele:row){
+  //     cout<<"("<<ele.first<<","<<ele.second<<")";
+  //   }
+  //   cout<<"\n";
+  // }
+  // cout<<"::::::::::::::::::::::::::::::::::::::\n";
+  // for(auto& ele:hint){
+  //   for(auto& ele2:ele){
+  //     cout<< ele2<<" ";
+  //   }cout<<"\n";
+  // }
+  // cout<<"::::::::::::::::::::::::::::::::::::::\n";
   //Algo
   KAKURO2_func(board,hint,hint_remain_arr,board_hint);
   //return
