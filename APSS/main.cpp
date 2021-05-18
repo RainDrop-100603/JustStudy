@@ -117,9 +117,9 @@ pair<int,int> KAKURO2_findHint(const vector<vector<int>>& board,const vector<vec
     result.first=tmp_hint;
     int yAxis(hint[tmp_hint][0]),xAxis(hint[tmp_hint][1]+1),remain_min(100);
     for(xAxis;xAxis<board.size();xAxis++){
-      if(board[yAxis][xAxis]==-1){
+      if(board[yAxis][xAxis]==0){
         break;
-      }else if(board[yAxis][xAxis]==0){
+      }else if(board[yAxis][xAxis]==-1){
         int vHint=board_hint[yAxis][xAxis].second;
         if(hint[vHint][5]<remain_min){
           remain_min=hint[vHint][5];
@@ -131,9 +131,9 @@ pair<int,int> KAKURO2_findHint(const vector<vector<int>>& board,const vector<vec
     result.second=tmp_hint;
     int yAxis(hint[tmp_hint][0]+1),xAxis(hint[tmp_hint][1]),remain_min(100);
     for(yAxis;yAxis<board.size();yAxis++){
-      if(board[yAxis][xAxis]==-1){
+      if(board[yAxis][xAxis]==0){
         break;
-      }else if(board[yAxis][xAxis]==0){
+      }else if(board[yAxis][xAxis]==-1){
         int hHint=board_hint[yAxis][xAxis].first;
         if(hint[hHint][5]<remain_min){
           remain_min=hint[hHint][5];
@@ -178,24 +178,18 @@ void KAKURO2_set(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vec
     v_remain--;h_remain--;
     //hint_remain_arr 변경
       //horizontal, vertical 삭제
-    for(int i=1;i<10;i++){
-      auto& tmp=hint_remain_arr[i];
-      for(auto iter=tmp.begin();iter!=tmp.end();iter++){
-        if(*iter=twoHint.first){
-          tmp.erase(iter);
-          i=10;
-          break;
-        }
+    auto &h_tmp=hint_remain_arr[h_remain+1];
+    for(auto iter=h_tmp.begin();iter!=h_tmp.end();iter++){
+      if(*iter=twoHint.first){
+        h_tmp.erase(iter);
+        break;
       }
     }
-    for(int i=1;i<10;i++){
-      auto& tmp=hint_remain_arr[i];
-      for(auto iter=tmp.begin();iter!=tmp.end();iter++){
-        if(*iter=twoHint.second){
-          tmp.erase(iter);
-          i=10;
-          break;
-        }
+    auto& v_tmp=hint_remain_arr[v_remain+1];
+    for(auto iter=v_tmp.begin();iter!=v_tmp.end();iter++){
+      if(*iter=twoHint.first){
+        v_tmp.erase(iter);
+        break;
       }
     }
       //horizontal, vertical 입력
@@ -210,31 +204,25 @@ void KAKURO2_set(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vec
     v_remain++;h_remain++;
     //hint_remain_arr 변경
       //horizontal, vertical 삭제
-    for(int i=1;i<10;i++){
-      auto& tmp=hint_remain_arr[i];
-      for(auto iter=tmp.begin();iter!=tmp.end();iter++){
-        if(*iter=twoHint.first){
-          tmp.erase(iter);
-          i=10;
-          break;
-        }
+    auto &h_tmp=hint_remain_arr[h_remain-1];
+    for(auto iter=h_tmp.begin();iter!=h_tmp.end();iter++){
+      if(*iter=twoHint.first){
+        h_tmp.erase(iter);
+        break;
       }
     }
-    for(int i=1;i<10;i++){
-      auto& tmp=hint_remain_arr[i];
-      for(auto iter=tmp.begin();iter!=tmp.end();iter++){
-        if(*iter=twoHint.second){
-          tmp.erase(iter);
-          i=10;
-          break;
-        }
+    auto& v_tmp=hint_remain_arr[v_remain-1];
+    for(auto iter=v_tmp.begin();iter!=v_tmp.end();iter++){
+      if(*iter=twoHint.first){
+        v_tmp.erase(iter);
+        break;
       }
     }
       //horizontal, vertical 입력
     hint_remain_arr[h_remain].push_back(twoHint.first);
     hint_remain_arr[v_remain].push_back(twoHint.second);
       //board 변경
-    board[hHint[0]][vHint[1]]=0;
+    board[hHint[0]][vHint[1]]=-1;
   }
 }
 bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<int>>& hint_remain_arr,const vector<vector<pair<int,int>>> board_hint){
@@ -245,7 +233,7 @@ bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint,vector<ve
   if(twoHint.first==-1){
     return true;
   }
-  auto& hHint(hint[twoHint.first]),&vHint(hint[twoHint.second]);
+  auto &hHint(hint[twoHint.first]),&vHint(hint[twoHint.second]);
   //숫자 입력
   for(int i=9;i>0;i--){
     if(KAKURO2_validChk(hHint,vHint,i)){
