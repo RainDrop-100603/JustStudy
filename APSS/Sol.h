@@ -232,3 +232,16 @@ vector<pair<int,long long>> ALLERGY_food_opti(const vector<string>& friendsName,
 void ALLERGY_func(const vector<pair<int,long long>>& foods_bitmask,int friendsNum, long long friends_bitmask, int& tmp_min, int prev_count, int food_idx);
 int ALLERGY_Algo(const vector<string>& friendsName, const vector<vector<string>>& foodsInfo);
 void ALLERGY();
+
+// @* combination, Constraint Satisfaction Problem, 책을 참고하여 더 최적화할 수 있다.
+void KAKURO2_Input(vector<vector<int>>& board, vector<vector<int>>& hint);
+void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint);
+pair<int,int> KAKURO2_hintChk(const vector<vector<int>>& board,const vector<vector<int>>& hint,int xAxis, int yAxis);
+pair<int,int> KAKURO2_findHint(const vector<vector<int>>& board,const vector<vector<int>>& hint,
+            const vector<vector<int>>& hint_remain_arr,const vector<vector<pair<int,int>>> board_hint);
+bool KAKURO2_validChk2(int bitmask, int count, int target);
+bool KAKURO2_validChk(const vector<int>& hHint,const vector<int>& vHint,int input);
+void KAKURO2_set(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<int>>& hint_remain_arr,pair<int,int> twoHint,int input,int mode);
+bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<int>>& hint_remain_arr,const vector<vector<pair<int,int>>> board_hint);
+vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> hint);
+void KAKURO2();

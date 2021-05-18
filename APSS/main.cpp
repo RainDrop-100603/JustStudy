@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// combination, set cover, 책에 더 최적화 하는 방법들이 있다.
+// /* combination, Constraint Satisfaction Problem, 책을 참고하여 더 최적화할 수 있다.
 void KAKURO2_Input(vector<vector<int>>& board, vector<vector<int>>& hint){
   int boardSize,hintSize;
   cin>>boardSize;
@@ -380,6 +380,9 @@ void KAKURO2(){
       O(N^2), N:게임판의 크기 
     보완 & 참고
       validChk를 보면, 더 자세한 heuristic(validChk2)이 단순한 heuristic보다 수행시간이 더 긴 것을 확인할 수 있다.
+      책의 방식을 참고하여 더 최적화도 가능하다.
+        대체로 책의 방식이 더 직관적이고 구현이 간단한 듯 하다.
+      제약 충족 문제(Constraint Satisfaction Problem), 종만북 1 436p 참고
   */
   //Sol
   int testCase;

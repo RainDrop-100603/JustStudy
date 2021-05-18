@@ -2,3 +2,18 @@ algorithm tips
 
 //https://www.youtube.com/watch?v=x7STjpcKZP8 
 //사회복무요원 교육 
+
+조합문제
+  제약 충족 문제 (Constraint Satisfaction Problem) : 특정한 제약에 해당하는 답을 찾는 문제
+      스도쿠, n-queen등 
+    아래 두 조건을 만족하면 대부분 빠르게 실행된다.
+      제약 전파(Constarint Propagation)
+        답의 일부를 생성한 뒤에, 문제의 제약을 이용하여 얻을 수 있는 힌트를 찾아내는것
+          답의 일부를 생성하면, 다른 조각의 답을 알게 되는것: 스도쿠를 떠올려보자
+          혹은 생성한 답이 정답이 아니라는 것을 알게 되는것도 제약전파이다.
+      채울 순서 정하기: 변수 순서 + 값 순서(Variable ordering + Value ordering)
+        카쿠로, 스도쿠에서 빈공간이 적은 line부터 해결하는 것 
+  algospot 444p
+    TSP, Sudoku 문제의 강력한 해결법 
+    http://norvig.com/sudoku.html
+      
