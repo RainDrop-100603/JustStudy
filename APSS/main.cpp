@@ -145,13 +145,31 @@ pair<int,int> KAKURO2_findHint(const vector<vector<int>>& board,const vector<vec
   //ret
   return result;
 }
+bool KAKURO2_validChk2(int bitmask, int count, int target){
+  //bitamsk 0~9(0제외)가 주어졌을때, count개의 숫자로 target 반환이 가능한가?
+  if(target<0||count<0){
+    return false;
+  }
+  if(count==0&&target==0){
+    return true;
+  }
+  //algo
+  for(int i=9;i>0;i--){
+    if(bitmask|(1<<i)){
+      if(KAKURO2_validChk2(bitmask-(1<<i),count-1,target-i)){
+        return true;
+      }
+    }
+  }
+  return false;
+}
 bool KAKURO2_validChk(const vector<int>& hHint,const vector<int>& vHint,int input){
   //hHint와 vHint에 i를 넣을 수 있는지 체크
   //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
   //bitamsk chk
   int v_clue(vHint[3]),v_bitmask(vHint[4]),v_remain(vHint[5]);
   int h_clue(hHint[3]),h_bitmask(hHint[4]),h_remain(hHint[5]);
-  if((1<<input)&v_bitmask&h_bitmask==0){
+  if(((1<<input)&v_bitmask&h_bitmask)==0){
     return false;
   }
   //clue chk, clue와 input 비교
@@ -159,10 +177,40 @@ bool KAKURO2_validChk(const vector<int>& hHint,const vector<int>& vHint,int inpu
     return false;
   }
   //remain이 1인경우
-  if((v_remain==1&&v_remain!=input)||(h_remain==1&&h_remain!=input)){
+  if((v_remain==1&&v_clue!=input)||(h_remain==1&&h_clue!=input)){
     return false;
   }
-  //남은 bitmask조합으로 clue를 만들 수 있는지 chk, clue,remain,bitmask 모두 사용해야함
+  //남은 bitmask조합의 합의 최댓값과, clue를 비교
+  int tmp1_vRemain(v_remain-1),tmp1_sum(0);
+  for(int i=9;i>0;i--){
+    if(tmp1_vRemain==0){
+      break;
+    }
+    if((v_bitmask&(1<<i))!=0){
+      tmp1_vRemain--;
+      tmp1_sum+=i;
+    }
+  }
+  if(tmp1_sum<v_clue-input){
+    return false;
+  }
+  int tmp2_vRemain(h_remain-1),tmp2_sum(0);
+  for(int i=9;i>0;i--){
+    if(tmp2_vRemain==0){
+      break;
+    }
+    if((h_bitmask&(1<<i))!=0){
+      tmp2_vRemain--;
+      tmp2_sum+=i;
+    }
+  }
+  if(tmp2_sum<h_clue-input){
+    return false;
+  }
+  //남은 bitmask 조합으로 clue를 만들 수 있는지 여부  
+  // if(!KAKURO2_validChk2(v_bitmask-(1<<input),v_remain-1,v_clue-input)||!KAKURO2_validChk2(h_bitmask-(1<<input),h_remain-1,h_clue-input)){
+  //   return false;
+  // }
   return true;
 }
 void KAKURO2_set(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<int>>& hint_remain_arr,pair<int,int> twoHint,int input,int mode){
@@ -178,16 +226,16 @@ void KAKURO2_set(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vec
     v_remain--;h_remain--;
     //hint_remain_arr 변경
       //horizontal, vertical 삭제
-    auto &h_tmp=hint_remain_arr[h_remain+1];
+    auto& h_tmp=hint_remain_arr[h_remain+1];
     for(auto iter=h_tmp.begin();iter!=h_tmp.end();iter++){
-      if(*iter=twoHint.first){
+      if(*iter==twoHint.first){
         h_tmp.erase(iter);
         break;
       }
     }
     auto& v_tmp=hint_remain_arr[v_remain+1];
     for(auto iter=v_tmp.begin();iter!=v_tmp.end();iter++){
-      if(*iter=twoHint.first){
+      if(*iter==twoHint.second){
         v_tmp.erase(iter);
         break;
       }
@@ -204,16 +252,16 @@ void KAKURO2_set(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vec
     v_remain++;h_remain++;
     //hint_remain_arr 변경
       //horizontal, vertical 삭제
-    auto &h_tmp=hint_remain_arr[h_remain-1];
+    auto& h_tmp=hint_remain_arr[h_remain-1];
     for(auto iter=h_tmp.begin();iter!=h_tmp.end();iter++){
-      if(*iter=twoHint.first){
+      if(*iter==twoHint.first){
         h_tmp.erase(iter);
         break;
       }
     }
     auto& v_tmp=hint_remain_arr[v_remain-1];
     for(auto iter=v_tmp.begin();iter!=v_tmp.end();iter++){
-      if(*iter=twoHint.first){
+      if(*iter==twoHint.second){
         v_tmp.erase(iter);
         break;
       }
@@ -266,37 +314,6 @@ vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> h
       }
     }
   }
-  // //debug
-  // cout<<"::::::::::::::::::::::::::::::::::::::\n";
-  // for(auto& row:board){
-  //   for(auto& ele:row){
-  //     cout<<ele<<" ";
-  //   }cout<<"\n";
-  // }
-  // cout<<"::::::::::::::::::::::::::::::::::::::\n";
-  // int iddd=0;
-  // for(auto& ele:hint_remain_arr){
-  //   cout<<iddd<<": ";
-  //   for(auto& ele2:ele){
-  //     cout<< ele2<<" ";
-  //   }
-  //   cout<<"\n";
-  //   iddd++;
-  // }
-  // cout<<"::::::::::::::::::::::::::::::::::::::\n";
-  // for(auto& row:board_hint){
-  //   for(auto& ele:row){
-  //     cout<<"("<<ele.first<<","<<ele.second<<")";
-  //   }
-  //   cout<<"\n";
-  // }
-  // cout<<"::::::::::::::::::::::::::::::::::::::\n";
-  // for(auto& ele:hint){
-  //   for(auto& ele2:ele){
-  //     cout<< ele2<<" ";
-  //   }cout<<"\n";
-  // }
-  // cout<<"::::::::::::::::::::::::::::::::::::::\n";
   //Algo
   KAKURO2_func(board,hint,hint_remain_arr,board_hint);
   //return
@@ -335,29 +352,34 @@ void KAKURO2(){
       완전탐색을 구현한 후 하나씩 최적화를 진행한다.
     완전탐색
       비어있는 칸부터 숫자를 하나씩 넣는다.
-    최적화
-      숫자를 채워넣을 때, 큰 숫자를 먼저 넣는것이 더 유리할듯
-      확인해야 하는 원소는 동일하므로, 호출의 깊이를 얕게 만들도록 하자 .
-      접근방법을 각 원소가 아닌 각 줄(가로 or 세로)에 대해서로 바꾼다. -> 
-        보드의 크기가 N이라면, (N/2)*N*2가 각 줄의 최대 갯수이다.(N/2: 한 열(행)에 들어갈 수 있는 최대의 줄, N: 각 행(열)의 갯수, 2: 행+열)
-          3차원 table:(row,col,direction)을 이용한다. -> 특정 원소를 포함하는 줄(line)에 접근하기 편하다(update가 편하다).
-          priority queue를 이용한다. -> 남은 원소의 수가 적은 순서대로 정렬하기 편하다.
-            특정 원소가 어떤 줄과 관련이 있는지 표현하는 N*N table을 통해, priority queue를 업데이트 한다.
-        남은 원소의 갯수가 적은 줄을 먼저 처리한다.
-      각 원소에 대해 접근하는 방법
-        흰칸 -1, 검은칸 or 힌트 0
-        좌상단 부터 시작하여 원소에 접근한다.
-        흰칸을 찾으면, 흰칸에 해당하는 hint를 두개 찾고, hint조건에 맞도록 숫자를 선택하고, hint와 board를 업데이트한다.
+    접근방법
+      각 원소에 대한 접근 -> 무작위 접근에 가깝다 
+      각 line에 대한 접근 -> 남은 공간이 적은 line에 먼저 접근하는등, 최적화가 쉽다.
+    최적화 - line 접근
+      숫자를 채워넣을 때, 큰 숫자를 먼저 넣는다.
+      남은 공간이 적은 line에 먼저 접근한다.
+        한 공간은 2개의 line이 교차된다. 교처하는 line의 남은공간의 합이 가장 적도록 접근한다.
+        priority queue-> 넣고 빼기가 까다롭다, 교차하는 line에 대해 접근하긴 어렵다.
+        array -> 넣고 뺍기가 쉽다. 
+        2-table -> array와 큰 차이는 없을듯 하다.
   */
   /*전략
   전략1
     combination search
+    접근방법
+      각 line에 대하여 접근한다.
+        모든 line에 대해, 남은 공간이 가장 적은 것을 찾는다.
+        찾은 line에 대해, 교차하는 line의 남은 공간이 가장 적은 좌표를 찾는다.
+      해당 좌표에 대해 넣을 수 있는 원소를 확인하고 넣는다.
+        hint array, hint_remain으로 정렬한 array, 특정 좌표에 해당하는 hint를 보여주는 table을 이용한다.
+      만약 넣을 수 있는 원소가 없다면, false를 반환하여 input을 취소한다(=output)
+      만약 남은 공간이 없다면, true를 return한다. 
     시간:
       O(9^(N^2)) & optimize 
     크기:
-      O(N^2)
-    보완
-      \
+      O(N^2), N:게임판의 크기 
+    보완 & 참고
+      validChk를 보면, 더 자세한 heuristic(validChk2)이 단순한 heuristic보다 수행시간이 더 긴 것을 확인할 수 있다.
   */
   //Sol
   int testCase;
@@ -375,10 +397,10 @@ void KAKURO2(){
 }
 
 int main(void){
-   clock_t start,end;
-   start=clock();
+   //clock_t start,end;
+   //start=clock();
   KAKURO2();
-   end=clock();;
-   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+   //end=clock();;
+   //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
