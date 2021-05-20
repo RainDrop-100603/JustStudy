@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// /* combination, Constraint Satisfaction Problem, 책을 참고하여 더 최적화할 수 있다.
+// /* combination, Constraint Satisfaction Problem, 두가지 버전 비교해보기
 void KAKURO2_Input(vector<vector<int>>& board, vector<vector<int>>& hint){
   int boardSize,hintSize;
   cin>>boardSize;
@@ -376,14 +376,21 @@ bool KAKURO2_func2(vector<vector<int>>& board,vector<vector<int>>& hint,vector<v
 void KAKURO2_setCache(vector<vector<vector<int>>>& cache){
   //cache: cache[len][sum][used]=bitmask, len 공간의 숫자의 합이 sum,이미 used가 들어가 있다면, 남은 공간에 넣을 수 있는 bitmask 
   for(int bitmask=0;bitmask<(1<<10);bitmask++){
+    if(bitmask%2==1){ //0의 자릿수는 의미가 없으므로 
+      continue;
+    }
     int bitmask_used(bitmask),bitmask_len(__builtin_popcount(bitmask)),bitmask_sum(0);
-    for(int i=0;i<10;i++){
+    for(int i=1;i<10;i++){
       if(bitmask&(1<<i)){
         bitmask_sum+=i;
       }
     }
     while(true){
-
+      cache[bitmask_len][bitmask_sum][bitmask_used]|=bitmask-bitmask_used;
+      if(bitmask_used==0){
+        break;
+      }
+      bitmask_used=(bitmask_used-1)&bitmask;
     }
   }
 }
@@ -479,6 +486,7 @@ void KAKURO2(){
   전략2
     나의방식(전략1)과 종만북을 참고하여 개선한 버전 
     남은 공간, bitmask사용법이 다소 바뀌었다.
+    2000ms -> 72ms로 감소 
   */
   //Sol
   int testCase;
@@ -486,7 +494,7 @@ void KAKURO2(){
   while(testCase--){
     vector<vector<int>> board,hint;
     KAKURO2_Input(board,hint);
-    auto result=KAKURO2_Algo(board,hint);
+    auto result=KAKURO2_Algo2(board,hint);
     for(auto& row:result){
       for(auto& ele:row){
         cout<<ele<<" ";
