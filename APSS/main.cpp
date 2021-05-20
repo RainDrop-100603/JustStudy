@@ -319,6 +319,99 @@ vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> h
   //return
   return board;
 }
+void KAKURO2_set2(vector<vector<int>>& board,vector<vector<int>>& hint,int input,pair<int,int> hint_pair, int mode){
+  //mode 1: input, 0: output
+  //힌트 정리
+  auto &hint_h(hint[hint_pair.first]),&hint_v(hint[hint_pair.second]);
+  if(mode){
+    //board 업데이트
+    board[hint_h[0]][hint_v[1]]=input;
+    //hint 업데이트
+    hint_h[4]+=(1<<input);hint_v[4]+=(1<<input);
+  }else{
+    //board 업데이트
+    board[hint_h[0]][hint_v[1]]=-1;
+    //hint 업데이트
+    hint_h[4]-=(1<<input);hint_v[4]-=(1<<input);
+  }
+}
+bool KAKURO2_func2(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<vector<int>>>& cache,const vector<vector<pair<int,int>>> board_hint){
+  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_used, 전체공간(사용중 포함)
+  //board: -1: 하얀색, 0: 검은색 or 힌트 
+  //경우의 수가 가장 작은 타일을 찾는다. misPossibility: 넣을 수 있는 경우의 수들 중 가장 작은 것
+  int yAxis(-1),xAxis(-1),minPossibility(11),bitmask_canInput;
+  for(int i=0;i<board.size();i++){
+    for(int j=0;j<board.size();j++){
+      if(board[i][j]==-1){
+        const auto &hint_h(hint[board_hint[i][j].first]),&hint_v(hint[board_hint[i][j].second]);
+        int bitmask_h(cache[hint_h[5]][hint_h[3]][hint_h[4]]),bitmask_v(cache[hint_v[5]][hint_v[3]][hint_v[4]]);
+        if(__builtin_popcount(bitmask_v&bitmask_h)<minPossibility){
+          bitmask_canInput=bitmask_v&bitmask_h;
+          minPossibility=__builtin_popcount(bitmask_canInput);
+          yAxis=i;xAxis=j;
+        }
+      }
+    }
+  }
+  //minPossibility==0: 공간은 있지만 넣을 수 없다, yAxis==-1: 모든 공간이 채워져 있다(KAKURO 완성)
+  if(minPossibility==0){
+    return false;
+  }
+  if(yAxis==-1){
+    return true;
+  }
+  //입력후 회귀한다, 만약 이때 true가 반환되면 board를 알맞게 채운 것이므로, 그대로 return 한다.
+  for(int i=9;i>0;i--){
+    if(bitmask_canInput&(1<<i)){
+      KAKURO2_set2(board,hint,i,board_hint[yAxis][xAxis],1);
+      if(KAKURO2_func2(board,hint,cache,board_hint)){
+        return true;
+      }
+      KAKURO2_set2(board,hint,i,board_hint[yAxis][xAxis],0);
+    }
+  }
+  //board를 적절하게 채우지 못했을경우, false를 반환한다.
+  return false;
+}
+void KAKURO2_setCache(vector<vector<vector<int>>>& cache){
+  //cache: cache[len][sum][used]=bitmask, len 공간의 숫자의 합이 sum,이미 used가 들어가 있다면, 남은 공간에 넣을 수 있는 bitmask 
+  for(int bitmask=0;bitmask<(1<<10);bitmask++){
+    int bitmask_used(bitmask),bitmask_len(__builtin_popcount(bitmask)),bitmask_sum(0);
+    for(int i=0;i<10;i++){
+      if(bitmask&(1<<i)){
+        bitmask_sum+=i;
+      }
+    }
+    while(true){
+
+    }
+  }
+}
+vector<vector<int>> KAKURO2_Algo2(vector<vector<int>> board,vector<vector<int>> hint){
+  //전처리: board와 hint 변경
+    //board: -1: 하얀색, 0: 검은색 or 힌트
+    //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_used, 전체공간(사용중 포함)
+  KAKURO2_preTreat(board,hint); //bitmask_canuse로 되어있다.  
+  for(auto& ele:hint){
+    ele[4]=0; //bitmask_used로 변경 
+  }
+  //cache: cache[len][sum][used]=bitmask, len 공간의 숫자의 합이 sum,이미 used가 들어가 있다면, 남은 공간에 넣을 수 있는 bitmask 
+  vector<vector<vector<int>>> cache(10,vector<vector<int>>(46,vector<int>(1<<10,0)));
+  KAKURO2_setCache(cache);
+  //board_hint: table[i][j]=(i,j)에 해당하는 hint:pair(horizontal,vertical)
+  vector<vector<pair<int,int>>> board_hint(board.size(),vector<pair<int,int>>(board.size()));
+  for(int yAxis=0;yAxis<board.size();yAxis++){
+    for(int xAxis=0;xAxis<board.size();xAxis++){
+      if(board[yAxis][xAxis]==-1){
+        board_hint[yAxis][xAxis]=KAKURO2_hintChk(board,hint,xAxis,yAxis);
+      }
+    }
+  }
+  //Algo
+  KAKURO2_func2(board,hint,cache,board_hint);
+  //return
+  return board;
+}
 void KAKURO2(){
   //KAKURO2
   /*설명 및 입력
@@ -383,6 +476,9 @@ void KAKURO2(){
       책의 방식을 참고하여 더 최적화도 가능하다.
         대체로 책의 방식이 더 직관적이고 구현이 간단한 듯 하다.
       제약 충족 문제(Constraint Satisfaction Problem), 종만북 1 436p 참고
+  전략2
+    나의방식(전략1)과 종만북을 참고하여 개선한 버전 
+    남은 공간, bitmask사용법이 다소 바뀌었다.
   */
   //Sol
   int testCase;
