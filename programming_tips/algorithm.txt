@@ -17,3 +17,7 @@ algorithm tips
     TSP, Sudoku 문제의 강력한 해결법 
     http://norvig.com/sudoku.html
       
+결정 문제(Decision Problem)
+  특정 조건에 대해 예 혹은 아니오의 답만 나오는 문제
+  최적화 문제를 결정 문제로 바꾸어 해결하는 방법이 존재한다.
+    결정문제의 난이도는 최적화 문제보다 쉽거나 같다.

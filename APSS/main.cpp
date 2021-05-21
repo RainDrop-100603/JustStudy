@@ -13,7 +13,7 @@
 using namespace std;
 
 // /* combination, Constraint Satisfaction Problem, 두가지 버전 비교해보기
-void KAKURO2_Input(vector<vector<int>>& board, vector<vector<int>>& hint){
+void DARPA_Input(vector<vector<int>>& board, vector<vector<int>>& hint){
   int boardSize,hintSize;
   cin>>boardSize;
   board=vector<vector<int>>(boardSize,vector<int>(boardSize));
@@ -31,7 +31,7 @@ void KAKURO2_Input(vector<vector<int>>& board, vector<vector<int>>& hint){
     hint.push_back(tmp);
   }
 }
-void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
+void DARPA_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
   //board: -1: 하얀색, 0: 검은색 or 힌트 
   for(auto& row:board){
     for(auto& ele:row){
@@ -67,239 +67,11 @@ void KAKURO2_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
     ele.push_back(remain);
   }
 }
-pair<int,int> KAKURO2_hintChk(const vector<vector<int>>& board,const vector<vector<int>>& hint,int xAxis, int yAxis){
-  //horizontal hint idx, vertical hint idx
-  pair<int,int> result;
-  //vertical hint 체크, direction=1
-  int xAxis_1(xAxis),yAxis_1(yAxis),key_1(board[yAxis_1][xAxis_1]);
-  while(key_1!=0){
-    yAxis_1--;
-    key_1=board[yAxis_1][xAxis_1];
-  }
-  for(int i=0;i<hint.size();i++){
-    auto& ele=hint[i];
-    if(ele[0]==yAxis_1&&ele[1]==xAxis_1&&ele[2]==1){
-      result.second=i;  //하단 idx
-      break;
-    }
-  }
-  //horizontal hint 체크, direction=0
-  int xAxis_2(xAxis),yAxis_2(yAxis),key_2(board[yAxis_2][xAxis_2]);
-  while(key_2!=0){
-    xAxis_2--;
-    key_2=board[yAxis_2][xAxis_2];
-  }
-  for(int i=0;i<hint.size();i++){
-    auto& ele=hint[i];
-    if(ele[0]==yAxis_2&&ele[1]==xAxis_2&&ele[2]==0){
-      result.first=i;  //우측 idx
-    }
-  }
-  return result;
-}
-pair<int,int> KAKURO2_findHint(const vector<vector<int>>& board,const vector<vector<int>>& hint,const vector<vector<int>>& hint_remain_arr,const vector<vector<pair<int,int>>> board_hint){
-  //pair(hHint,vHint)
-  auto result=make_pair(-1,-1);
-  //remain이 가장 작은 line 찾기
-  int tmp_hint(-1);
-  for(int i=1;i<10;i++){
-    if(hint_remain_arr[i].size()>0){
-      tmp_hint=hint_remain_arr[i].back();
-      break;
-    }
-  }
-    //빈공간이 없다면 반환
-  if(tmp_hint==-1){
-    return result;
-  }
-    //교차하는 line의 reamin도 가장 작은 것을 선택 
-  if(hint[tmp_hint][2]==0){ //horizontal
-    result.first=tmp_hint;
-    int yAxis(hint[tmp_hint][0]),xAxis(hint[tmp_hint][1]+1),remain_min(100);
-    for(xAxis;xAxis<board.size();xAxis++){
-      if(board[yAxis][xAxis]==0){
-        break;
-      }else if(board[yAxis][xAxis]==-1){
-        int vHint=board_hint[yAxis][xAxis].second;
-        if(hint[vHint][5]<remain_min){
-          remain_min=hint[vHint][5];
-          result.second=vHint;
-        }
-      }
-    }
-  }else{  //vertical
-    result.second=tmp_hint;
-    int yAxis(hint[tmp_hint][0]+1),xAxis(hint[tmp_hint][1]),remain_min(100);
-    for(yAxis;yAxis<board.size();yAxis++){
-      if(board[yAxis][xAxis]==0){
-        break;
-      }else if(board[yAxis][xAxis]==-1){
-        int hHint=board_hint[yAxis][xAxis].first;
-        if(hint[hHint][5]<remain_min){
-          remain_min=hint[hHint][5];
-          result.first=hHint;
-        }
-      }
-    }
-  }
-  //ret
-  return result;
-}
-bool KAKURO2_validChk2(int bitmask, int count, int target){
-  //bitamsk 0~9(0제외)가 주어졌을때, count개의 숫자로 target 반환이 가능한가?
-  if(target<0||count<0){
-    return false;
-  }
-  if(count==0&&target==0){
-    return true;
-  }
-  //algo
-  for(int i=9;i>0;i--){
-    if(bitmask|(1<<i)){
-      if(KAKURO2_validChk2(bitmask-(1<<i),count-1,target-i)){
-        return true;
-      }
-    }
-  }
-  return false;
-}
-bool KAKURO2_validChk(const vector<int>& hHint,const vector<int>& vHint,int input){
-  //hHint와 vHint에 i를 넣을 수 있는지 체크
-  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
-  //bitamsk chk
-  int v_clue(vHint[3]),v_bitmask(vHint[4]),v_remain(vHint[5]);
-  int h_clue(hHint[3]),h_bitmask(hHint[4]),h_remain(hHint[5]);
-  if(((1<<input)&v_bitmask&h_bitmask)==0){
-    return false;
-  }
-  //clue chk, clue와 input 비교
-  if(input>v_clue||input>h_clue){
-    return false;
-  }
-  //remain이 1인경우
-  if((v_remain==1&&v_clue!=input)||(h_remain==1&&h_clue!=input)){
-    return false;
-  }
-  //남은 bitmask조합의 합의 최댓값과, clue를 비교
-  int tmp1_vRemain(v_remain-1),tmp1_sum(0);
-  for(int i=9;i>0;i--){
-    if(tmp1_vRemain==0){
-      break;
-    }
-    if((v_bitmask&(1<<i))!=0){
-      tmp1_vRemain--;
-      tmp1_sum+=i;
-    }
-  }
-  if(tmp1_sum<v_clue-input){
-    return false;
-  }
-  int tmp2_vRemain(h_remain-1),tmp2_sum(0);
-  for(int i=9;i>0;i--){
-    if(tmp2_vRemain==0){
-      break;
-    }
-    if((h_bitmask&(1<<i))!=0){
-      tmp2_vRemain--;
-      tmp2_sum+=i;
-    }
-  }
-  if(tmp2_sum<h_clue-input){
-    return false;
-  }
-  //남은 bitmask 조합으로 clue를 만들 수 있는지 여부  
-  // if(!KAKURO2_validChk2(v_bitmask-(1<<input),v_remain-1,v_clue-input)||!KAKURO2_validChk2(h_bitmask-(1<<input),h_remain-1,h_clue-input)){
-  //   return false;
-  // }
-  return true;
-}
-void KAKURO2_set(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<int>>& hint_remain_arr,pair<int,int> twoHint,int input,int mode){
-  //board를 수정하는 작업, mode 1=input, mode 0=output
-  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
-  vector<int> &vHint(hint[twoHint.second]),&hHint(hint[twoHint.first]);
-  int &v_clue(vHint[3]),&v_bitmask(vHint[4]),&v_remain(vHint[5]);
-  int &h_clue(hHint[3]),&h_bitmask(hHint[4]),&h_remain(hHint[5]);
-  if(mode==1){
-    //hint 변경
-    v_clue-=input;h_clue-=input;
-    v_bitmask-=(1<<input);h_bitmask-=(1<<input);
-    v_remain--;h_remain--;
-    //hint_remain_arr 변경
-      //horizontal, vertical 삭제
-    auto& h_tmp=hint_remain_arr[h_remain+1];
-    for(auto iter=h_tmp.begin();iter!=h_tmp.end();iter++){
-      if(*iter==twoHint.first){
-        h_tmp.erase(iter);
-        break;
-      }
-    }
-    auto& v_tmp=hint_remain_arr[v_remain+1];
-    for(auto iter=v_tmp.begin();iter!=v_tmp.end();iter++){
-      if(*iter==twoHint.second){
-        v_tmp.erase(iter);
-        break;
-      }
-    }
-      //horizontal, vertical 입력
-    hint_remain_arr[h_remain].push_back(twoHint.first);
-    hint_remain_arr[v_remain].push_back(twoHint.second);
-      //board 변경
-    board[hHint[0]][vHint[1]]=input;
-  }else{
-    //hint 변경
-    v_clue+=input;h_clue+=input;
-    v_bitmask+=(1<<input);h_bitmask+=(1<<input);
-    v_remain++;h_remain++;
-    //hint_remain_arr 변경
-      //horizontal, vertical 삭제
-    auto& h_tmp=hint_remain_arr[h_remain-1];
-    for(auto iter=h_tmp.begin();iter!=h_tmp.end();iter++){
-      if(*iter==twoHint.first){
-        h_tmp.erase(iter);
-        break;
-      }
-    }
-    auto& v_tmp=hint_remain_arr[v_remain-1];
-    for(auto iter=v_tmp.begin();iter!=v_tmp.end();iter++){
-      if(*iter==twoHint.second){
-        v_tmp.erase(iter);
-        break;
-      }
-    }
-      //horizontal, vertical 입력
-    hint_remain_arr[h_remain].push_back(twoHint.first);
-    hint_remain_arr[v_remain].push_back(twoHint.second);
-      //board 변경
-    board[hHint[0]][vHint[1]]=-1;
-  }
-}
-bool KAKURO2_func(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<int>>& hint_remain_arr,const vector<vector<pair<int,int>>> board_hint){
-  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
-  //board: -1: 하얀색, 0: 검은색 or 힌트 
-  //remain이 가장 작은 line을 찾고, 해당 line과 교차하는 line중 가장 remain이 작은 것을 선택, 순서는 (h,v), 남은 공간이 없다면 true 반환 
-  pair<int,int> twoHint=KAKURO2_findHint(board,hint,hint_remain_arr,board_hint);
-  if(twoHint.first==-1){
-    return true;
-  }
-  auto &hHint(hint[twoHint.first]),&vHint(hint[twoHint.second]);
-  //숫자 입력
-  for(int i=9;i>0;i--){
-    if(KAKURO2_validChk(hHint,vHint,i)){
-      KAKURO2_set(board,hint,hint_remain_arr,twoHint,i,1);  //i를 넣는 과정
-      if(KAKURO2_func(board,hint,hint_remain_arr,board_hint)){
-        return true;
-      }
-      KAKURO2_set(board,hint,hint_remain_arr,twoHint,i,0);  //i를 빼는 과정
-    }
-  }
-  // 적절한 값을 채워넣지 못했다면, 잘못된 것이므로 false 반환 
-  return false;
-}
-vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> hint){
+vector<vector<int>> DARPA_Algo(vector<vector<int>> board,vector<vector<int>> hint){
   //전처리
     //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
     //board: -1: 하얀색, 0: 검은색 or 힌트
-  KAKURO2_preTreat(board,hint);
+  DARPA_preTreat(board,hint);
     //hint_remain_arr: hint를 remain기준으로 정렬
   vector<vector<int>> hint_remain_arr(10);
   for(int idx=0;idx<hint.size();idx++){
@@ -310,170 +82,55 @@ vector<vector<int>> KAKURO2_Algo(vector<vector<int>> board,vector<vector<int>> h
   for(int yAxis=0;yAxis<board.size();yAxis++){
     for(int xAxis=0;xAxis<board.size();xAxis++){
       if(board[yAxis][xAxis]==-1){
-        board_hint[yAxis][xAxis]=KAKURO2_hintChk(board,hint,xAxis,yAxis);
+        board_hint[yAxis][xAxis]=DARPA_hintChk(board,hint,xAxis,yAxis);
       }
     }
   }
   //Algo
-  KAKURO2_func(board,hint,hint_remain_arr,board_hint);
+  DARPA_func(board,hint,hint_remain_arr,board_hint);
   //return
   return board;
 }
-void KAKURO2_set2(vector<vector<int>>& board,vector<vector<int>>& hint,int input,pair<int,int> hint_pair, int mode){
-  //mode 1: input, 0: output
-  //힌트 정리
-  auto &hint_h(hint[hint_pair.first]),&hint_v(hint[hint_pair.second]);
-  if(mode){
-    //board 업데이트
-    board[hint_h[0]][hint_v[1]]=input;
-    //hint 업데이트
-    hint_h[4]+=(1<<input);hint_v[4]+=(1<<input);
-  }else{
-    //board 업데이트
-    board[hint_h[0]][hint_v[1]]=-1;
-    //hint 업데이트
-    hint_h[4]-=(1<<input);hint_v[4]-=(1<<input);
-  }
-}
-bool KAKURO2_func2(vector<vector<int>>& board,vector<vector<int>>& hint,vector<vector<vector<int>>>& cache,const vector<vector<pair<int,int>>> board_hint){
-  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_used, 전체공간(사용중 포함)
-  //board: -1: 하얀색, 0: 검은색 or 힌트 
-  //경우의 수가 가장 작은 타일을 찾는다. misPossibility: 넣을 수 있는 경우의 수들 중 가장 작은 것
-  int yAxis(-1),xAxis(-1),minPossibility(11),bitmask_canInput;
-  for(int i=0;i<board.size();i++){
-    for(int j=0;j<board.size();j++){
-      if(board[i][j]==-1){
-        const auto &hint_h(hint[board_hint[i][j].first]),&hint_v(hint[board_hint[i][j].second]);
-        int bitmask_h(cache[hint_h[5]][hint_h[3]][hint_h[4]]),bitmask_v(cache[hint_v[5]][hint_v[3]][hint_v[4]]);
-        if(__builtin_popcount(bitmask_v&bitmask_h)<minPossibility){
-          bitmask_canInput=bitmask_v&bitmask_h;
-          minPossibility=__builtin_popcount(bitmask_canInput);
-          yAxis=i;xAxis=j;
-        }
-      }
-    }
-  }
-  //minPossibility==0: 공간은 있지만 넣을 수 없다, yAxis==-1: 모든 공간이 채워져 있다(KAKURO 완성)
-  if(minPossibility==0){
-    return false;
-  }
-  if(yAxis==-1){
-    return true;
-  }
-  //입력후 회귀한다, 만약 이때 true가 반환되면 board를 알맞게 채운 것이므로, 그대로 return 한다.
-  for(int i=9;i>0;i--){
-    if(bitmask_canInput&(1<<i)){
-      KAKURO2_set2(board,hint,i,board_hint[yAxis][xAxis],1);
-      if(KAKURO2_func2(board,hint,cache,board_hint)){
-        return true;
-      }
-      KAKURO2_set2(board,hint,i,board_hint[yAxis][xAxis],0);
-    }
-  }
-  //board를 적절하게 채우지 못했을경우, false를 반환한다.
-  return false;
-}
-void KAKURO2_setCache(vector<vector<vector<int>>>& cache){
-  //cache: cache[len][sum][used]=bitmask, len 공간의 숫자의 합이 sum,이미 used가 들어가 있다면, 남은 공간에 넣을 수 있는 bitmask 
-  for(int bitmask=0;bitmask<(1<<10);bitmask++){
-    if(bitmask%2==1){ //0의 자릿수는 의미가 없으므로 
-      continue;
-    }
-    int bitmask_used(bitmask),bitmask_len(__builtin_popcount(bitmask)),bitmask_sum(0);
-    for(int i=1;i<10;i++){
-      if(bitmask&(1<<i)){
-        bitmask_sum+=i;
-      }
-    }
-    while(true){
-      cache[bitmask_len][bitmask_sum][bitmask_used]|=bitmask-bitmask_used;
-      if(bitmask_used==0){
-        break;
-      }
-      bitmask_used=(bitmask_used-1)&bitmask;
-    }
-  }
-}
-vector<vector<int>> KAKURO2_Algo2(vector<vector<int>> board,vector<vector<int>> hint){
-  //전처리: board와 hint 변경
-    //board: -1: 하얀색, 0: 검은색 or 힌트
-    //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_used, 전체공간(사용중 포함)
-  KAKURO2_preTreat(board,hint); //bitmask_canuse로 되어있다.  
-  for(auto& ele:hint){
-    ele[4]=0; //bitmask_used로 변경 
-  }
-  //cache: cache[len][sum][used]=bitmask, len 공간의 숫자의 합이 sum,이미 used가 들어가 있다면, 남은 공간에 넣을 수 있는 bitmask 
-  vector<vector<vector<int>>> cache(10,vector<vector<int>>(46,vector<int>(1<<10,0)));
-  KAKURO2_setCache(cache);
-  //board_hint: table[i][j]=(i,j)에 해당하는 hint:pair(horizontal,vertical)
-  vector<vector<pair<int,int>>> board_hint(board.size(),vector<pair<int,int>>(board.size()));
-  for(int yAxis=0;yAxis<board.size();yAxis++){
-    for(int xAxis=0;xAxis<board.size();xAxis++){
-      if(board[yAxis][xAxis]==-1){
-        board_hint[yAxis][xAxis]=KAKURO2_hintChk(board,hint,xAxis,yAxis);
-      }
-    }
-  }
-  //Algo
-  KAKURO2_func2(board,hint,cache,board_hint);
-  //return
-  return board;
-}
-void KAKURO2(){
-  //KAKURO2
+void DARPA(){
+  //DARPA
   /*설명 및 입력
   설명
-    카쿠로는 흔히 십자말풀이 수학 버전이라고 불리는 논리 퍼즐이다. 
-    카쿠로는 위와 같이 생긴 정사각형의 게임판을 가지고 하는 퍼즐로, 
-      이 게임판의 각 칸은 흰 칸이거나, 검은 칸이거나, 힌트 칸이다. (힌트 칸은, 대각선으로 갈라져 있고 숫자가 씌여 있는 칸을 말한다) 
-    모든 흰 칸에 적절히 숫자를 채워 넣어 규칙을 만족시키는 것이 이 게임의 목표이다.
-    모든 흰 칸에는 1 부터 9 까지의 정수를 써넣어야 한다.
-      이 때 한 줄을 이루는 연속된 흰 칸들에는 같은 수를 두 번 넣을 수 없다. 
-    세로로 연속한 흰 칸들의 수를 모두 더하면, 그 칸들의 바로 위에 있는 힌트 칸의 왼쪽 아래에 씌인 숫자가 나와야 한다.
-    가로로 연속한 흰 칸들의 수를 모두 더하면, 그 칸들의 바로 왼쪽에 있는 힌트 칸의 오른쪽 위에 씌인 숫자가 나와야 한다.
+    DARPA Grand Challenge 는 운전자 없는 차들을 컴퓨터 인공지능으로 조작해 누가 먼저 결승점에 도달하느냐를 가지고 겨루는 인공지능 대회입니다. 
+      2004년 DARPA Grand Challenge 의 과제는 사막을 가로지르는 240km 도로를 완주하는 것이었습니다.
+    우리는 이 경기를 N 개의 카메라로 중계하려고 합니다. 이 도로에는 카메라를 설치할 수 있는 곳이 M 군데 있습니다. 
+      여기에 카메라를 배치하여, 가장 가까운 두 카메라 간의 간격을 최대화하고 싶습니다. 이와 같은 배치를 찾아내는 프로그램을 작성하세요.
   입력
-    The first line of input file has the number of test cases T.
-    In the first line of each test case, the size of the game board N (<= 20) is given. 
-    The next N lines will give a description of the board, from top to bottom. 
-      These lines will have N numbers, where 0 denote black/hint cells, and 1 denote white cells. 
-    In the next line, the number of hint Q is given. 
-      The following Q lines give the hints on the board, each described with four integers: y, x, direction, and sum. 
-      sum is the value of the clue (1 <= sum <= 45), and (y, x) is the 1-based coordinate of the hint cell. 
-      direction is 0 if hint clue is a horizontal sum, 1 if the clue is a vertical sum.
-    You can assume for all test cases, there will be a unique valid solution.
+    입력의 첫 줄에는 테스트 케이스의 수 C (<= 50) 이 주어집니다. 
+    각 테스트 케이스의 첫 줄에는 카메라의 개수 N (<= 100) 과 설치 가능한 중계소의 수 M (N <= M <= 200) 이 주어집니다. 
+    그 다음 줄에는 M 개의 실수로, 카메라를 설치 가능한 곳의 위치가 오름 차순으로 주어집니다. 
+    각 위치는 시작점에서부터의 거리로, 240 이하의 실수이며 소숫점 둘째 자리까지 주어질 수 있습니다.
   출력
-    For each test case, print out the solved Kakuro board in N lines each with N numbers. 
-    Print 0 for black or hint cells, and print the filled number for white cells.
+    각 테스트 케이스마다 가장 가까운 두 카메라 간의 최대 간격을 소수점 셋째 자리에서 반올림해 출력합니다.
   제한조건
     20초, 64MB
   */
   /*힌트
-    조합 풀이법을 사용하자
-      완전탐색을 구현한 후 하나씩 최적화를 진행한다.
-    완전탐색
-      비어있는 칸부터 숫자를 하나씩 넣는다.
-    접근방법
-      각 원소에 대한 접근 -> 무작위 접근에 가깝다 
-      각 line에 대한 접근 -> 남은 공간이 적은 line에 먼저 접근하는등, 최적화가 쉽다.
-    최적화 - line 접근
-      숫자를 채워넣을 때, 큰 숫자를 먼저 넣는다.
-      남은 공간이 적은 line에 먼저 접근한다.
-        한 공간은 2개의 line이 교차된다. 교처하는 line의 남은공간의 합이 가장 적도록 접근한다.
-        priority queue-> 넣고 빼기가 까다롭다, 교차하는 line에 대해 접근하긴 어렵다.
-        array -> 넣고 뺍기가 쉽다. 
-        2-table -> array와 큰 차이는 없을듯 하다.
+    결정 문제
+      접근방법
+        결정문제: 거리가 x이상일 때, y이상의 카메라를 설치할 수 있는가?
+        거리 x는 이분법을 이용하여 구함 -> 두 카메라포인트간 간격이 매우 작을경우 문제 발생
+          발생할 수 있는 문제는, 최소/최대 위치를 실제 카메라간 거리로 정하면 된다.
+          이로인해 최소==최대가 되면, 함수를 종결시킨다.
+    가능한 카메라의 위치는 정해져 있다 -> 각 카메라포인트간 거리를 모두 특정 행렬에 저장한다.
+      이분법에서 거리를 정할 때, 이 값을 이용한다.
   */
   /*전략
   전략1
-    combination search
+    Decision Problem
     접근방법
-      각 line에 대하여 접근한다.
-        모든 line에 대해, 남은 공간이 가장 적은 것을 찾는다.
-        찾은 line에 대해, 교차하는 line의 남은 공간이 가장 적은 좌표를 찾는다.
-      해당 좌표에 대해 넣을 수 있는 원소를 확인하고 넣는다.
-        hint array, hint_remain으로 정렬한 array, 특정 좌표에 해당하는 hint를 보여주는 table을 이용한다.
-      만약 넣을 수 있는 원소가 없다면, false를 반환하여 input을 취소한다(=output)
-      만약 남은 공간이 없다면, true를 return한다. 
+      카메라포인트간의 거리를 모두 구해 "배열1"에 정렬한다.
+      재귀 결정: 거리의 최소/최댓값이 주어질 때, y개 이상의 카메라를 설치할 수 있는가?
+        조건: (최소+최대)/2인 "x"에 대해, y개 카메라 이상을 설치할 수 있는가
+          참: 최소="배열1"의 값중 "x"이하의 최댓값, 으로 바꾸고 재귀 
+          거짓: 최대="배열1"의 값 중 "x"이상의 최솟값, 으로 바꾸고 재귀 
+        기저: 최솟값 == 최댓값이라면, 해당 값을 반환
+          만약 답을 찾지 못한 경우, -1을 반환
+    시간부터 추가바람 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     시간:
       O(9^(N^2)) & optimize 
     크기:
@@ -493,8 +150,8 @@ void KAKURO2(){
   cin>>testCase;
   while(testCase--){
     vector<vector<int>> board,hint;
-    KAKURO2_Input(board,hint);
-    auto result=KAKURO2_Algo2(board,hint);
+    DARPA_Input(board,hint);
+    auto result=DARPA_Algo2(board,hint);
     for(auto& row:result){
       for(auto& ele:row){
         cout<<ele<<" ";
@@ -506,7 +163,7 @@ void KAKURO2(){
 int main(void){
    //clock_t start,end;
    //start=clock();
-  KAKURO2();
+  DARPA();
    //end=clock();;
    //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
