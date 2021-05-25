@@ -13,83 +13,53 @@
 using namespace std;
 
 // /* combination, Constraint Satisfaction Problem, 두가지 버전 비교해보기
-void DARPA_Input(vector<vector<int>>& board, vector<vector<int>>& hint){
-  int boardSize,hintSize;
-  cin>>boardSize;
-  board=vector<vector<int>>(boardSize,vector<int>(boardSize));
-  for(auto& row:board){
-    for(auto& ele:row){
-      cin>>ele;
-    }
-  }
-  cin>>hintSize;
-  for(int i=0;i<hintSize;i++){
-    vector<int> tmp(4);
-    for(auto& ele:tmp){
-      cin>>ele;
-    }
-    hint.push_back(tmp);
+void DARPA_Input(int& cameraNum, vector<double>& cameraPoint){
+  int cameraPointNum;
+  cin>>cameraNum>>cameraPointNum;
+  cameraPoint.resize(cameraPointNum);
+  for(auto& ele:cameraPoint){
+    cin>>ele;
   }
 }
-void DARPA_preTreat(vector<vector<int>>& board,vector<vector<int>>& hint){
-  //board: -1: 하얀색, 0: 검은색 or 힌트 
-  for(auto& row:board){
-    for(auto& ele:row){
-      if(ele){ //white
-        ele=-1;
-      }
+double DARPA_func(int cameraNum, const vector<double>& cameraDistance, const vector<double>& cameraPoint, double begin, double end){
+  //기저
+  if(begin==end){
+    return begin;
+  }
+  //조건
+  double mid((begin+end)/2);
+  auto now(cameraPoint.begin()),next(now);
+  for(int count=0;count<cameraNum;count++){
+    next=lower_bound(cameraPoint.begin(),cameraPoint.end(),*now+mid);
+    if(next==cameraPoint.end()){
+      break;
     }
   }
-  //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
-  //hint update(bitmask추가), x와 y좌표가 0부터 시작하도록 수정, 남은 공간 추가
-  for(auto& ele: hint){
-    ele[0]--;
-    ele[1]--;
-    ele.push_back((1<<10)-2);  //hint 끝에 넣을 수 있는 원소 추가(bitmask), default=111,111,111,0
-    int remain(0),yAxis(ele[0]),xAxis(ele[1]);
-    if(ele[2]==0){  //horizontal
-      for(xAxis=ele[1]+1;xAxis<board.size();xAxis++){
-        if(board[yAxis][xAxis]==-1){
-          remain++;
-        }else{
-          break;
-        }
-      }
-    }else{  //vertical
-      for(yAxis=ele[0]+1;yAxis<board.size();yAxis++){
-        if(board[yAxis][xAxis]==-1){
-          remain++;
-        }else{
-          break;
-        }
-      }
-    }
-    ele.push_back(remain);
+  //재귀
+  if(next==cameraPoint.end()){
+    end=*(upper_bound(cameraDistance.begin(),cameraDistance.end(),mid)--);
+  }else{
+    begin=*(upper_bound(cameraDistance.begin(),cameraDistance.end(),mid)--);
   }
+  return DARPA_func(cameraNum,cameraDistance,cameraPoint,begin,end);
 }
-vector<vector<int>> DARPA_Algo(vector<vector<int>> board,vector<vector<int>> hint){
-  //전처리
-    //hint: yAxis, xAxis, direction(0:h, 1:v), clue, bitmask_canInput, 남은 공간 (remain)
-    //board: -1: 하얀색, 0: 검은색 or 힌트
-  DARPA_preTreat(board,hint);
-    //hint_remain_arr: hint를 remain기준으로 정렬
-  vector<vector<int>> hint_remain_arr(10);
-  for(int idx=0;idx<hint.size();idx++){
-    hint_remain_arr[(hint[idx][5])].push_back(idx);
-  }
-    //board_hint: table[i][j]=(i,j)에 해당하는 hint:pair(horizontal,vertical)
-  vector<vector<pair<int,int>>> board_hint(board.size(),vector<pair<int,int>>(board.size()));
-  for(int yAxis=0;yAxis<board.size();yAxis++){
-    for(int xAxis=0;xAxis<board.size();xAxis++){
-      if(board[yAxis][xAxis]==-1){
-        board_hint[yAxis][xAxis]=DARPA_hintChk(board,hint,xAxis,yAxis);
-      }
+double DARPA_Algo(int cameraNum, vector<double> cameraPoint){
+  //카메라간 거리의 가능한 값
+  vector<double> cameraDistance;
+  int cameraPointNum(cameraPoint.size());
+  for(int from=0;from<cameraPointNum;from++){
+    for(int to=from+1;to<cameraPointNum;to++){
+      cameraDistance.push_back(cameraPoint[to]-cameraPoint[from]);
     }
   }
+  sort(cameraDistance.begin(),cameraDistance.end());
+  cameraDistance.erase(unique(cameraDistance.begin(),cameraDistance.end()),cameraDistance.end());
   //Algo
-  DARPA_func(board,hint,hint_remain_arr,board_hint);
+  double result=DARPA_func(cameraNum,cameraDistance,cameraPoint,cameraDistance.front(),cameraDistance.back());
+  //소수점 셋째 자리에서 반올림 
+  result=round(result*100)/100;
   //return
-  return board;
+  return result;
 }
 void DARPA(){
   //DARPA
@@ -110,12 +80,8 @@ void DARPA(){
     20초, 64MB
   */
   /*힌트
-    결정 문제
-      접근방법
-        결정문제: 거리가 x이상일 때, y이상의 카메라를 설치할 수 있는가?
-        거리 x는 이분법을 이용하여 구함 -> 두 카메라포인트간 간격이 매우 작을경우 문제 발생
-          발생할 수 있는 문제는, 최소/최대 위치를 실제 카메라간 거리로 정하면 된다.
-          이로인해 최소==최대가 되면, 함수를 종결시킨다.
+    결정 문제: 거리가 x이상일 때, y이상의 카메라를 설치할 수 있는가?
+      거리x는 이분법을 통해 구함
     가능한 카메라의 위치는 정해져 있다 -> 각 카메라포인트간 거리를 모두 특정 행렬에 저장한다.
       이분법에서 거리를 정할 때, 이 값을 이용한다.
   */
@@ -123,40 +89,29 @@ void DARPA(){
   전략1
     Decision Problem
     접근방법
-      카메라포인트간의 거리를 모두 구해 "배열1"에 정렬한다.
-      재귀 결정: 거리의 최소/최댓값이 주어질 때, y개 이상의 카메라를 설치할 수 있는가?
-        조건: (최소+최대)/2인 "x"에 대해, y개 카메라 이상을 설치할 수 있는가
-          참: 최소="배열1"의 값중 "x"이하의 최댓값, 으로 바꾸고 재귀 
-          거짓: 최대="배열1"의 값 중 "x"이상의 최솟값, 으로 바꾸고 재귀 
-        기저: 최솟값 == 최댓값이라면, 해당 값을 반환
-          만약 답을 찾지 못한 경우, -1을 반환
-    시간부터 추가바람 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      카메라포인트간의 거리를 모두 구해 "배열1"에 정렬한다. (m^2)
+      재귀함수 (lg(m^2))
+        기저: 최솟값==최댓값이라면, 해당값을 반환
+        조건: (최소+최대)/2인 x에 대해, n개 이상의 카메라를 설치할 수 있는가?   (n*lgm), lgm= time(카메라포인트.lower_bound(이전위치+x))
+          참: 최소=*(배열1.upper_bound(x)-1)==x이하의 최댓값, 재귀
+          거짓: 최대=*(배열1.upper_bound(x)-1), 재귀 (최대와 x사이에 공간이 남긴하지만, 그 공간은 어차피 사용되지 않으므로 무시 가능)
     시간:
-      O(9^(N^2)) & optimize 
+      O(m^2+nlgm*lg(m^2))
     크기:
-      O(N^2), N:게임판의 크기 
+      O(m^2)
     보완 & 참고
-      validChk를 보면, 더 자세한 heuristic(validChk2)이 단순한 heuristic보다 수행시간이 더 긴 것을 확인할 수 있다.
-      책의 방식을 참고하여 더 최적화도 가능하다.
-        대체로 책의 방식이 더 직관적이고 구현이 간단한 듯 하다.
-      제약 충족 문제(Constraint Satisfaction Problem), 종만북 1 436p 참고
-  전략2
-    나의방식(전략1)과 종만북을 참고하여 개선한 버전 
-    남은 공간, bitmask사용법이 다소 바뀌었다.
-    2000ms -> 72ms로 감소 
   */
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    vector<vector<int>> board,hint;
-    DARPA_Input(board,hint);
-    auto result=DARPA_Algo2(board,hint);
-    for(auto& row:result){
-      for(auto& ele:row){
-        cout<<ele<<" ";
-      }cout<<"\n";
-    }
+    int cameraNum;
+    vector<double> cameraPoint;
+    DARPA_Input(cameraNum,cameraPoint);
+    auto result=DARPA_Algo(cameraNum,cameraPoint);
+    cout<<fixed;
+    cout.precision(2);
+    cout<<result<<endl;
   }
 }
 
