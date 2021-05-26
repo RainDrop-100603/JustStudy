@@ -13,7 +13,7 @@
 using namespace std;
 
 // Decision Problem, 이분법 사용시 유의
-void DARPA_Input(int& cameraNum, vector<double>& cameraPoint){
+void ARCTIC_Input(int& cameraNum, vector<double>& cameraPoint){
   int cameraPointNum;
   cin>>cameraNum>>cameraPointNum;
   cameraPoint.resize(cameraPointNum);
@@ -21,7 +21,7 @@ void DARPA_Input(int& cameraNum, vector<double>& cameraPoint){
     cin>>ele;
   }
 }
-double DARPA_func(int cameraNum, const vector<double>& cameraDistance, const vector<double>& cameraPoint, int left, int right){
+double ARCTIC_func(int cameraNum, const vector<double>& cameraDistance, const vector<double>& cameraPoint, int left, int right){
   //[left,right)
   //기저
   int mid((left+right)/2);
@@ -42,9 +42,9 @@ double DARPA_func(int cameraNum, const vector<double>& cameraDistance, const vec
   }else{
    left=mid;
   }
-  return DARPA_func(cameraNum,cameraDistance,cameraPoint,left,right);
+  return ARCTIC_func(cameraNum,cameraDistance,cameraPoint,left,right);
 }
-double DARPA_Algo(int cameraNum, vector<double> cameraPoint){
+double ARCTIC_Algo(int cameraNum, vector<double> cameraPoint){
   //카메라간 거리의 가능한 값
   vector<double> cameraDistance;
   int cameraPointNum(cameraPoint.size());
@@ -56,44 +56,46 @@ double DARPA_Algo(int cameraNum, vector<double> cameraPoint){
   sort(cameraDistance.begin(),cameraDistance.end());
   cameraDistance.erase(unique(cameraDistance.begin(),cameraDistance.end()),cameraDistance.end());
   //Algo
-  double result=DARPA_func(cameraNum,cameraDistance,cameraPoint,0,cameraDistance.size());
+  double result=ARCTIC_func(cameraNum,cameraDistance,cameraPoint,0,cameraDistance.size());
   //소수점 셋째 자리에서 반올림 
   result=round(result*100)/100;
   //return
   return result;
 }
-void DARPA(){
-  //DARPA
+void ARCTIC(){
+  // ARCTIC
   /*설명 및 입력
   설명
-    DARPA Grand Challenge 는 운전자 없는 차들을 컴퓨터 인공지능으로 조작해 누가 먼저 결승점에 도달하느냐를 가지고 겨루는 인공지능 대회입니다. 
-      2004년 DARPA Grand Challenge 의 과제는 사막을 가로지르는 240km 도로를 완주하는 것이었습니다.
-    우리는 이 경기를 N 개의 카메라로 중계하려고 합니다. 이 도로에는 카메라를 설치할 수 있는 곳이 M 군데 있습니다. 
-      여기에 카메라를 배치하여, 가장 가까운 두 카메라 간의 간격을 최대화하고 싶습니다. 이와 같은 배치를 찾아내는 프로그램을 작성하세요.
+    남극에는 N 개의 탐사 기지가 있습니다. 
+    N 개의 무전기를 구입해 각 탐사 기지에 배치하려 합니다. 
+      이 때, 두 탐사 기지 사이의 거리가 D 라고 하면, 무전기의 출력이 D 이상이어야만 통신이 가능합니다
+    모든 탐사 기지에는 똑같은 무전기가 지급됩니다.
+    탐사 본부가 다른 모든 기지에 연락을 할 수 있기 위해 필요한 무전기의 최소 출력은 얼마일까요?
+      탐사 본부는 다른 기지를 통해 간접적으로 연락할 수 있다고 가정합니다.
   입력
-    입력의 첫 줄에는 테스트 케이스의 수 C (<= 50) 이 주어집니다. 
-    각 테스트 케이스의 첫 줄에는 카메라의 개수 N (<= 100) 과 설치 가능한 중계소의 수 M (N <= M <= 200) 이 주어집니다. 
-    그 다음 줄에는 M 개의 실수로, 카메라를 설치 가능한 곳의 위치가 오름 차순으로 주어집니다. 
-    각 위치는 시작점에서부터의 거리로, 240 이하의 실수이며 소숫점 둘째 자리까지 주어질 수 있습니다.
+    입력의 첫 줄에는 테스트 케이스의 수 C (<= 50) 가 주어집니다. 
+    각 테스트 케이스의 첫 줄에는 기지의 수 N (<= 100)이 주어지고, 그 다음 줄에 2개씩의 실수로 각 기지의 좌표 (x,y) 가 주어집니다. 
+    기지의 위치는 0 이상 1000 이하의 실수입니다. 이 때 첫 번째 주어지는 기지가 탐사 본부라고 가정합니다.
   출력
-    각 테스트 케이스마다 가장 가까운 두 카메라 간의 최대 간격을 소수점 셋째 자리에서 반올림해 출력합니다.
+    각 테스트 케이스마다, 탐사 본부가 다른 모든 기지에 연락을 할 수 있기 위해 필요한 최소 무전기의 출력을 소숫점 밑 셋째 자리에서 반올림해 출력합니다.
   제한조건
-    20초, 64MB
+    1초, 64MB
   */
   /*힌트
-    결정 문제: 거리가 x이상일 때, y이상의 카메라를 설치할 수 있는가?
-      거리x는 이분법을 통해 구함
-    가능한 카메라의 위치는 정해져 있다 -> 각 카메라포인트간 거리를 모두 특정 행렬에 저장한다.
-      이분법에서 거리를 정할 때, 이 값을 이용한다.
+    결정 문제: 출력이 D 일때 통신이 가능한가
+      첫번째 기지(본부)부터 시작하여, 연결 가능한 기지를 재귀적으로 연결한다.
+        연결된 기지가2개 이상이면, 하나의 기지에만 연결되어도 연결된 것으로 간주한다.
+        모든 기지에 연결되었다면 참, 그렇지 않다면 거짓 
+      출력D는 이분법을 통해 구함
   */
   /*전략
   전략1
     Decision Problem
     접근방법
-      카메라포인트간의 거리를 모두 구해 "배열1"에 정렬한다. (m^2)
-      재귀함수(left,right): 배열1의 [left,right)범위 idx에 대한 이분법. (lg(m^2))
-        기저: left==mid(==(left+right)/2)이라면, 해당값을 반환
-        조건: arr[mid]인 x에 대해, n개 이상의 카메라를 설치할 수 있는가?   (n*lgm), lgm= time(카메라포인트.lower_bound(이전위치+x))
+      재귀함수(min, max, count)
+        기저: count==100만큼 반복한 후 min 반환 
+        조건: 출력이 (min+max)/2 일 때, 모든 기지에 연결이 되는가? ->조건함수 또한 재귀함수로 구현
+          @@@@@@@@@@@@@@@@@조건함수 구현법 간단하게 
           참: return 재귀함수(mid,right)
           거짓: return 재귀함수(left,mid)
     시간:
@@ -108,8 +110,8 @@ void DARPA(){
   while(testCase--){
     int cameraNum;
     vector<double> cameraPoint;
-    DARPA_Input(cameraNum,cameraPoint);
-    auto result=DARPA_Algo(cameraNum,cameraPoint);
+   ARCTIC_Input(cameraNum,cameraPoint);
+    auto result=ARCTIC_Algo(cameraNum,cameraPoint);
     cout<<fixed;
     cout.precision(2);
     cout<<result<<endl;
@@ -119,7 +121,7 @@ void DARPA(){
 int main(void){
    //clock_t start,end;
    //start=clock();
-  DARPA();
+ ARCTIC();
    //end=clock();;
    //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;

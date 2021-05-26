@@ -250,7 +250,7 @@ void KAKURO2_setCache(vector<vector<vector<int>>>& cache);
 vector<vector<int>> KAKURO2_Algo2(vector<vector<int>> board,vector<vector<int>> hint);
 void KAKURO2();
 
-// Decision Problem, 이분법 사용시 유의
+// Decision Problem, 이분법 사용시 유의, 13.2절을 공부한 후 다시 보기 
 void DARPA_Input(int& cameraNum, vector<double>& cameraPoint);
 double DARPA_func(int cameraNum, const vector<double>& cameraDistance, const vector<double>& cameraPoint, int left, int right);
 double DARPA_Algo(int cameraNum, vector<double> cameraPoint);
