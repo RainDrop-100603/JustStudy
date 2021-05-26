@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// /* combination, Constraint Satisfaction Problem, 두가지 버전 비교해보기
+// Decision Problem, 이분법 사용시 유의
 void DARPA_Input(int& cameraNum, vector<double>& cameraPoint){
   int cameraPointNum;
   cin>>cameraNum>>cameraPointNum;
@@ -21,27 +21,28 @@ void DARPA_Input(int& cameraNum, vector<double>& cameraPoint){
     cin>>ele;
   }
 }
-double DARPA_func(int cameraNum, const vector<double>& cameraDistance, const vector<double>& cameraPoint, double begin, double end){
+double DARPA_func(int cameraNum, const vector<double>& cameraDistance, const vector<double>& cameraPoint, int left, int right){
+  //[left,right)
   //기저
-  if(begin==end){
-    return begin;
+  int mid((left+right)/2);
+  if(left==mid){
+    return cameraDistance[left];
   }
   //조건
-  double mid((begin+end)/2);
-  auto now(cameraPoint.begin()),next(now);
-  for(int count=0;count<cameraNum;count++){
-    next=lower_bound(cameraPoint.begin(),cameraPoint.end(),*now+mid);
-    if(next==cameraPoint.end()){
+  auto now(cameraPoint.begin());
+  for(int count=0;count<cameraNum-1;count++){
+    now=lower_bound(cameraPoint.begin(),cameraPoint.end(),*now+cameraDistance[mid]);
+    if(now==cameraPoint.end()){
       break;
     }
   }
   //재귀
-  if(next==cameraPoint.end()){
-    end=*(upper_bound(cameraDistance.begin(),cameraDistance.end(),mid)--);
+  if(now==cameraPoint.end()){
+    right=mid;
   }else{
-    begin=*(upper_bound(cameraDistance.begin(),cameraDistance.end(),mid)--);
+   left=mid;
   }
-  return DARPA_func(cameraNum,cameraDistance,cameraPoint,begin,end);
+  return DARPA_func(cameraNum,cameraDistance,cameraPoint,left,right);
 }
 double DARPA_Algo(int cameraNum, vector<double> cameraPoint){
   //카메라간 거리의 가능한 값
@@ -55,7 +56,7 @@ double DARPA_Algo(int cameraNum, vector<double> cameraPoint){
   sort(cameraDistance.begin(),cameraDistance.end());
   cameraDistance.erase(unique(cameraDistance.begin(),cameraDistance.end()),cameraDistance.end());
   //Algo
-  double result=DARPA_func(cameraNum,cameraDistance,cameraPoint,cameraDistance.front(),cameraDistance.back());
+  double result=DARPA_func(cameraNum,cameraDistance,cameraPoint,0,cameraDistance.size());
   //소수점 셋째 자리에서 반올림 
   result=round(result*100)/100;
   //return
@@ -90,11 +91,11 @@ void DARPA(){
     Decision Problem
     접근방법
       카메라포인트간의 거리를 모두 구해 "배열1"에 정렬한다. (m^2)
-      재귀함수 (lg(m^2))
-        기저: 최솟값==최댓값이라면, 해당값을 반환
-        조건: (최소+최대)/2인 x에 대해, n개 이상의 카메라를 설치할 수 있는가?   (n*lgm), lgm= time(카메라포인트.lower_bound(이전위치+x))
-          참: 최소=*(배열1.upper_bound(x)-1)==x이하의 최댓값, 재귀
-          거짓: 최대=*(배열1.upper_bound(x)-1), 재귀 (최대와 x사이에 공간이 남긴하지만, 그 공간은 어차피 사용되지 않으므로 무시 가능)
+      재귀함수(left,right): 배열1의 [left,right)범위 idx에 대한 이분법. (lg(m^2))
+        기저: left==mid(==(left+right)/2)이라면, 해당값을 반환
+        조건: arr[mid]인 x에 대해, n개 이상의 카메라를 설치할 수 있는가?   (n*lgm), lgm= time(카메라포인트.lower_bound(이전위치+x))
+          참: return 재귀함수(mid,right)
+          거짓: return 재귀함수(left,mid)
     시간:
       O(m^2+nlgm*lg(m^2))
     크기:
