@@ -12,51 +12,56 @@
 
 using namespace std;
 
-// Decision Problem, 이분법 사용시 유의
-void ARCTIC_Input(int& cameraNum, vector<double>& cameraPoint){
-  int cameraPointNum;
-  cin>>cameraNum>>cameraPointNum;
-  cameraPoint.resize(cameraPointNum);
-  for(auto& ele:cameraPoint){
-    cin>>ele;
+// Decision Problem
+void ARCTIC_Input(int& pointNum, vector<pair<double,double>>& pointLoc){
+  cin>>pointNum;
+  pointLoc.resize(pointNum);
+  for(auto& ele:pointLoc){
+    cin>>ele.first>>ele.second;
   }
 }
-double ARCTIC_func(int cameraNum, const vector<double>& cameraDistance, const vector<double>& cameraPoint, int left, int right){
-  //[left,right)
+double ARCTIC_func(int pointNum, const vector<pair<double,double>>& pointLoc,int count, double left, double right){
+  //(left,right], right는 항상 참
   //기저
-  int mid((left+right)/2);
-  if(left==mid){
-    return cameraDistance[left];
+  if(count==100){
+    return right;
   }
   //조건
-  auto now(cameraPoint.begin());
-  for(int count=0;count<cameraNum-1;count++){
-    now=lower_bound(cameraPoint.begin(),cameraPoint.end(),*now+cameraDistance[mid]);
-    if(now==cameraPoint.end()){
-      break;
+  double mid=(left+right)/2;
+  vector<int> linked(pointNum,0),toBeChk;
+  linked[0]=1; toBeChk.push_back(0); //시작위치 연결 및 체크할 항목에 추가
+  while(!toBeChk.empty()){
+    int now=toBeChk.back();
+    toBeChk.pop_back();
+    //연결관계 갱신
+    for(int i=0;i<pointNum;i++){
+      if(linked[i]==0){
+        auto point1(pointLoc[now]),point2(pointLoc[i]);
+        double distance=sqrt(pow(point1.first-point2.first,2)+pow(point1.second-point2.second,2));
+        if(mid>=distance){
+          linked[i]=1; toBeChk.push_back(i);
+        }
+      }
     }
   }
   //재귀
-  if(now==cameraPoint.end()){
-    right=mid;
-  }else{
-   left=mid;
-  }
-  return ARCTIC_func(cameraNum,cameraDistance,cameraPoint,left,right);
-}
-double ARCTIC_Algo(int cameraNum, vector<double> cameraPoint){
-  //카메라간 거리의 가능한 값
-  vector<double> cameraDistance;
-  int cameraPointNum(cameraPoint.size());
-  for(int from=0;from<cameraPointNum;from++){
-    for(int to=from+1;to<cameraPointNum;to++){
-      cameraDistance.push_back(cameraPoint[to]-cameraPoint[from]);
+  bool linkChk(true);
+  for(auto& ele:linked){
+    if(ele==0){
+      linkChk=false;
+      break;
     }
   }
-  sort(cameraDistance.begin(),cameraDistance.end());
-  cameraDistance.erase(unique(cameraDistance.begin(),cameraDistance.end()),cameraDistance.end());
-  //Algo
-  double result=ARCTIC_func(cameraNum,cameraDistance,cameraPoint,0,cameraDistance.size());
+  if(linkChk){
+    right=mid;
+  }else{
+    left=mid;
+  }
+  return ARCTIC_func(pointNum,pointLoc,count+1,left,right);
+}
+double ARCTIC_Algo(int pointNum, vector<pair<double,double>> pointLoc){
+  //Algo, 기지의 위치는 0~1000 -> 최대 거리는 1000*root(2)<1420
+  double result=ARCTIC_func(pointNum,pointLoc,0,0.0,1420.0);
   //소수점 셋째 자리에서 반올림 
   result=round(result*100)/100;
   //return
@@ -96,26 +101,26 @@ void ARCTIC(){
         기저: count==100만큼 반복한 후 min 반환 
         조건: 출력이 (min+max)/2 일 때, 모든 기지에 연결이 되는가? (n^2)
           구현:
-            첫 기지(본부에서 시작)@@@@@@@@@@@@@@@뭔가 표현 더 깔끔학[ ]
-            본부에서 거리 D이하인 기지들을 연결된 기지에 포함 (n)
-              먼저 연결된 기지부터 순서대로, 연결관계 갱신 (n)
+            첫 기지(본부)에서 연결관계 갱신(거리D이하인 기지 연결) (n)
+            먼저 연결된 기지부터, 다시 연결관계 갱신 (n^2)
             모든 기지가 연결되면 참
           참: return 재귀함수(mid,right)
           거짓: return 재귀함수(left,mid)
     시간:
       O(100*n^2)
     크기:
-      O(m^2)
+      O(n)
     보완 & 참고
+      모든 링크를 방문했는지 확인할 때, for문이 아닌, 방문카운트를 이용하여 확인할 수도 있다(중복방문 안하므로)
   */
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int cameraNum;
-    vector<double> cameraPoint;
-   ARCTIC_Input(cameraNum,cameraPoint);
-    auto result=ARCTIC_Algo(cameraNum,cameraPoint);
+    int pointNum;
+    vector<pair<double,double>> pointLoc;
+   ARCTIC_Input(pointNum,pointLoc);
+    auto result=ARCTIC_Algo(pointNum,pointLoc);
     cout<<fixed;
     cout.precision(2);
     cout<<result<<endl;

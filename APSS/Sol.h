@@ -255,3 +255,9 @@ void DARPA_Input(int& cameraNum, vector<double>& cameraPoint);
 double DARPA_func(int cameraNum, const vector<double>& cameraDistance, const vector<double>& cameraPoint, int left, int right);
 double DARPA_Algo(int cameraNum, vector<double> cameraPoint);
 void DARPA();
+
+// Decision Problem, 이분법의 적절한 사용예
+void ARCTIC_Input(int& pointNum, vector<pair<double,double>>& pointLoc);
+double ARCTIC_func(int pointNum, const vector<pair<double,double>>& pointLoc,int count, double left, double right);
+double ARCTIC_Algo(int pointNum, vector<pair<double,double>> pointLoc);
+void ARCTIC();
