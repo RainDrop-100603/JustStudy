@@ -13,116 +13,98 @@
 using namespace std;
 
 // Decision Problem
-void ARCTIC_Input(int& pointNum, vector<pair<double,double>>& pointLoc){
-  cin>>pointNum;
-  pointLoc.resize(pointNum);
-  for(auto& ele:pointLoc){
-    cin>>ele.first>>ele.second;
+void CANADATRIP_Input(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap){
+  cin>>cityNum>>order;
+  cityLoc.resize(cityNum);signBegin.resize(cityNum);signGap.resize(cityNum);
+  cin.ignore();// \n 제거
+  for(int i=0;i<cityNum;i++){
+    string tmp;
+    size_t idx;
+    getline(cin,tmp);
+    cityLoc[i]=stoi(tmp,&idx);
+    signBegin[i]=stoi(tmp.substr(idx),&idx);
+    signGap[i]=stoi(tmp.substr(idx),&idx);
   }
 }
-double ARCTIC_func(int pointNum, const vector<pair<double,double>>& pointLoc,int count, double left, double right){
+double CANADATRIP_func(int order, vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap, int left, int right){
   //(left,right], right는 항상 참
   //기저
-  if(count==100){
+  if(left+1==right){
     return right;
   }
   //조건
-  double mid=(left+right)/2;
-  vector<int> linked(pointNum,0),toBeChk;
-  linked[0]=1; toBeChk.push_back(0); //시작위치 연결 및 체크할 항목에 추가
-  while(!toBeChk.empty()){
-    int now=toBeChk.back();
-    toBeChk.pop_back();
-    //연결관계 갱신
-    for(int i=0;i<pointNum;i++){
-      if(linked[i]==0){
-        auto point1(pointLoc[now]),point2(pointLoc[i]);
-        double distance=sqrt(pow(point1.first-point2.first,2)+pow(point1.second-point2.second,2));
-        if(mid>=distance){
-          linked[i]=1; toBeChk.push_back(i);
-        }
-      }
-    }
+  int mid((left+right)/2),count(0);
+  for(int i=0;i<cityLoc.size();i++){
+    count+=max(0,min((mid-cityLoc[i]+signBegin[i])/signGap[i],signBegin[i]/signGap[i]));
   }
+  cout<<"mid: "<<mid<<" count: "<<count<<endl;
   //재귀
-  bool linkChk(true);
-  for(auto& ele:linked){
-    if(ele==0){
-      linkChk=false;
-      break;
-    }
-  }
-  if(linkChk){
+  if(count>=order){
     right=mid;
   }else{
     left=mid;
   }
-  return ARCTIC_func(pointNum,pointLoc,count+1,left,right);
+  return CANADATRIP_func(order,cityLoc,signBegin,signGap,left,right);
 }
-double ARCTIC_Algo(int pointNum, vector<pair<double,double>> pointLoc){
-  //Algo, 기지의 위치는 0~1000 -> 최대 거리는 1000*root(2)<1420
-  double result=ARCTIC_func(pointNum,pointLoc,0,0.0,1420.0);
-  //소수점 셋째 자리에서 반올림 
-  result=round(result*100)/100;
+double CANADATRIP_Algo(int cityNum,int order,vector<int> cityLoc,vector<int> signBegin,vector<int> signGap){
+  //Algo, (min,max] 
+  int result=CANADATRIP_func(order,cityLoc,signBegin,signGap,0,8030000);
   //return
   return result;
 }
-void ARCTIC(){
-  // ARCTIC
+void CANADATRIP(){
+  // CANADATRIP
   /*설명 및 입력
   설명
-    남극에는 N 개의 탐사 기지가 있습니다. 
-    N 개의 무전기를 구입해 각 탐사 기지에 배치하려 합니다. 
-      이 때, 두 탐사 기지 사이의 거리가 D 라고 하면, 무전기의 출력이 D 이상이어야만 통신이 가능합니다
-    모든 탐사 기지에는 똑같은 무전기가 지급됩니다.
-    탐사 본부가 다른 모든 기지에 연락을 할 수 있기 위해 필요한 무전기의 최소 출력은 얼마일까요?
-      탐사 본부는 다른 기지를 통해 간접적으로 연락할 수 있다고 가정합니다.
+    캐나다의 1번 고속도로는 세계에서 가장 긴 고속도로 중 하나로, 캐나다의 동쪽 끝에서 서쪽 끝까지 있는 모든 주요 도시를 연결합니다. 
+      동건이는 이 고속도로를 타고 캐나다의 서쪽 끝 빅토리아에서 동쪽 끝 세인트 존까지 8,030km 를 달리기로 마음먹었습니다.
+    이 고속도로는 N개의 주요 도시를 지나치는데, i번째 도시까지의 거리를 나타내는 표지판은 도시에 도착하기 Mi미터 전부터 시작해서 도시에 도착할 때까지 Gi미터 간격으로 설치되어 있습니다.
+      즉 일반적으로 표시판의 개수는 Mi/Gi 이다.
+    시작점으로부터 각 도시까지의 거리 Li와 Mi, Gi가 주어질 때, 시작점으로부터 여행하면서 동건이가 보게 되는 K번째 표지판의 위치를 계산하는 프로그램을 작성하세요. 
+      한 위치에 표지판이 여러 개 있을 경우에도 각각의 표지판을 따로 세기로 합니다.
   입력
-    입력의 첫 줄에는 테스트 케이스의 수 C (<= 50) 가 주어집니다. 
-    각 테스트 케이스의 첫 줄에는 기지의 수 N (<= 100)이 주어지고, 그 다음 줄에 2개씩의 실수로 각 기지의 좌표 (x,y) 가 주어집니다. 
-    기지의 위치는 0 이상 1000 이하의 실수입니다. 이 때 첫 번째 주어지는 기지가 탐사 본부라고 가정합니다.
+    입력의 첫 줄에는 테스트 케이스의 수 T (T <= 50) 가 주어집니다. 
+    각 테스트 케이스의 첫 줄에는 도시의 수 N (1 <= N <= 5000) 과 K (1 <= K <= 2^31-1) 가 주어집니다. 
+    그 후 N줄에는 각 3개의 정수로 Li, Mi, Gi (1 <= Gi <= Mi <= Li <= 8,030,000) 가 주어집니다. 
+    Mi는 항상 Gi의 배수입니다. K는 항상 총 표지판의 수 이하입니다.
+    입출력 데이터의 양이 많으니 빠른 입출력 방법을 사용하시기 바랍니다.
   출력
-    각 테스트 케이스마다, 탐사 본부가 다른 모든 기지에 연락을 할 수 있기 위해 필요한 최소 무전기의 출력을 소숫점 밑 셋째 자리에서 반올림해 출력합니다.
+    각 테스트 케이스마다 한 줄에 K번째 표지판의 위치를 출력합니다.
   제한조건
     1초, 64MB
   */
   /*힌트
-    결정 문제: 출력이 D 일때 통신이 가능한가
-      첫번째 기지(본부)부터 시작하여, 연결 가능한 기지를 재귀적으로 연결한다.
-        연결된 기지가2개 이상이면, 하나의 기지에만 연결되어도 연결된 것으로 간주한다.
-        모든 기지에 연결되었다면 참, 그렇지 않다면 거짓 
-      출력D는 이분법을 통해 구함
+    k의 최대값은 2^32~= 20억이며, 표지판의 개수는 최대 400억이다. 즉 하나하나 구해선 답을 구할 수 없다.
+    결정문제: 어느 위치(x)의 표지판의 개수가 k개 이상인가?
+      표지판시작위치(Li-Mi)가 x이하인 도시 k개 선택
+        sum(i=0~k-1): min((x-Li+Mi)/Gi,Mi/Gi)
+      이분법: 실수가 아닌 정수이므로, 정확한 위치를 구할때까지만 재귀 
   */
   /*전략
   전략1
     Decision Problem
     접근방법
-      재귀함수(min, max, count)
-        기저: count==100만큼 반복한 후 min 반환 
-        조건: 출력이 (min+max)/2 일 때, 모든 기지에 연결이 되는가? (n^2)
-          구현:
-            첫 기지(본부)에서 연결관계 갱신(거리D이하인 기지 연결) (n)
-            먼저 연결된 기지부터, 다시 연결관계 갱신 (n^2)
-            모든 기지가 연결되면 참
-          참: return 재귀함수(mid,right)
-          거짓: return 재귀함수(left,mid)
+      재귀함수: (min, max] (lgn 반복, n수행시간)
+        기저: min+1==max -> ret max
+        조건: 어느 위치 x: (min+max)/2 의 표지판의 개수가 k개 이상인가?
+          구현: (n)
+            표지판시작위치(Li-Mi)가 x이하인 도시 k개 선택
+              sum(i=0~k-1): min((x-Li+Mi)/Gi,Mi/Gi)
+          참: return 재귀함수(left,mid)
+          거짓: return 재귀함수(mid,right)
     시간:
-      O(100*n^2)
+      O(nlgn)
     크기:
       O(n)
-    보완 & 참고
-      모든 링크를 방문했는지 확인할 때, for문이 아닌, 방문카운트를 이용하여 확인할 수도 있다(중복방문 안하므로)
   */
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int pointNum;
-    vector<pair<double,double>> pointLoc;
-   ARCTIC_Input(pointNum,pointLoc);
-    auto result=ARCTIC_Algo(pointNum,pointLoc);
-    cout<<fixed;
-    cout.precision(2);
+    int cityNum,order;
+    vector<int> cityLoc,signBegin,signGap;
+    CANADATRIP_Input(cityNum,order,cityLoc,signBegin,signGap);
+    auto result=CANADATRIP_Algo(cityNum,order,cityLoc,signBegin,signGap);
     cout<<result<<endl;
   }
 }
@@ -130,7 +112,7 @@ void ARCTIC(){
 int main(void){
    //clock_t start,end;
    //start=clock();
- ARCTIC();
+ CANADATRIP();
    //end=clock();;
    //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
