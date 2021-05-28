@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// Decision Problem
+// Decision Problem, 재귀를 이용함, while문을 이용하여 재귀를 대신할 수 있음, input 방식 유의  
 void CANADATRIP_Input(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap){
   cin>>cityNum>>order;
   cityLoc.resize(cityNum);signBegin.resize(cityNum);signGap.resize(cityNum);
@@ -21,23 +21,33 @@ void CANADATRIP_Input(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& 
     string tmp;
     size_t idx;
     getline(cin,tmp);
-    cityLoc[i]=stoi(tmp,&idx);
-    signBegin[i]=stoi(tmp.substr(idx),&idx);
-    signGap[i]=stoi(tmp.substr(idx),&idx);
+    cityLoc[i]=stoi(tmp,&idx);tmp=tmp.substr(idx);
+    signBegin[i]=stoi(tmp,&idx);tmp=tmp.substr(idx);
+    signGap[i]=stoi(tmp,&idx);
   }
 }
-double CANADATRIP_func(int order, vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap, int left, int right){
-  //(left,right], right는 항상 참
+void CANADATRIP_Input2(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap){
+  cin>>cityNum>>order;
+  cityLoc.resize(cityNum);signBegin.resize(cityNum);signGap.resize(cityNum);
+  for(int i=0;i<cityNum;i++){
+    cin>>cityLoc[i]>>signBegin[i]>>signGap[i];
+  }
+}
+int CANADATRIP_func(int order, vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap, int left, int right){
+  //(left,right], right는 항상 count>=order
   //기저
   if(left+1==right){
     return right;
   }
   //조건
-  int mid((left+right)/2),count(0);
+  int mid((left+right)/2);
+  long long count(0);
   for(int i=0;i<cityLoc.size();i++){
-    count+=max(0,min((mid-cityLoc[i]+signBegin[i])/signGap[i],signBegin[i]/signGap[i]));
+    int start=cityLoc[i]-signBegin[i];
+    if(mid>=start){
+      count+=(min(mid,cityLoc[i])-start)/signGap[i]+1;
+    }
   }
-  cout<<"mid: "<<mid<<" count: "<<count<<endl;
   //재귀
   if(count>=order){
     right=mid;
@@ -46,7 +56,7 @@ double CANADATRIP_func(int order, vector<int>& cityLoc,vector<int>& signBegin,ve
   }
   return CANADATRIP_func(order,cityLoc,signBegin,signGap,left,right);
 }
-double CANADATRIP_Algo(int cityNum,int order,vector<int> cityLoc,vector<int> signBegin,vector<int> signGap){
+int CANADATRIP_Algo(int cityNum,int order,vector<int> cityLoc,vector<int> signBegin,vector<int> signGap){
   //Algo, (min,max] 
   int result=CANADATRIP_func(order,cityLoc,signBegin,signGap,0,8030000);
   //return
@@ -96,6 +106,9 @@ void CANADATRIP(){
       O(nlgn)
     크기:
       O(n)
+    개선 및 보완
+      input2가 input보다 빠르다.
+      전략1은 이분법에 대해 재귀를 하였고, 책은 while문을 이용하여 재귀를 대신했다.(while min+1<max)
   */
   //Sol
   int testCase;
@@ -103,7 +116,7 @@ void CANADATRIP(){
   while(testCase--){
     int cityNum,order;
     vector<int> cityLoc,signBegin,signGap;
-    CANADATRIP_Input(cityNum,order,cityLoc,signBegin,signGap);
+    CANADATRIP_Input2(cityNum,order,cityLoc,signBegin,signGap);
     auto result=CANADATRIP_Algo(cityNum,order,cityLoc,signBegin,signGap);
     cout<<result<<endl;
   }

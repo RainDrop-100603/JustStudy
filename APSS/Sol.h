@@ -261,3 +261,10 @@ void ARCTIC_Input(int& pointNum, vector<pair<double,double>>& pointLoc);
 double ARCTIC_func(int pointNum, const vector<pair<double,double>>& pointLoc,int count, double left, double right);
 double ARCTIC_Algo(int pointNum, vector<pair<double,double>> pointLoc);
 void ARCTIC();
+
+// Decision Problem, 재귀를 이용함, while문을 이용하여 재귀를 대신할 수 있음, input 방식 유의  
+void CANADATRIP_Input(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap);
+void CANADATRIP_Input2(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap);
+int CANADATRIP_func(int order, vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap, int left, int right);
+int CANADATRIP_Algo(int cityNum,int order,vector<int> cityLoc,vector<int> signBegin,vector<int> signGap);
+void CANADATRIP();
