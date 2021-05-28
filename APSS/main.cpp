@@ -13,7 +13,7 @@
 using namespace std;
 
 // Decision Problem, 재귀를 이용함, while문을 이용하여 재귀를 대신할 수 있음, input 방식 유의  
-void CANADATRIP_Input(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap){
+void WITHDRAWL_Input(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap){
   cin>>cityNum>>order;
   cityLoc.resize(cityNum);signBegin.resize(cityNum);signGap.resize(cityNum);
   cin.ignore();// \n 제거
@@ -26,14 +26,7 @@ void CANADATRIP_Input(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& 
     signGap[i]=stoi(tmp,&idx);
   }
 }
-void CANADATRIP_Input2(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap){
-  cin>>cityNum>>order;
-  cityLoc.resize(cityNum);signBegin.resize(cityNum);signGap.resize(cityNum);
-  for(int i=0;i<cityNum;i++){
-    cin>>cityLoc[i]>>signBegin[i]>>signGap[i];
-  }
-}
-int CANADATRIP_func(int order, vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap, int left, int right){
+int WITHDRAWL_func(int order, vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap, int left, int right){
   //(left,right], right는 항상 count>=order
   //기저
   if(left+1==right){
@@ -54,41 +47,42 @@ int CANADATRIP_func(int order, vector<int>& cityLoc,vector<int>& signBegin,vecto
   }else{
     left=mid;
   }
-  return CANADATRIP_func(order,cityLoc,signBegin,signGap,left,right);
+  return WITHDRAWL_func(order,cityLoc,signBegin,signGap,left,right);
 }
-int CANADATRIP_Algo(int cityNum,int order,vector<int> cityLoc,vector<int> signBegin,vector<int> signGap){
+int WITHDRAWL_Algo(int cityNum,int order,vector<int> cityLoc,vector<int> signBegin,vector<int> signGap){
   //Algo, (min,max] 
-  int result=CANADATRIP_func(order,cityLoc,signBegin,signGap,0,8030000);
+  int result=WITHDRAWL_func(order,cityLoc,signBegin,signGap,0,8030000);
   //return
   return result;
 }
-void CANADATRIP(){
-  // CANADATRIP
+void WITHDRAWL(){
+  // WITHDRAWL
   /*설명 및 입력
   설명
-    캐나다의 1번 고속도로는 세계에서 가장 긴 고속도로 중 하나로, 캐나다의 동쪽 끝에서 서쪽 끝까지 있는 모든 주요 도시를 연결합니다. 
-      동건이는 이 고속도로를 타고 캐나다의 서쪽 끝 빅토리아에서 동쪽 끝 세인트 존까지 8,030km 를 달리기로 마음먹었습니다.
-    이 고속도로는 N개의 주요 도시를 지나치는데, i번째 도시까지의 거리를 나타내는 표지판은 도시에 도착하기 Mi미터 전부터 시작해서 도시에 도착할 때까지 Gi미터 간격으로 설치되어 있습니다.
-      즉 일반적으로 표시판의 개수는 Mi/Gi 이다.
-    시작점으로부터 각 도시까지의 거리 Li와 Mi, Gi가 주어질 때, 시작점으로부터 여행하면서 동건이가 보게 되는 K번째 표지판의 위치를 계산하는 프로그램을 작성하세요. 
-      한 위치에 표지판이 여러 개 있을 경우에도 각각의 표지판을 따로 세기로 합니다.
+    백준이네 학교에서는 장학금을 학생의 중간고사 등수와 기말고사 등수에 따라 배정합니다. 
+      어떤 학생이 듣는 i번째 과목의 수강생 수가 ci라고 합시다. 
+      그리고 이 학생의 i번째 과목 중간 고사 등수가 ri라고 하면, 이 학생의 중간 고사 누적 등수 cumulativeRank 는 다음과 같이 정의됩니다.
+      cumulativeRank = sum(ri) / sum(ci)
+    수강 철회를 하면 철회한 과목은 중간 고사의 누적 등수 계산에 들어가지 않게 됩니다. 
+      다행히 백준이네 학교에서는 수강 철회를 해도 남은 과목이 k 개 이상이라면 장학금을 받을 수 있습니다. 
+    백준이가 적절히 과목을 철회했을 때 얻을 수 있는 최소 누적 등수를 계산하는 프로그램을 작성하세요.
   입력
     입력의 첫 줄에는 테스트 케이스의 수 T (T <= 50) 가 주어집니다. 
-    각 테스트 케이스의 첫 줄에는 도시의 수 N (1 <= N <= 5000) 과 K (1 <= K <= 2^31-1) 가 주어집니다. 
-    그 후 N줄에는 각 3개의 정수로 Li, Mi, Gi (1 <= Gi <= Mi <= Li <= 8,030,000) 가 주어집니다. 
-    Mi는 항상 Gi의 배수입니다. K는 항상 총 표지판의 수 이하입니다.
-    입출력 데이터의 양이 많으니 빠른 입출력 방법을 사용하시기 바랍니다.
+    각 테스트 케이스의 첫 줄에는 백준이가 수강하는 과목의 수 n(1 <= n <= 1,000)과 남겨둬야 할 과목의 수 k(1 <= k <= n)가 주어집니다. 
+    다음 줄에는 n 개의 정수 쌍 (ri,ci) 이 순서대로 주어집니다. (1 <= ri <= ci <= 1,000)
   출력
-    각 테스트 케이스마다 한 줄에 K번째 표지판의 위치를 출력합니다.
+    각 줄마다 백준이가 얻을 수 있는 최소의 누적 등수를 출력합니다. 정답과 10-7 이하의 오차가 있는 답은 정답으로 인정됩니다.
   제한조건
     1초, 64MB
   */
   /*힌트
-    k의 최대값은 2^32~= 20억이며, 표지판의 개수는 최대 400억이다. 즉 하나하나 구해선 답을 구할 수 없다.
-    결정문제: 어느 위치(x)의 표지판의 개수가 k개 이상인가?
-      표지판시작위치(Li-Mi)가 x이하인 도시 k개 선택
-        sum(i=0~k-1): min((x-Li+Mi)/Gi,Mi/Gi)
-      이분법: 실수가 아닌 정수이므로, 정확한 위치를 구할때까지만 재귀 
+    k개이상의 과목을 선택했을 때, 누적등수의 최솟값을 찾는 문제
+    누적 점수가 X일 때, X>Y를 추가하면 X는 작아진다.
+      Y1>Y2 이지만, 수강생(Y2)>>수강생(Y1)일때, Y1을 추가한게 더 작을때도 있다
+        -> greedy하게 풀 수는 없다.
+    k+1개로 k개보다 낮은 점수를 만들 수 있을까? -> 잘 모르니까 일단 생략 
+    Decision Problem: k개이상의 과목으로 X점 이하를 만들 수 있는가?
+
   */
   /*전략
   전략1
@@ -116,8 +110,8 @@ void CANADATRIP(){
   while(testCase--){
     int cityNum,order;
     vector<int> cityLoc,signBegin,signGap;
-    CANADATRIP_Input2(cityNum,order,cityLoc,signBegin,signGap);
-    auto result=CANADATRIP_Algo(cityNum,order,cityLoc,signBegin,signGap);
+    WITHDRAWL_Input(cityNum,order,cityLoc,signBegin,signGap);
+    auto result=WITHDRAWL_Algo(cityNum,order,cityLoc,signBegin,signGap);
     cout<<result<<endl;
   }
 }
@@ -125,7 +119,7 @@ void CANADATRIP(){
 int main(void){
    //clock_t start,end;
    //start=clock();
- CANADATRIP();
+ WITHDRAWL();
    //end=clock();;
    //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
