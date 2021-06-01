@@ -1,4 +1,4 @@
-JavsScript의 팁
+JavsScript tips
 
 JavaScript의 기타 팁
   camel case를 사용한다 : thisIsVarName
