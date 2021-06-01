@@ -1,0 +1,52 @@
+JavsScript의 팁
+
+JavaScript의 기타 팁
+  camel case를 사용한다 : thisIsVarName
+  주석처리는 c++와 동일하다 ( // 한줄처리, /**/ 여러줄처리)
+
+JavaScript의 semicolon(";") 사용
+  JavaScript에는 semicolon을 자동으로 붙여주는 ASI라는 기능이 존재한다.
+    따라서 semicolon을 사용하지 않아도, ASI가 적절한 위치에 semicolon을 삽입한다.
+    그러나 "적절한 위치"라는 것 때문에, semicolon을 사용하는 것에 대한 찬반이 나뉜다.
+  결론
+    우선은 semicolon을 사용하자. 
+  찬성
+    ASI의 기능을 유추하기 어렵기 때문에 semicolon을 사용해야한다.
+      의문점: semicolon을 사용하면 ASI가 작동하지 않는가? 즉 semicolon사용 유무와 관계없이 ASI를 신경써야 하는것인가
+    https://okky.kr/article/448378
+      semicolon을 사용하지 않으면 비직관적인 경우의 예시
+    TC39(ECMA 인터내셔널의 ECMA 스크립트 담당 기술 위원회)에서는 향후에 언어가 확장되면서 발생할 수 있는 문제를 방지하기 위해서, 세미콜론을 넣는 스타일을 권장하는 듯하다.
+  반대
+    https://feross.org/never-use-semicolons/
+    행의 시작을 [,(,' 으로 하지 앟는다면 문제가 생기지 않으며, 꼭 그렇게 해야할경우 semicolon으로 행을 시작하면 된다.
+  참고
+    https://bakyeono.net/post/2018-01-19-javascript-use-semicolon-or-not.html
+    https://okky.kr/article/448378
+    https://feross.org/never-use-semicolons/
+
+JavaScript의 변수
+  let var1 = "content" 와 같이 선언
+  var, let, const가 존재
+    ES6부터 let 과 const를 사용할 수 있게 되었다.
+    var은 함수레벨 스코프, let과 const는 블럭 레벨 스코프 
+    var로 선언한 변수는 선언전에 사용해도 에러가 나지 않지만(미선언 사용), let,const는 에러가 발생한다.
+    const는 선언과 동시에 초기화 해야한다.
+    const는 한번 할당한 값을 변경할 수 없지만, const object의 property가 바뀌는 것은 막지 못한다.
+    var의 경우 버그발생과 메모리누수의 위험등이 있기 때문에 let, const 사용을 권장 
+  자료형
+    string("content"), bool(true/false), int(123), float(1.346)
+    이모티콘은 str 자료형 
+    array ( const arr1 = [var1, 2, 3.14, "text", true, obj1]; )
+      python의 arr과 유사
+      모든 자료형이 들어갈 수 있다.
+      []을 통해 개별 원소에 접근한다.
+    object (const obj1 = {property1:var1, property2:3, property3:var1}; )
+      python의 dictionary와 유사
+      모든 자료형이 들어갈 수 있다.
+      . 을 통해 각각의 property에 접근한다.
+      const로 선언되어도 property에 접근할 수 있다.
+
+JavaScript의 함수
+  console: console에 무언가를 할 때 이용
+    console.log(data1, data2): console에 data를 출력, ","콤마를 통해 여러변수 출력 가능(공백으로 구분) 
+    기본 자료형은 모두 출력 가능하다.(arr, object등도 모두 가능)
