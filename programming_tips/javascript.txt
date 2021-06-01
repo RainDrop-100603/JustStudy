@@ -3,6 +3,7 @@ JavsScript의 팁
 JavaScript의 기타 팁
   camel case를 사용한다 : thisIsVarName
   주석처리는 c++와 동일하다 ( // 한줄처리, /**/ 여러줄처리)
+  str을 표현할 때 ""와 ''는 같다.
 
 JavaScript의 semicolon(";") 사용
   JavaScript에는 semicolon을 자동으로 붙여주는 ASI라는 기능이 존재한다.
