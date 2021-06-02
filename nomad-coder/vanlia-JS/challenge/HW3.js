@@ -15,21 +15,21 @@ const colors = ["#1abc9c", "#3498db", "#9b59b6", "#f39c12", "#e74c3c"];
 const title = document.querySelector("h2");
 
 const superEventHandler = {
+  titleChange: function (message, color) {
+    title.innerHTML = message;
+    title.style.color = color;
+  },
   titleMouseOver: function () {
-    title.innerHTML = "The mouse is here!";
-    title.style.color = colors[0];
+    superEventHandler.titleChange("The mouse is here!", colors[0]);
   },
   titleMouseLeave: function () {
-    title.innerHTML = "The mouse is gone!";
-    title.style.color = colors[1];
+    superEventHandler.titleChange("The mouse is gone!", colors[1]);
   },
   windowResize: function () {
-    title.innerHTML = "You just resized!";
-    title.style.color = colors[2];
+    superEventHandler.titleChange("You just resized!", colors[2]);
   },
   windowRightClick: function () {
-    title.innerHTML = "That was a right click!";
-    title.style.color = colors[4];
+    superEventHandler.titleChange("That was a right click!", colors[4]);
   }
 };
 
