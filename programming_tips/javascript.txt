@@ -77,3 +77,5 @@ html과의 사용
   html의 element를 선택하여 변경할 수 있다.
   document 객체를 이용한다.
   DOM 객체(Document Object Module)를 이용하여 html을 수정 가능하다.
+
+https://developer.mozilla.org/ko/docs/Web/Events
