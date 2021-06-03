@@ -67,9 +67,8 @@ JavaScript의 연산자
     비교 연산자의 자료형이 다르면, 적절하게 변환 후 비교한다
       3=="3": true, "12">3: true, "3"!=4: true
     엄격한 비교는 ===, !== 두가지가 있다. 연산자의 자료형을 변환하려고 시도하지 않는다.
-  
-console object  
-  console에 출력하는 함수를 가진 객체
+
+console object: console에 정보를 출력
   log vs dir
     console.log(args): args를 출력. object, array를 포함한 모든 자료형 출력 가능. 각 arg는 공백으로 구분 
     console.dir(arg): arg 하나를 출력, 모든 자료형 출력 가능.
@@ -77,15 +76,8 @@ console object
     console.log는 요소를 HTML과 같은 트리 구조로 출력합니다.
     console.dir은 요소를 JSON과 같은 트리 구조로 출력합니다.
 
-document object 
-  querySelector(parameter): parameter 노드의 첫번째 자식을 반환, 이때 param을 선택하는 법은 css와 동일 tag, #id, .class
-
-html과의 사용
-  html의 element를 선택하여 변경할 수 있다.
-  document 객체를 이용한다.
-  DOM 객체(Document Object Module)를 이용하여 html을 수정 가능하다.
-
-title.classlist: class를 각각 분리한다.
-  toggle(class): class가 있으면 제거, 없으면 추가해준다.
-
-https://developer.mozilla.org/ko/docs/Web/Events
+JavaScript with Html
+  DOM object (Document Object Module): html을 다루는 object
+    querySelector: 원하는 요소(#id,.class,tag)를 찾는다.  
+    classList: 요소의 개별 class를 다룬다. https://developer.mozilla.org/ko/docs/Web/API/Element/classList
+    event: event 처리. https://developer.mozilla.org/ko/docs/Web/Events
