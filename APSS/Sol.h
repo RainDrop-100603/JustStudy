@@ -268,3 +268,9 @@ void CANADATRIP_Input2(int& cityNum,int& order,vector<int>& cityLoc,vector<int>&
 int CANADATRIP_func(int order, vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap, int left, int right);
 int CANADATRIP_Algo(int cityNum,int order,vector<int> cityLoc,vector<int> signBegin,vector<int> signGap);
 void CANADATRIP();
+
+// @*@*@* Decision Problem, 이분법, 문제가 안풀리면 수식을 작성해보자 
+void WITHDRAWL_Input(int& classNum,int& requiredNum,vector<int>& order,vector<int>& students);
+bool WITHDRAWL_decision(int classNum,int requiredNum,vector<int>& order,vector<int>& students, double left, double right);
+double WITHDRAWL_Algo(int classNum,int requiredNum,vector<int> order,vector<int> students);
+void WITHDRAWL();

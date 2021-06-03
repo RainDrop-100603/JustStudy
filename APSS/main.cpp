@@ -12,48 +12,46 @@
 
 using namespace std;
 
-// Decision Problem, 재귀를 이용함, while문을 이용하여 재귀를 대신할 수 있음, input 방식 유의  
-void WITHDRAWL_Input(int& cityNum,int& order,vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap){
-  cin>>cityNum>>order;
-  cityLoc.resize(cityNum);signBegin.resize(cityNum);signGap.resize(cityNum);
-  cin.ignore();// \n 제거
-  for(int i=0;i<cityNum;i++){
-    string tmp;
-    size_t idx;
-    getline(cin,tmp);
-    cityLoc[i]=stoi(tmp,&idx);tmp=tmp.substr(idx);
-    signBegin[i]=stoi(tmp,&idx);tmp=tmp.substr(idx);
-    signGap[i]=stoi(tmp,&idx);
+// Decision Problem, 이분법, 문제가 안풀리면 수식을 작성해보자 
+void WITHDRAWL_Input(int& classNum,int& requiredNum,vector<int>& order,vector<int>& students){
+  cin>>classNum>>requiredNum;
+  order.resize(classNum);
+  students.resize(classNum);
+  for(int i=0;i<classNum;i++){
+    cin>>order[i]>>students[i];
   }
 }
-int WITHDRAWL_func(int order, vector<int>& cityLoc,vector<int>& signBegin,vector<int>& signGap, int left, int right){
-  //(left,right], right는 항상 count>=order
-  //기저
-  if(left+1==right){
-    return right;
+bool WITHDRAWL_decision(int classNum,int requiredNum,vector<int>& order,vector<int>& students, double left, double right){
+  double mid=(left+right)/2;
+  vector<double> arr;
+  // x*분모-분자를 구하기
+  for(int i=0;i<classNum;i++){
+    arr.push_back(mid*students[i]-order[i]);
   }
-  //조건
-  int mid((left+right)/2);
-  long long count(0);
-  for(int i=0;i<cityLoc.size();i++){
-    int start=cityLoc[i]-signBegin[i];
-    if(mid>=start){
-      count+=(min(mid,cityLoc[i])-start)/signGap[i]+1;
+  //오름차순 정렬
+  sort(arr.begin(),arr.end());
+  reverse(arr.begin(),arr.end());
+  //requiredNum만큼 넣었을 때 0보다 큰가? (오름차순 정렬이므로 required만큼만 넣으면 된다)
+  double sum(0);
+  for(int i=0;i<requiredNum;i++){
+    sum+=arr[i];
+  }
+  //sum이 0보다 크거나 같으면 참
+  return sum>=0;
+}
+double WITHDRAWL_Algo(int classNum,int requiredNum,vector<int> order,vector<int> students){
+  double left(0),right(1);
+  int count=100;
+  //Algo, (min,max] 
+  while(count--){
+    if(WITHDRAWL_decision(classNum,requiredNum,order,students,left,right)){
+      right=(left+right)/2;
+    }else{
+      left=(left+right)/2;
     }
   }
-  //재귀
-  if(count>=order){
-    right=mid;
-  }else{
-    left=mid;
-  }
-  return WITHDRAWL_func(order,cityLoc,signBegin,signGap,left,right);
-}
-int WITHDRAWL_Algo(int cityNum,int order,vector<int> cityLoc,vector<int> signBegin,vector<int> signGap){
-  //Algo, (min,max] 
-  int result=WITHDRAWL_func(order,cityLoc,signBegin,signGap,0,8030000);
   //return
-  return result;
+  return right;
 }
 void WITHDRAWL(){
   // WITHDRAWL
@@ -82,36 +80,48 @@ void WITHDRAWL(){
         -> greedy하게 풀 수는 없다.
     k+1개로 k개보다 낮은 점수를 만들 수 있을까? -> 잘 모르니까 일단 생략 
     Decision Problem: k개이상의 과목으로 X점 이하를 만들 수 있는가?
-
+    조합을 생각해보자
+      n개중 r래를 선택하여 최저값을 구한다고 하자.
+        특정한 법칙을 구하지 못하는 한, nCr번 비교를 해야할 것이다.
+        nCr=(n!/(n-r)!)/r!, 상당한 시간이 걸린다.
+      Decision Problem 단원의 문제이다.
+        현재 값에서, x를 넣으면 정해진 값 y 이하인가? 
+    *@*@*@ 책 참고
+      직관적으로 풀리지 않을 땐 수식을 작성해보자
+      Decision(x)= sum(분모)/sum(분자)<=x
+        0<=sum(x*분자-분모)
+        즉, x*분자-분모를 정렬하고, 큰 값부터 차례로 더해서 0이상이 나오면 된다.
   */
   /*전략
   전략1
     Decision Problem
     접근방법
-      재귀함수: (min, max] (lgn 반복, n수행시간)
-        기저: min+1==max -> ret max
-        조건: 어느 위치 x: (min+max)/2 의 표지판의 개수가 k개 이상인가?
-          구현: (n)
-            표지판시작위치(Li-Mi)가 x이하인 도시 k개 선택
-              sum(i=0~k-1): min((x-Li+Mi)/Gi,Mi/Gi)
+      재귀함수: (min, max] (100 반복, nlgn수행시간)
+        기저: 반복 100회 -> return max
+        조건: 시험점수가 x이하가 나올 수 있는가?
+          구현: (nlgn)
+            sum(분모)/sum(분자)<=x, 0<=sum(x*분자-분모)
+            x*분자-분모 를 정렬한 후, 큰 값부터 더한다.
           참: return 재귀함수(left,mid)
           거짓: return 재귀함수(mid,right)
     시간:
-      O(nlgn)
+      O(100*nlgn)
     크기:
       O(n)
     개선 및 보완
-      input2가 input보다 빠르다.
-      전략1은 이분법에 대해 재귀를 하였고, 책은 while문을 이용하여 재귀를 대신했다.(while min+1<max)
+      책을 참고하였다.
+      문제가 직관적으로 풀리지 않으면 수식을 작성하여 풀어보자 
   */
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int cityNum,order;
-    vector<int> cityLoc,signBegin,signGap;
-    WITHDRAWL_Input(cityNum,order,cityLoc,signBegin,signGap);
-    auto result=WITHDRAWL_Algo(cityNum,order,cityLoc,signBegin,signGap);
+    int classNum,requiredNum;
+    vector<int> order,students;
+    WITHDRAWL_Input(classNum,requiredNum,order,students);
+    auto result=WITHDRAWL_Algo(classNum,requiredNum,order,students);
+    cout<<fixed;
+    cout.precision(10);
     cout<<result<<endl;
   }
 }
