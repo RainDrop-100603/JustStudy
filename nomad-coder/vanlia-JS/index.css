@@ -1,7 +1,11 @@
 h1{
-  color:blueviolet;
+  color:#4b7bec;
 }
 
 body{
   background-color:bisque;
+}
+
+.clicked{
+  color:#a55eea;
 }

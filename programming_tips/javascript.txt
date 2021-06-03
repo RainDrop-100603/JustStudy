@@ -61,6 +61,13 @@ JavaScript의 함수 생성
   끝부분에 semicolon을 붙이지 않는다.
   object에 내장함수를 만들 수 있다(JavaScript의 변수 - object 참고)
 
+JavaScript의 연산자
+  https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide/Expressions_and_Operators
+  비교 연산자의 동작이 다른 언어와 다소 차이가 있다.
+    비교 연산자의 자료형이 다르면, 적절하게 변환 후 비교한다
+      3=="3": true, "12">3: true, "3"!=4: true
+    엄격한 비교는 ===, !== 두가지가 있다. 연산자의 자료형을 변환하려고 시도하지 않는다.
+  
 console object  
   console에 출력하는 함수를 가진 객체
   log vs dir
@@ -77,5 +84,8 @@ html과의 사용
   html의 element를 선택하여 변경할 수 있다.
   document 객체를 이용한다.
   DOM 객체(Document Object Module)를 이용하여 html을 수정 가능하다.
+
+title.classlist: class를 각각 분리한다.
+  toggle(class): class가 있으면 제거, 없으면 추가해준다.
 
 https://developer.mozilla.org/ko/docs/Web/Events

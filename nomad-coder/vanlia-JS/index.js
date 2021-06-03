@@ -1,17 +1,22 @@
-const title=document.getElementById("title");
+const title=document.querySelector(".title");
 
-console.dir(title);
-
-title.innerHTML="Title Changed";
-title.style.color="red";
-
-function handleResize(event){
-  console.log(event);
+function handleWindowWidth(){
+  const body=document.querySelector("body");
+  const width=window.innerWidth;
+  console.log(width);
+  if(width>1000){
+    body.classList.add("big_width");
+    body.classList.remove("small_width");
+    body.classList.remove("mid_width");
+  }else if(width>500){
+    body.classList.remove("big_width");
+    body.classList.remove("small_width");
+    body.classList.add("mid_width");
+  }else{
+    body.classList.remove("big_width");
+    body.classList.add("small_width");
+    body.classList.remove("mid_width");
+  }
 }
 
-function titleClicked(event){
-  title.style.color="black";
-}
-
-window.addEventListener("resize",handleResize);   //window(화면) 에서 resize event가 발생하면, handleResize라는 함수를 실행, event는 JS에서 자동으로 전달? 
-title.addEventListener("click",titleClicked);
+window.addEventListener("resize",handleWindowWidth);
