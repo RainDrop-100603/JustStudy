@@ -81,3 +81,5 @@ JavaScript with Html
     querySelector: 원하는 요소(#id,.class,tag)를 찾는다.  
     classList: 요소의 개별 class를 다룬다. https://developer.mozilla.org/ko/docs/Web/API/Element/classList
     event: event 처리. https://developer.mozilla.org/ko/docs/Web/Events
+  body=document.body: query로 찾을 필요 없다.
+  classList.erase(): 한번에 여러개를 지울 수 있다(더할 수도 있을 듯)
