@@ -1,9 +1,10 @@
 
 
-.displayNone{
+.form,
+.greetings{
   display: none;
 }
 
-.displayBlock{
+.showing{
   display: block;
 }
