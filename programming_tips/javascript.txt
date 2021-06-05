@@ -6,6 +6,7 @@ JavaScript의 기본
   자료형은 python과 유사한 면이 있다.
   semicolon의 사용, {}, 주석처리(//, /**/), camelCase 사용등 c++과 유사한 면이 있다.
   html의 유일한 frotend programming language (backend는 다른 옵션도 존재한다)
+  js파일을 목적에 따라 분할하여 사용하면 좋다.(다른 프로그래밍 언어와 비슷하게 이용)
 
 JavaScript의 semicolon(";") 사용
   JavaScript에는 semicolon을 자동으로 붙여주는 ASI라는 기능이 존재한다.
@@ -90,3 +91,4 @@ document: 전체 파일을 의미함
 innerHtml: tag내부에 text부분을 의미함 
 new Date(): 현재 시간을 불러옴 https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Date
 setInterval(func,x ms): x ms마다 func반복 실행 
+localstorage: 여러 옵션을 local storage에 저장할 수 있다(이름, 국적, 24시간 표기 등등)

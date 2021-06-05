@@ -15,9 +15,18 @@ function displayTime(){
   clockTitle.innerHTML=now;
 }
 
+function displaySimple(){
+  let date=new Date(),
+    seconds=date.getSeconds(),
+    minutes=date.getMinutes(),
+    hours=date.getHours();
+  const now= `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+  clockTitle.innerHTML=now;
+}
+
 function init(){
-  displayTime();
-  setInterval(displayTime,1000);
+  displaySimple();
+  setInterval(displaySimple,1000);
 }
 
 init();
