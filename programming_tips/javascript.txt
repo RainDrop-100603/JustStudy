@@ -95,4 +95,5 @@ localstorage: 여러 옵션을 local storage에 저장할 수 있다(이름, 국
 preventEvent
 eventlistner
   상시 대기하다가, event가 수행되면 실행된다. 즉 일반적인 top to down 실행과는 약간 다르다.
+  또한 수행 됐다고 바로 없어지는것은 아닌듯(이건 왠지 설정 가능할듯 하다, 1회용 or 다중사용)
 4.2, 4.3 복습 
