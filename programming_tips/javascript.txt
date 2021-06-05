@@ -93,5 +93,6 @@ new Date(): 현재 시간을 불러옴 https://developer.mozilla.org/ko/docs/Web
 setInterval(func,x ms): x ms마다 func반복 실행 
 localstorage: 여러 옵션을 local storage에 저장할 수 있다(이름, 국적, 24시간 표기 등등)4
 preventEvent
-
+eventlistner
+  상시 대기하다가, event가 수행되면 실행된다. 즉 일반적인 top to down 실행과는 약간 다르다.
 4.2, 4.3 복습 
