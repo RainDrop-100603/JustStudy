@@ -3,7 +3,8 @@ const toDo_Container=document.querySelector(".js-toDo"),
   toDo_input=toDo_form.querySelector("input"),
   toDo_ul=toDo_Container.querySelector("ul");
 
-const LS_TODOLIST = "todo-list";
+const LS_TODOLIST = "todo-list",
+  LIST_SIZE=10000;
 
 let toDoList=[];
 
@@ -31,9 +32,9 @@ function displayToDo(inputObject){
 }
 
 function getID(){
-  let len=toDoList.length;
   while(true){
-    const newID=`toDo-${len}`;
+    const rand=Math.floor(Math.random()*LIST_SIZE);
+    const newID=`toDo-${rand}`;
     let overlap=false;
     toDoList.forEach(function(toDo){
       if(toDo.id === newID){
@@ -43,7 +44,6 @@ function getID(){
     if(!overlap){
       return newID;
     }
-    len++;
   }
 }
 
