@@ -10,7 +10,7 @@ function addToDo(inputValue){
   const delBtn=document.createElement("button");
   delBtn.value="❌";
   const span=document.createElement("span");
-  span.value=inputValue;
+  span.innerText=inputValue;
   li.appendChild(span);
   li.appendChild(delBtn);
   toDo_ul.appendChild(li);
