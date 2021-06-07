@@ -1,4 +1,4 @@
-JavsScript tips
+JavaScript tips
 https://developer.mozilla.org/ko/docs/Web/JavaScript
 
 JavaScript의 기본
@@ -88,8 +88,12 @@ JavaScript with Html
 body=document.body: query로 찾을 필요 없다.
 classList.erase(): 한번에 여러개를 지울 수 있다(더할 수도 있을 듯)
 document: 전체 파일을 의미함 
-innerHtml: tag내부에 text부분을 의미함 
+HTMLElement.innerHtml: mozilla 검토 필요, 사용시 주의
+  element의 모든 자손을 입력값으로 대체한다?
+  HTMLElement.innerText, Node.textContent 와의 차이? https://developer.mozilla.org/ko/docs/Web/API/Node/textContent
+  https://hianna.tistory.com/483
 new Date(): 현재 시간을 불러옴 https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Date
+  new Date로 불러온 data를 뺄셈연산 가능 
 setInterval(func,x ms): x ms마다 func반복 실행 
 localstorage: 여러 옵션을 local storage에 저장할 수 있다(이름, 국적, 24시간 표기 등등)4
 preventEvent

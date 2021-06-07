@@ -1,41 +1,36 @@
-const form=document.querySelector(".js-form"),
-  greetings=document.querySelector(".js-greetings"),
-  input=form.querySelector("input");
+const greetings=document.querySelector(".js-greetings"),
+  form=greetings.querySelector("form"),
+  input=form.querySelector("input"),
+  sayHello=greetings.querySelector("h4");
 
-const CN_visible="showing",
-  LS_User="userName";
+const CN_INVISIBLE="display-none",
+  LC_USER="greetings-userName";
 
 function greetUser(user){
-  form.classList.remove(CN_visible);
-  greetings.classList.add(CN_visible);
-  greetings.innerText=`Hello ${user}!`;
+  sayHello.classList.remove(CN_INVISIBLE);
+  sayHello.innerText=`Hello ${user}!`;
 }
 
 function handleSubmit(event){
-  event.preventDefault();
-  const currentValue=input.value;
-  localStorage.setItem(LS_User,currentValue);
-  greetUser(currentValue);
+  event.preventDefault(); //submit시 새로고침 방지
+  const inputValue=input.value;
+  localStorage.setItem(LC_USER,inputValue);
+  form.classList.add(CN_INVISIBLE);
+  greetUser(inputValue);
 }
 
 function getUser(){
-  form.classList.add(CN_visible);
+  form.classList.remove(CN_INVISIBLE);
   form.addEventListener("submit",handleSubmit);
-  // const user=localStorage.getItem(LS_User);
-  // greetUser(user);
-}
-
-function loadUsername(){
-  const user=localStorage.getItem(LS_User);
-  if(user === null){
-    getUser();
-  }else{
-    greetUser(user);
-  }
 }
 
 function init(){
-  loadUsername();
+  const user=localStorage.getItem(LC_USER);
+  if(user){
+    greetUser(user);
+  }else{
+    getUser();
+  }
 }
 
 init();
