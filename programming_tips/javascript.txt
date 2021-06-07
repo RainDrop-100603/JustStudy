@@ -45,7 +45,7 @@ JavaScript의 변수
       ""와 ''와 ``을 사용하며, ""와 ''는 python과 같이 문자열을 나타낸다.
       `` 과 ${}을 사용하여 다른 자료형과 혼합사용이 가능하다. (키보드에서 tab위에 있다)
         `Hello ${name} you are ${age} years`
-      이모티콘은 string이다.
+      이모티콘은 string이다. (window + '.' or window + ';')
     array ( const arr1 = [var1, 2, 3.14, "text", true, obj1]; )
       python의 arr과 유사
       모든 자료형이 들어갈 수 있다.
@@ -103,3 +103,4 @@ eventlistner
   또한 수행 됐다고 바로 없어지는것은 아닌듯(이건 왠지 설정 가능할듯 하다, 1회용 or 다중사용)
 input.value, input.placeholder등, HTMLElement.요소 는 attribute(placeholder)와, tag에 내장된 요소(value) 모두에 접근할 수 있는듯?
   JavaScript기본값으로 코딩되어있는듯, input object에 value, placeholder등이 있다고 생각하면 이해가 쉬울듯 
+변수는 중복될 수 없고, 함수는 중복되도 되는가?(파일을 분할했을 때)
