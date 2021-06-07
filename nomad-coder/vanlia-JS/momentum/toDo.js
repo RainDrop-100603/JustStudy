@@ -5,9 +5,19 @@ const toDo_Container=document.querySelector(".js-toDo"),
 
 const LS_TODOLIST = "todo-list";
 
-const toDoList=[];
+let toDoList=[];
 
-function addToDo(inputObject){
+function handleDel(event){
+  const li=event.target.parentNode;
+  toDo_ul.removeChild(li);
+  toDoList=toDoList.filter(function(toDo){
+    return toDo.id !== li.id;
+  });
+  console.log(toDoList);
+  localStorage.setItem(LS_TODOLIST,JSON.stringify(toDoList));
+}
+
+function displayToDo(inputObject){
   const li=document.createElement("li");
   const delBtn=document.createElement("button");
   delBtn.innerText="❌";
@@ -17,16 +27,34 @@ function addToDo(inputObject){
   li.appendChild(span);
   li.appendChild(delBtn);
   toDo_ul.appendChild(li);
-  toDoList.push(inputObject);
+  delBtn.addEventListener("click",handleDel);
+}
+
+function getID(){
+  let len=toDoList.length;
+  while(true){
+    const newID=`toDo-${len}`;
+    let overlap=false;
+    toDoList.forEach(function(toDo){
+      if(toDo.id === newID){
+        overlap=true;
+      }
+    });
+    if(!overlap){
+      return newID;
+    }
+    len++;
+  }
 }
 
 function handleSubmit(event){
   event.preventDefault();
   const inputObject={
     text:toDo_input.value,
-    id:toDoList.length
+    id:getID()
   };
-  addToDo(inputObject);
+  toDoList.push(inputObject);
+  displayToDo(inputObject);
   localStorage.setItem(LS_TODOLIST,JSON.stringify(toDoList));
   toDo_input.value="";
 }
@@ -34,8 +62,8 @@ function handleSubmit(event){
 function loadToDOList(){
   const loadedToDoList=localStorage.getItem(LS_TODOLIST);
   if(loadedToDoList){
-    parsedToDoList=JSON.parse(loadedToDoList);
-    parsedToDoList.forEach(addToDo);
+    toDoList=JSON.parse(loadedToDoList);
+    toDoList.forEach(displayToDo);
   }
 }
 

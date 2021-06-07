@@ -114,6 +114,13 @@ JSON.stringfy(object) <-> JSON.parse(string)
 array.forEach(function(element){...}); : array의 각 element에 대해 function을 실행한다.
   array.forEach(funcName): array의 각 element를 전달인자로 넘겨서, funcName을 실행한다.
 
+array.filter(func) : true/false를 반환하는 func를 통해, true를 반환하는 요소들로 구성된 array를 반환한다.
+
+func를 바로 정의해서 사용할 수 있다(무명함수? 정도로 이해하자)
+  object의 멤버함수, filter,forEach 에서의 함수 등등 여러 분야에 이용 가능 
+
+parseInt(str) int로 바꾼다.
+
 id를 todo_1과 같이 중복되지 않도록 변경
 중간에 있는 ele가 지워지면, id가 1, 3만 남게되면 어떻게 할지 생각 
   1: 2가 지워지면 3 이상의 것을 전부 다 바꿈
