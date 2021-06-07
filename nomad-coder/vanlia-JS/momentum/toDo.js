@@ -5,31 +5,45 @@ const toDo_Container=document.querySelector(".js-toDo"),
 
 const LS_TODOLIST = "todo-list";
 
-function addToDo(inputValue){
+const toDoList=[];
+
+function addToDo(inputObject){
   const li=document.createElement("li");
   const delBtn=document.createElement("button");
-  delBtn.value="❌";
+  delBtn.innerText="❌";
   const span=document.createElement("span");
-  span.innerText=inputValue;
+  span.innerText=inputObject.text;
+  li.id=inputObject.id;
   li.appendChild(span);
   li.appendChild(delBtn);
   toDo_ul.appendChild(li);
+  toDoList.push(inputObject);
 }
 
-function toDo_handleSubmit(event){
+function handleSubmit(event){
   event.preventDefault();
-  const inputValue=toDo_input.value;
-  addToDo(inputValue);
+  const inputObject={
+    text:toDo_input.value,
+    id:toDoList.length
+  };
+  addToDo(inputObject);
+  localStorage.setItem(LS_TODOLIST,JSON.stringify(toDoList));
   toDo_input.value="";
 }
 
 function loadToDOList(){
-
+  const loadedToDoList=localStorage.getItem(LS_TODOLIST);
+  if(loadedToDoList){
+    parsedToDoList=JSON.parse(loadedToDoList);
+    for(let i=0;i<parsedToDoList.length;i++){
+      addToDo(parsedToDoList[i]);
+    }
+  }
 }
 
 function init(){
-  //loadToDOList();
-  toDo_form.addEventListener("submit",toDo_handleSubmit);
+  loadToDOList(); 
+  toDo_form.addEventListener("submit",handleSubmit);
 }
 
 init();
