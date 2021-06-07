@@ -35,9 +35,7 @@ function loadToDOList(){
   const loadedToDoList=localStorage.getItem(LS_TODOLIST);
   if(loadedToDoList){
     parsedToDoList=JSON.parse(loadedToDoList);
-    for(let i=0;i<parsedToDoList.length;i++){
-      addToDo(parsedToDoList[i]);
-    }
+    parsedToDoList.forEach(addToDo);
   }
 }
 
