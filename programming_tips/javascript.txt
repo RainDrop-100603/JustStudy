@@ -96,8 +96,10 @@ new Date(): 현재 시간을 불러옴 https://developer.mozilla.org/ko/docs/Web
   new Date로 불러온 data를 뺄셈연산 가능 
 setInterval(func,x ms): x ms마다 func반복 실행 
 localstorage: 여러 옵션을 local storage에 저장할 수 있다(이름, 국적, 24시간 표기 등등)4
-preventEvent
+event.preventDefault()
+  event의 기본동작을 방지한다.(ex: form은 data를 보내고 새로고침한다)
 eventlistner
   상시 대기하다가, event가 수행되면 실행된다. 즉 일반적인 top to down 실행과는 약간 다르다.
   또한 수행 됐다고 바로 없어지는것은 아닌듯(이건 왠지 설정 가능할듯 하다, 1회용 or 다중사용)
-4.2, 4.3 복습 
+input.value, input.placeholder등, HTMLElement.요소 는 attribute(placeholder)와, tag에 내장된 요소(value) 모두에 접근할 수 있는듯?
+  JavaScript기본값으로 코딩되어있는듯, input object에 value, placeholder등이 있다고 생각하면 이해가 쉬울듯 
