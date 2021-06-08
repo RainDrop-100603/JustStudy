@@ -6,13 +6,11 @@ const LIST_SIZE=10000;
 //[name of list ,placeholder], if there's no input form, placeholder is null
 const TDL_name=[  
   ["TDL-todo","What to do?"],
+  ["TDL-should","What should have to do?"],
   ["TDL-finish",null]
 ]; 
 //map of list: [key: name, value: list(map)]
 const TDL_listGroup=new Map();  
-
-
-
 
 function displayElement(name,key,value){
   //make li
@@ -37,9 +35,7 @@ function addElement(name,value){
   nowList.set(newID,value);
   //이거 이용해서 map을 localstorage에 저장하고 불러오기 
   const str=JSON.stringify(Array.from(nowList.entries()));
-  console.log(str);
-  console.dir(new Map(JSON.parse(str)));
-  //localStorage.setItem(name,JSON.stringify(nowList));
+  localStorage.setItem(name,str);
   return newID;
 }
 
@@ -57,6 +53,11 @@ function handleSubmit(event){
 function buildHtmlBase(listObj){
   const tmpDiv=document.createElement("div");
   tmpDiv.classList.add(listObj[0]);
+  //make title of to-do-list
+  const listName=listObj[0].substr(4);
+  const tmpTitle=document.createElement("h1");
+  tmpTitle.innerText=listName;
+  tmpDiv.appendChild(tmpTitle);
   //make input form if placeholder !== null
   if(listObj[1]){
     const tmpInput=document.createElement("input");
@@ -75,11 +76,7 @@ function buildHtmlBase(listObj){
 
 function loadListFromLC(name){
   let tmp_map=localStorage.getItem(name);
-  if(tmp_map){
-    tmp_map=JSON.parse(tmp_map);
-  }else{
-    tmp_map=new Map();
-  }
+  tmp_map=new Map(JSON.parse(tmp_map));
   TDL_listGroup.set(name,tmp_map);
 } 
 
