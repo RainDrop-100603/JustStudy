@@ -13,7 +13,8 @@ const TDL_listGroup=new Map();
 
 
 
-function addElement(name,key,value){
+
+function displayElement(name,key,value){
   //make li
   const tmpLi=document.createElement("li");
   tmpLi.innerText=value;
@@ -23,13 +24,39 @@ function addElement(name,key,value){
   ul.appendChild(tmpLi);
 }
 
+function addElement(name,value){
+  let newID;
+  const nowList=TDL_listGroup.get(name);
+  while(true){
+    const rand=Math.floor(Math.random()*LIST_SIZE);
+    newID=`${name}-${rand}`;
+    if(!nowList.has(newID)){
+      break;
+    }
+  }
+  nowList.set(newID,value);
+  //이거 이용해서 map을 localstorage에 저장하고 불러오기 
+  const str=JSON.stringify(Array.from(nowList.entries()));
+  console.log(str);
+  console.dir(new Map(JSON.parse(str)));
+  //localStorage.setItem(name,JSON.stringify(nowList));
+  return newID;
+}
+
 function handleSubmit(event){
-  console.dir(event);
+  event.preventDefault();
+  const parentName=event.target.parentElement.className;
+  const inputValue=event.target.querySelector("input").value;
+  //add element to list
+  const ID=addElement(parentName,inputValue);
+  //add element to html
+  displayElement(parentName,ID,inputValue);
+  event.target.querySelector("input").value="";
 }
 
 function buildHtmlBase(listObj){
   const tmpDiv=document.createElement("div");
-  tmpDiv.class=listObj[0];
+  tmpDiv.classList.add(listObj[0]);
   //make input form if placeholder !== null
   if(listObj[1]){
     const tmpInput=document.createElement("input");
@@ -53,18 +80,16 @@ function loadListFromLC(name){
   }else{
     tmp_map=new Map();
   }
-  console.log(name);
-  console.log(tmp_map);
-  TDL_listGroup.prototype.set(name,tmp_map);
+  TDL_listGroup.set(name,tmp_map);
 } 
 
 function loadList(listObj){
   const name=listObj[0];
   buildHtmlBase(listObj);
   loadListFromLC(name);
-  const nowList=TDL_listGroup.prototype.get(name);
+  const nowList=TDL_listGroup.get(name);
   for(let [key,value] of nowList){
-    addElement(name,key,value);
+    displayElement(name,key,value);
   }
 }
 
