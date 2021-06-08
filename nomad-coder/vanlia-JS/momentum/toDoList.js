@@ -1,36 +1,75 @@
 const TDL_Container=document.querySelector(".js-toDoList");
-  TDL_form=TDL_Container.querySelector("form"),
-  TDL_input=TDL_form.querySelector("input");
   // toDo_ul=toDo_Container.querySelector("ul");
 
 //size of list
 const LIST_SIZE=10000;
-  //r
-const TDL_name=["TDL-todo","TDL-finish"]; //name of group
-const TDL_map=Map();  // name: data(map) of name
+//[name of list ,placeholder], if there's no input form, placeholder is null
+const TDL_name=[  
+  ["TDL-todo","What to do?"],
+  ["TDL-finish",null]
+]; 
+//map of list: [key: name, value: list(map)]
+const TDL_listGroup=new Map();  
 
 
 
-function makeList(listName){
-  tmpDiv=document.createElement("div");
-  tmpDiv.classList.add(listName);
-  tmpForm=document.createElement("form");
+function addElement(name,key,value){
+  //make li
+  const tmpLi=document.createElement("li");
+  tmpLi.innerText=value;
+  tmpLi.id=key;
+  //make Btn
+  const ul=TDL_Container.querySelector(`.${name}`);
+  ul.appendChild(tmpLi);
 }
 
-function loadList(listName){
-  let tmp_map=localStorage.getItem(listName);
+function handleSubmit(event){
+  console.dir(event);
+}
+
+function buildHtmlBase(listObj){
+  const tmpDiv=document.createElement("div");
+  tmpDiv.class=listObj[0];
+  //make input form if placeholder !== null
+  if(listObj[1]){
+    const tmpInput=document.createElement("input");
+    tmpInput.type="text";
+    tmpInput.placeholder=listObj[1];
+    const tmpForm=document.createElement("form");
+    tmpForm.appendChild(tmpInput);
+    tmpForm.addEventListener("submit",handleSubmit);
+    tmpDiv.appendChild(tmpForm);
+  }
+  //make ul
+  const tmpUl=document.createElement("ul");
+  tmpDiv.appendChild(tmpUl);
+  TDL_Container.appendChild(tmpDiv);
+}
+
+function loadListFromLC(name){
+  let tmp_map=localStorage.getItem(name);
   if(tmp_map){
     tmp_map=JSON.parse(tmp_map);
   }else{
-    tmp_map=Map();
+    tmp_map=new Map();
   }
-  TDL_map.prototype.set(listName,tmp_map);
-  makeList(listName);
+  console.log(name);
+  console.log(tmp_map);
+  TDL_listGroup.prototype.set(name,tmp_map);
+} 
+
+function loadList(listObj){
+  const name=listObj[0];
+  buildHtmlBase(listObj);
+  loadListFromLC(name);
+  const nowList=TDL_listGroup.prototype.get(name);
+  for(let [key,value] of nowList){
+    addElement(name,key,value);
+  }
 }
 
 function init(){
   TDL_name.forEach(loadList);
-  TDL_name.forEach(addEvent);
 }
 
 init();
