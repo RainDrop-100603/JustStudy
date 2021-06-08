@@ -6,11 +6,66 @@ const LIST_SIZE=10000;
 //[name of list ,placeholder], if there's no input form, placeholder is null
 const TDL_name=[  
   ["TDL-todo","What to do?"],
-  ["TDL-should","What should have to do?"],
   ["TDL-finish",null]
 ]; 
 //map of list: [key: name, value: list(map)]
 const TDL_listGroup=new Map();  
+
+function saveToLocal(listName){
+  list=TDL_listGroup.get(listName);
+  const str=JSON.stringify(Array.from(list.entries()));
+  localStorage.setItem(listName,str);
+}
+
+function getFromLocal(listName){
+  const str=localStorage.getItem(listName);
+  return new Map(JSON.parse(str));
+}
+
+function getID(list){
+  while(true){
+    const rand=Math.floor(Math.random()*LIST_SIZE);
+    const newID=`TDL-${rand}`;
+    if(!list.has(newID)){
+      return newID;
+    }
+  }
+}
+
+function removeChild(doc, target){
+  const tmp=doc.querySelectorAll(target);
+  tmp.forEach(function(element){
+    doc.removeChild(element);
+  });
+}
+
+function handleBtn(event,destName){
+  const fromLi=event.target.parentElement;
+  const fromUl=fromLi.parentElement;
+  const fromName=fromUl.parentElement.className;
+  const fromID=fromLi.id;
+  const fromList=TDL_listGroup.get(fromName);
+  if(destName){ //move
+    const destList=TDL_listGroup.get(destName);
+    fromLi.id=getID(destList);
+    removeChild(fromLi,"button");
+    destList.set(fromLi.id,fromLi.innerText);
+    displayElement(destName,fromLi.id,fromLi.innerText);
+    saveToLocal(destName);
+  }
+  fromUl.removeChild(fromLi);
+  fromList.delete(fromID);
+  saveToLocal(fromName);
+}
+
+function makeBtn(btnText,dest){
+  const btn=document.createElement("button");
+  btn.innerText=btnText;
+  btn.addEventListener("click",function(event){
+    handleBtn(event,dest);
+  });
+  return btn;
+}
 
 function displayElement(name,key,value){
   //make li
@@ -18,24 +73,23 @@ function displayElement(name,key,value){
   tmpLi.innerText=value;
   tmpLi.id=key;
   //make Btn
-  const ul=TDL_Container.querySelector(`.${name}`);
+  if(name==="TDL-todo"){
+    tmpLi.appendChild(makeBtn("✔","TDL-finish"));
+  }
+  if(name==="TDL-finish"){
+    tmpLi.appendChild(makeBtn("♻","TDL-todo"));
+  }
+  tmpLi.appendChild(makeBtn("❌",null));
+  //add li to ul
+  const ul=TDL_Container.querySelector(`.${name}`).querySelector("ul");
   ul.appendChild(tmpLi);
 }
 
 function addElement(name,value){
-  let newID;
   const nowList=TDL_listGroup.get(name);
-  while(true){
-    const rand=Math.floor(Math.random()*LIST_SIZE);
-    newID=`${name}-${rand}`;
-    if(!nowList.has(newID)){
-      break;
-    }
-  }
+  const newID=getID(nowList);
   nowList.set(newID,value);
-  //이거 이용해서 map을 localstorage에 저장하고 불러오기 
-  const str=JSON.stringify(Array.from(nowList.entries()));
-  localStorage.setItem(name,str);
+  saveToLocal(name);
   return newID;
 }
 
@@ -74,17 +128,11 @@ function buildHtmlBase(listObj){
   TDL_Container.appendChild(tmpDiv);
 }
 
-function loadListFromLC(name){
-  let tmp_map=localStorage.getItem(name);
-  tmp_map=new Map(JSON.parse(tmp_map));
-  TDL_listGroup.set(name,tmp_map);
-} 
-
 function loadList(listObj){
   const name=listObj[0];
   buildHtmlBase(listObj);
-  loadListFromLC(name);
-  const nowList=TDL_listGroup.get(name);
+  const nowList=getFromLocal(name);
+  TDL_listGroup.set(name,nowList);
   for(let [key,value] of nowList){
     displayElement(name,key,value);
   }
