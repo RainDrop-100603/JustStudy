@@ -12,7 +12,7 @@ const TDL_name=[
 const TDL_listGroup=new Map();  
 
 function saveToLocal(listName){
-  list=TDL_listGroup.get(listName);
+  const list=TDL_listGroup.get(listName);
   const str=JSON.stringify(Array.from(list.entries()));
   localStorage.setItem(listName,str);
 }
