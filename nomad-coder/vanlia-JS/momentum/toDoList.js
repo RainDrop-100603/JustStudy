@@ -1,13 +1,32 @@
-const toDo_Container=document.querySelector(".js-toDoList");
-  // toDo_form=toDo_Container.querySelector("form"),
-  // toDo_input=toDo_form.querySelector("input"),
+const TDL_Container=document.querySelector(".js-toDoList");
+  TDL_form=TDL_Container.querySelector("form"),
+  TDL_input=TDL_form.querySelector("input");
   // toDo_ul=toDo_Container.querySelector("ul");
 
 //size of list
 const LIST_SIZE=10000;
   //r
-const TDL_name=["TDL-todo","TDL-finish"]; //
-const TDL_dict={};  // name: array
+const TDL_name=["TDL-todo","TDL-finish"]; //name of group
+const TDL_map=Map();  // name: data(map) of name
+
+
+
+function makeList(listName){
+  tmpDiv=document.createElement("div");
+  tmpDiv.classList.add(listName);
+  tmpForm=document.createElement("form");
+}
+
+function loadList(listName){
+  let tmp_map=localStorage.getItem(listName);
+  if(tmp_map){
+    tmp_map=JSON.parse(tmp_map);
+  }else{
+    tmp_map=Map();
+  }
+  TDL_map.prototype.set(listName,tmp_map);
+  makeList(listName);
+}
 
 function init(){
   TDL_name.forEach(loadList);
