@@ -145,8 +145,7 @@ function init(){
 }
 
 init();
-
-
+//li를 옮길때, text를 list에서 찾아도 된다.
 
 
 // function handleDel(event){

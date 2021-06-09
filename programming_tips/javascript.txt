@@ -142,3 +142,5 @@ map to localstorage: https://intro0517.tistory.com/153
   String -> Map (String to Map): var map = new Map(JSON.parse(str));
 
 존재하는 변수를 불러올 때, 대체로 참조형으로 불러오는 듯 하다.
+
+id를 정할 때, id: String(Date.now()) 와 같이 하면 중복 염려도 없고 좋다. 
