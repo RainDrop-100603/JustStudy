@@ -32,12 +32,12 @@ function getID(list){
   }
 }
 
-function removeChild(doc, target){
-  const tmp=doc.querySelectorAll(target);
-  tmp.forEach(function(element){
-    doc.removeChild(element);
-  });
-}
+// function removeChild(doc, target){
+//   const tmp=doc.querySelectorAll(target);
+//   tmp.forEach(function(element){
+//     doc.removeChild(element);
+//   });
+// }
 
 function handleBtn(event,destName){
   const fromLi=event.target.parentElement;
@@ -48,9 +48,9 @@ function handleBtn(event,destName){
   if(destName){ //move
     const destList=TDL_listGroup.get(destName);
     fromLi.id=getID(destList);
-    removeChild(fromLi,"button");
-    destList.set(fromLi.id,fromLi.innerText);
-    displayElement(destName,fromLi.id,fromLi.innerText);
+    const fromText=fromLi.querySelector("span").innerText;
+    destList.set(fromLi.id,fromText);
+    displayElement(destName,fromLi.id,fromText);
     saveToLocal(destName);
   }
   fromUl.removeChild(fromLi);
@@ -70,7 +70,9 @@ function makeBtn(btnText,dest){
 function displayElement(name,key,value){
   //make li
   const tmpLi=document.createElement("li");
-  tmpLi.innerText=value;
+  const tmpSpan=document.createElement("span");
+  tmpSpan.innerText=value;
+  tmpLi.appendChild(tmpSpan);
   tmpLi.id=key;
   //make Btn
   if(name==="TDL-todo"){
