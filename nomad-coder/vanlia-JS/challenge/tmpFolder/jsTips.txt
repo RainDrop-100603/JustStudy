@@ -1,0 +1,15 @@
+이전 challenge 아주 간단하게 나오므로 나의 답과 비교하기 
+  datalist:input 요소에서 사용하기 위한 옵션들의 리스트를 미리 정의, list="id of datalist" 로 불러온다.
+    chg에서는 눈금 만들기 위해 사용하였음 (type: range)
+    type: text에서 미리 생성된 리스트를 표현할 수 있음 (http://tcpschool.com/html-tags/datalist)
+  input 
+    어떤 type이든 간에, js에서 input.value로 값을 가져올 수 있다. 
+    type  
+      range: bar 로 입력 
+      text: 자유로운 입력 
+      number: 숫자만 입력 가능하며, step 만큼 움직일 수 있는 버튼이 존재
+  innerHtml: js에서 표현된 html tag를 적용시킨다.
+    만약 innerText라면, tag로 인식되지 않고 text인식되어 표현된다. 
+    <br />: 줄바꿈
+    <strong><strong />: 강조 
+

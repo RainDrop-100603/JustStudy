@@ -13,123 +13,145 @@
 using namespace std;
 
 // Decision Problem, 이분법, 문제가 안풀리면 수식을 작성해보자 
-void WITHDRAWL_Input(int& classNum,int& requiredNum,vector<int>& order,vector<int>& students){
-  cin>>classNum>>requiredNum;
-  order.resize(classNum);
-  students.resize(classNum);
-  for(int i=0;i<classNum;i++){
-    cin>>order[i]>>students[i];
+void ROOTS_Input(int& power, vector<double>& coefficients){
+  cin>>power;
+  coefficients.resize(power+1);
+  for(auto& ele:coefficients){
+    cin>>ele;
   }
 }
-bool WITHDRAWL_decision(int classNum,int requiredNum,vector<int>& order,vector<int>& students, double left, double right){
-  double mid=(left+right)/2;
-  vector<double> arr;
-  // x*분모-분자를 구하기
-  for(int i=0;i<classNum;i++){
-    arr.push_back(mid*students[i]-order[i]);
-  }
-  //오름차순 정렬
-  sort(arr.begin(),arr.end());
-  reverse(arr.begin(),arr.end());
-  //requiredNum만큼 넣었을 때 0보다 큰가? (오름차순 정렬이므로 required만큼만 넣으면 된다)
-  double sum(0);
-  for(int i=0;i<requiredNum;i++){
-    sum+=arr[i];
-  }
-  //sum이 0보다 크거나 같으면 참
-  return sum>=0;
+vector<double> ROOTS_2ndEquation(const vector<double>& coefficients){
+  double varA(coefficients[0]),varB(coefficients[1]),varC(coefficients[2]);
+  vector<double> result;
+  result.push_back((-1*varB-sqrt(varB*varB-4*varA*varC))/(2*varA));
+  result.push_back((-1*varB+sqrt(varB*varB-4*varA*varC))/(2*varA));
+  return result;
 }
-double WITHDRAWL_Algo(int classNum,int requiredNum,vector<int> order,vector<int> students){
-  double left(0),right(1);
-  int count=100;
-  //Algo, (min,max] 
-  while(count--){
-    if(WITHDRAWL_decision(classNum,requiredNum,order,students,left,right)){
-      right=(left+right)/2;
-    }else{
-      left=(left+right)/2;
+vector<double> ROOTS_differential(const vector<double>& coefficients){
+  vector<double> result;
+  int power=coefficients.size()-1;
+  int idx=0;
+  while(power){
+    result.push_back(coefficients[idx]*power);
+    idx++;
+    power--;
+  }
+  return result;
+}
+double ROOTS_funcValue(double variable, const vector<double>& coefficients){
+  double result=0;
+  int power=coefficients.size()-1;
+  for(auto& ele: coefficients){
+    result+=ele*pow(variable,power);
+    power--;
+  }
+  return result;
+}
+vector<double> ROOTS_Algo(int power, const vector<double>& coefficients){
+  //기저 
+  if(power==2){
+    return ROOTS_2ndEquation(coefficients);
+  }
+  //미분 후 극점 구하기 
+  auto pole=ROOTS_Algo(power-1,ROOTS_differential(coefficients));
+  pole.insert(pole.begin(),-11.0); pole.push_back(11.0); 
+  //계산
+  vector<double> result;
+  for(int i=0;i+1<pole.size();i++){
+    double lo(pole[i]),hi(pole[i+1]),loValue(ROOTS_funcValue(lo,coefficients)),hiValue(ROOTS_funcValue(hi,coefficients));
+    if(loValue*hiValue>0){
+      continue;
     }
+    //반복문 불변식, f(lo)<=0<f(hi);
+    if(hiValue<=0){
+      double tmp=lo; lo=hi; hi=tmp;
+    }
+    for(int count=0;count<100;count++){
+      double mid=(lo+hi)/2;
+      double midValue=ROOTS_funcValue(mid,coefficients);
+      if(midValue<=0){
+        lo=mid;
+      }else{
+        hi=mid;
+      }
+    }
+    result.push_back((lo+hi)/2);
   }
-  //return
-  return right;
+  return result;
 }
-void WITHDRAWL(){
-  // WITHDRAWL
+void ROOTS(){
+  // ROOTS
   /*설명 및 입력
   설명
-    백준이네 학교에서는 장학금을 학생의 중간고사 등수와 기말고사 등수에 따라 배정합니다. 
-      어떤 학생이 듣는 i번째 과목의 수강생 수가 ci라고 합시다. 
-      그리고 이 학생의 i번째 과목 중간 고사 등수가 ri라고 하면, 이 학생의 중간 고사 누적 등수 cumulativeRank 는 다음과 같이 정의됩니다.
-      cumulativeRank = sum(ri) / sum(ci)
-    수강 철회를 하면 철회한 과목은 중간 고사의 누적 등수 계산에 들어가지 않게 됩니다. 
-      다행히 백준이네 학교에서는 수강 철회를 해도 남은 과목이 k 개 이상이라면 장학금을 받을 수 있습니다. 
-    백준이가 적절히 과목을 철회했을 때 얻을 수 있는 최소 누적 등수를 계산하는 프로그램을 작성하세요.
+    실수 근만을 갖는 ax2 + bx + c = 0과 같은 형태의 단변수 다항 방정식이 주어질 때, 이들의 근을 계산하는 프로그램을 작성하세요.
+    다항식의 모든 해의 절대값은 10 이하라고 가정해도 좋습니다.
   입력
-    입력의 첫 줄에는 테스트 케이스의 수 T (T <= 50) 가 주어집니다. 
-    각 테스트 케이스의 첫 줄에는 백준이가 수강하는 과목의 수 n(1 <= n <= 1,000)과 남겨둬야 할 과목의 수 k(1 <= k <= n)가 주어집니다. 
-    다음 줄에는 n 개의 정수 쌍 (ri,ci) 이 순서대로 주어집니다. (1 <= ri <= ci <= 1,000)
+    입력의 첫 줄에는 테스트 케이스의 수 C(C<=50)가 주어집니다. 
+    각 테스트 케이스의 첫 줄에는 방정식의 차수 n(2 <= n <= 5)이 주어지고, 그 다음 줄에 n+1개의 실수로 방정식의 차수가 고차항부터 주어집니다.
   출력
-    각 줄마다 백준이가 얻을 수 있는 최소의 누적 등수를 출력합니다. 정답과 10-7 이하의 오차가 있는 답은 정답으로 인정됩니다.
+    각 테스트 케이스마다 n개의 실수로 오름차순으로 정렬된 방정식의 해를 출력합니다. 
+    방정식의 해는 모두 다르다고 가정해도 좋습니다. 
+    10-8 이하의 상대/절대 오차가 있는 답은 정답으로 처리됩니다.
   제한조건
-    1초, 64MB
+    5초, 64MB
   */
   /*힌트
-    k개이상의 과목을 선택했을 때, 누적등수의 최솟값을 찾는 문제
-    누적 점수가 X일 때, X>Y를 추가하면 X는 작아진다.
-      Y1>Y2 이지만, 수강생(Y2)>>수강생(Y1)일때, Y1을 추가한게 더 작을때도 있다
-        -> greedy하게 풀 수는 없다.
-    k+1개로 k개보다 낮은 점수를 만들 수 있을까? -> 잘 모르니까 일단 생략 
-    Decision Problem: k개이상의 과목으로 X점 이하를 만들 수 있는가?
-    조합을 생각해보자
-      n개중 r래를 선택하여 최저값을 구한다고 하자.
-        특정한 법칙을 구하지 못하는 한, nCr번 비교를 해야할 것이다.
-        nCr=(n!/(n-r)!)/r!, 상당한 시간이 걸린다.
-      Decision Problem 단원의 문제이다.
-        현재 값에서, x를 넣으면 정해진 값 y 이하인가? 
-    *@*@*@ 책 참고
-      직관적으로 풀리지 않을 땐 수식을 작성해보자
-      Decision(x)= sum(분모)/sum(분자)<=x
-        0<=sum(x*분자-분모)
-        즉, x*분자-분모를 정렬하고, 큰 값부터 차례로 더해서 0이상이 나오면 된다.
+    n차 방정식 이하는 직접 구하고, 그 이상은 미분과 재귀, 이분법을 이용한다.
+      1차방정식은 간단하게 계산 가능하다
+      2차방정식은 근의 공식을 이용할 수 있다.
+      3차이상은 극점과 근의 관계를 이용한다.
+        부호가 다른 두 극점 사이에는, 한개의 해가 반드시 존재한다. 
+          양 끝 극점 바깥부분에도 해가 존재할 수 있다 -> 아랫부분 참고
+        각 극점은, 미분값의 해와 같다.
+          미분 후 재귀하여 각 극점의 해를 구할 수 있다.
+    양 끝 극점 바깥부분에도 해가 존재할 수 있다
+      문제에서는 해의 절댓값이 10 이하라고 밝힌다.
+      그림을 그려보면 알겠지만, -10~10의 범위를 벗어나는 극점은 어차피 의미가 없다.
+        또한 이 극점을 제거하지 않아도 상관없다. (어차피 두 극점의 부호가 같기 때문)
+        따라서 극점의 양 끝은 -10, 10으로 정해도 무방하다(오차를 감안한다면 -11, 11도 괜찮다)
+      약간 추가정리해도될듯 
   */
   /*전략
   전략1
-    Decision Problem
+    이분법
     접근방법
-      재귀함수: (min, max] (100 반복, nlgn수행시간)
-        기저: 반복 100회 -> return max
-        조건: 시험점수가 x이하가 나올 수 있는가?
-          구현: (nlgn)
-            sum(분모)/sum(분자)<=x, 0<=sum(x*분자-분모)
-            x*분자-분모 를 정렬한 후, 큰 값부터 더한다.
-          참: return 재귀함수(left,mid)
-          거짓: return 재귀함수(mid,right)
+      2차 함수는 근의 공식, 1차함수는 바로 답을 구한다.
+      3차이상의 함수는 양끝점과 극점사이를 계산하여 값을 구한다.
+        양 끝점은 +-11으로한다(해는 반드시 -10과 10 사이);
+        각 극점은 미분값의 해 이다.
+        계산은 이분법을 100회 진행한다. f(lo)<=0<f(hi)
+          f(lo)*f(hi)<=0일때만 해가 존재한다.
     시간:
-      O(100*nlgn)
+      1차, 2차함수: O(1)
+      3차함수: O(3*100+2차함수);
+      4차함수: O(4*100+3차함수)=O(4*100+3*100+2차함수);
+      5차함수: O(5*100+4차함수)=O((5+4+3)*100+1);
+      n차함수: O(sigma(n)*100)=O(n^2);
     크기:
       O(n)
     개선 및 보완
-      책을 참고하였다.
-      문제가 직관적으로 풀리지 않으면 수식을 작성하여 풀어보자 
+      
   */
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int classNum,requiredNum;
-    vector<int> order,students;
-    WITHDRAWL_Input(classNum,requiredNum,order,students);
-    auto result=WITHDRAWL_Algo(classNum,requiredNum,order,students);
+    int power;
+    vector<double> coefficients;
+    ROOTS_Input(power,coefficients);
+    auto result=ROOTS_Algo(power,coefficients);
     cout<<fixed;
     cout.precision(10);
-    cout<<result<<endl;
+    for(auto& ele: result){
+      cout<<ele<<" ";
+    }cout<<endl;
   }
 }
 
 int main(void){
    //clock_t start,end;
    //start=clock();
- WITHDRAWL();
+ ROOTS();
    //end=clock();;
    //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
