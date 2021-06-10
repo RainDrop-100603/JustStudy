@@ -31,8 +31,10 @@ vector<double> ROOTS_differential(const vector<double>& coefficients){
   vector<double> result;
   int power=coefficients.size()-1;
   int idx=0;
-  while(power--){
+  while(power){
     result.push_back(coefficients[idx]*power);
+    idx++;
+    power--;
   }
   return result;
 }
@@ -57,7 +59,6 @@ vector<double> ROOTS_Algo(int power, const vector<double>& coefficients){
   vector<double> result;
   for(int i=0;i+1<pole.size();i++){
     double lo(pole[i]),hi(pole[i+1]),loValue(ROOTS_funcValue(lo,coefficients)),hiValue(ROOTS_funcValue(hi,coefficients));
-    cout<< "lo: "<<loValue<<"hi: "<<hiValue<<endl;
     if(loValue*hiValue>0){
       continue;
     }
@@ -95,16 +96,20 @@ void ROOTS(){
     5초, 64MB
   */
   /*힌트
-    n차 방정식 이하는 직접 구하고, 그 이상은 이분법을 통해 구하자 
-      이분법 100회면 10^30이므로 오차범위 이내 
+    n차 방정식 이하는 직접 구하고, 그 이상은 미분과 재귀, 이분법을 이용한다.
       1차방정식은 간단하게 계산 가능하다
       2차방정식은 근의 공식을 이용할 수 있다.
-      3차이상은 이분법을 사용한다.
-        해의 절대값이 10 이하이므로 양 끝점은 +-11 으로 한다.
-        -11, 각 극점, 11 의 지점에서, 각 극점 사이에 해가 있는지를 구한다.(양 끝점도 극점취급)
-    극점과 극점의 f(x)값의 부호가 다르면, 반드시 해가 하나 존재한다.
-      극점과 극점의 부호가 같으면, 해가 존재하지 않는다.
-      극점을 미분값의 해와 같다.
+      3차이상은 극점과 근의 관계를 이용한다.
+        부호가 다른 두 극점 사이에는, 한개의 해가 반드시 존재한다. 
+          양 끝 극점 바깥부분에도 해가 존재할 수 있다 -> 아랫부분 참고
+        각 극점은, 미분값의 해와 같다.
+          미분 후 재귀하여 각 극점의 해를 구할 수 있다.
+    양 끝 극점 바깥부분에도 해가 존재할 수 있다
+      문제에서는 해의 절댓값이 10 이하라고 밝힌다.
+      그림을 그려보면 알겠지만, -10~10의 범위를 벗어나는 극점은 어차피 의미가 없다.
+        또한 이 극점을 제거하지 않아도 상관없다. (어차피 두 극점의 부호가 같기 때문)
+        따라서 극점의 양 끝은 -10, 10으로 정해도 무방하다(오차를 감안한다면 -11, 11도 괜찮다)
+      약간 추가정리해도될듯 
   */
   /*전략
   전략1
