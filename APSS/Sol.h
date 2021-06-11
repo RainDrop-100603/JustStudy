@@ -289,3 +289,9 @@ void LOAN_Input(double& loan,int& month,double& interest);
 double LOAN_funcValue(double loan,int month,double interest, double pay);
 double LOAN_Algo(double loan,int month,double interest);
 void LOAN();
+
+// Decision Problem, 이분법, 자료형 유의
+void RATIO_Input(int& playTime,int& winTime);
+bool RATIO_decision(long long playTime,long long winTime,long long addWin);
+int RATIO_Algo(int playTime,int winTime);
+void RATIO();
