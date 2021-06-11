@@ -274,3 +274,12 @@ void WITHDRAWL_Input(int& classNum,int& requiredNum,vector<int>& order,vector<in
 bool WITHDRAWL_decision(int classNum,int requiredNum,vector<int>& order,vector<int>& students, double left, double right);
 double WITHDRAWL_Algo(int classNum,int requiredNum,vector<int> order,vector<int> students);
 void WITHDRAWL();
+
+
+// Decision Problem, 이분법
+void ROOTS_Input(int& power, vector<double>& coefficients);
+vector<double> ROOTS_2ndEquation(const vector<double>& coefficients);
+vector<double> ROOTS_differential(const vector<double>& coefficients);
+double ROOTS_funcValue(double variable, const vector<double>& coefficients);
+vector<double> ROOTS_Algo(int power, const vector<double>& coefficients);
+void ROOTS();
