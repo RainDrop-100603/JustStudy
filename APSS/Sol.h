@@ -283,3 +283,9 @@ vector<double> ROOTS_differential(const vector<double>& coefficients);
 double ROOTS_funcValue(double variable, const vector<double>& coefficients);
 vector<double> ROOTS_Algo(int power, const vector<double>& coefficients);
 void ROOTS();
+
+// Decision Problem, 이분법, 최초 lo, hi를 넉넉하게 결정하자
+void LOAN_Input(double& loan,int& month,double& interest);
+double LOAN_funcValue(double loan,int month,double interest, double pay);
+double LOAN_Algo(double loan,int month,double interest);
+void LOAN();

@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// Decision Problem, 이분법
+// Decision Problem, 이분법, 최초 lo, hi를 넉넉하게 결정하자
 void LOAN_Input(double& loan,int& month,double& interest){
   cin>>loan>>month>>interest;
 }
@@ -24,7 +24,7 @@ double LOAN_funcValue(double loan,int month,double interest, double pay){
 }
 double LOAN_Algo(double loan,int month,double interest){
   // f(lo) <= 0 < f(hi)
-  double lo(loan),hi(0); 
+  double lo(loan*2),hi(0); 
   //이분법 100회 실행
   for(int i=0;i<100;i++){
     if(LOAN_funcValue(loan,month,interest,(lo+hi)/2)<=0){
@@ -61,7 +61,9 @@ void LOAN(){
     금액 C를 찍고, m회 돌려보는 방식을 사용해보자
       C는 이분법을 통해 구할 수 있다.
         반복문 불변식: f(lo)<=0<f(hi)
+        hi=0(상환불가), lo=2*loan(한달만에 값으려면 최대 1.5*loan, 넉넉하게 2배로 설정)
       전체 수행시간은 100(이분법)*m이므로 부담되지 않는다.
+    
   */
   /*전략
   전략1
