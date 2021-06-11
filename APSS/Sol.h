@@ -290,7 +290,7 @@ double LOAN_funcValue(double loan,int month,double interest, double pay);
 double LOAN_Algo(double loan,int month,double interest);
 void LOAN();
 
-// Decision Problem, 이분법, 자료형 유의
+// Decision Problem, 이분법, 자료형 유의, 수학적 해법도 생각은 해보자 
 void RATIO_Input(int& playTime,int& winTime);
 bool RATIO_decision(long long playTime,long long winTime,long long addWin);
 int RATIO_Algo(int playTime,int winTime);
