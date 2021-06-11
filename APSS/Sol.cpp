@@ -5146,7 +5146,7 @@
 //   cin>>playTime>>winTime;
 // }
 // bool RATIO_decision(long long playTime,long long winTime,long long addWin){
-//   long long totalPlay(playTim+addwin),totalWin(winTime+addwin);
+//   long long totalPlay(playTime+addWin),totalWin(winTime+addWin);
 //   long long prevWinRate=winTime*100/playTime;
 //   long long newWinRate=totalWin*100/totalPlay;
 //   return newWinRate>prevWinRate;

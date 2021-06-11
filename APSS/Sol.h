@@ -295,3 +295,19 @@ void RATIO_Input(int& playTime,int& winTime);
 bool RATIO_decision(long long playTime,long long winTime,long long addWin);
 int RATIO_Algo(int playTime,int winTime);
 void RATIO();
+
+//철인 2종경기, Decision Problem, 삼분탐색, local minimum, 그래프를 그려서 조건 확인 
+/*
+  삼분탐색
+    달리기거리(r)에 따른 시간(time)그래프, 시간이 낮을수록 좋은것
+      부정행위자의 그래프는 선형증가함수이다.
+      time_min(정상참가자)의 그래프는 위로 볼록한 2차함수 모양이다(모양만 그렇다는것, concave function) 
+      따라서 정상참가자 그래프-부정행위자 그래프는 위로 볼록한 2차함수 모양이다.
+      local maximun이 존재하고, 남은 구간에서 strictly decresing(increasing) 하므로 삼분탐색 이용가능
+    삼분탐색 함수
+      f(r) = min(정상참가자 time) - 부정행위자 time
+    개선점
+      사실 삼분탐색 조건을 완전히 만족하는 것이 아니다. 두 그래프의 기울기가 일치하는 지점이 있을 수 있기 때문이다.
+        두 그래프의 기울기가 일치하면, 합친 그래프의 기울기는 0이 되는것을 의미한다.
+        그러나 기울기가 0이 되는 부분은 반드시 최대(최소)이기 때문에, 여전히 삼분탐색을 이용할 수 있다.
+*/
