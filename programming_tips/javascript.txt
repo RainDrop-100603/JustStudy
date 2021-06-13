@@ -103,6 +103,7 @@ event.preventDefault()
 eventlistner
   상시 대기하다가, event가 수행되면 실행된다. 즉 일반적인 top to down 실행과는 약간 다르다.
   또한 수행 됐다고 바로 없어지는것은 아닌듯(이건 왠지 설정 가능할듯 하다, 1회용 or 다중사용)
+  load: load 이벤트는 리소스와 그것에 의존하는 리소스들의 로딩이 완료되면 실행됩니다.
 input.value, input.placeholder등, HTMLElement.요소 는 attribute(placeholder)와, tag에 내장된 요소(value) 모두에 접근할 수 있는듯?
   JavaScript기본값으로 코딩되어있는듯, input object에 value, placeholder등이 있다고 생각하면 이해가 쉬울듯 
 변수는 중복될 수 없고, 함수는 중복되도 되는가?(파일을 분할했을 때)
@@ -144,3 +145,22 @@ map to localstorage: https://intro0517.tistory.com/153
 존재하는 변수를 불러올 때, 대체로 참조형으로 불러오는 듯 하다.
 
 id를 정할 때, id: String(Date.now()) 와 같이 하면 중복 염려도 없고 좋다. 
+
+HTMLElement.append(ele): ele를 HTMLElement의 마지막에 추가한다.
+  HTMLElement.prepend(ele): ele를 맨앞에 추가한다.
+
+navigator func
+  geolocation: 날씨와 관련됨
+
+obj{
+  var1,
+  var2
+}
+는 아래와 같다.
+obj{
+  var1:var1,
+  var2:var2
+}
+
+then: 무언가가 실행된 후 실행?(weather.js참고)
+https://openweathermap.org/ : 날씨데이터 불러오는 프리웨어
