@@ -3,11 +3,11 @@ const weatherContainer=document.querySelector(".js-weather");
 const API_KEY="33a4b37f047d9d66fe381f85dc77ba6f",
   LC_COORDS="weather-coords";
 
-function saveToLocal(coords){
+function WEATHER_saveToLocal(coords){
   localStorage.setItem(LC_COORDS,JSON.stringify(coords));
 }
 
-function loadFromLocal(){
+function WEATHER_loadFromLocal(){
   return JSON.parse(localStorage.getItem(LC_COORDS));
 }
 
@@ -37,7 +37,7 @@ function getCoordsSuccess(position){
     latitude,
     longitude
   };
-  saveToLocal(coords);
+  WEATHER_saveToLocal(coords);
   displayWeather(coords);
 }
 
@@ -50,7 +50,7 @@ function getCoords(){
 }
 
 function init(){
-  const coords=loadFromLocal();
+  const coords=WEATHER_loadFromLocal();
   if(coords){
     displayWeather(coords);
   }else{
