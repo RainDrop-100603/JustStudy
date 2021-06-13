@@ -7,7 +7,7 @@ function handleLoad(image){
 
 function init(){
   const image=new Image();
-  imgNum=Math.floor(Math.random()*8);
+  imgNum=Math.floor(Math.random()*2)+4;
   image.src=`images/${imgNum}.jpg`
   image.addEventListener("load",handleLoad(image),{once:true})
 }

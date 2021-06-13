@@ -17,7 +17,10 @@ function weatherInfo(json){
     tempMax=json.main.temp_max,
     tempMin=json.main.temp_min,
     location=json.name;
-  weatherContainer.innerText=`${tempMax} ${tempMin} ${tempNow} ${location}`;
+  weatherContainer.innerHTML=`최저온도${tempMax}</br> 
+    최고온도: ${tempMin}</br> 
+    현재온도: ${tempNow}</br> 
+    지역: ${location}`;
 }
 
 function displayWeather(coords){
