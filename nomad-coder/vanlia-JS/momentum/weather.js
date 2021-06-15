@@ -1,61 +1,64 @@
 const weatherContainer=document.querySelector(".js-weather");
 
-const API_KEY="33a4b37f047d9d66fe381f85dc77ba6f",
-  LC_COORDS="weather-coords";
+const WEATHER_API_KEY="33a4b37f047d9d66fe381f85dc77ba6f",
+  WEATHER_LC_COORDS="weather-coords";
 
-function WEATHER_saveToLocal(coords){
-  localStorage.setItem(LC_COORDS,JSON.stringify(coords));
-}
-
-function WEATHER_loadFromLocal(){
-  return JSON.parse(localStorage.getItem(LC_COORDS));
-}
-
-function weatherInfo(json){
+//실제 날씨 표현, 날씨 예보도 추가 
+function weather_info(json){
   console.log(json);
   const tempNow=json.main.temp,
     tempMax=json.main.temp_max,
     tempMin=json.main.temp_min,
-    location=json.name;
-  weatherContainer.innerHTML=`최저온도${tempMax}</br> 
-    최고온도: ${tempMin}</br> 
-    현재온도: ${tempNow}</br> 
-    지역: ${location}`;
+    tempFeel=json.main.feels_like;    
+  const location=json.name;
+  const weather=json.weather[0].main,
+    wind=json.wind.speed,
+    humidity=json.main.humidity;
+  const str=`${location} ${weather} ${tempNow}°C ${humidity}% ${wind}m/s`;
+  weatherContainer.innerHTML=str;
 }
 
-function displayWeather(coords){
-  fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&appid=${API_KEY}&units=metric`
+function weather_saveToLocal(coords){
+  localStorage.setItem(WEATHER_LC_COORDS,JSON.stringify(coords));
+}
+
+function weather_loadFromLocal(){
+  return JSON.parse(localStorage.getItem(WEATHER_LC_COORDS));
+}
+
+function weather_display(coords){
+  fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&appid=${WEATHER_API_KEY}&units=metric`
     ).then(function(response){
       return response.json();
-    }).then(weatherInfo);
+    }).then(weather_info);
 }
 
-function getCoordsSuccess(position){
+function weather_getCoordsSuccess(position){
   const latitude=position.coords.latitude;
   const longitude=position.coords.longitude;
   const coords={
     latitude,
     longitude
   };
-  WEATHER_saveToLocal(coords);
-  displayWeather(coords);
+  weather_saveToLocal(coords);
+  weather_display(coords);
 }
 
-function getCoordsError(){
+function weather_getCoordsFail(){
   console.log("please allow location service");
 }
 
-function getCoords(){
-  navigator.geolocation.getCurrentPosition(getCoordsSuccess,getCoordsError);
+function weather_getCoords(){
+  navigator.geolocation.getCurrentPosition(weather_getCoordsSuccess,weather_getCoordsFail);
 }
 
-function init(){
-  const coords=WEATHER_loadFromLocal();
+function weather_init(){
+  const coords=weather_loadFromLocal();
   if(coords){
-    displayWeather(coords);
+    weather_display(coords);
   }else{
-    getCoords();
+    weather_getCoords();
   }
 } 
 
-init();
+weather_init();

@@ -1,15 +1,15 @@
-const body=document.body;
+const bgBody=document.bgBody;
 
-function handleLoad(image){
+function bg_handleLoad(image){
   image.classList.add("bg-image");
-  body.appendChild(image);
+  bgBody.appendChild(image);
 }
 
-function init(){
+function bg_init(){
   const image=new Image();
   imgNum=Math.floor(Math.random()*2)+4;
   image.src=`images/${imgNum}.jpg`
-  image.addEventListener("load",handleLoad(image),{once:true})
+  image.addEventListener("load",bg_handleLoad(image),{once:true})
 }
 
-init();
+bg_init();

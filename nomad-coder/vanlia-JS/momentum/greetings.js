@@ -1,36 +1,36 @@
-const greet_Container=document.querySelector(".js-greetings"),
-  greet_form=greet_Container.querySelector("form"),
-  greet_input=greet_form.querySelector("input"),
-  greet_sayHello=greet_Container.querySelector("h4");
+const greetContainer=document.querySelector(".js-greetings"),
+  greetForm=greetContainer.querySelector("form"),
+  greetInput=greetForm.querySelector("input"),
+  greetSayHello=greetContainer.querySelector("h4");
 
-const CN_INVISIBLE="display-none",
-  LC_USER="greetings-userName";
+const GREET_CN_INVISIBLE="display-none",
+  GREET_LC_USER="greetings-userName";
 
-function greetUser(user){
-  greet_sayHello.classList.remove(CN_INVISIBLE);
-  greet_sayHello.innerText=`Hello ${user}!`;
+function greet_user(user){
+  greetSayHello.classList.remove(GREET_CN_INVISIBLE);
+  greetSayHello.innerText=`Hello ${user}!`;
 }
 
-function GREET_handleSubmit(event){
+function greet_handleSubmit(event){
   event.preventDefault(); //submit시 새로고침 방지
-  const inputValue=greet_input.value;
-  localStorage.setItem(LC_USER,inputValue);
-  greet_form.classList.add(CN_INVISIBLE);
-  greetUser(inputValue);
+  const inputValue=greetInput.value;
+  localStorage.setItem(GREET_LC_USER,inputValue);
+  greetForm.classList.add(GREET_CN_INVISIBLE);
+  greet_user(inputValue);
 }
 
-function getUser(){
-  greet_form.classList.remove(CN_INVISIBLE);
-  greet_form.addEventListener("submit",GREET_handleSubmit);
+function greet_getUser(){
+  greetForm.classList.remove(GREET_CN_INVISIBLE);
+  greetForm.addEventListener("submit",greet_handleSubmit);
 }
 
-function init(){
-  const user=localStorage.getItem(LC_USER);
+function greet_init(){
+  const user=localStorage.getItem(GREET_LC_USER);
   if(user){
-    greetUser(user);
+    greet_user(user);
   }else{
-    getUser();
+    greet_getUser();
   }
 }
 
-init();
+greet_init();
