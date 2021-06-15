@@ -1,4 +1,4 @@
-const bgBody=document.bgBody;
+const bgBody=document.body;
 
 function bg_handleLoad(image){
   image.classList.add("bg-image");
