@@ -1,11 +1,10 @@
 const weatherContainer=document.querySelector(".js-weather");
 
 const WEATHER_API_KEY="33a4b37f047d9d66fe381f85dc77ba6f",
-  WEATHER_LC_COORDS="weather-coords";
+  WEATHER_LS_COORDS="weather-coords";
 
 //실제 날씨 표현, 날씨 예보도 추가 
 function weather_info(json){
-  console.log(json);
   const tempNow=json.main.temp,
     tempMax=json.main.temp_max,
     tempMin=json.main.temp_min,
@@ -14,16 +13,16 @@ function weather_info(json){
   const weather=json.weather[0].main,
     wind=json.wind.speed,
     humidity=json.main.humidity;
-  const str=`${location} ${weather} ${tempNow}°C ${humidity}% ${wind}m/s`;
+  const str=`<strong>${location} ${weather} ${tempNow}°C ${humidity}% ${wind}m/s</strong>`;
   weatherContainer.innerHTML=str;
 }
 
 function weather_saveToLocal(coords){
-  localStorage.setItem(WEATHER_LC_COORDS,JSON.stringify(coords));
+  localStorage.setItem(WEATHER_LS_COORDS,JSON.stringify(coords));
 }
 
 function weather_loadFromLocal(){
-  return JSON.parse(localStorage.getItem(WEATHER_LC_COORDS));
+  return JSON.parse(localStorage.getItem(WEATHER_LS_COORDS));
 }
 
 function weather_display(coords){
