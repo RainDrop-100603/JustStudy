@@ -15,6 +15,15 @@ body{
   }
 }
 
+.position-right{
+  background-color: #9AB1DD;
+  position:absolute;
+  right:10%;
+  top:10%;
+  border-radius: 10px;
+  padding:10px;
+}
+
 .bg-image{
   position: absolute;
   top:0;
@@ -24,3 +33,4 @@ body{
   z-index: -1;
   animation: fadeIn 0.5s linear;
 }
+

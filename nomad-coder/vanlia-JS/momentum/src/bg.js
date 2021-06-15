@@ -7,7 +7,7 @@ function bg_handleLoad(image){
 
 function bg_init(){
   const image=new Image();
-  imgNum=Math.floor(Math.random()*2)+4;
+  imgNum=0;
   image.src=`images/${imgNum}.jpg`
   image.addEventListener("load",bg_handleLoad(image),{once:true})
 }
