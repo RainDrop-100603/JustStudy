@@ -13,7 +13,7 @@ function weather_info(json){
   const weather=json.weather[0].main,
     wind=json.wind.speed,
     humidity=json.main.humidity;
-  const str=`<strong>${location} ${weather} ${tempNow}°C ${humidity}% ${wind}m/s</strong>`;
+  const str=`<strong>${location} ${weather}</br>${tempNow}°C ${humidity}% ${wind}m/s</strong>`;
   weatherContainer.innerHTML=str;
 }
 

@@ -19,10 +19,45 @@ function todo_loadFromLocal(){
   }
 }
 
-function todo_displayElement(id,value,target){
-  console.log(id,value,target);
+function todo_handleBtn(event,target){
+  const li=event.target.parentElement; 
+  const fromUl=li.parentElement;
+  //remove
+  fromUl.removeChild(li);
+  const fromTask=fromUl.className.substring(5); //remove todo-
+  const id=li.id;
+  const value=li.querySelector("span").innerText;
+  delete TODO_list[fromTask][id];
+  //add to target ul (if exist)
+  if(target){
+    const targetTask=target.substring(5);
+    TODO_list[targetTask][id]=value;
+    todo_displayElement(id,value,target);
+  }
+  todo_saveToLocal();
 }
 
+function todo_makeBtn(target,icon){
+  const button=document.createElement("button");
+  button.innerText=icon;
+  button.addEventListener("click",function(event){todo_handleBtn(event,target)});
+  return button;
+}
+
+function todo_displayElement(id,value,property){
+  const ul=todoContainer.querySelector("."+property);
+  const li=document.createElement("li");
+  const span=document.createElement("span");
+  li.id=id; span.innerText=value; 
+  li.appendChild(span); 
+  //makeBtn
+  if(property=="todo-pending"){li.appendChild(todo_makeBtn("todo-finished","✔"));}  //finishedBtn
+  if(property=="todo-finished"){li.appendChild(todo_makeBtn("todo-pending","♻"));}  //restoreBtn
+  li.appendChild(todo_makeBtn(null,"❌")); //delBtn
+  //append to html
+  ul.appendChild(li);
+}
+  
 function todo_display(){
   for ([id,value] of Object.entries(TODO_list.pending)){
     todo_displayElement(id,value,"todo-pending");
