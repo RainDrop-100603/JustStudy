@@ -73,6 +73,7 @@ JavaScript의 변수
         메모리에 값을 그대로 저장한다
       Reference data type: Object
         메모리에 값을 주소로 저장한다.
+        https://ryulog.tistory.com/140
     Boolean 
       Boolean 은 논리적인 요소를 나타내고, true 와 false 의 두 가지 값을 가질 수 있다.
     Null  
