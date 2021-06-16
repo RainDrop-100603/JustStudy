@@ -4,6 +4,13 @@ const WEATHER_API_KEY="33a4b37f047d9d66fe381f85dc77ba6f",
   WEATHER_LS_COORDS="weather-coords";
 
 //실제 날씨 표현, 날씨 예보도 추가 
+function weather_icon(str){
+  if(str=="few clouds"){return "⛅"+str;}
+  if(str=="temp"){return "🌡";}
+  if(str=="humidity"){return "💧"}
+  if(str=="wind"){return "🌫"}
+}
+
 function weather_info(json){
   const tempNow=json.main.temp,
     tempMax=json.main.temp_max,
@@ -11,9 +18,12 @@ function weather_info(json){
     tempFeel=json.main.feels_like;    
   const location=json.name;
   const weather=json.weather[0].main,
+    weatherDetail=json.weather[0].description,
     wind=json.wind.speed,
     humidity=json.main.humidity;
-  const str=`<strong>${location} ${weather}</br>${Math.floor(tempNow)}°C ${humidity}% ${wind}m/s</strong>`;
+  console.log(json);
+  const str=`<strong>${location} ${weather_icon(weatherDetail)}</br>
+    ${weather_icon("temp")+Math.floor(tempNow)}°C ${weather_icon("humidity")+humidity}% ${weather_icon("wind")+wind}m/s</strong>`;
   weatherContainer.innerHTML=str;
 }
 
