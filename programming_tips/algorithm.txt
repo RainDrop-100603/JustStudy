@@ -57,6 +57,7 @@ algorithm tips
         strictly decreasing after local maximum
       특수조건
         기울기가 0인지점이 있으면 strictly하지 않지만, 해당 지점이 local maximum(minimum)의 값과 같다면 상관없다.
+        local maximum이 연속적이다 ; 라고 표현할 수 있다.
       lo, hi, 1/3지점, 2/3지점을 확인하여 범위를 좁혀나간다
         f(1/3지점)>f(2/3지점) -> hi=2/3지점, else: lo=1/3지점 
       오차: 이분법과 동일하며, 매 실행시 범위가 2/3으로 줄어든다.
