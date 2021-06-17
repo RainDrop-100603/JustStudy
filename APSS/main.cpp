@@ -13,32 +13,99 @@
 using namespace std;
 
 // Decision Problem, 이분법, 자료형 유의
-void FOSSIL_Input(int& playTime,int& winTime){
-  cin>>playTime>>winTime;
+void FOSSIL_Input(int& fig1Num,int& fig2Num,vector<pair<double,double>>& figure1,vector<pair<double,double>>& figure2){
+  cin>>fig1Num>>fig2Num;
+  figure1.resize(fig1Num);
+  figure2.resize(fig2Num);
+  for(auto& ele: figure1){
+    cin>>ele.first>>ele.second;
+  }
+  for(auto& ele: figure2){
+    cin>>ele.first>>ele.second;
+  }
 }
-bool FOSSIL_decision(long long playTime,long long winTime,long long addWin){
-  long long totalPlay(playTime+addWin),totalWin(winTime+addWin);
-  long long prevWinRate=winTime*100/playTime;
-  long long newWinRate=totalWin*100/totalPlay;
-  return newWinRate>prevWinRate;
-}
-int FOSSIL_Algo(int playTime,int winTime){
-  // f(lo)=true, f(hi)=false;
-  int lo(2000000000),hi(0); 
-  //기저
-  if(!FOSSIL_decision(playTime,winTime,lo)){
+double FOSSIL_yPos(pair<double,double>& point1,pair<double,double>& point2,double xPos){
+  pair<double,double> tmpLo,tmpHi;
+  if(point1.first<point2.first){
+    tmpLo=point1; tmpHi=point2;
+  }else{
+    tmpLo=point2; tmpHi=point1;
+  }
+  if(tmpLo.first<=xPos&&xPos<tmpHi.first){
+    double slope=(tmpHi.second-tmpLo.second)/(tmpHi.first-tmpLo.first);
+    double yPos=tmpLo.second+slope*(xPos-tmpLo.first);
+    return yPos;
+  }else{
     return -1;
   }
-  //이분법 100회 실행
+}
+double FOSSIL_yRange(vector<pair<double,double>>& figure1, vector<pair<double,double>>& figure2,double xPos){
+  pair<double,double> fig1Range={-1,-1},fig2Range={-1,-1};  //(lo~hi)
+  //get yPos for fig1
+  for(int i=0;i+1<figure1.size();i++){
+    double tmpY=FOSSIL_yPos(figure1[i],figure1[i+1],xPos);
+    if(tmpY!=-1){
+      if(fig1Range.first==-1){
+        fig1Range.first=tmpY;
+      }else{
+        fig1Range.second=tmpY;
+      }
+    }
+  }
+  if(fig1Range.second==-1){
+    fig1Range.second=FOSSIL_yPos(figure1.front(),figure1.back(),xPos);
+  }
+  if(fig1Range.first>fig1Range.second){
+    fig1Range=make_pair(fig1Range.second,fig1Range.first);
+  }
+  //get yPos for fig2
+  for(int i=0;i+1<figure2.size();i++){
+    double tmpY=FOSSIL_yPos(figure2[i],figure2[i+1],xPos);
+    if(tmpY!=-1){
+      if(fig2Range.first==-1){
+        fig2Range.first=tmpY;
+      }else{
+        fig2Range.second=tmpY;
+      }
+    }
+  }
+  if(fig2Range.second==-1){
+    fig2Range.second=FOSSIL_yPos(figure1.front(),figure1.back(),xPos);
+  }
+  if(fig2Range.first>fig2Range.second){
+    fig2Range=make_pair(fig2Range.second,fig2Range.first);
+  }
+  //return
+  double lo=max(fig1Range.first,fig2Range.first),hi=min(fig1Range.second,fig2Range.second);
+  return hi-lo;
+}
+pair<double,double> FOSSIL_getLoHi(vector<pair<double,double>>& figure1, vector<pair<double,double>>& figure2){
+  double fig1Leftest(101),fig2Leftest(101),fig1Rightest(-1),fig2Rightest(-1);
+  for(auto& ele: figure1){
+    fig1Leftest=min(fig1Leftest,ele.first);
+    fig1Rightest=max(fig1Rightest,ele.first);
+  }
+  for(auto& ele: figure2){
+    fig2Leftest=min(fig2Leftest,ele.first);
+    fig2Rightest=max(fig2Rightest,ele.first);
+  }
+  return make_pair(max(fig1Leftest,fig2Leftest),min(fig1Rightest,fig2Rightest));
+}
+double FOSSIL_Algo(int fig1Num,int fig2Num,vector<pair<double,double>> figure1, vector<pair<double,double>> figure2){
+  //get lo and hi
+  auto tmp=FOSSIL_getLoHi(figure1,figure2);
+  double lo(tmp.first),hi(tmp.second);
+  //삼분탐색 100회 실행
   for(int i=0;i<100;i++){
-    if(FOSSIL_decision(playTime,winTime,(lo+hi)/2)){
-      lo=(lo+hi)/2;
+    if(FOSSIL_yRange(figure1,figure2,(lo*2+hi)/3)<FOSSIL_yRange(figure1,figure2,(lo+hi*2)/3)){
+      lo=(2*lo+hi)/3;
     }else{
-      hi=(lo+hi)/2;
+      hi=(lo+2*hi)/3;
     }
   }
   //반환 
-  return lo;
+  double result=FOSSIL_yRange(figure1,figure2,(lo+hi)/2);
+  return result < 0 ? 0 : result;
 }
 void FOSSIL(){
   // FOSSIL
@@ -69,6 +136,9 @@ void FOSSIL(){
     convex hull에서 겹치는 부분은 한군데에서만 겹친다(여러군데에서 겹치지 않는다)
       교점이 단 두개이며, lo와 hi로 규정할 수 있다.
       lo와 hi는 영점이므로, 삼분탐색으로 max를 구할 수 있다.
+    convex hull은 시계반대방향순서로 점을 표현해 나타낼 수 있다.
+      ex) 직사각형 ABCD는 (A,B,C,D) -> AB, BC, CD, DA로 이루어진 직사각형 
+      문제에서 이미 시계반대방향순서로 점을 표현했다. -> 선분의 연결관계등은 고민할 필요 없다.
     구하는 조건
       1. lo와 hi를 구해야한다.
           겹치는 점이 여러개일 수 있다.
@@ -79,56 +149,45 @@ void FOSSIL(){
             음수값이어도, 그래프의 모양이 조건을 충족한다면 삼분탐색에는지장이 없다.
             local maximum이 음수일 경우, 겹치지 않는다는 것을 알 수 있을 뿐이다.
       2. 두 convex hull에 대해, 항상 삼분탐색을 이용할 수 있는가
-          convex hull은 내각이 항상 180도 이하이다.
-          만약 두 convex hull이 겹친다면, 교점에 존재하는 교선의 최대 각도는 180도이다.
-            이때 180도인 경우는 선분이 완전히 겹치는 경우
-            설명 추가
-          결론적으로, 겹치는 부분도 convex hull이다.
-      2. 겹침을 어떻게 알아낼 것인가?
-
-      2. 어떤 x좌표에 대해, 각 convex hull에서 어떤 선분이 관여되는지를 알아야한다.
-          이때, 한 x좌표에 대해 각 convex hull은 2개의 선분이 관여되거나, 0개의 선분(양 끝)이 관여될 수 있다.
-            2개의 선분이 관여된다면, 
-      3. convex hull에 대한 고찰
-          선분의 합으로 나타낼 수 있다.
-            각 선분은, 두 점의 관계로 나타낼 수 있다.
-          -> 시작점부터 반시계방향으로 돌아가며 순서대로 점을 표시하면 된다.
-            ex: ABCD라는 사각형은, (A,B,C,D) 로 표시할 수 있다.
-      4. 다양한 형태의 겹침, x에 따른 겹침길이의 그래프
-          일부분이 겹침
-            중심이 먼 겹침 - 마름모 두개가 끝에만 겹친것을 상상하자
-              -> 볼록한 부분끼리의 만남 -> 연속적이며, 삼분탐색의 조건을 만족한다, (local maximum이 연속적일 수 있다.)
-            중심이 가까운 겹침 - 정사각형과, 45도 돌아간 정사각형이 겹친 모습을 상상하자 
-              -> convex hull의 특징을 생각하면 삼분탐색을 사용할 수 있다.
-          포함관계
-            -> 더 작은 convexhull의 세로길이, 삼분탐색의 조건을 만족한다. (local maximum이 연속적일 수 있다.)
-          겹치지않는다.
-            -> 그래도 convex hull의 모습을 생각하면, local maximum이 음수일지 언정 삼분탐색은 사용할 수 있는 모양이다.
-
+          해석 1
+            convex hull은 내각이 항상 180도 미만이다.
+            만약 두 convex hull이 겹친다면, 교점에 존재하는 교선의 최대 각도는 180도이다.
+              이때 180도인 경우는 선분이 완전히 겹치는 경우
+              즉, 나머지 부분의각도는 모두 180도 미만이므로, 겹치는 부분도 convex hull이다.
+                convexhull의 높이는 삼분탐색이 가능한 그래프이다.
+          해석 2
+            아랫 convex hull의 윗부분은, local maximum이 존재하며 삼분탐색이 가능하다. --(1)
+            윗 convex hull의 아랫부분은, local minimum이 존재하며 삼분탐색이 가능하다. --(2)
+            이때 겹치는 높이의 그래프는, (1)에서 (2)를 뺀 것의 그래프와 같다.
+              즉 삼분탐색이 가능하다.
+      3. 겹치는 길이를 구하는 법
+          x에 대해, 각 convex hull에서의 내부 범위를 구하고, 두 convexhull에서 겹치는 범위를 구한다.
+            x좌표를 포함하는 선분은, 시계 반대 방향으로 돌면서 구하면 된다.
+              min(p[n].x,p[n+1].x) <= x position < max(p[n].x,p[n+1].x) -> n과 n+1이 구성하는 선분에 포함됨
   */
   /*전략
   전략1
-    이분법 & decision problem
-    접근방법
-      C번 승리하면 승률이 증가하는지 결정하는 decision problem
-        C는 이분법을 통해 구할 수 있다.
-          반복문 불변식: f(lo)=true, f(hi)=false
-        전체 수행시간은 100(이분법)*m이므로 부담되지 않는다.
+    삼분탐색
+      접근방법
+        1. lo,hi를 구한다. 힌트-구하는조건-1을 참고 : O(n+m)
+        2. 삼분탐색을 100회 수행한다. 겹치는 길이는 힌트-구하는조건-3을 참고 
+            선분 구하기: O(n+m)
+            높이 구하기: O(1)
     시간:
-      O(100*m);
+      O(100*(n+m));
     크기:
-      O(n)
+      O(n+m)
     개선 및 보완
-      static_cast<long long>을 해도 되지만 ,처음부터 전달인자를 long long으로 받아와도 된다.
   */
   //Sol
   int testCase;
   cin>>testCase;
   while(testCase--){
-    int playTime,winTime;
-    FOSSIL_Input(playTime,winTime);
-    auto result=FOSSIL_Algo(playTime,winTime);
-    cout<<result<<endl;
+    int fig1Num,fig2Num;
+    vector<pair<double,double>> figure1,figure2;
+    FOSSIL_Input(fig1Num,fig2Num,figure1,figure2);
+    auto result=FOSSIL_Algo(fig1Num,fig2Num,figure1,figure2);
+    cout<<result<<"::::::::::::::::"<<endl;
   }
 }
 
