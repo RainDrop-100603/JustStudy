@@ -6,7 +6,7 @@ const WEATHER_API_KEY="33a4b37f047d9d66fe381f85dc77ba6f",
 //실제 날씨 표현, 날씨 예보도 추가 
 function weather_icon(str){
   if(str=="few clouds"||str=="scattered clouds"){return "⛅"+str;}
-  if(str=="overcast clouds"){return "☁️"+str;}
+  if(str=="overcast clouds"||str=="broken clouds"){return "☁️"+str;}
   if(str=="temp"){return "🌡️";}
   if(str=="humidity"){return "💧";}
   if(str=="wind"){return "🌬️";}

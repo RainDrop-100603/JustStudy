@@ -4,7 +4,6 @@
   ver3: structure optimize, if you want to add task, just add task_name to TODO_tasks
   ver4: structure optimize, if yoe want to use icon, just add task_icon to TODO_icon
   ver5: structure optimize, you can freely change the task name
-    아직 안끝남 
   ver6: structure optimize, remove TODO_icon, just use one object
 */ 
 
@@ -26,9 +25,10 @@ const TODO_list={}
 
 function todo_saveToLocal(){
   const obj={};
-  const idx=0;
-  for(funcName in TODO_list){
+  let idx=0;
+  for(const funcName in TODO_list){
     obj["task"+idx]=TODO_list[funcName];
+    idx++;
   }
   localStorage.setItem(TODO_LS_LIST,JSON.stringify(obj));
 }
