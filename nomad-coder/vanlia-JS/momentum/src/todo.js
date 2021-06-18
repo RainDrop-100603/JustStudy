@@ -2,11 +2,9 @@ const todoContainer=document.querySelector(".js-todo");
 
 const TODO_LS_LIST="todo-list";
 
-const TODO_list={
-  pending:{},
-  notNow:{},
-  finished:{}
-}
+const TODO_tasks=["pending","notNow","finished"];
+
+const TODO_list={}
 
 function todo_saveToLocal(){
   localStorage.setItem(TODO_LS_LIST,JSON.stringify(TODO_list));
@@ -15,9 +13,7 @@ function todo_saveToLocal(){
 function todo_loadFromLocal(){
   const tmpObj=JSON.parse(localStorage.getItem(TODO_LS_LIST));
   if(tmpObj){
-    TODO_list.pending=tmpObj.pending;
-    TODO_list.notNow=tmpObj.notNow;
-    TODO_list.finished=tmpObj.finished;
+    TODO_tasks.forEach(ele => TODO_list[ele]=tmpObj[ele]);
   }
 }
 
@@ -53,25 +49,28 @@ function todo_displayElement(id,value,property){
   li.id=id; span.innerText=value; 
   li.appendChild(span); 
   //makeBtn
-  if(property=="todo-pending"){li.appendChild(todo_makeBtn("todo-finished","✔"));}  //finishedBtn
-  if(property=="todo-pending"){li.appendChild(todo_makeBtn("todo-notNow","LATER"));}  //finishedBtn
-  if(property=="todo-notNow"){li.appendChild(todo_makeBtn("todo-pending","NOW"));}  //finishedBtn
-  if(property=="todo-finished"){li.appendChild(todo_makeBtn("todo-pending","♻"));}  //restoreBtn
+  if(property=="todo-pending"){
+    li.appendChild(todo_makeBtn("todo-finished","✔")); //finishedBtn
+    li.appendChild(todo_makeBtn("todo-notNow","LATER"));  //laterBtn
+  }  
+  if(property=="todo-notNow"){
+    li.appendChild(todo_makeBtn("todo-pending","NOW")); //nowBtn
+  }  
+  if(property=="todo-finished"){
+    li.appendChild(todo_makeBtn("todo-pending","♻"));  //restoreBtn
+  }  
   li.appendChild(todo_makeBtn(null,"❌")); //delBtn
   //append to html
   ul.appendChild(li);
 }
   
 function todo_display(){
-  for ([id,value] of Object.entries(TODO_list.pending)){
-    todo_displayElement(id,value,"todo-pending");
-  }
-  for ([id,value] of Object.entries(TODO_list.notNow)){
-    todo_displayElement(id,value,"todo-notNow");
-  }
-  for ([id,value] of Object.entries(TODO_list.finished)){
-    todo_displayElement(id,value,"todo-finished");
-  }
+  TODO_tasks.forEach(function(taskName){
+    obj=TODO_list[taskName];
+    for([id,value] of Object.entries(obj)){
+      todo_displayElement(id,value,"todo-"+taskName);
+    }
+  });
 }
 
 function todo_handleSubmit(event){
@@ -93,19 +92,19 @@ function todo_buildEachHtml(listName){
   todoContainer.appendChild(span); todoContainer.appendChild(ul);
 }
 
-function todo_buildHtmlBase(){
+function todo_buildBase(){
+  //build todo-list base
+  TODO_tasks.forEach(ele => TODO_list[ele]={}); 
   //build input
   const input=document.createElement("input"); input.type="text"; input.placeholder="to do task";
   const form=document.createElement("form"); form.addEventListener("submit",todo_handleSubmit);
   form.appendChild(input); todoContainer.appendChild(form);
   //build pending task, finished task
-  todo_buildEachHtml("pending");
-  todo_buildEachHtml("notNow");
-  todo_buildEachHtml("finished");
+  TODO_tasks.forEach(ele => todo_buildEachHtml(ele));
 }
 
 function todo_init(){
-  todo_buildHtmlBase();
+  todo_buildBase();
   todo_loadFromLocal();
   todo_display();
 }
