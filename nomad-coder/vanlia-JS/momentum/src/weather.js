@@ -12,6 +12,7 @@ function weather_icon(str){
   if(str=="wind"){return "🌬️";}
   if(str=="clear sky"){return "🌞"+str;}
   if(str=="mist"){return "🌫️"+str;}
+  if(str=="light intensity drizzle"){return "🌧️"+str;}
 }
 
 function weather_info(json){
