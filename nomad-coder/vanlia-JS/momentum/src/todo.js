@@ -2,6 +2,8 @@ const todoContainer=document.querySelector(".js-todo");
 
 const TODO_LS_LIST="todo-list";
 
+//if you want to add task, add name to here
+//if you want to make Btn, add Btn to todo_displayElement
 const TODO_tasks=["pending","notNow","finished"];
 
 const TODO_list={}
