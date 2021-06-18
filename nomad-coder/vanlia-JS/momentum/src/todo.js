@@ -1,11 +1,23 @@
+/*
+  ver1: basic
+  ver2: basic, just add later
+  ver3: structure update, if you want to add task, just add task_name to TODO_tasks
+  ver4: structure update, if yoe want to use icon, just add task_icon to TODO_icon
+*/ 
+
 const todoContainer=document.querySelector(".js-todo");
 
 //key of localStorage
 const TODO_LS_LIST="todo-list";
 
 //if you want to add task, add name to here
-//if you want to make Btn, add Btn to todo_displayElement
-const TODO_tasks=["pending","notNow","finished"];
+//if you want to make Btn, add Btn to todo_displayElement function
+const TODO_tasks=["pending","later","finished"];
+const TODO_icon={
+  pending:"⌛",
+  later:"🟢",
+  finished:"🏁"
+}
 
 const TODO_list={}
 
@@ -38,9 +50,13 @@ function todo_handleBtn(event,target){
   todo_saveToLocal();
 }
 
-function todo_makeBtn(target,icon){
+function todo_makeBtn(target){
   const button=document.createElement("button");
-  button.innerText=icon;
+  if(target){
+    button.innerText=TODO_icon[target.slice(5)];
+  }else{
+    button.innerText="❌";
+  }
   button.addEventListener("click",function(event){todo_handleBtn(event,target)});
   return button;
 }
@@ -53,16 +69,16 @@ function todo_displayElement(id,value,property){
   li.appendChild(span); 
   //makeBtn
   if(property=="todo-pending"){
-    li.appendChild(todo_makeBtn("todo-finished","✔")); //finishedBtn
-    li.appendChild(todo_makeBtn("todo-notNow","LATER"));  //laterBtn
+    li.appendChild(todo_makeBtn("todo-finished")); //finishedBtn
+    li.appendChild(todo_makeBtn("todo-later"));  //laterBtn
   }  
-  if(property=="todo-notNow"){
-    li.appendChild(todo_makeBtn("todo-pending","NOW")); //nowBtn
+  if(property=="todo-later"){
+    li.appendChild(todo_makeBtn("todo-pending")); //nowBtn
   }  
   if(property=="todo-finished"){
-    li.appendChild(todo_makeBtn("todo-pending","♻"));  //restoreBtn
+    li.appendChild(todo_makeBtn("todo-pending"));  //restoreBtn
   }  
-  li.appendChild(todo_makeBtn(null,"❌")); //delBtn
+  li.appendChild(todo_makeBtn(null)); //delBtn
   //append to html
   ul.appendChild(li);
 }
@@ -89,7 +105,7 @@ function todo_handleSubmit(event){
 }
 
 function todo_buildEachHtml(listName){
-  listNameCapital=listName.charAt(0).toUpperCase() + listName.slice(1);
+  const listNameCapital=TODO_icon[listName]+listName.charAt(0).toUpperCase() + listName.slice(1);
   const ul=document.createElement("ul"); ul.classList.add("todo-"+listName);
   const span=document.createElement("span"); span.innerHTML=`<strong>${listNameCapital}</strong>`;
   todoContainer.appendChild(span); todoContainer.appendChild(ul);
