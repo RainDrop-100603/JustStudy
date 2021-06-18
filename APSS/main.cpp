@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// Decision Problem, 이분법, 자료형 유의
+// Decision Problem, 삼분탐색, 차분히 힌트를 찾아서 풀자
 void FOSSIL_Input(int& fig1Num,int& fig2Num,vector<pair<double,double>>& figure1,vector<pair<double,double>>& figure2){
   cin>>fig1Num>>fig2Num;
   figure1.resize(fig1Num);
@@ -70,7 +70,7 @@ double FOSSIL_yRange(vector<pair<double,double>>& figure1, vector<pair<double,do
     }
   }
   if(fig2Range.second==-1){
-    fig2Range.second=FOSSIL_yPos(figure1.front(),figure1.back(),xPos);
+    fig2Range.second=FOSSIL_yPos(figure2.front(),figure2.back(),xPos);
   }
   if(fig2Range.first>fig2Range.second){
     fig2Range=make_pair(fig2Range.second,fig2Range.first);
@@ -187,7 +187,9 @@ void FOSSIL(){
     vector<pair<double,double>> figure1,figure2;
     FOSSIL_Input(fig1Num,fig2Num,figure1,figure2);
     auto result=FOSSIL_Algo(fig1Num,fig2Num,figure1,figure2);
-    cout<<result<<"::::::::::::::::"<<endl;
+    cout<<fixed;
+    cout.precision(10);
+    cout<<result<<endl;
   }
 }
 

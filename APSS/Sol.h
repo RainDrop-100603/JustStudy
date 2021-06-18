@@ -311,3 +311,11 @@ void RATIO();
         두 그래프의 기울기가 일치하면, 합친 그래프의 기울기는 0이 되는것을 의미한다.
         그러나 기울기가 0이 되는 부분은 반드시 최대(최소)이기 때문에, 여전히 삼분탐색을 이용할 수 있다.
 */
+
+// Decision Problem, 삼분탐색, 차분히 힌트를 찾아서 풀자
+void FOSSIL_Input(int& fig1Num,int& fig2Num,vector<pair<double,double>>& figure1,vector<pair<double,double>>& figure2);
+double FOSSIL_yPos(pair<double,double>& point1,pair<double,double>& point2,double xPos);
+double FOSSIL_yRange(vector<pair<double,double>>& figure1, vector<pair<double,double>>& figure2,double xPos);
+pair<double,double> FOSSIL_getLoHi(vector<pair<double,double>>& figure1, vector<pair<double,double>>& figure2);
+double FOSSIL_Algo(int fig1Num,int fig2Num,vector<pair<double,double>> figure1, vector<pair<double,double>> figure2);
+void FOSSIL();
