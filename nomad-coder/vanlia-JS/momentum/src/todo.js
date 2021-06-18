@@ -4,6 +4,7 @@ const TODO_LS_LIST="todo-list";
 
 const TODO_list={
   pending:{},
+  notNow:{},
   finished:{}
 }
 
@@ -15,6 +16,7 @@ function todo_loadFromLocal(){
   const tmpObj=JSON.parse(localStorage.getItem(TODO_LS_LIST));
   if(tmpObj){
     TODO_list.pending=tmpObj.pending;
+    TODO_list.notNow=tmpObj.notNow;
     TODO_list.finished=tmpObj.finished;
   }
 }
@@ -52,6 +54,8 @@ function todo_displayElement(id,value,property){
   li.appendChild(span); 
   //makeBtn
   if(property=="todo-pending"){li.appendChild(todo_makeBtn("todo-finished","✔"));}  //finishedBtn
+  if(property=="todo-pending"){li.appendChild(todo_makeBtn("todo-notNow","LATER"));}  //finishedBtn
+  if(property=="todo-notNow"){li.appendChild(todo_makeBtn("todo-pending","NOW"));}  //finishedBtn
   if(property=="todo-finished"){li.appendChild(todo_makeBtn("todo-pending","♻"));}  //restoreBtn
   li.appendChild(todo_makeBtn(null,"❌")); //delBtn
   //append to html
@@ -61,6 +65,9 @@ function todo_displayElement(id,value,property){
 function todo_display(){
   for ([id,value] of Object.entries(TODO_list.pending)){
     todo_displayElement(id,value,"todo-pending");
+  }
+  for ([id,value] of Object.entries(TODO_list.notNow)){
+    todo_displayElement(id,value,"todo-notNow");
   }
   for ([id,value] of Object.entries(TODO_list.finished)){
     todo_displayElement(id,value,"todo-finished");
@@ -79,18 +86,22 @@ function todo_handleSubmit(event){
   todo_displayElement(newID,inputValue,"todo-pending");
 }
 
+function todo_buildEachHtml(listName){
+  listNameCapital=listName.charAt(0).toUpperCase() + listName.slice(1);
+  const ul=document.createElement("ul"); ul.classList.add("todo-"+listName);
+  const span=document.createElement("span"); span.innerHTML=`<strong>${listNameCapital}</strong>`;
+  todoContainer.appendChild(span); todoContainer.appendChild(ul);
+}
+
 function todo_buildHtmlBase(){
   //build input
   const input=document.createElement("input"); input.type="text"; input.placeholder="to do task";
   const form=document.createElement("form"); form.addEventListener("submit",todo_handleSubmit);
   form.appendChild(input); todoContainer.appendChild(form);
   //build pending task, finished task
-  const ulPending=document.createElement("ul"); ulPending.classList.add("todo-pending");
-  const spanPending=document.createElement("span"); spanPending.innerHTML="<strong>Pending</strong>";
-  todoContainer.appendChild(spanPending); todoContainer.appendChild(ulPending);
-  const ulFinished=document.createElement("ul");ulFinished.classList.add("todo-finished");
-  const spanFinished=document.createElement("span"); spanFinished.innerHTML="<strong>Finished</strong>";
-  todoContainer.appendChild(spanFinished); todoContainer.appendChild(ulFinished);
+  todo_buildEachHtml("pending");
+  todo_buildEachHtml("notNow");
+  todo_buildEachHtml("finished");
 }
 
 function todo_init(){

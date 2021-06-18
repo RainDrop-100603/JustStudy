@@ -118,6 +118,10 @@ JavaScript의 변수
           Map과 WeakMap의 차이는 전자는 오브젝트 키를 열거할 수 있다는 것이다. 이것은 가비지 콜렉션에서 이점을 준다.
         TypedArrays
 
+String
+  문자열 자르기
+    substr, substring, slice
+    https://hianna.tistory.com/340
 
 JavaScript의 함수 선언
   오버로딩이 불가능하다

@@ -11,6 +11,7 @@ function weather_icon(str){
   if(str=="humidity"){return "💧";}
   if(str=="wind"){return "🌬️";}
   if(str=="clear sky"){return "🌞"+str;}
+  if(str=="mist"){return "🌫️"+str;}
 }
 
 function weather_info(json){
