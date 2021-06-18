@@ -1,5 +1,6 @@
 const todoContainer=document.querySelector(".js-todo");
 
+//key of localStorage
 const TODO_LS_LIST="todo-list";
 
 //if you want to add task, add name to here
