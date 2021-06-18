@@ -2,9 +2,9 @@
   ver1: basic
   ver2: basic, just add later
   ver3: structure optimize, if you want to add task, just add task_name to TODO_tasks
-  ver4: structure optimize, if yoe want to use icon, just add task_icon to TODO_icon
+  ver4: structure optimize, if yoe want to use icon, just add task_icon to TODO_icons
   ver5: structure optimize, you can freely change the task name
-  ver6: structure optimize, remove TODO_icon, just use one object
+  ver6: structure optimize, merge TODO_tasks and TODO_icons
 */ 
 
 const todoContainer=document.querySelector(".js-todo");
@@ -14,8 +14,7 @@ const TODO_LS_LIST="todo-list";
 
 //if you want to add task, add name to here
 //if you want to make Btn, add Btn to todo_displayElement function
-const TODO_tasks=["pending","later","finished"];
-const TODO_icon={
+const TODO_tasks={
   pending:"⌛",
   later:"🟢",
   finished:"🏁"
@@ -36,8 +35,8 @@ function todo_saveToLocal(){
 function todo_loadFromLocal(){
   const tmpObj=JSON.parse(localStorage.getItem(TODO_LS_LIST));
   if(tmpObj){
-    for(tmpKey in tmpObj){
-      const taskName=TODO_tasks[tmpKey.slice(4)];
+    for(const tmpKey in tmpObj){
+      const taskName=Object.keys(TODO_tasks)[parseInt(tmpKey.slice(4))];
       if(taskName){
         TODO_list[taskName]=tmpObj[tmpKey];
       }
@@ -66,7 +65,7 @@ function todo_handleBtn(event,target){
 function todo_makeBtn(target){
   const button=document.createElement("button");
   if(target){
-    button.innerText=TODO_icon[target.slice(5)];
+    button.innerText=TODO_tasks[target.slice(5)];
   }else{
     button.innerText="❌";
   }
@@ -97,15 +96,15 @@ function todo_displayElement(id,value,property){
 }
   
 function todo_display(){
-  TODO_tasks.forEach(function(taskName){
+  for(const taskName in TODO_tasks){
     const obj=TODO_list[taskName];
     const isEmpty=(obj&&Object.keys(obj).length===0 && obj.constructor === Object);
     if(!isEmpty){
-      for(id in obj){
+      for(const id in obj){
         todo_displayElement(id,obj[id],"todo-"+taskName);
       }
     }
-  });
+  }
 }
 
 function todo_handleSubmit(event){
@@ -121,7 +120,7 @@ function todo_handleSubmit(event){
 }
 
 function todo_buildEachHtml(listName){
-  const listNameCapital=TODO_icon[listName]+listName.charAt(0).toUpperCase() + listName.slice(1);
+  const listNameCapital=TODO_tasks[listName]+listName.charAt(0).toUpperCase() + listName.slice(1);
   const ul=document.createElement("ul"); ul.classList.add("todo-"+listName);
   const span=document.createElement("span"); span.innerHTML=`<strong>${listNameCapital}</strong>`;
   todoContainer.appendChild(span); todoContainer.appendChild(ul);
@@ -129,13 +128,13 @@ function todo_buildEachHtml(listName){
 
 function todo_buildBase(){
   //build todo-list base
-  TODO_tasks.forEach(ele => TODO_list[ele]={}); 
+  for(const taskName in TODO_tasks){TODO_list[taskName]={};}
   //build input
   const input=document.createElement("input"); input.type="text"; input.placeholder="to do task";
   const form=document.createElement("form"); form.addEventListener("submit",todo_handleSubmit);
   form.appendChild(input); todoContainer.appendChild(form);
   //build pending task, finished task
-  TODO_tasks.forEach(ele => todo_buildEachHtml(ele));
+  for(const taskName in TODO_tasks){todo_buildEachHtml(taskName);}
 }
 
 function todo_init(){
