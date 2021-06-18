@@ -3,6 +3,7 @@
   ver2: basic, just add later
   ver3: structure update, if you want to add task, just add task_name to TODO_tasks
   ver4: structure update, if yoe want to use icon, just add task_icon to TODO_icon
+  ver5: structure update, you can freely change the task name
 */ 
 
 const todoContainer=document.querySelector(".js-todo");
