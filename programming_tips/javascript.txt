@@ -123,6 +123,13 @@ String
     substr, substring, slice
     https://hianna.tistory.com/340
 
+Object  
+  empty chk
+    obj && Object.keys(obj).length===0 && obj.constructor === Object
+      null,undefined chk
+      element개수 체크 (빈 arr인 []도 0을 반환)
+      빈 arr인 []을 걸러주기 위함 
+
 JavaScript의 함수 선언
   오버로딩이 불가능하다
     각각의 js파일의 함수를 object의 내장함수로 구현하면 중복우려를 덜 수 있다.
