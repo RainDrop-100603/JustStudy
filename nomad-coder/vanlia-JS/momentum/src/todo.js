@@ -5,6 +5,7 @@
   ver4: structure optimize, if yoe want to use icon, just add task_icon to TODO_icons
   ver5: structure optimize, you can freely change the task name
   ver6: structure optimize, merge TODO_tasks and TODO_icons
+  ver7: structure optimize, button operation is declared on front
 */ 
 
 const todoContainer=document.querySelector(".js-todo");
@@ -18,6 +19,11 @@ const TODO_tasks={
   pending:"⌛",
   later:"🟢",
   finished:"🏁"
+}
+const TODO_btnOperation={
+  pending:["later","finished"],
+  later:["pending"],
+  finished:["pending"]
 }
 
 const TODO_list={}
@@ -62,14 +68,14 @@ function todo_handleBtn(event,target){
   todo_saveToLocal();
 }
 
-function todo_makeBtn(target){
+function todo_makeBtn(destTask){
   const button=document.createElement("button");
-  if(target){
-    button.innerText=TODO_tasks[target.slice(5)];
+  if(destTask){
+    button.innerText=TODO_tasks[destTask.slice(5)];
   }else{
     button.innerText="❌";
   }
-  button.addEventListener("click",function(event){todo_handleBtn(event,target)});
+  button.addEventListener("click",function(event){todo_handleBtn(event,destTask)});
   return button;
 }
 
@@ -80,16 +86,13 @@ function todo_displayElement(id,value,property){
   li.id=id; span.innerText=value; 
   li.appendChild(span); 
   //makeBtn
-  if(property=="todo-pending"){
-    li.appendChild(todo_makeBtn("todo-finished")); //finishedBtn
-    li.appendChild(todo_makeBtn("todo-later"));  //laterBtn
-  }  
-  if(property=="todo-later"){
-    li.appendChild(todo_makeBtn("todo-pending")); //nowBtn
-  }  
-  if(property=="todo-finished"){
-    li.appendChild(todo_makeBtn("todo-pending"));  //restoreBtn
-  }  
+  for(const fromTask in TODO_btnOperation){
+    if(property==="todo-"+fromTask){
+      TODO_btnOperation[fromTask].forEach(function(destTask){
+        li.appendChild(todo_makeBtn("todo-"+destTask));
+      })
+    }
+  }
   li.appendChild(todo_makeBtn(null)); //delBtn
   //append to html
   ul.appendChild(li);
