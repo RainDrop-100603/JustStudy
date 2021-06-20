@@ -1,0 +1,62 @@
+현재진도
+#2.6, 6:21
+
+
+html-css
+1. website can be made of min 1(html), max 3(html-css-js) language
+2. html is markup language, describe the content of our website
+3. css is design language, tell how the content of our website looks like
+4. JS is programming language, make our website interactive
+
+
+html tip
+
+1.browser는 단순한 출력기계. code가 적절하게 사용되면 해당 기능을 포함하여 출력하지만, 부적절하게 사용되도 (기능만 제외되었을 뿐)내용은 출력한다. 
+    즉 code를 부적절하게 사용했더라도, error가 뜨거나 하지 않는다.
+Tag and Attributes
+    <tag attributes="data">content</tag>
+    tag: content의 종류를 알려주는 역할
+        </tag>를 통해 닫아주어야 한다.
+    self-closing tag: text content가 없는 경우 (ex: img) 
+    attributes: tag에 추가하는 부가적인 정보
+        특정 tag에서만 작동하는 attributes가 있다.(ex: href)
+    적절한 Place에 적절한 tag, attributes를 이용해야 brwoser가 인식한다.
+
+3.self-closing 
+4.html 형식(규칙)
+    1. <!DOCTYPE html> 로 시작 - 브라우저에게 html임을 알려줌 
+    2. <html> all code </html> - all code는 html태그 사이에 넣는다.
+        head-body 구조
+            head: 외부적으로 보여지지 않는 설정, head에 있는 모든 tag들은 보여지지 않는다? 
+                homepage가 아닌 다른 부분(상단 title부분, 검색시 meta 부분 등등)에서 보여진다는 의미인듯 
+            body: 사용자가 볼 수 있는 content
+        meta: 사이트에 대한 여러 정보, 설정, 추가정보등  
+
+    <!DOCTYPE html>
+    <html lang="kr">    ->사이트의  주 사용 언어가 kr임을 나타냄 -> 검색엔진에 도움 
+        <head>
+            <title> First Homapage </title>         -> tab에 나오는 부분, 검색시 나오는 이름 
+            <meta charset="utf-8" />        -> 문자 인코딩 방식 -> 해당 인코딩이 지원하지 않는 문자는 깨지게 된다.
+            <meta name="description" content="This is my first website" />      ->검색시 title아래 나오는 content 부분 
+                title과 description은 구글 검색에서 중요한 비중을 차지한다.
+                    이때 description은 contest attribute를 말하는가? content attribute를 말하는가? 
+        </head>
+        <body>
+            <h1>
+                hello!
+            </h1>
+            <a href="https://google.com" tagert="_blank">go to Google</a>
+            <img src="img/google logo.png" />
+        </body>
+    </html>
+
+
+html-tag 
+    h1 (header 1) ~ h6 : header(주제 등)을 보여주는데 이용 
+    ul (unordered list)
+    li (list item)
+    ol (ordered list)
+    a (anchor) : link
+Tag Attributes
+    href(html ref or hyperlink ref) : 링크를 지정 
+    target : 링크가 열리는 위치 지정(_self는 이 탭, _blank는 다른 탭)
