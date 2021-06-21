@@ -276,7 +276,7 @@ double WITHDRAWL_Algo(int classNum,int requiredNum,vector<int> order,vector<int>
 void WITHDRAWL();
 
 
-// Decision Problem, 이분법
+// 수치해석, 이분법
 void ROOTS_Input(int& power, vector<double>& coefficients);
 vector<double> ROOTS_2ndEquation(const vector<double>& coefficients);
 vector<double> ROOTS_differential(const vector<double>& coefficients);
@@ -284,19 +284,19 @@ double ROOTS_funcValue(double variable, const vector<double>& coefficients);
 vector<double> ROOTS_Algo(int power, const vector<double>& coefficients);
 void ROOTS();
 
-// Decision Problem, 이분법, 최초 lo, hi를 넉넉하게 결정하자
+// 수치해석, 이분법, 최초 lo, hi를 넉넉하게 결정하자
 void LOAN_Input(double& loan,int& month,double& interest);
 double LOAN_funcValue(double loan,int month,double interest, double pay);
 double LOAN_Algo(double loan,int month,double interest);
 void LOAN();
 
-// Decision Problem, 이분법, 자료형 유의, 수학적 해법도 생각은 해보자 
+// 수치해석, 이분법, 자료형 유의, 수학적 해법도 생각은 해보자 
 void RATIO_Input(int& playTime,int& winTime);
 bool RATIO_decision(long long playTime,long long winTime,long long addWin);
 int RATIO_Algo(int playTime,int winTime);
 void RATIO();
 
-//철인 2종경기, Decision Problem, 삼분탐색, local minimum, 그래프를 그려서 조건 확인 
+//철인 2종경기, 수치해석, 삼분탐색, local minimum, 그래프를 그려서 조건 확인 
 /*
   삼분탐색
     달리기거리(r)에 따른 시간(time)그래프, 시간이 낮을수록 좋은것
@@ -312,7 +312,7 @@ void RATIO();
         그러나 기울기가 0이 되는 부분은 반드시 최대(최소)이기 때문에, 여전히 삼분탐색을 이용할 수 있다.
 */
 
-// Decision Problem, 삼분탐색, 차분히 힌트를 찾아서 풀자
+// 수치해석, 삼분탐색, 차분히 힌트를 찾아서 풀자
 void FOSSIL_Input(int& fig1Num,int& fig2Num,vector<pair<double,double>>& figure1,vector<pair<double,double>>& figure2);
 double FOSSIL_yPos(pair<double,double>& point1,pair<double,double>& point2,double xPos);
 double FOSSIL_yRange(vector<pair<double,double>>& figure1, vector<pair<double,double>>& figure2,double xPos);
