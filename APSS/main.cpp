@@ -14,31 +14,61 @@ using namespace std;
 
 // 정수론
 void PASS486_Input(int& number,int& low,int& hi){
-  cin>>fig1Num>>fig2Num;
-  figure1.resize(fig1Num);
-  figure2.resize(fig2Num);
-  for(auto& ele: figure1){
-    cin>>ele.first>>ele.second;
+  cin>>number>>low>>hi;
+}
+int PASS486_Divisor(vector<int>& primeArr,int num){
+  int count(1),primeCount(0),prime(0);
+  //primeArr[num]==0 : num = 0 or 1
+  while(int divisor=primeArr[num]){
+    if(prime==divisor){
+      primeCount++;
+    }else{
+      count*=primeCount+1;
+      primeCount=1;
+      prime=divisor;
+    }
+    num/=divisor;
   }
-  for(auto& ele: figure2){
-    cin>>ele.first>>ele.second;
+  count*=primeCount+1;
+  return count;
+}
+int PASS486_DP(vector<int>& primeArr, int num){
+  int& result=primeArr[num];
+  if(result!=-1){
+    return result;
+  }
+  //Algo
+  result=
+}
+void PASS486_GetPrime(vector<int>& primeArr){
+  //arr[i]==i : 소수, arr[i]==소수 : 가장 작은 소인수, arr[i]==0: 0혹은 1 
+  int size=primeArr.size();
+  int sqrtSize=static_cast<int>(sqrt(size));
+  for(int i=2;i<size;i++){
+    primeArr[i]=i;
+  }
+  //에라스토테네스의 채
+  for(int i=2;i<=sqrtSize;i++){
+    for(int now=i*i;now<size;now++){
+      if(primeArr[now]==now){
+        primeArr[now]=i;
+      }
+    }
   }
 }
 int PASS486_Algo(int number,int low,int hi){
-  //get lo and hi
-  auto tmp=PASS486_getLoHi(figure1,figure2);
-  double lo(tmp.first),hi(tmp.second);
-  //삼분탐색 100회 실행
-  for(int i=0;i<100;i++){
-    if(PASS486_yRange(figure1,figure2,(lo*2+hi)/3)<PASS486_yRange(figure1,figure2,(lo+hi*2)/3)){
-      lo=(2*lo+hi)/3;
-    }else{
-      hi=(lo+2*hi)/3;
+  //애라스토테네스의 채
+  vector<int> primeArr(hi+1,0);
+  PASS486_GetPrime(primeArr);
+  //Algo
+  int count=0;
+  for(int num=low;num<=hi;num++){
+    if(PASS486_Divisor(primeArr,num)==number){
+      count++;
     }
   }
   //반환 
-  double result=PASS486_yRange(figure1,figure2,(lo+hi)/2);
-  return result < 0 ? 0 : result;
+  return count;
 }
 void PASS486(){
   // PASS486
@@ -76,6 +106,9 @@ void PASS486(){
     크기:
       O(1천만*4byte)~=40MB
     개선 및 보완
+      시간초과, 200 1000000 2000000 : 2.96875s
+      Divisor에서 잦은 호출을 줄임 -> 1.4375s
+      Divisor에서 하나씩 구하는게 아니라, DP방식으로 구하자 
   */
   //Sol
   int testCase;
@@ -89,11 +122,11 @@ void PASS486(){
 }
 
 int main(void){
-   //clock_t start,end;
-   //start=clock();
+   clock_t start,end;
+   start=clock();
  PASS486();
-   //end=clock();;
-   //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+   end=clock();;
+   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
 
