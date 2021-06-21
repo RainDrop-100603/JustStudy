@@ -16,30 +16,6 @@ using namespace std;
 void PASS486_Input(int& number,int& low,int& hi){
   cin>>number>>low>>hi;
 }
-int PASS486_Divisor(vector<int>& primeArr,int num){
-  int count(1),primeCount(0),prime(0);
-  //primeArr[num]==0 : num = 0 or 1
-  while(int divisor=primeArr[num]){
-    if(prime==divisor){
-      primeCount++;
-    }else{
-      count*=primeCount+1;
-      primeCount=1;
-      prime=divisor;
-    }
-    num/=divisor;
-  }
-  count*=primeCount+1;
-  return count;
-}
-int PASS486_DP(vector<int>& primeArr, int num){
-  int& result=primeArr[num];
-  if(result!=-1){
-    return result;
-  }
-  //Algo
-  result=
-}
 void PASS486_GetPrime(vector<int>& primeArr){
   //arr[i]==i : 소수, arr[i]==소수 : 가장 작은 소인수, arr[i]==0: 0혹은 1 
   int size=primeArr.size();
@@ -49,21 +25,41 @@ void PASS486_GetPrime(vector<int>& primeArr){
   }
   //에라스토테네스의 채
   for(int i=2;i<=sqrtSize;i++){
-    for(int now=i*i;now<size;now++){
-      if(primeArr[now]==now){
-        primeArr[now]=i;
+    if(primeArr[i]==i){  //소수인 경우만 
+      for(int now=i*i;now<size;now+=i){
+        if(primeArr[now]==now){
+          primeArr[now]=i;
+        }
       }
     }
   }
 }
-int PASS486_Algo(int number,int low,int hi){
-  //애라스토테네스의 채
-  vector<int> primeArr(hi+1,0);
-  PASS486_GetPrime(primeArr);
+int PASS486_GetFactor(vector<int>& primeArr, vector<int>& factorArr,vector<int>& minFactorNum,int num){
+  int& result=factorArr[num];
+  if(result!=-1){
+    return result;
+  }
+  if(num==1){
+    return 1;
+  }
+  //algo
+  int minPrime=primeArr[num];
+  int& primeNum=minFactorNum[num];
+  //prevNum을 가져올 뿐 아니라, minFactorNum갱신
+  int prevNum=PASS486_GetFactor(primeArr,factorArr,minFactorNum,num/minPrime);  
+  if(primeArr[num/minPrime]!=minPrime){
+    primeNum=1;
+  }else{
+    primeNum=minFactorNum[num/minPrime]+1;
+  }
+  result=prevNum*(primeNum+1)/primeNum;
+  return result;
+}
+int PASS486_Algo(vector<int>& primeArr,vector<int>& factorArr,vector<int>& minFactorNum,int number,int low,int hi){
   //Algo
   int count=0;
   for(int num=low;num<=hi;num++){
-    if(PASS486_Divisor(primeArr,num)==number){
+    if(PASS486_GetFactor(primeArr,factorArr,minFactorNum,num)==number){
       count++;
     }
   }
@@ -106,27 +102,39 @@ void PASS486(){
     크기:
       O(1천만*4byte)~=40MB
     개선 및 보완
-      시간초과, 200 1000000 2000000 : 2.96875s
-      Divisor에서 잦은 호출을 줄임 -> 1.4375s
-      Divisor에서 하나씩 구하는게 아니라, DP방식으로 구하자 
+      시간초과
+      소수를 전역변수로 구해서 중복을 줄여야 할거같은데?  -> 1864ms 
+      DP방식으로 풀 수 있다. 이것 역시 전역변수로 선언하면 재활용이 가능하다. -> 844ms
+        dp[x]=xp[x/prime]*(primeNum+1)/primeNum, prime=x의 가장 작은 소인수 
+        가장 작은 소인수의 개수도 DP방식으로 풀어버리자  -> 512ms
+  전략2
+    x=1~sqrt(n), x의 배수에 1씩 추가한다.(brute force)
+    따로 계산은 안함  
   */
   //Sol
   int testCase;
   cin>>testCase;
+  //전역변수
+  int maxNum=10*1000*1000;
+  vector<int> primeArr(maxNum+1,0);
+  vector<int> factorArr(maxNum+1,-1); 
+  vector<int> minFactorNum(maxNum+1,-1);
+  PASS486_GetPrime(primeArr);
+  //각 테스트케이스
   while(testCase--){
     int number,low,hi;
     PASS486_Input(number,low,hi);
-    auto result=PASS486_Algo(number,low,hi);
+    auto result=PASS486_Algo(primeArr,factorArr,minFactorNum,number,low,hi);
     cout<<result<<endl;
   }
 }
 
 int main(void){
-   clock_t start,end;
-   start=clock();
+   //clock_t start,end;
+   //start=clock();
  PASS486();
-   end=clock();;
-   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+   //end=clock();;
+   //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
 

@@ -312,10 +312,17 @@ void RATIO();
         그러나 기울기가 0이 되는 부분은 반드시 최대(최소)이기 때문에, 여전히 삼분탐색을 이용할 수 있다.
 */
 
-// 수치해석, 삼분탐색, 차분히 힌트를 찾아서 풀자
+// @* 수치해석, 삼분탐색, 차분히 힌트를 찾아서 풀자
 void FOSSIL_Input(int& fig1Num,int& fig2Num,vector<pair<double,double>>& figure1,vector<pair<double,double>>& figure2);
 double FOSSIL_yPos(pair<double,double>& point1,pair<double,double>& point2,double xPos);
 double FOSSIL_yRange(vector<pair<double,double>>& figure1, vector<pair<double,double>>& figure2,double xPos);
 pair<double,double> FOSSIL_getLoHi(vector<pair<double,double>>& figure1, vector<pair<double,double>>& figure2);
 double FOSSIL_Algo(int fig1Num,int fig2Num,vector<pair<double,double>> figure1, vector<pair<double,double>> figure2);
 void FOSSIL();
+
+// @* 정수론, 약수계산, 에라스토테네스의채, DP와 전역변수등을 적절히 이용하자, brute force도 고려할만 하다. 
+void PASS486_Input(int& number,int& low,int& hi);
+void PASS486_GetPrime(vector<int>& primeArr);
+int PASS486_GetFactor(vector<int>& primeArr, vector<int>& factorArr,vector<int>& minFactorNum,int num);
+int PASS486_Algo(vector<int>& primeArr,vector<int>& factorArr,vector<int>& minFactorNum,int number,int low,int hi);
+void PASS486();
