@@ -326,3 +326,9 @@ void PASS486_GetPrime(vector<int>& primeArr);
 int PASS486_GetFactor(vector<int>& primeArr, vector<int>& factorArr,vector<int>& minFactorNum,int num);
 int PASS486_Algo(vector<int>& primeArr,vector<int>& factorArr,vector<int>& minFactorNum,int number,int low,int hi);
 void PASS486();
+
+// 정수론, 유클리드 알고리즘 최대공약수를 이용
+void POTION_Input(int& num,vector<int>& recipe,vector<int>& used);
+int POTION_getGCD(int p,int q);
+vector<int> POTION_Algo(int num,vector<int> recipe,vector<int> used);
+void POTION();

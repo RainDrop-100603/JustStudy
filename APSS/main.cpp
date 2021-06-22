@@ -12,129 +12,115 @@
 
 using namespace std;
 
-// 정수론
-void PASS486_Input(int& number,int& low,int& hi){
-  cin>>number>>low>>hi;
-}
-void PASS486_GetPrime(vector<int>& primeArr){
-  //arr[i]==i : 소수, arr[i]==소수 : 가장 작은 소인수, arr[i]==0: 0혹은 1 
-  int size=primeArr.size();
-  int sqrtSize=static_cast<int>(sqrt(size));
-  for(int i=2;i<size;i++){
-    primeArr[i]=i;
+// 정수론, 유클리드 알고리즘 최대공약수를 이용
+void POTION_Input(int& num,vector<int>& recipe,vector<int>& used){
+  cin>>num;
+  recipe.resize(num);
+  for(auto& ele:recipe){
+    cin>>ele;
   }
-  //에라스토테네스의 채
-  for(int i=2;i<=sqrtSize;i++){
-    if(primeArr[i]==i){  //소수인 경우만 
-      for(int now=i*i;now<size;now+=i){
-        if(primeArr[now]==now){
-          primeArr[now]=i;
-        }
-      }
-    }
+  used.resize(num);
+  for(auto& ele:used){
+    cin>>ele;
   }
 }
-int PASS486_GetFactor(vector<int>& primeArr, vector<int>& factorArr,vector<int>& minFactorNum,int num){
-  int& result=factorArr[num];
-  if(result!=-1){
-    return result;
+int POTION_getGCD(int p,int q){
+  return q==0 ? p : POTION_getGCD(q,p%q);
+}
+vector<int> POTION_Algo(int num,vector<int> recipe,vector<int> used){
+  //get ratio and factor
+  vector<int> ratio(recipe);
+  int factor=0;
+  for(int i=0;i<num;i++){
+    factor=POTION_getGCD(factor,recipe[i]);
   }
-  if(num==1){
-    return 1;
+  for(auto& ele:ratio){
+    ele/=factor;
   }
-  //algo
-  int minPrime=primeArr[num];
-  int& primeNum=minFactorNum[num];
-  //prevNum을 가져올 뿐 아니라, minFactorNum갱신
-  int prevNum=PASS486_GetFactor(primeArr,factorArr,minFactorNum,num/minPrime);  
-  if(primeArr[num/minPrime]!=minPrime){
-    primeNum=1;
-  }else{
-    primeNum=minFactorNum[num/minPrime]+1;
+  //get new factor
+  int newFactor=0;
+  for(int i=0;i<num;i++){
+    int tmp=ceil(static_cast<double>(used[i])/ratio[i]);
+    newFactor=max(newFactor,tmp);
   }
-  result=prevNum*(primeNum+1)/primeNum;
+  newFactor=max(newFactor,factor);
+  //get result
+  vector<int> result(num);
+  for(int i=0;i<num;i++){
+    result[i]=ratio[i]*newFactor-used[i];
+  } 
   return result;
 }
-int PASS486_Algo(vector<int>& primeArr,vector<int>& factorArr,vector<int>& minFactorNum,int number,int low,int hi){
-  //Algo
-  int count=0;
-  for(int num=low;num<=hi;num++){
-    if(PASS486_GetFactor(primeArr,factorArr,minFactorNum,num)==number){
-      count++;
-    }
-  }
-  //반환 
-  return count;
-}
-void PASS486(){
-  // PASS486
+void POTION(){
+  // POTION
   /*설명 및 입력
   설명
-    비밀번호는 [lo,hi] 범위에 존재한다.
-    비밀번호는 n개의 약수를 가진다.
-    비밀번호의 경우의 수를 구하여라
+    마법의 약은 n 종류의 재료를 각 ri 숟가락씩 넣어서 만들어야 합니다. 
+      모든 재료를 정확히 넣었을 경우 만들어진 마법의 약은 정확히 한 병 분량이 됩니다.
+    헤리가 이미 냄비에 넣은 각 재료들의 양은 pi 로 주어집니다. 
+      헤리는 적절히 냄비에 재료를 최소한으로 더 넣어 각 재료의 비율을 정확히 맞추고 싶습니다.
+      이를 위해 한 병보다 많은 약을 만들어도 상관 없지만, 최소한 한 병은 만들어야 합니다. 
+    헤리는 항상 숟가락 단위로만 재료를 넣을 수 있기 때문에, 반 숟가락의 재료를 더 넣는다거나 하는 일은 불가능합니다.
+    넣어야 할 각 재료의 최소량을 계산하는 프로그램을 작성하세요.
   입력
-    입력의 첫 줄에는 테스트 케이스의 수 c(c <= 50)가 주어집니다. 
-    그 후 c줄에 각 3개의 정수로 n (n < 400), lo , hi(1 <= lo <= hi <= 10,000,000)이 주어집니다. 
-    hi-lo 는 항상 1백만 이하입니다.
+    입력의 첫 줄에는 테스트 케이스의 수 c (c <= 50) 가 주어집니다. 
+    각 테스트 케이스는 세 줄로 구성됩니다. 
+      첫 줄에는 재료의 수 n (1 <= n <= 200) 이 주어지고, 
+      다음 줄에는 n 개의 정수로 약에 들어가야 하는 각 재료의 양 ri (1 <= ri <= 1000), 
+      그 다음 줄에는 n 개의 정수로 이미 냄비에 넣은 재료의 양 pi (0 <= pi <= 1000) 가 주어집니다.
   출력
-    각 테스트 케이스마다, 해당 범위 내에 비밀번호가 될 수 있는 숫자가 몇 개인지 출력합니다.
+    각 테스트 케이스마다 한 줄에 n 개의 정수로 각 재료마다 더 넣어야 하는 양을 출력합니다.
   제한조건
-    5초, 128MB
+    1초, 64MB
   */
   /*힌트
-    소인수 분해를 하고, 약수의 개수를 구하면 된다.
-      약수의 개수: 아주 간단함
-      소인수 분해: 에라스토테네스의 채를 이용하여 구한다.
-    수의 범위는 1천만 이하다.
-      에라스토테네스의 채: root(1천만)~=3300
-      소인수분해: 최대 log2(1천만)=23
-    최대 100만개의 수를 모두 계산해야 하나? 
-      일단 풀어보고 최적화를 하든가 하자 
+    반 숟가락을 더 넣을수는 없지만, 1.5병, 1.333병등의 분량은 만들 수 있다.
+    풀이법
+      1.각 재료의 비율을 구한다.
+          기존 레시피의 최대공약수를 구한 후, 각 값을 최대공약수로 나눠주면 된다.
+      2. 비율에 몇배를 해야 조건을 만족하는지 구한다. (배율을 구한다)
+          넣은 재료에 대해, 각각의 재료를 비율로 나눠주어 올림하고, 해당 값의 최대치를 구한다.
+            기존 레시피에 대한 수행값은 최대공약수와 같다.
+          max(새로 구한 배율, 기존 최대공약수)
   */
   /*전략
   전략1
-    소인수분해
-      소인수 분해를 통해 약수를 구하고, 약수의 개수를 구한다.
-      소인수분해는 아레스토테네스의 채를 이용한다.
-    시간:
-      O(1백만*root(1천만)*약수의개수(최대 23개)));
-    크기:
-      O(1천만*4byte)~=40MB
+    최대공약수의 이용
+      1.각 재료의 비율을 구한다.  -> O(n)
+          기존 레시피의 최대공약수를 구한 후, 각 값을 최대공약수로 나눠주면 된다.
+      2. 비율에 몇배를 해야 조건을 만족하는지 구한다. (배율을 구한다) -> O(n)
+          넣은 재료에 대해, 각각의 재료를 비율로 나눠주어 올림하고, 해당 값의 최대치를 구한다.  ->O(n)
+            기존 레시피에 대한 수행값은 최대공약수와 같다.
+          max(새로 구한 배율, 기존 최대공약수)
+    시간
+      O(n)
+    크기
+      O(1)
     개선 및 보완
-      시간초과
-      소수를 전역변수로 구해서 중복을 줄여야 할거같은데?  -> 1864ms 
-      DP방식으로 풀 수 있다. 이것 역시 전역변수로 선언하면 재활용이 가능하다. -> 844ms
-        dp[x]=xp[x/prime]*(primeNum+1)/primeNum, prime=x의 가장 작은 소인수 
-        가장 작은 소인수의 개수도 DP방식으로 풀어버리자  -> 512ms
-  전략2
-    x=1~sqrt(n), x의 배수에 1씩 추가한다.(brute force)
-    따로 계산은 안함  
   */
   //Sol
   int testCase;
   cin>>testCase;
   //전역변수
-  int maxNum=10*1000*1000;
-  vector<int> primeArr(maxNum+1,0);
-  vector<int> factorArr(maxNum+1,-1); 
-  vector<int> minFactorNum(maxNum+1,-1);
-  PASS486_GetPrime(primeArr);
   //각 테스트케이스
   while(testCase--){
-    int number,low,hi;
-    PASS486_Input(number,low,hi);
-    auto result=PASS486_Algo(primeArr,factorArr,minFactorNum,number,low,hi);
-    cout<<result<<endl;
+    int num;
+    vector<int> recipe,used;
+    POTION_Input(num,recipe,used);
+    auto result=POTION_Algo(num,recipe,used);
+    //cout<<"::::";
+    for(auto& ele:result){
+      cout<<ele<<" ";
+    }cout<<endl;
   }
 }
 
 int main(void){
-   //clock_t start,end;
-   //start=clock();
- PASS486();
-   //end=clock();;
-   //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+    //clock_t start,end;
+    //start=clock();
+  POTION();
+    //end=clock();;
+    //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
 
