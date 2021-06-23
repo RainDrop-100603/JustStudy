@@ -2,3 +2,6 @@ c++ tips
 
 상수는 int로 취급된다. long long으로 취급하고 싶다면, LL 혹은 i64 를 상수뒤에 붙이면 된다.
 참조형 변수를 여러개 선언할 때, int &var1, &var2 와 같이 선언해야한다.
+
+https://seastar105.tistory.com/65
+explicit 생성자에 대한 내용 
