@@ -12,6 +12,24 @@
 
 using namespace std;
 
+class vector2{  //2차원벡터
+  const double PI=2.0*acos(0.0);
+public:
+  double x,y;
+  vector2(double x_=0, double y_=0):x(x_),y(y_){}
+  bool operator==(const vector2& rhs)const {return x==rhs.x&&y==rhs.y; }
+  bool operator<(const vector2& rhs)const {return x!=rhs.x ? x<rhs.x : y<rhs.y; }
+  vector2 operator+(const vector2& rhs)const {return vector2(x+rhs.x,y+rhs.y); }
+  vector2 operator-(const vector2& rhs)const {return vector2(x-rhs.x,y-rhs.y); }
+  vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
+  double length()const {return hypot(x,y); }
+  vector2 normalize()const {return vector2(x/length(),y/length()); }
+  vector2 polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); }
+  double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
+  double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
+  vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
+};
+
 // 정수론, 유클리드 알고리즘 최대공약수를 이용
 void POTION_Input(int& num,vector<int>& recipe,vector<int>& used){
   cin>>num;
