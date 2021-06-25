@@ -41,47 +41,56 @@ void PINBALL_Input(int& xPos,int& yPos,int& dx,int& dy,int& num,vector<int>& cen
     cin>>centerX[i]>>centerY[i]>>radius[i];
   }
 }
+vector2 PINBALL_lineSym(vector2 point1,vector2 a,vector2 b){
+  //point1을 직선 ab에대해 선대칭 이동한다.
+  vector2 crossPoint=point1.perpendicularFoot(a,b);
+  return point1+(crossPoint-point1)*2;
+}
 double PINBALL_length(vector2 center,double radius,vector2 ballPoint,vector2 ballVector){
-  vector2 pFoot=center.perpendicularFoot(ballPoint,ballVector);
-  double distanceShort=(center-pFoot).length();
-  double distanceLong=(pFoot-ballPoint).length();
+  vector2 pFoot=center.perpendicularFoot(ballPoint,ballPoint+ballVector);
+  double lenShort=(center-pFoot).length();
   //범위를 벗어나거나, 만나지 않는지 테스트
+  if(pFoot.x>=99.0||pFoot.y>=99.0||pFoot.x<=1||pFoot.y<=1||lenShort>=radius+1.0){
+    return 2000.0;
+  }
   //길이 반환 
-  double realLength=
+  double lenLong=(pFoot-ballPoint).length();
+  return lenLong-sqrt(pow(radius+1,2)-pow(lenShort,2));
 }
 vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count){
-  //기저, 100회 반복
-  if(count==100){
+  //기저, count만큼 반복
+  if(count==0){
     return vector<int>();
   }
   //원과 만나는 벡터 중 가장 가까운 벡터를 구한다.
   double minLen=1000.0;
-  int circleNum=-1;
+  int circleIdx=-1;
   for(int i=0;i<centerX.size();i++){
     double length=PINBALL_length(vector2(centerX[i],centerY[i]),radius[i],ballPoint,ballVector);
     if(length<minLen){
       minLen=length;
-      circleNum=i;
+      circleIdx=i;
     }
   }
-  if(circleNum==-1){  //벽과 만났다.
+  if(circleIdx==-1){  //벽과 만났다.
     return vector<int>();
   }
   // 새로운 핀볼의 위치와 방향벡터를 구한다.
-  vector2 newBallPoint(ballVector*sqrt(minLen)+ballPoint);
-  vector2 vectorC(newBallPoint.x-centerX[circleNum],newBallPoint.y-centerY[circleNum]);
-  vectorC=vectorC.normalize();
-  vector2 newBallVector(PINBALL_lineSym(ballVector,vectorC));
+  vector2 center(centerX[circleIdx],centerY[circleIdx]);
+  vector2 newBallPoint=ballPoint+ballVector*minLen;
+  vector2 newBallVector=PINBALL_lineSym(ballPoint,newBallPoint,center)-newBallPoint;
+  newBallVector.normalize();
   //재귀, 정답을 반대로 저장함에 유위하자
-  vector<int> result=PINBALL_func(centerX,centerY,radius,newBallPoint,newBallVector,count+1);
-  result.push_back(circleNum);
+  vector<int> result=PINBALL_func(centerX,centerY,radius,newBallPoint,newBallVector,count-1);
+  result.push_back(circleIdx);
   return result;
 }
 vector<int> PINBALL_Algo(int xPos,int yPos,int dx,int dy,int num,vector<int> centerX,vector<int> centerY,vector<int> radius){
   //재귀함수 구현
   vector2 ballPoint(xPos,yPos),ballVector(dx,dy); 
   ballVector=ballVector.normalize();
-  vector<int> result=PINBALL_func(centerX,centerY,radius,ballPoint,ballVector,0);
+  int count=100;
+  vector<int> result=PINBALL_func(centerX,centerY,radius,ballPoint,ballVector,count);
   reverse(result.begin(),result.end());
   return result;
 }
@@ -151,13 +160,13 @@ void PINBALL(){
   /*전략
   전략1
     벡터의 이용
-      1. 각 원의 중심과 벡터 사이의 거리를 구한다. -> O(n)
-      2. 만나는 원 중 가장 가까운 것을 찾는다. projection과 피타고라스의 정리를 이용한다. -> O(n)
+      1. 각 원의 중심과 직선 사이의 거리를 구한다. -> O(n)
+          거리가 원의반지름+1 이하라면 만나는 것이다.
+      2. 만나는 원 중 가장 가까운 것을 찾는다. 수선의발, 반지름+1, 피타고라스의 정리를 이용한다. -> O(n)
           만나는 원이 없거나, 만나는 위치가 범위 밖이라면 벽을 만난 것이다.
-      3. 원과 벡터의 교점을 구한다. 단위벡터에 root(거리)를 곱하면 된다. -> O(1)
-      4. 시작점을, 원의 중심과 교점을 잇는 벡터에 대해 선대칭 이동한다. -> O(1)
-      5. 원과의 교점과 선대칭이동된 점이 이루는 벡터가 새로운 벡터이다.
-      6. 벽을 만나거나 100회 반복할때까지 반복한다. -> O(100)
+      3. 핀볼이 멈춘 지점의 벡터를 구한다. 원의중심에서 직선으로 수선의 발을 내리면 된다.
+      4. 핀볼의 시작위치를, 수선의 발에 대해 선대칭이동한다. 이것이 핀볼이 다시 이동할 방향이다.
+      5. 벽을 만나거나 100회 반복할때까지 반복한다. -> O(100)
     시간
       O(100n)
     크기
