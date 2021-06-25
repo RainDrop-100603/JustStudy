@@ -29,6 +29,8 @@ public:
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
+  //기타 함수들
+  vector2 perpendicularFoot(const vector2& a,const vector2& b)const {return a+(*this-a).project(b-a); }//*this에서 직선ab에 내린 수선의 발
 };
 
 // 정수론, 유클리드 알고리즘 최대공약수를 이용
@@ -40,7 +42,12 @@ void PINBALL_Input(int& xPos,int& yPos,int& dx,int& dy,int& num,vector<int>& cen
   }
 }
 double PINBALL_length(vector2 center,double radius,vector2 ballPoint,vector2 ballVector){
-  double wholeLength=
+  vector2 pFoot=center.perpendicularFoot(ballPoint,ballVector);
+  double distanceShort=(center-pFoot).length();
+  double distanceLong=(pFoot-ballPoint).length();
+  //범위를 벗어나거나, 만나지 않는지 테스트
+  //길이 반환 
+  double realLength=
 }
 vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count){
   //기저, 100회 반복
