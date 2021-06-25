@@ -17,6 +17,7 @@ class vector2{  //2차원벡터
 public:
   double x,y;
   vector2(double x_=0, double y_=0):x(x_),y(y_){}
+  vector2 operator=(const vector2& rhs){x=rhs.x;y=rhs.y; return *this;}
   bool operator==(const vector2& rhs)const {return x==rhs.x&&y==rhs.y; }
   bool operator<(const vector2& rhs)const {return x!=rhs.x ? x<rhs.x : y<rhs.y; }
   vector2 operator+(const vector2& rhs)const {return vector2(x+rhs.x,y+rhs.y); }
@@ -31,42 +32,50 @@ public:
 };
 
 // 정수론, 유클리드 알고리즘 최대공약수를 이용
-void PINBALL_Input(int& num,vector<int>& recipe,vector<int>& used){
-  cin>>num;
-  recipe.resize(num);
-  for(auto& ele:recipe){
-    cin>>ele;
-  }
-  used.resize(num);
-  for(auto& ele:used){
-    cin>>ele;
+void PINBALL_Input(int& xPos,int& yPos,int& dx,int& dy,int& num,vector<int>& centerX,vector<int>& centerY,vector<int>& radius){
+  cin>>xPos>>yPos>>dx>>dy>>num;
+  centerX.resize(num);centerY.resize(num);radius.resize(num);
+  for(int i=0;i<num;i++){
+    cin>>centerX[i]>>centerY[i]>>radius[i];
   }
 }
-int PINBALL_getGCD(int p,int q){
-  return q==0 ? p : PINBALL_getGCD(q,p%q);
+double PINBALL_length(vector2 center,double radius,vector2 ballPoint,vector2 ballVector){
+  double wholeLength=
 }
-vector<int> PINBALL_Algo(int num,vector<int> recipe,vector<int> used){
-  //get ratio and factor
-  vector<int> ratio(recipe);
-  int factor=0;
-  for(int i=0;i<num;i++){
-    factor=PINBALL_getGCD(factor,recipe[i]);
+vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count){
+  //기저, 100회 반복
+  if(count==100){
+    return vector<int>();
   }
-  for(auto& ele:ratio){
-    ele/=factor;
+  //원과 만나는 벡터 중 가장 가까운 벡터를 구한다.
+  double minLen=1000.0;
+  int circleNum=-1;
+  for(int i=0;i<centerX.size();i++){
+    double length=PINBALL_length(vector2(centerX[i],centerY[i]),radius[i],ballPoint,ballVector);
+    if(length<minLen){
+      minLen=length;
+      circleNum=i;
+    }
   }
-  //get new factor
-  int newFactor=0;
-  for(int i=0;i<num;i++){
-    int tmp=ceil(static_cast<double>(used[i])/ratio[i]);
-    newFactor=max(newFactor,tmp);
+  if(circleNum==-1){  //벽과 만났다.
+    return vector<int>();
   }
-  newFactor=max(newFactor,factor);
-  //get result
-  vector<int> result(num);
-  for(int i=0;i<num;i++){
-    result[i]=ratio[i]*newFactor-used[i];
-  } 
+  // 새로운 핀볼의 위치와 방향벡터를 구한다.
+  vector2 newBallPoint(ballVector*sqrt(minLen)+ballPoint);
+  vector2 vectorC(newBallPoint.x-centerX[circleNum],newBallPoint.y-centerY[circleNum]);
+  vectorC=vectorC.normalize();
+  vector2 newBallVector(PINBALL_lineSym(ballVector,vectorC));
+  //재귀, 정답을 반대로 저장함에 유위하자
+  vector<int> result=PINBALL_func(centerX,centerY,radius,newBallPoint,newBallVector,count+1);
+  result.push_back(circleNum);
+  return result;
+}
+vector<int> PINBALL_Algo(int xPos,int yPos,int dx,int dy,int num,vector<int> centerX,vector<int> centerY,vector<int> radius){
+  //재귀함수 구현
+  vector2 ballPoint(xPos,yPos),ballVector(dx,dy); 
+  ballVector=ballVector.normalize();
+  vector<int> result=PINBALL_func(centerX,centerY,radius,ballPoint,ballVector,0);
+  reverse(result.begin(),result.end());
   return result;
 }
 void PINBALL(){
@@ -110,10 +119,14 @@ void PINBALL(){
           원을 만났더라도, 이때의 좌표가 범위(0~100)를 벗어나면, 벽을 만난것으로 판단한다.
       방법1
         원의 중심과 벡터와의 거리를 구한다. -> 원과 만나는지 알 수 있다.
+          거리는 1+원의 반지름 이하여야 한다.
         시작점부터 교점까지의 좌표가 가장 작은 것이 가장 먼저 만나는 점이다.
           시작점-원의 중심 벡터를 a라 하자, 핀볼의 경로는 벡터 b
-          벡터a를 벡터b에 projection, 원의 중심과 벡터b의 거리를 구하고, 원의 반지름을 이용한 피타고라스의 정리(그림그려보자)
-          길이를 알고나면, 교점도 알 수 있다. 
+          벡터a를 벡터b에 projection, 원의 중심과 벡터b의 거리를 구하고, 원의 반지름+1을 이용한 피타고라스의 정리(그림그려보자)
+            핀볼의 이동거리와 새로운 중심을 구할 수 있다.
+          원과 핀볼의 교점도 구할 수 있다. (필요할지는 모르겠다)
+            핀볼의 새로운 중심에서 원의 중심을 향한 벡터를 c라 하자
+            벡터 a와 벡터 c를 더하면, 핀볼의 시작점에서 핀볼과 원의 교점으로 향하는 벡터다. 
         모든 원에 대해 수행하면 된다.
     입사각과 반사각이 같도록 튕겨나가는 것을 구현해야 한다.
       힌트
@@ -150,11 +163,11 @@ void PINBALL(){
   //전역변수
   //각 테스트케이스
   while(testCase--){
-    int xPos,yPos,dx,dy,N;
+    int xPos,yPos,dx,dy,num;
     vector<int> centerX,centerY,radius;
-    PINBALL_Input(num,recipe,used);
-    auto result=PINBALL_Algo(num,recipe,used);
-    //cout<<"::::";
+    PINBALL_Input(xPos,yPos,dx,dy,num,centerX,centerY,radius);
+    auto result=PINBALL_Algo(xPos,yPos,dx,dy,num,centerX,centerY,radius);
+    cout<<"::::";
     for(auto& ele:result){
       cout<<ele<<" ";
     }cout<<endl;
