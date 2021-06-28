@@ -49,7 +49,7 @@ void PINBALL_Input(int& xPos,int& yPos,int& dx,int& dy,int& num,vector<int>& cen
 }
 vector2 PINBALL_lineSym(vector2 point1,vector2 a,vector2 b){
   //point1을 직선 ab에대해 선대칭 이동한다.
-  vector2 crossPoint=point1.pFoot(a,b-a);
+  vector2 crossPoint=point1.pFoot(a,(b-a).normalize());
   return point1+(crossPoint-point1)*2;
 }
 double PINBALL_ifMet(vector2 center,double radius,vector2 ballPoint,vector2 ballVector){
@@ -69,8 +69,15 @@ double PINBALL_ifMet(vector2 center,double radius,vector2 ballPoint,vector2 ball
   }
   return distance;
 }
+double PINBALL_ifMet2(vector2 center,double radius,vector2 ballPoint,vector2 ballVector){
+  vector2 foot=center.pFoot(ballPoint,ballVector);
+  if((center-foot).length()>=radius+1||ballVector.dot(center-ballPoint)<=0){
+    return 0;
+  }
+  //이분법 계산
+  //이 부분을, new ballpoint를 반환하는 함수로 바꾸자. 그래야 방법을 바꾸더라도 쉽게 계산할 수 있다.
+}
 vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count){
-  cout<<count<<":"<<ballPoint<<":"<<ballVector<<":"<<endl;
   //기저, count만큼 반복
   if(count==0){
     return vector<int>();
@@ -79,7 +86,7 @@ vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& 
   double minDist=1000.0;
   int circleIdx=-1;
   for(int i=0;i<centerX.size();i++){
-    if(int distance=PINBALL_ifMet(vector2(centerX[i],centerY[i]),radius[i],ballPoint,ballVector)){
+    if(double distance=PINBALL_ifMet(vector2(centerX[i],centerY[i]),radius[i],ballPoint,ballVector)){
       if(distance<minDist){
         minDist=distance;
         circleIdx=i;
@@ -94,6 +101,9 @@ vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& 
   vector2 newBallPoint=ballPoint+ballVector*minDist;
   vector2 newBallVector=PINBALL_lineSym(ballPoint,center,newBallPoint)-newBallPoint;
   newBallVector=newBallVector.normalize();
+  //test
+  vector2 foot=center.pFoot(ballPoint,ballVector);
+  cout<<pow(radius[circleIdx]+1,2)<<"="<<pow((foot-ballPoint).length()-minDist,2)+pow((foot-center).length(),2)<<endl;
   //재귀, 정답을 반대로 저장함에 유위하자
   vector<int> result=PINBALL_func(centerX,centerY,radius,newBallPoint,newBallVector,count-1);
   result.push_back(circleIdx);
@@ -191,6 +201,8 @@ void PINBALL(){
   int testCase;
   cin>>testCase;
   //전역변수
+  cout<<fixed;
+  cout.precision(10);
   //각 테스트케이스
   while(testCase--){
     int xPos,yPos,dx,dy,num;
