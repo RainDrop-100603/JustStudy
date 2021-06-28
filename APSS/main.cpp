@@ -30,8 +30,14 @@ public:
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
   //기타 함수들
-  vector2 perpendicularFoot(const vector2& a,const vector2& b)const {return a+(*this-a).project(b-a); }//*this에서 직선ab에 내린 수선의 발
+  vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); }//*this에서 직선ab에 내린 수선의 발
+  //전역함수 오버로딩
+  friend ostream& operator<<(ostream& os, vector2& vec);
 };
+ostream& operator<<(ostream& os, vector2& vec){
+  os<<"("<<vec.x<<","<<vec.y<<")";
+  return os;
+}
 
 // 정수론, 유클리드 알고리즘 최대공약수를 이용
 void PINBALL_Input(int& xPos,int& yPos,int& dx,int& dy,int& num,vector<int>& centerX,vector<int>& centerY,vector<int>& radius){
@@ -43,32 +49,42 @@ void PINBALL_Input(int& xPos,int& yPos,int& dx,int& dy,int& num,vector<int>& cen
 }
 vector2 PINBALL_lineSym(vector2 point1,vector2 a,vector2 b){
   //point1을 직선 ab에대해 선대칭 이동한다.
-  vector2 crossPoint=point1.perpendicularFoot(a,b);
+  vector2 crossPoint=point1.pFoot(a,b-a);
   return point1+(crossPoint-point1)*2;
 }
 double PINBALL_length(vector2 center,double radius,vector2 ballPoint,vector2 ballVector){
-  vector2 pFoot=center.perpendicularFoot(ballPoint,ballPoint+ballVector);
+  vector2 pFoot=center.pFoot(ballPoint,ballVector);
   double lenShort=(center-pFoot).length();
-  //범위를 벗어나거나, 만나지 않는지 테스트
-  if(pFoot.x>=99.0||pFoot.y>=99.0||pFoot.x<=1||pFoot.y<=1||lenShort>=radius+1.0){
+  //만나지 않는경우
+  if(lenShort>=radius+1.0){
     return 2000.0;
   }
-  //길이 반환 
+  //길이 계산
   double lenLong=(pFoot-ballPoint).length();
-  return lenLong-sqrt(pow(radius+1,2)-pow(lenShort,2));
+  double distance=lenLong-sqrt(pow(radius+1,2)-pow(lenShort,2));
+  vector2 newBall=ballPoint+ballVector*distance;
+  //공이 범위를 벗어난 경우 
+  if(newBall.x>=99||newBall.x<=1||newBall.y>=99||newBall.y<=1){
+    return 2000.0;
+  }
+  return distance;
 }
-vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count){
+vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count, int lastCircle){
+  cout<<"___"<<count<<":"<<ballPoint<<":"<<ballVector<<":"<<lastCircle<<endl;
   //기저, count만큼 반복
   if(count==0){
     return vector<int>();
   }
   //원과 만나는 벡터 중 가장 가까운 벡터를 구한다.
-  double minLen=1000.0;
+  double minDist=1000.0;
   int circleIdx=-1;
   for(int i=0;i<centerX.size();i++){
-    double length=PINBALL_length(vector2(centerX[i],centerY[i]),radius[i],ballPoint,ballVector);
-    if(length<minLen){
-      minLen=length;
+    if(i==lastCircle){
+      continue;
+    }
+    double distance=PINBALL_length(vector2(centerX[i],centerY[i]),radius[i],ballPoint,ballVector);
+    if(distance<minDist){
+      minDist=distance;
       circleIdx=i;
     }
   }
@@ -77,11 +93,11 @@ vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& 
   }
   // 새로운 핀볼의 위치와 방향벡터를 구한다.
   vector2 center(centerX[circleIdx],centerY[circleIdx]);
-  vector2 newBallPoint=ballPoint+ballVector*minLen;
-  vector2 newBallVector=PINBALL_lineSym(ballPoint,newBallPoint,center)-newBallPoint;
-  newBallVector.normalize();
+  vector2 newBallPoint=ballPoint+ballVector*minDist;
+  vector2 newBallVector=PINBALL_lineSym(ballPoint,center,newBallPoint)-newBallPoint;
+  newBallVector=newBallVector.normalize();
   //재귀, 정답을 반대로 저장함에 유위하자
-  vector<int> result=PINBALL_func(centerX,centerY,radius,newBallPoint,newBallVector,count-1);
+  vector<int> result=PINBALL_func(centerX,centerY,radius,newBallPoint,newBallVector,count-1,circleIdx);
   result.push_back(circleIdx);
   return result;
 }
@@ -90,7 +106,7 @@ vector<int> PINBALL_Algo(int xPos,int yPos,int dx,int dy,int num,vector<int> cen
   vector2 ballPoint(xPos,yPos),ballVector(dx,dy); 
   ballVector=ballVector.normalize();
   int count=100;
-  vector<int> result=PINBALL_func(centerX,centerY,radius,ballPoint,ballVector,count);
+  vector<int> result=PINBALL_func(centerX,centerY,radius,ballPoint,ballVector,count,-1);
   reverse(result.begin(),result.end());
   return result;
 }
