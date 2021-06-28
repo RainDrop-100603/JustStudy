@@ -52,12 +52,12 @@ vector2 PINBALL_lineSym(vector2 point1,vector2 a,vector2 b){
   vector2 crossPoint=point1.pFoot(a,b-a);
   return point1+(crossPoint-point1)*2;
 }
-double PINBALL_length(vector2 center,double radius,vector2 ballPoint,vector2 ballVector){
+double PINBALL_ifMet(vector2 center,double radius,vector2 ballPoint,vector2 ballVector){
   vector2 pFoot=center.pFoot(ballPoint,ballVector);
   double lenShort=(center-pFoot).length();
   //만나지 않는경우
-  if(lenShort>=radius+1.0){
-    return 2000.0;
+  if(lenShort>=radius+1.0||ballVector.dot(center-ballPoint)<=0){
+    return 0;
   }
   //길이 계산
   double lenLong=(pFoot-ballPoint).length();
@@ -65,12 +65,12 @@ double PINBALL_length(vector2 center,double radius,vector2 ballPoint,vector2 bal
   vector2 newBall=ballPoint+ballVector*distance;
   //공이 범위를 벗어난 경우 
   if(newBall.x>=99||newBall.x<=1||newBall.y>=99||newBall.y<=1){
-    return 2000.0;
+    return 0;
   }
   return distance;
 }
-vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count, int lastCircle){
-  cout<<"___"<<count<<":"<<ballPoint<<":"<<ballVector<<":"<<lastCircle<<endl;
+vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count){
+  cout<<count<<":"<<ballPoint<<":"<<ballVector<<":"<<endl;
   //기저, count만큼 반복
   if(count==0){
     return vector<int>();
@@ -79,13 +79,11 @@ vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& 
   double minDist=1000.0;
   int circleIdx=-1;
   for(int i=0;i<centerX.size();i++){
-    if(i==lastCircle){
-      continue;
-    }
-    double distance=PINBALL_length(vector2(centerX[i],centerY[i]),radius[i],ballPoint,ballVector);
-    if(distance<minDist){
-      minDist=distance;
-      circleIdx=i;
+    if(int distance=PINBALL_ifMet(vector2(centerX[i],centerY[i]),radius[i],ballPoint,ballVector)){
+      if(distance<minDist){
+        minDist=distance;
+        circleIdx=i;
+      }
     }
   }
   if(circleIdx==-1){  //벽과 만났다.
@@ -97,7 +95,7 @@ vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& 
   vector2 newBallVector=PINBALL_lineSym(ballPoint,center,newBallPoint)-newBallPoint;
   newBallVector=newBallVector.normalize();
   //재귀, 정답을 반대로 저장함에 유위하자
-  vector<int> result=PINBALL_func(centerX,centerY,radius,newBallPoint,newBallVector,count-1,circleIdx);
+  vector<int> result=PINBALL_func(centerX,centerY,radius,newBallPoint,newBallVector,count-1);
   result.push_back(circleIdx);
   return result;
 }
@@ -106,7 +104,7 @@ vector<int> PINBALL_Algo(int xPos,int yPos,int dx,int dy,int num,vector<int> cen
   vector2 ballPoint(xPos,yPos),ballVector(dx,dy); 
   ballVector=ballVector.normalize();
   int count=100;
-  vector<int> result=PINBALL_func(centerX,centerY,radius,ballPoint,ballVector,count,-1);
+  vector<int> result=PINBALL_func(centerX,centerY,radius,ballPoint,ballVector,count);
   reverse(result.begin(),result.end());
   return result;
 }
@@ -199,7 +197,7 @@ void PINBALL(){
     vector<int> centerX,centerY,radius;
     PINBALL_Input(xPos,yPos,dx,dy,num,centerX,centerY,radius);
     auto result=PINBALL_Algo(xPos,yPos,dx,dy,num,centerX,centerY,radius);
-    cout<<"::::";
+    //cout<<"::::";
     for(auto& ele:result){
       cout<<ele<<" ";
     }cout<<endl;
