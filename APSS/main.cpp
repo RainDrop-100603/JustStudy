@@ -68,7 +68,7 @@ pair<int,vector2> PINBALL_ifMet(vector<int>& centerX,vector<int>& centerY,vector
     double distance=lenLong-sqrt(pow(rad+1,2)-pow(lenShort,2));
     //공이 범위를 벗어난 경우 
     vector2 newBall=ballPoint+ballVector*distance;
-    if(newBall.x>=99||newBall.x<=1||newBall.y>=99||newBall.y<=1){
+    if(newBall.x>99+1e-7||newBall.x<1-1e-7||newBall.y>99+1e-7||newBall.y<1-1e-7){
       continue;
     }
     //가장 가까운 위치인가?
@@ -105,10 +105,10 @@ pair<int,vector2> PINBALL_sol(vector<int>& centerX,vector<int>& centerY,vector<i
     if(sols.empty()||sols[0]<1e-9){
       continue;
     }
-    vector2 newBall=ballPoint+ballVector*sols[0];
-    if(newBall.x>=99||newBall.x<=1||newBall.y>=99||newBall.y<=1){
-      continue;
-    }
+    // vector2 newBall=ballPoint+ballVector*sols[0];
+    // if(newBall.x>=99||newBall.x<=1||newBall.y>=99||newBall.y<=1){
+    //   continue;
+    // }
     //가장 가까운 위치인가?
     if(sols[0]<minDist){
       minDist=sols[0];
@@ -123,7 +123,7 @@ vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& 
     return vector<int>();
   }
   //원과 만나는 벡터 중 가장 가까운 벡터를 구한다.
-  pair<int,vector2> tmp=PINBALL_sol(centerX,centerY,radius,ballPoint,ballVector);
+  pair<int,vector2> tmp=PINBALL_ifMet(centerX,centerY,radius,ballPoint,ballVector);
   // pair<int,vector2> tmp2=PINBALL_ifMet(centerX,centerY,radius,ballPoint,ballVector);
   // vector2 tmp3=tmp.second-tmp2.second;
   // cout<<tmp.first<<":"<<tmp2.first<<tmp.second<<":"<<tmp2.second<<":"<<tmp3<<endl;;
@@ -286,7 +286,7 @@ void PINBALL(){
     auto result=PINBALL_Algo(xPos,yPos,dx,dy,num,centerX,centerY,radius);
     //cout<<"::::";
     for(int i=0;i<result.size();i++){
-      if(i++) cout<<" ";
+      if(i) cout<<" ";
       cout<<result[i];
     }cout<<endl;
   }
