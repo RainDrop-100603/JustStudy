@@ -56,12 +56,12 @@ pair<int,vector2> PINBALL_ifMet(vector<int>& centerX,vector<int>& centerY,vector
   double minDist=1000.0;
   int circleIdx=-1;
   for(int i=0;i<centerX.size();i++){
-    //새로운 공까지의 거리 구하기, 피타고라스 정리
+    //새로운 공까지의 거리 구하기, 피타고라스 정리, 스치고 가는것도 포함하는듯
     vector2 center(centerX[i],centerY[i]);
     vector2 pFoot=center.pFoot(ballPoint,ballVector);
     double rad=radius[i];
     double lenShort=(center-pFoot).length();
-    if(lenShort>=rad+1.0||ballVector.dot(center-ballPoint)<=0){
+    if(lenShort>rad+1.0+1e-9||ballVector.dot(center-ballPoint)<=1e-9){
       continue;
     }
     double lenLong=(pFoot-ballPoint).length();
@@ -79,41 +79,43 @@ pair<int,vector2> PINBALL_ifMet(vector<int>& centerX,vector<int>& centerY,vector
   }
   return make_pair(circleIdx,ballPoint+ballVector*minDist);
 }
-pair<int,vector2> PINBALL_ifMet2(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector){
+vector<double> solve2(double a, double b, double c){
+  double d=b*b-4*a*c;
+  if(d<-1e-9){
+    return vector<double>();
+  }
+  if(d<1e-9){
+    return vector<double>(1,-b/(2*a));
+  }
+  vector<double> ret;
+  ret.push_back((-b-sqrt(d))/(2*a));
+  ret.push_back((-b+sqrt(d))/(2*a));
+  return ret;
+}
+pair<int,vector2> PINBALL_sol(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector){
   double minDist=1000.0;
-  pair<int,vector2> result;
-  result.first=-1;
+  int circleIdx=-1;
   for(int i=0;i<centerX.size();i++){
-    //새로운 공까지의 거리 구하기, 이분법
     vector2 center(centerX[i],centerY[i]);
-    vector2 pFoot=center.pFoot(ballPoint,ballVector);
-    double rad=radius[i];
-    double hi(0),lo((pFoot-ballPoint).length());
-    double lenShort=(center-pFoot).length();
-    if(lenShort>=rad+1.0||ballVector.dot(center-ballPoint)<=0){
+    double rad=radius[i]+1;
+    double a=ballVector.dot(ballVector);
+    double b=2*ballVector.dot(ballPoint-center);
+    double c=center.dot(center)+ballPoint.dot(ballPoint)-2*ballPoint.dot(center)-rad*rad;
+    auto sols=solve2(a,b,c);
+    if(sols.empty()||sols[0]<1e-9){
       continue;
     }
-    vector2 newBall;
-    for(int j=0;j<100;j++){
-      newBall=ballPoint+ballVector*((lo+hi)/2);
-      if((center-newBall).length()<rad+1){
-        lo=(lo+hi)/2;
-      }else{
-        hi=(lo+hi)/2;
-      }
-    }
-    //공이 범위를 벗어난 경우 
+    vector2 newBall=ballPoint+ballVector*sols[0];
     if(newBall.x>=99||newBall.x<=1||newBall.y>=99||newBall.y<=1){
       continue;
     }
     //가장 가까운 위치인가?
-    if((newBall-ballPoint).length()<minDist){
-      minDist=(newBall-ballPoint).length();
-      result.first=i;
-      result.second=newBall;
+    if(sols[0]<minDist){
+      minDist=sols[0];
+      circleIdx=i;
     }
   }
-  return result;
+  return make_pair(circleIdx,ballPoint+ballVector*minDist);
 }
 vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count){
   //기저, count만큼 반복
@@ -121,7 +123,10 @@ vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& 
     return vector<int>();
   }
   //원과 만나는 벡터 중 가장 가까운 벡터를 구한다.
-  pair<int,vector2> tmp=PINBALL_ifMet2(centerX,centerY,radius,ballPoint,ballVector);
+  pair<int,vector2> tmp=PINBALL_sol(centerX,centerY,radius,ballPoint,ballVector);
+  // pair<int,vector2> tmp2=PINBALL_ifMet(centerX,centerY,radius,ballPoint,ballVector);
+  // vector2 tmp3=tmp.second-tmp2.second;
+  // cout<<tmp.first<<":"<<tmp2.first<<tmp.second<<":"<<tmp2.second<<":"<<tmp3<<endl;;
   int circleIdx=tmp.first;
   vector2 newBallPoint=tmp.second;
   if(circleIdx==-1){  //벽과 만났다.
@@ -144,6 +149,49 @@ vector<int> PINBALL_Algo(int xPos,int yPos,int dx,int dy,int num,vector<int> cen
   vector<int> result=PINBALL_func(centerX,centerY,radius,ballPoint,ballVector,count);
   reverse(result.begin(),result.end());
   return result;
+}
+const double EPSILON=1e-9;
+const double INFTY=1e200;
+double hitCircle(vector2 here, vector2 dir, vector2 center, int radius){
+  double a=dir.dot(dir);
+  double b=2*dir.dot(here-center);
+  double c=center.dot(center)+here.dot(here)-2*here.dot(center)-radius*radius;
+  auto sols=solve2(a,b,c);
+  if(sols.empty()||sols[0]<EPSILON){
+    return INFTY;
+  }
+  return sols[0];
+}
+vector2 reflect(vector2 dir, vector2 center, vector2 contact){
+  return (dir-dir.project(contact-center)*2).normalize();
+}
+void PINBALL_Algo2(int xPos,int yPos,int dx,int dy,int num,vector<int> centerX,vector<int> centerY,vector<int> radius){
+  //재귀함수 구현
+  vector2 ballPoint(xPos,yPos),ballVector(dx,dy); 
+  ballVector=ballVector.normalize();
+  int hitCount=0;
+  while(hitCount<100){
+    int circle=-1;
+    double time=INFTY*0.5;
+    for(int i=0;i<num;i++){
+      double cand=hitCircle(ballPoint,ballVector,vector2(centerX[i],centerY[i]),radius[i]+1);
+      if(cand<time){
+        time=cand;
+        circle=i;
+      }
+    }
+    if(circle==-1){
+      break;
+    }
+    if(hitCount++){
+      cout<<" ";
+    }
+    cout<<circle;
+    vector2 contact=ballPoint+ballVector*time;
+    ballVector=reflect(ballVector,vector2(centerX[circle],centerY[circle]),contact);
+    ballPoint=contact;
+  }
+  cout<<endl;
 }
 void PINBALL(){
   // PINBALL
@@ -237,8 +285,9 @@ void PINBALL(){
     PINBALL_Input(xPos,yPos,dx,dy,num,centerX,centerY,radius);
     auto result=PINBALL_Algo(xPos,yPos,dx,dy,num,centerX,centerY,radius);
     //cout<<"::::";
-    for(auto& ele:result){
-      cout<<ele<<" ";
+    for(int i=0;i<result.size();i++){
+      if(i++) cout<<" ";
+      cout<<result[i];
     }cout<<endl;
   }
 }
@@ -251,4 +300,7 @@ int main(void){
     //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
+
+
+
 
