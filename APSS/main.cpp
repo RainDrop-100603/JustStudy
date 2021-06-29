@@ -49,33 +49,71 @@ void PINBALL_Input(int& xPos,int& yPos,int& dx,int& dy,int& num,vector<int>& cen
 }
 vector2 PINBALL_lineSym(vector2 point1,vector2 a,vector2 b){
   //point1을 직선 ab에대해 선대칭 이동한다.
-  vector2 crossPoint=point1.pFoot(a,(b-a).normalize());
+  vector2 crossPoint=point1.pFoot(a,b-a);
   return point1+(crossPoint-point1)*2;
 }
-double PINBALL_ifMet(vector2 center,double radius,vector2 ballPoint,vector2 ballVector){
-  vector2 pFoot=center.pFoot(ballPoint,ballVector);
-  double lenShort=(center-pFoot).length();
-  //만나지 않는경우
-  if(lenShort>=radius+1.0||ballVector.dot(center-ballPoint)<=0){
-    return 0;
+pair<int,vector2> PINBALL_ifMet(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector){
+  double minDist=1000.0;
+  int circleIdx=-1;
+  for(int i=0;i<centerX.size();i++){
+    //새로운 공까지의 거리 구하기, 피타고라스 정리
+    vector2 center(centerX[i],centerY[i]);
+    vector2 pFoot=center.pFoot(ballPoint,ballVector);
+    double rad=radius[i];
+    double lenShort=(center-pFoot).length();
+    if(lenShort>=rad+1.0||ballVector.dot(center-ballPoint)<=0){
+      continue;
+    }
+    double lenLong=(pFoot-ballPoint).length();
+    double distance=lenLong-sqrt(pow(rad+1,2)-pow(lenShort,2));
+    //공이 범위를 벗어난 경우 
+    vector2 newBall=ballPoint+ballVector*distance;
+    if(newBall.x>=99||newBall.x<=1||newBall.y>=99||newBall.y<=1){
+      continue;
+    }
+    //가장 가까운 위치인가?
+    if(distance<minDist){
+      minDist=distance;
+      circleIdx=i;
+    }
   }
-  //길이 계산
-  double lenLong=(pFoot-ballPoint).length();
-  double distance=lenLong-sqrt(pow(radius+1,2)-pow(lenShort,2));
-  vector2 newBall=ballPoint+ballVector*distance;
-  //공이 범위를 벗어난 경우 
-  if(newBall.x>=99||newBall.x<=1||newBall.y>=99||newBall.y<=1){
-    return 0;
-  }
-  return distance;
+  return make_pair(circleIdx,ballPoint+ballVector*minDist);
 }
-double PINBALL_ifMet2(vector2 center,double radius,vector2 ballPoint,vector2 ballVector){
-  vector2 foot=center.pFoot(ballPoint,ballVector);
-  if((center-foot).length()>=radius+1||ballVector.dot(center-ballPoint)<=0){
-    return 0;
+pair<int,vector2> PINBALL_ifMet2(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector){
+  double minDist=1000.0;
+  pair<int,vector2> result;
+  result.first=-1;
+  for(int i=0;i<centerX.size();i++){
+    //새로운 공까지의 거리 구하기, 이분법
+    vector2 center(centerX[i],centerY[i]);
+    vector2 pFoot=center.pFoot(ballPoint,ballVector);
+    double rad=radius[i];
+    double hi(0),lo((pFoot-ballPoint).length());
+    double lenShort=(center-pFoot).length();
+    if(lenShort>=rad+1.0||ballVector.dot(center-ballPoint)<=0){
+      continue;
+    }
+    vector2 newBall;
+    for(int j=0;j<100;j++){
+      newBall=ballPoint+ballVector*((lo+hi)/2);
+      if((center-newBall).length()<rad+1){
+        lo=(lo+hi)/2;
+      }else{
+        hi=(lo+hi)/2;
+      }
+    }
+    //공이 범위를 벗어난 경우 
+    if(newBall.x>=99||newBall.x<=1||newBall.y>=99||newBall.y<=1){
+      continue;
+    }
+    //가장 가까운 위치인가?
+    if((newBall-ballPoint).length()<minDist){
+      minDist=(newBall-ballPoint).length();
+      result.first=i;
+      result.second=newBall;
+    }
   }
-  //이분법 계산
-  //이 부분을, new ballpoint를 반환하는 함수로 바꾸자. 그래야 방법을 바꾸더라도 쉽게 계산할 수 있다.
+  return result;
 }
 vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count){
   //기저, count만큼 반복
@@ -83,27 +121,16 @@ vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& 
     return vector<int>();
   }
   //원과 만나는 벡터 중 가장 가까운 벡터를 구한다.
-  double minDist=1000.0;
-  int circleIdx=-1;
-  for(int i=0;i<centerX.size();i++){
-    if(double distance=PINBALL_ifMet(vector2(centerX[i],centerY[i]),radius[i],ballPoint,ballVector)){
-      if(distance<minDist){
-        minDist=distance;
-        circleIdx=i;
-      }
-    }
-  }
+  pair<int,vector2> tmp=PINBALL_ifMet2(centerX,centerY,radius,ballPoint,ballVector);
+  int circleIdx=tmp.first;
+  vector2 newBallPoint=tmp.second;
   if(circleIdx==-1){  //벽과 만났다.
     return vector<int>();
   }
   // 새로운 핀볼의 위치와 방향벡터를 구한다.
   vector2 center(centerX[circleIdx],centerY[circleIdx]);
-  vector2 newBallPoint=ballPoint+ballVector*minDist;
   vector2 newBallVector=PINBALL_lineSym(ballPoint,center,newBallPoint)-newBallPoint;
   newBallVector=newBallVector.normalize();
-  //test
-  vector2 foot=center.pFoot(ballPoint,ballVector);
-  cout<<pow(radius[circleIdx]+1,2)<<"="<<pow((foot-ballPoint).length()-minDist,2)+pow((foot-center).length(),2)<<endl;
   //재귀, 정답을 반대로 저장함에 유위하자
   vector<int> result=PINBALL_func(centerX,centerY,radius,newBallPoint,newBallVector,count-1);
   result.push_back(circleIdx);
@@ -202,7 +229,7 @@ void PINBALL(){
   cin>>testCase;
   //전역변수
   cout<<fixed;
-  cout.precision(10);
+  cout.precision(14);
   //각 테스트케이스
   while(testCase--){
     int xPos,yPos,dx,dy,num;
