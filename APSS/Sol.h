@@ -6,6 +6,7 @@
 #include <map>
 
 #include "useful.h"
+#include "main.cpp" //main에서 쓰는 vector2와 같은 class 불러오기 위함 
 
 using namespace std;
 // @*: 풀었으나 참고해볼만한 문제, @*@*: 어렵게 풀었던 문제, @*@*@*: 책이나 다른 해답을 참고한 문제 
@@ -332,3 +333,11 @@ void POTION_Input(int& num,vector<int>& recipe,vector<int>& used);
 int POTION_getGCD(int p,int q);
 vector<int> POTION_Algo(int num,vector<int> recipe,vector<int> used);
 void POTION();
+
+// @* 계산 기하, vector의 이용, double이용시 오차범위 항상 유의
+void PINBALL_Input(int& xPos,int& yPos,int& dx,int& dy,int& num,vector<int>& centerX,vector<int>& centerY,vector<int>& radius);
+vector2 PINBALL_lineSym(vector2 point1,vector2 a,vector2 b);
+pair<int,vector2> PINBALL_ifMet(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector);
+vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count);
+vector<int> PINBALL_Algo(int xPos,int yPos,int dx,int dy,int num,vector<int> centerX,vector<int> centerY,vector<int> radius);
+void PINBALL();
