@@ -30,7 +30,18 @@ public:
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
   //기타 함수들
-  vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); }//*this에서 직선ab에 내린 수선의 발
+  vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
+  bool isInside(const vector<vector2>& polygon){  //*this가 polygon 내부에 있는가
+    int crossCount,pSize(polygon.size());
+    for(int i=0;i<pSize;i++){
+      vector2 p1(polygon[i]),p2(polygon[(i+1)%pSize]);
+      if(p1.y>this->y != p2.y>this->y){ 
+        double crossX=(this->y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
+        if(this->x<crossX){crossCount++;}
+      }
+    }
+    return crossCount%2>0;
+  }
   //전역함수 오버로딩
   friend ostream& operator<<(ostream& os, vector2& vec);
 };
@@ -38,7 +49,6 @@ ostream& operator<<(ostream& os, vector2& vec){
   os<<"("<<vec.x<<","<<vec.y<<")";
   return os;
 }
-
 // 계산 기하, vector의 이용, double이용시 오차범위 항상 유의
 void PINBALL_Input(int& xPos,int& yPos,int& dx,int& dy,int& num,vector<int>& centerX,vector<int>& centerY,vector<int>& radius){
   cin>>xPos>>yPos>>dx>>dy>>num;
