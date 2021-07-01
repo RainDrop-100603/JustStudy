@@ -14,6 +14,7 @@ using namespace std;
 
 class vector2{  //2차원벡터
   const double PI=2.0*acos(0.0);
+  const double EPSILON=1e-9;
 public:
   double x,y;
   vector2(double x_=0, double y_=0):x(x_),y(y_){}
@@ -31,16 +32,35 @@ public:
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
   //기타 함수들
   vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
-  bool isInside(const vector<vector2>& polygon){  //*this가 polygon 내부에 있는가
-    int crossCount,pSize(polygon.size());
+  bool isInside(const vector<vector2>& polygon)const{  //*this가 polygon 내부에 있는가
+    int crossCount(0),pSize(polygon.size());
     for(int i=0;i<pSize;i++){
       vector2 p1(polygon[i]),p2(polygon[(i+1)%pSize]);
-      if(p1.y>this->y != p2.y>this->y){ 
+      if((p1.y>this->y)!=(p2.y>this->y)){ 
         double crossX=(this->y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
         if(this->x<crossX){crossCount++;}
       }
     }
     return crossCount%2>0;
+  }
+  pair<bool,vector2> lineIntersection(const vector2& rhs, const vector2& p1, const vector2& p2)const{
+    double det=(rhs-*this).cross(p2-p1);
+    if(fabs(det)<EPSILON) return make_pair(false,vector2()); //평행인 경우
+    return make_pair(true,*this+(rhs-*this)*((p1-*this).cross(p2-p1)/det));
+  }
+  pair<bool,vector2> isCross(const vector2& rhs, const vector2& p1, const vector2& p2)const{  //*this-rhs가 p1-p2와의 교점이 있는가
+    //두 직선이 교차관계 인지 먼저 확인
+    if((rhs-*this).cross(p1-*this)*(rhs-*this).cross(p2-*this)>0||(p2-p1).cross(rhs-p1)*(p2-p1).cross(*this-p1)>0){
+      return make_pair(false,vector2());
+    }
+    //두 직선의 교점을 구하기
+    vector2 crossPoint=this->lineIntersection(rhs,p1,p2).second;
+    //두 직선의 교점이 선분위에 있는지 확인 
+    if((crossPoint-*this).dot(rhs-*this)<=0&&(crossPoint<rhs||crossPoint==rhs)){
+      return make_pair(true,crossPoint);
+    }else{
+      return make_pair(false,vector2());
+    }
   }
   //전역함수 오버로딩
   friend ostream& operator<<(ostream& os, vector2& vec);
@@ -68,6 +88,7 @@ int TREASURE_startPoint(vector<vector2>& polygon, vector<vector2>& treasure){
       return i;
     }
   }
+  return -1;
 }
 double TREASURE_areaSize(vector<vector2>& polygon){
   int pSize=polygon.size();
@@ -75,23 +96,14 @@ double TREASURE_areaSize(vector<vector2>& polygon){
   for(int i=0;i<pSize;i++){
     result+=polygon[i].cross(polygon[(i+1)%pSize]);
   }
-  return result;
+  return result/2;
 }
 vector2 TREASURE_crossPoint(vector2 p1, vector2 p2, vector<vector2>& treasure){
+  //crossPoint가 2개인 지점도 있는데, 그건 어떻게? 
   for(int i=0;i<4;i++){
-    //cross 여부
-    vector2 vec1(treasure[i]),vec2(treasure[(i+1)%4]);
-    if((p2-p1).cross(vec1-p1)*(p2-p1).cross(vec2-p1)>0){
-      continue;
-    }
-    if((vec2-vec1).cross(p1-vec1)*(vec2-vec1).cross(p2-vec1)>0){
-      continue;
-    }
-    //교점
-    if(vec1.x==vec2.x){
-      return vector2(vec1.x,p1.y+(vec1.x-p1.x)*(p2.y-p1.y)/(p2.x-p1.x));
-    }else{
-      return vector2(p1.x+(vec1.y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y),vec1.y);
+    auto result=p1.isCross(p2,treasure[i],treasure[(i+1)%4]);
+    if(result.first){
+      return result.second;
     }
   }
 }
@@ -210,9 +222,9 @@ void TREASURE(){
   cout.precision(14);
   //각 테스트케이스
   while(testCase--){
-    vector<vector2> polygon,treausre;
-    TREASURE_Input(polygon,treausre);
-    auto result=TREASURE_Algo(polygon,treausre);
+    vector<vector2> polygon,treasure;
+    TREASURE_Input(polygon,treasure);
+    auto result=TREASURE_Algo(polygon,treasure);
     //cout<<"::::";
     cout<<result<<endl;
   }
