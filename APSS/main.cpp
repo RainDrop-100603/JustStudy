@@ -50,76 +50,56 @@ ostream& operator<<(ostream& os, vector2& vec){
   return os;
 }
 // 계산 기하, vector의 이용, double이용시 오차범위 항상 유의
-void TREASURE_Input(int& xPos,int& yPos,int& dx,int& dy,int& num,vector<int>& centerX,vector<int>& centerY,vector<int>& radius){
-  cin>>xPos>>yPos>>dx>>dy>>num;
-  centerX.resize(num);centerY.resize(num);radius.resize(num);
-  for(int i=0;i<num;i++){
-    cin>>centerX[i]>>centerY[i]>>radius[i];
+void TREASURE_Input(vector<vector2>& polygon, vector<vector2>& treasure){
+  int x1,y1,x2,y2,N;
+  cin>>x1>>y1>>x2>>y2>>N;
+  treasure.push_back(vector2(x1,y1));treasure.push_back(vector2(x2,y1));
+  treasure.push_back(vector2(x2,y2));treasure.push_back(vector2(x1,y2));
+  polygon.resize(N);
+  for(auto& ele:polygon){
+    cin>>ele.x>>ele.y;
   }
 }
-vector2 TREASURE_lineSym(vector2 point1,vector2 a,vector2 b){
-  //point1을 직선 ab에대해 선대칭 이동한다.
-  vector2 crossPoint=point1.pFoot(a,b-a);
-  return point1+(crossPoint-point1)*2;
-}
-pair<int,vector2> TREASURE_ifMet(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector){
-  double minDist=1000.0;
-  int circleIdx=-1;
-  for(int i=0;i<centerX.size();i++){
-    //새로운 공까지의 거리 구하기, 피타고라스 정리, 스치고 가는것도 포함하는듯
-    vector2 center(centerX[i],centerY[i]);
-    vector2 pFoot=center.pFoot(ballPoint,ballVector);
-    double rad=radius[i];
-    double lenShort=(center-pFoot).length();
-    if(lenShort>rad+1.0+1e-9||ballVector.dot(center-ballPoint)<=1e-9){
-      continue;
-    }
-    double lenLong=(pFoot-ballPoint).length();
-    double distance=lenLong-sqrt(pow(rad+1,2)-pow(lenShort,2));
-    //공이 범위를 벗어난 경우 
-    // vector2 newBall=ballPoint+ballVector*distance;
-    // if(newBall.x>99+1e-7||newBall.x<1-1e-7||newBall.y>99+1e-7||newBall.y<1-1e-7){
-    //   continue;
-    // }
-    //가장 가까운 위치인가?
-    if(distance<minDist){
-      minDist=distance;
-      circleIdx=i;
+int TREASURE_startPoint(vector<vector2>& polygon, vector<vector2>& treasure){
+  int pSize=polygon.size();
+  for(int i=0;i<pSize;i++){
+    if(polygon[i].isInside(treasure)==true && polygon[(i+1)%pSize].isInside(treasure)==false){
+      return i;
     }
   }
-  return make_pair(circleIdx,ballPoint+ballVector*minDist);
 }
-vector<int> TREASURE_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count){
-  //기저, count만큼 반복
-  if(count==0){
-    return vector<int>();
+double TREASURE_areaSize(vector<vector2>& polygon){
+  int pSize=polygon.size();
+  double result=0;
+  for(int i=0;i<pSize;i++){
+    result+=polygon[i].cross(polygon[(i+1)%pSize]);
   }
-  //원과 만나는 벡터 중 가장 가까운 벡터를 구한다.
-  pair<int,vector2> tmp=TREASURE_ifMet(centerX,centerY,radius,ballPoint,ballVector);
-  // pair<int,vector2> tmp2=TREASURE_ifMet(centerX,centerY,radius,ballPoint,ballVector);
-  // vector2 tmp3=tmp.second-tmp2.second;
-  // cout<<tmp.first<<":"<<tmp2.first<<tmp.second<<":"<<tmp2.second<<":"<<tmp3<<endl;;
-  int circleIdx=tmp.first;
-  vector2 newBallPoint=tmp.second;
-  if(circleIdx==-1){  //벽과 만났다.
-    return vector<int>();
-  }
-  // 새로운 핀볼의 위치와 방향벡터를 구한다.
-  vector2 center(centerX[circleIdx],centerY[circleIdx]);
-  vector2 newBallVector=TREASURE_lineSym(ballPoint,center,newBallPoint)-newBallPoint;
-  newBallVector=newBallVector.normalize();
-  //재귀, 정답을 반대로 저장함에 유위하자
-  vector<int> result=TREASURE_func(centerX,centerY,radius,newBallPoint,newBallVector,count-1);
-  result.push_back(circleIdx);
   return result;
 }
-vector<int> TREASURE_Algo(int xPos,int yPos,int dx,int dy,int num,vector<int> centerX,vector<int> centerY,vector<int> radius){
-  //재귀함수 구현
-  vector2 ballPoint(xPos,yPos),ballVector(dx,dy); 
-  ballVector=ballVector.normalize();
-  int count=100;
-  vector<int> result=TREASURE_func(centerX,centerY,radius,ballPoint,ballVector,count);
-  reverse(result.begin(),result.end());
+vector<vector2> TREASURE_getPolygon(vector<vector2>& polygon, vector<vector2>& treasure, int& startPoint){
+  //새로운 startPoint는 참조형을 통해 되돌려주고, 만든 polygon은 return으로 반환
+  int pSize=polygon.size();
+  for(int i=startPoint;i<pSize;i++){
+
+  } 
+}
+double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
+  //시작점 찾기
+  int startPoint=TREASURE_startPoint(polygon,treasure);
+  if(startPoint==-1){
+    return TREASURE_areaSize(treasure);
+  }
+  //순회, 이부분 약간 수정 필요 
+  int pSize=polygon.size()+startPoint;
+  vector<vector<vector2>> polygons;
+  while(startPoint<pSize){
+    polygons.push_back(TREASURE_getPolygon(polygon,treasure,startPoint));
+  }
+  //계산
+  double result=TREASURE_areaSize(treasure);
+  for(auto& ele:polygons){
+    result-=TREASURE_areaSize(ele);
+  }
   return result;
 }
 void TREASURE(){
@@ -146,40 +126,28 @@ void TREASURE(){
   */
   /*힌트
     섬은 단순 다각형(simple polygon)이다.
-    조사해야할 부분의 모양
+    1)보물영역 내부에 포함되는 다각형 영역을 찾는 방법
       1. 하나의 단순 다각형
       2. 여러개의 단순 다각형
-    꼭짓점을 이용한 방법
-      조사해야할 부분의 꼭짓점
-        1. 섬과 직사각형 영역의 교점
-        2. 섬 내부의 점
-      꼭짓점을 어떻게 이어서 모양을 만들어야하나?
-    선분을 이용한 방법
-      보물 영역과 섬 영역의 경우의 수
-        1. 섬 영역이 보물 영역을 완전히 포함 -> 꼭짓점 4개가 섬에 포함됨
-        2. 영역이 일부 겹치면서, 하나의 단순 다각형 영역을 이룸
-        3. 영역이 일부 겹치면서, 여러개의 단순 다각형 영역을 이룸
+    2)섬의 영역에서, 보물영역 외부에 있는 다각형들을 제거하는 방법
+      섬 내부의 다각형은 구할 필요가 없다.
       구현방법
-        1. 모든 섬의 꼭짓점이 보물영역 바깥에 있다면, 섬 영역이 보물영역을 완전히 포함한다.
-        2. 만약 포함되는 꼭짓점이 있다면, 해당 영역에서 시작하여 겹치는 부분을 찾아낸다.
-          2-1. 계속하여 다음 꼭짓점을 순회하며 찾는다. 이때 보물 영역과의 교점이 생긴다면, 해당 부분을 꼭짓점으로 한다.
-            2-1-1. 다음 꼭짓점이 직전 꼭짓점과 같은 선분에 있다면, 그대로 꼭짓점을 추가한다.
-            2-1-2. 다음 꼭짓점이 직전 꼭짓점과 다른 선분에 있다면, 그 선분까지 이어지도록 꼭짓점을 추가한다.
+        섬의 시작점은, 보물영역 내부에서 외부로 이어지는 선분의 내부점 중 하나로 한다. -> O(n)
+          시작점이 없다면, 즉 모든 선분이 외부에 있다면, 보물의 영역은 섬의 영역에 포함된다.
+        섬의 꼭짓점을 반시계 방향으로 순회한다. -> O(n)
+          보물영역 외부에 있는 섬의 영역polygon을 구한다.
+            보물영역 내부에서 외부로 나가는 교점을 시작으로, 외부에서 내부로 들어가는 교점을 끝으로 하는 polygon을 구한다.
+            해당 polygon의 마지막 점에서, polygon내부에 포함되는, 보물영역의 꼭짓점을 시계방향으로 추가한다. -> O(4)
+        섬의 영역에서 보물영역 외부에 있는 영역을 빼준다.
   */
   /*전략
   전략1
-    벡터의 이용
-      1. 각 원의 중심과 직선 사이의 거리를 구한다. -> O(n)
-          거리가 원의반지름+1 이하라면 만나는 것이다.
-      2. 만나는 원 중 가장 가까운 것을 찾는다. 수선의발, 반지름+1, 피타고라스의 정리를 이용한다. -> O(n)
-          만나는 원이 없거나, 만나는 위치가 범위 밖이라면 벽을 만난 것이다.
-      3. 핀볼이 멈춘 지점의 벡터를 구한다. 원의중심에서 직선으로 수선의 발을 내리면 된다.
-      4. 핀볼의 시작위치를, 수선의 발에 대해 선대칭이동한다. 이것이 핀볼이 다시 이동할 방향이다.
-      5. 벽을 만나거나 100회 반복할때까지 반복한다. -> O(100)
+    벡터를 이용한다.
+    2)섬의 영역에서, 보물영역 외부에 있는 다각형들을 제거하는 방법
     시간
-      O(100n)
+      O(n)
     크기
-      O(1)
+      O(n)
     개선 및 보완
   */
   //Sol
@@ -190,15 +158,11 @@ void TREASURE(){
   cout.precision(14);
   //각 테스트케이스
   while(testCase--){
-    int xPos,yPos,dx,dy,num;
-    vector<int> centerX,centerY,radius;
-    TREASURE_Input(xPos,yPos,dx,dy,num,centerX,centerY,radius);
-    auto result=TREASURE_Algo(xPos,yPos,dx,dy,num,centerX,centerY,radius);
+    vector<vector2> polygon,treausre;
+    TREASURE_Input(polygon,treausre);
+    auto result=TREASURE_Algo(polygon,treausre);
     //cout<<"::::";
-    for(int i=0;i<result.size();i++){
-      if(i) cout<<" ";
-      cout<<result[i];
-    }cout<<endl;
+    cout<<result<<endl;
   }
 }
 
