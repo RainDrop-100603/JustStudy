@@ -6,7 +6,6 @@
 #include <map>
 
 #include "useful.h"
-#include "main.cpp" //main에서 쓰는 vector2와 같은 class 불러오기 위함 
 
 using namespace std;
 // @*: 풀었으나 참고해볼만한 문제, @*@*: 어렵게 풀었던 문제, @*@*@*: 책이나 다른 해답을 참고한 문제 

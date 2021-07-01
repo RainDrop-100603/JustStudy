@@ -49,6 +49,7 @@ ostream& operator<<(ostream& os, vector2& vec){
   os<<"("<<vec.x<<","<<vec.y<<")";
   return os;
 }
+
 // 계산 기하, vector의 이용, double이용시 오차범위 항상 유의
 void TREASURE_Input(vector<vector2>& polygon, vector<vector2>& treasure){
   int x1,y1,x2,y2,N;
@@ -76,12 +77,59 @@ double TREASURE_areaSize(vector<vector2>& polygon){
   }
   return result;
 }
-vector<vector2> TREASURE_getPolygon(vector<vector2>& polygon, vector<vector2>& treasure, int& startPoint){
+vector2 TREASURE_crossPoint(vector2 p1, vector2 p2, vector<vector2>& treasure){
+  for(int i=0;i<4;i++){
+    //cross 여부
+    vector2 vec1(treasure[i]),vec2(treasure[(i+1)%4]);
+    if((p2-p1).cross(vec1-p1)*(p2-p1).cross(vec2-p1)>0){
+      continue;
+    }
+    if((vec2-vec1).cross(p1-vec1)*(vec2-vec1).cross(p2-vec1)>0){
+      continue;
+    }
+    //교점
+    if(vec1.x==vec2.x){
+      return vector2(vec1.x,p1.y+(vec1.x-p1.x)*(p2.y-p1.y)/(p2.x-p1.x));
+    }else{
+      return vector2(p1.x+(vec1.y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y),vec1.y);
+    }
+  }
+}
+vector<vector2> TREASURE_getPolygon(vector<vector2>& polygon, vector<vector2> treasure, int& startPoint){
   //새로운 startPoint는 참조형을 통해 되돌려주고, 만든 polygon은 return으로 반환
   int pSize=polygon.size();
-  for(int i=startPoint;i<pSize;i++){
-
+  vector<vector2> result;
+  result.push_back(TREASURE_crossPoint(polygon[startPoint],polygon[(startPoint+1)%pSize],treasure));
+  //외부에 있는 점들 
+  for(int i=startPoint+1;i<pSize+startPoint;i++){
+    if(polygon[i%pSize].isInside(treasure)){
+      result.push_back(polygon[i%pSize]);
+    }else{
+      result.push_back(TREASURE_crossPoint(polygon[(i-1)%pSize],polygon[i%pSize],treasure));
+      break;
+    }
   } 
+  //포함된 보물 영역 제거 
+  vector2 lastPoint=result.back();
+  vector2 tmp=treasure[1];
+  treasure[1]=treasure[3];
+  treasure[3]=tmp;
+  int startPoint2;
+  if(lastPoint.x==treasure[0].x&&lastPoint.y>treasure[0].y){
+    startPoint2=1;
+  }else if(lastPoint.x>treasure[1].x&&lastPoint.y==treasure[1].y){
+    startPoint2=2;
+  }else if(lastPoint.x==treasure[2].x&&lastPoint.y<treasure[2].y){
+    startPoint2=3;
+  }else{
+    startPoint2=0;
+  }
+  for(int i=0;i<4;i++){
+    if(treasure[(i+startPoint2)%4].isInside(result)){
+      result.push_back(treasure[(i+startPoint2)%4]);
+    }
+  }
+  return result;
 }
 double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   //시작점 찾기
@@ -89,11 +137,15 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   if(startPoint==-1){
     return TREASURE_areaSize(treasure);
   }
-  //순회, 이부분 약간 수정 필요 
-  int pSize=polygon.size()+startPoint;
+  //순회 
+  int pSize=polygon.size(), idx=startPoint;
   vector<vector<vector2>> polygons;
-  while(startPoint<pSize){
-    polygons.push_back(TREASURE_getPolygon(polygon,treasure,startPoint));
+  while(idx<pSize+startPoint){
+    if(polygon[idx%pSize].isInside(treasure)==true && polygon[(idx+1)%pSize].isInside(treasure)==false){
+      polygons.push_back(TREASURE_getPolygon(polygon,treasure,idx));
+    }else{
+      idx++;
+    }
   }
   //계산
   double result=TREASURE_areaSize(treasure);

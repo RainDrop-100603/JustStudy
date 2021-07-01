@@ -411,10 +411,47 @@ int cmpDouble_AbsRel(double a, double b, double absTolerance=(1.0e-8), double re
 int cmpDouble_Ulps(double a, double b, int ulpsTolerance=4);
 int cmpDouble_UlpsAbs(double a, double b, int absTolerance=(1.0e-8), int ulpsTolerance=4);
 
-
 //유용한 테스트
 void moveTest_vec();  //move가 제대로 이루어 졌는지 확인하는 방법에 대한 참고 
 
+//class
+class vector2{  //2차원벡터
+  const double PI=2.0*acos(0.0);
+public:
+  double x,y;
+  vector2(double x_=0, double y_=0):x(x_),y(y_){}
+  vector2 operator=(const vector2& rhs){x=rhs.x;y=rhs.y; return *this;}
+  bool operator==(const vector2& rhs)const {return x==rhs.x&&y==rhs.y; }
+  bool operator<(const vector2& rhs)const {return x!=rhs.x ? x<rhs.x : y<rhs.y; }
+  vector2 operator+(const vector2& rhs)const {return vector2(x+rhs.x,y+rhs.y); }
+  vector2 operator-(const vector2& rhs)const {return vector2(x-rhs.x,y-rhs.y); }
+  vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
+  double length()const {return hypot(x,y); }
+  vector2 normalize()const {return vector2(x/length(),y/length()); }
+  vector2 polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); }
+  double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
+  double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
+  vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
+  //기타 함수들
+  vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
+  bool isInside(const vector<vector2>& polygon){  //*this가 polygon 내부에 있는가
+    int crossCount,pSize(polygon.size());
+    for(int i=0;i<pSize;i++){
+      vector2 p1(polygon[i]),p2(polygon[(i+1)%pSize]);
+      if(p1.y>this->y != p2.y>this->y){ 
+        double crossX=(this->y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
+        if(this->x<crossX){crossCount++;}
+      }
+    }
+    return crossCount%2>0;
+  }
+  //전역함수 오버로딩
+  friend ostream& operator<<(ostream& os, vector2& vec);
+};
+ostream& operator<<(ostream& os, vector2& vec){
+  os<<"("<<vec.x<<","<<vec.y<<")";
+  return os;
+}
 
 //미완성 
 class longNum{
