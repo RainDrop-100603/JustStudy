@@ -145,10 +145,8 @@ vector<vector2> TREASURE_getPolygon(vector<vector2>& polygon, vector<vector2> tr
 }
 double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   //시작점 찾기
-  int startPoint=TREASURE_startPoint(polygon,treasure);
-  if(startPoint==-1){
-    return TREASURE_areaSize(treasure);
-  }
+  vector<vector2> newPolygon=TREASURE_newPoly(polygon, treasure); //시작점은 내부에서 외부로 나가는 점
+  if(newPolygon.front().isInside())
   //순회 
   int pSize=polygon.size(), idx=startPoint;
   vector<vector<vector2>> polygons;
@@ -196,8 +194,9 @@ void TREASURE(){
     2)섬의 영역에서, 보물영역 외부에 있는 다각형들을 제거하는 방법
       섬 내부의 다각형은 구할 필요가 없다.
       구현방법
-        섬의 시작점은, 보물영역 내부에서 외부로 이어지는 선분의 내부점 중 하나로 한다. -> O(n)
-          시작점이 없다면, 즉 모든 선분이 외부에 있다면, 보물의 영역은 섬의 영역에 포함된다.
+        섬과 보물영역의 교점도 꼭짓점으로 추가해준다.
+        섬의 시작점은, 보물영역 내부에서 외부로 이어지는 선분의 꼭짓점 중 하나로 한다. -> O(n)
+          다음 꼭짓점이 외부면 나가는것, 경계거나 내부면 들어가는 것 
         섬의 꼭짓점을 반시계 방향으로 순회한다. -> O(n)
           보물영역 외부에 있는 섬의 영역polygon을 구한다.
             보물영역 내부에서 외부로 나가는 교점을 시작으로, 외부에서 내부로 들어가는 교점을 끝으로 하는 polygon을 구한다.
