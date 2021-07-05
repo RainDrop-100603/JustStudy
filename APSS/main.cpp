@@ -32,7 +32,7 @@ public:
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
   //기타 함수들
   vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
-  bool isInside(const vector<vector2>& polygon)const{  //*this가 polygon 내부에 있는가
+  bool isInside(const vector<vector2>& polygon)const{  //*this가 polygon 내부에 있는가, 경계 포함 x
     int crossCount(0),pSize(polygon.size());
     for(int i=0;i<pSize;i++){
       vector2 p1(polygon[i]),p2(polygon[(i+1)%pSize]);
@@ -42,6 +42,17 @@ public:
       }
     }
     return crossCount%2>0;
+  }
+  bool onEdge(const vector<vector2>& polygon)const{
+    int pSize=polygon.size();
+    for(int i=0;i<pSize;i++){
+      vector2 p1=polygon[i];
+      vector2 p2=polygon[(i+1)%pSize];
+      if((*this-p1).dot(p2-p1)==(*this-p1).length()*(p2-p1).length()){
+        return true;
+      }
+    }
+    return false;
   }
   pair<bool,vector2> lineIntersection(const vector2& rhs, const vector2& p1, const vector2& p2)const{
     double det=(rhs-*this).cross(p2-p1);
@@ -98,68 +109,103 @@ double TREASURE_areaSize(vector<vector2>& polygon){
   }
   return result/2;
 }
-vector2 TREASURE_crossPoint(vector2 p1, vector2 p2, vector<vector2>& treasure){
-  //crossPoint가 2개인 지점도 있는데, 그건 어떻게? 
-  for(int i=0;i<4;i++){
-    auto result=p1.isCross(p2,treasure[i],treasure[(i+1)%4]);
-    if(result.first){
-      return result.second;
+int TREASURE_pos(vector<vector2>& polygon, vector<vector2>& treasure, int idx){
+  //polygon[idx]가 경계에 있지 않다.
+  if(!polygon[idx].onEdge(treasure)){
+    return 0;
+  }
+  //polygon[idx+1]의 위치에 따른 차이 (내부-> 외부인가, 외부-> 내부인가)
+  vector2 next=polygon[(idx+1)%polygon.size()];
+  if(next.isInside(treasure)||next.onEdge(treasure)){ //외부->내부
+    return 1;
+  }else{  //내부-> 외부
+    return 2;
+  }
+
+}
+vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& treasure){
+  int pSize=polygon.size();
+  vector<vector2> newPoly;
+  for(int idx=0;idx<pSize;idx++){
+    vector2 now=polygon[idx];
+    vector2 next=polygon[(idx+1)%pSize];
+    vector<vector2> crossPoints;
+    //treasure와의 교점을 구한다.
+    for(int i=0;i<4;i++){
+      auto tmp=now.isCross(next,treasure[i],treasure[(i+1)%4]);
+      if(tmp.first){
+        crossPoints.push_back(tmp.second);
+      }
+    }
+    //순서대로 newPoly에 추가
+    newPoly.push_back(now);
+    if(crossPoints.size()==1){
+      newPoly.push_back(crossPoints.front());
+    }else if(crossPoints.size()==2){
+      if(crossPoints.front()==crossPoints.back()){
+        continue; //둘이 같으면 모서리란 뜻, 추가하지 않는다.
+      }else if((now-crossPoints.front()).length()<(now-crossPoints.back()).length()){
+        newPoly.push_back(crossPoints.front()); newPoly.push_back(crossPoints.back());
+      }else{
+        newPoly.push_back(crossPoints.back()); newPoly.push_back(crossPoints.front());
+      }
     }
   }
-}
-vector<vector2> TREASURE_getPolygon(vector<vector2>& polygon, vector<vector2> treasure, int& startPoint){
-  //새로운 startPoint는 참조형을 통해 되돌려주고, 만든 polygon은 return으로 반환
-  int pSize=polygon.size();
-  vector<vector2> result;
-  result.push_back(TREASURE_crossPoint(polygon[startPoint],polygon[(startPoint+1)%pSize],treasure));
-  //외부에 있는 점들 
-  for(int i=startPoint+1;i<pSize+startPoint;i++){
-    if(polygon[i%pSize].isInside(treasure)){
-      result.push_back(polygon[i%pSize]);
-    }else{
-      result.push_back(TREASURE_crossPoint(polygon[(i-1)%pSize],polygon[i%pSize],treasure));
+  //한 polygon이 다른 polygon을 완전히 포함하면, 두 polygon의 원소의 개수가 같다.
+  if(polygon.size()==newPoly.size()){
+    return vector<vector2>();
+  }
+  //newPoly.erase(unique(newPoly.begin(),newPoly.end())); //treasure의 모서리와 같이, 같은 점이 이어져서 나타나면 제거
+  //newPoly의 시작점이, 내부에서 외부로 가는 경계의 점이 되도록 하자
+  int npSize=newPoly.size();
+  int idx=0;
+  for(idx;idx<npSize;idx++){
+    if(TREASURE_pos(newPoly,treasure,idx)==1){
       break;
     }
-  } 
-  //포함된 보물 영역 제거 
-  vector2 lastPoint=result.back();
-  vector2 tmp=treasure[1];
-  treasure[1]=treasure[3];
-  treasure[3]=tmp;
-  int startPoint2;
-  if(lastPoint.x==treasure[0].x&&lastPoint.y>treasure[0].y){
-    startPoint2=1;
-  }else if(lastPoint.x>treasure[1].x&&lastPoint.y==treasure[1].y){
-    startPoint2=2;
-  }else if(lastPoint.x==treasure[2].x&&lastPoint.y<treasure[2].y){
-    startPoint2=3;
-  }else{
-    startPoint2=0;
   }
-  for(int i=0;i<4;i++){
-    if(treasure[(i+startPoint2)%4].isInside(result)){
-      result.push_back(treasure[(i+startPoint2)%4]);
-    }
+  vector<vector2> result;
+  for(int i=0;i<npSize;i++){
+    result.push_back(newPoly[(i+idx)%npSize]);
   }
   return result;
 }
-double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
-  //시작점 찾기
-  vector<vector2> newPolygon=TREASURE_newPoly(polygon, treasure); //시작점은 내부에서 외부로 나가는 점
-  if(newPolygon.front().isInside())
-  //순회 
-  int pSize=polygon.size(), idx=startPoint;
-  vector<vector<vector2>> polygons;
-  while(idx<pSize+startPoint){
-    if(polygon[idx%pSize].isInside(treasure)==true && polygon[(idx+1)%pSize].isInside(treasure)==false){
-      polygons.push_back(TREASURE_getPolygon(polygon,treasure,idx));
-    }else{
-      idx++;
+vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2>& treasure,int begin,int end){
+  //기본 polygon 생성
+  for(int i=begin;i<end;)
+  //polygon에 들어가는 treasure의 꼭짓점을 찾는다.
+  vector<int> points;
+  for(int i=0;i<4;i++){
+    if(treasure[i].isInside(polygon)){
+      points.push_back(i);
     }
   }
-  //계산
-  double result=TREASURE_areaSize(treasure);
-  for(auto& ele:polygons){
+  if(points.empty()){
+    return polygon;
+  }
+  //처음 들어갈 꼭짓점을 찾는다.
+}
+double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
+  //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
+  vector<vector2> newPolygon=TREASURE_newPoly(polygon, treasure);
+  if(newPolygon.empty()){ // 하나가 다른 하나를 완전히 포함할 때
+    return min(TREASURE_areaSize(polygon),TREASURE_areaSize(treasure));
+  }
+  //제거해야하는 outsidePolygon을 구한다
+  int polySize=newPolygon.size();
+  int begin(0);
+  vector<vector<vector2>> outsidePoly;
+  for(int idx=0;idx<polySize;idx++){  /////////////////이부분과 outsidepoly 부분 체크 
+    int status=TREASURE_pos(newPolygon,treasure,idx);
+    if(status==1){ //내부에서 외부로 가는 경계의 점
+      begin=idx;
+    }else if(status==2){ //외부에서 내부로 가는 경계의 점
+      outsidePoly.push_back(TREASURE_outsidePoly(newPolygon,treasure,begin,idx));
+    }
+  }
+  //결과계산
+  double result=TREASURE_areaSize(polygon);
+  for(auto& ele: outsidePoly){
     result-=TREASURE_areaSize(ele);
   }
   return result;
