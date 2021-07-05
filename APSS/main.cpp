@@ -110,18 +110,22 @@ double TREASURE_areaSize(vector<vector2>& polygon){
   return result/2;
 }
 int TREASURE_pos(vector<vector2>& polygon, vector<vector2>& treasure, int idx){
+  vector2 now=polygon[idx];
   //polygon[idx]가 경계에 있지 않다.
-  if(!polygon[idx].onEdge(treasure)){
+  if(!now.onEdge(treasure)){
     return 0;
   }
   //polygon[idx+1]의 위치에 따른 차이 (내부-> 외부인가, 외부-> 내부인가)
+  vector2 prev=polygon[(idx-1+polygon.size())%polygon.size()];
   vector2 next=polygon[(idx+1)%polygon.size()];
-  if(next.isInside(treasure)||next.onEdge(treasure)){ //외부->내부
+  if(prev.isInside(treasure)&&(!next.isInside(treasure)&&!next.onEdge(treasure))){
     return 1;
-  }else{  //내부-> 외부
+  }else if(){
     return 2;
+  }else{
+    return 0;
   }
-
+  //pos에 대한 고찰 필요 
 }
 vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& treasure){
   int pSize=polygon.size();
