@@ -30,6 +30,7 @@ public:
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
+  bool onLine(const vector2& p1, const vector2& p2)const {return (*this-p1).dot(p2-p1)==(*this-p1).length()*(p2-p1).length(); }
   //기타 함수들
   vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
   bool isInside(const vector<vector2>& polygon)const{  //*this가 polygon 내부에 있는가, 경계 포함 x
@@ -46,9 +47,7 @@ public:
   bool onEdge(const vector<vector2>& polygon)const{
     int pSize=polygon.size();
     for(int i=0;i<pSize;i++){
-      vector2 p1=polygon[i];
-      vector2 p2=polygon[(i+1)%pSize];
-      if((*this-p1).dot(p2-p1)==(*this-p1).length()*(p2-p1).length()){
+      if(this->onLine(polygon[i],polygon[(i+1)%pSize])){
         return true;
       }
     }
@@ -67,16 +66,17 @@ public:
     //두 직선의 교점을 구하기
     vector2 crossPoint=this->lineIntersection(rhs,p1,p2).second;
     //두 직선의 교점이 선분위에 있는지 확인 
-    if((crossPoint-*this).dot(rhs-*this)<=0&&(crossPoint<rhs||crossPoint==rhs)){
+    if(crossPoint.onLine(p1,p2)&&crossPoint.onLine(*this,rhs)){
+      cout<<"chkCross:"<<p1<<p2<<(*this)<<rhs<<endl;
       return make_pair(true,crossPoint);
     }else{
       return make_pair(false,vector2());
     }
   }
   //전역함수 오버로딩
-  friend ostream& operator<<(ostream& os, vector2& vec);
+  friend ostream& operator<<(ostream& os, const vector2& vec);
 };
-ostream& operator<<(ostream& os, vector2& vec){
+ostream& operator<<(ostream& os, const vector2& vec){
   os<<"("<<vec.x<<","<<vec.y<<")";
   return os;
 }
@@ -183,7 +183,7 @@ vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> tr
     startPoint=1;
   }else if(last.x==treasure[2].x){
     startPoint=2;
-  }else if(last.y=treasure[3].y){
+  }else if(last.y==treasure[3].y){
     startPoint=3;
   }else{
     startPoint=0;
