@@ -111,21 +111,15 @@ double TREASURE_areaSize(vector<vector2>& polygon){
 }
 int TREASURE_pos(vector<vector2>& polygon, vector<vector2>& treasure, int idx){
   vector2 now=polygon[idx];
-  //polygon[idx]가 경계에 있지 않다.
-  if(!now.onEdge(treasure)){
-    return 0;
-  }
-  //polygon[idx+1]의 위치에 따른 차이 (내부-> 외부인가, 외부-> 내부인가)
-  vector2 prev=polygon[(idx-1+polygon.size())%polygon.size()];
   vector2 next=polygon[(idx+1)%polygon.size()];
-  if(prev.isInside(treasure)&&(!next.isInside(treasure)&&!next.onEdge(treasure))){
-    return 1;
-  }else if(){
-    return 2;
-  }else{
-    return 0;
+  if(now.onEdge(treasure)){
+    if(!next.isInside(treasure)&&!next.onEdge(treasure)){
+      return 1; //바깥으로 나가는 점
+    }else{
+      return -1;  //모서리에 머무르거나, 내부로 들어가는 점
+    }
   }
-  //pos에 대한 고찰 필요 
+  return 0; //경계에 있지 않고, 내부 혹은 외부에 있는 점 
 }
 vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& treasure){
   int pSize=polygon.size();
@@ -155,11 +149,11 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
       }
     }
   }
+  newPoly.erase(unique(newPoly.begin(),newPoly.end())); //treasure의 모서리와 같이, 같은 점이 이어져서 나타나면 제거
   //한 polygon이 다른 polygon을 완전히 포함하면, 두 polygon의 원소의 개수가 같다.
   if(polygon.size()==newPoly.size()){
     return vector<vector2>();
   }
-  //newPoly.erase(unique(newPoly.begin(),newPoly.end())); //treasure의 모서리와 같이, 같은 점이 이어져서 나타나면 제거
   //newPoly의 시작점이, 내부에서 외부로 가는 경계의 점이 되도록 하자
   int npSize=newPoly.size();
   int idx=0;
@@ -174,20 +168,31 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
   }
   return result;
 }
-vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2>& treasure,int begin,int end){
+vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> treasure,int begin,int end){
   //기본 polygon 생성
-  for(int i=begin;i<end;)
-  //polygon에 들어가는 treasure의 꼭짓점을 찾는다.
-  vector<int> points;
+  vector<vector2> result;
+  for(int i=begin;i<end;i++){
+    result.push_back(polygon[i]);
+  }
+  //result[last]의 다음 위치로 와야할 treasure의 꼭짓점을 찾는다.
+  vector2 last=result.back();
+  int startPoint;
+  if(last.y==treasure[1].y){
+    startPoint=1;
+  }else if(last.x==treasure[2].x){
+    startPoint=2;
+  }else if(last.y=treasure[3].y){
+    startPoint=3;
+  }else{
+    startPoint=0;
+  }
+  //꼭짓점이 포함되면 추가한다.
   for(int i=0;i<4;i++){
-    if(treasure[i].isInside(polygon)){
-      points.push_back(i);
+    if(treasure[(i+startPoint+4-i)%4].isInside(result)){
+      result.push_back(treasure[(i+startPoint+4-i)%4]);
     }
   }
-  if(points.empty()){
-    return polygon;
-  }
-  //처음 들어갈 꼭짓점을 찾는다.
+  return result;
 }
 double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
@@ -197,14 +202,15 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   }
   //제거해야하는 outsidePolygon을 구한다
   int polySize=newPolygon.size();
-  int begin(0);
+  int begin(-1);
   vector<vector<vector2>> outsidePoly;
   for(int idx=0;idx<polySize;idx++){  /////////////////이부분과 outsidepoly 부분 체크 
     int status=TREASURE_pos(newPolygon,treasure,idx);
     if(status==1){ //내부에서 외부로 가는 경계의 점
       begin=idx;
-    }else if(status==2){ //외부에서 내부로 가는 경계의 점
+    }else if(begin!=-1&&status==-1){ //외부에서 내부로 가는 경계의 점
       outsidePoly.push_back(TREASURE_outsidePoly(newPolygon,treasure,begin,idx));
+      begin=-1;
     }
   }
   //결과계산
