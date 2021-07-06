@@ -149,7 +149,9 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
       }
     }
   }
-  newPoly.erase(unique(newPoly.begin(),newPoly.end())); //treasure의 모서리와 같이, 같은 점이 이어져서 나타나면 제거
+  // cout<<"::::::::::"<<newPoly.size()<<endl;
+  // newPoly.erase(unique(newPoly.begin(),newPoly.end())); //treasure의 모서리와 같이, 같은 점이 이어져서 나타나면 제거
+  // cout<<"::::::::::"<<newPoly.size()<<endl;
   //한 polygon이 다른 polygon을 완전히 포함하면, 두 polygon의 원소의 개수가 같다.
   if(polygon.size()==newPoly.size()){
     return vector<vector2>();
@@ -157,7 +159,7 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
   //newPoly의 시작점이, 내부에서 외부로 가는 경계의 점이 되도록 하자
   int npSize=newPoly.size();
   int idx=0;
-  for(idx;idx<npSize;idx++){
+  for(;idx<npSize;idx++){
     if(TREASURE_pos(newPoly,treasure,idx)==1){
       break;
     }
@@ -197,6 +199,8 @@ vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> tr
 double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
   vector<vector2> newPolygon=TREASURE_newPoly(polygon, treasure);
+  cout<<"::::::::::"<<polygon.size()<<endl;
+  cout<<"::::::::::"<<newPolygon.size()<<endl;
   if(newPolygon.empty()){ // 하나가 다른 하나를 완전히 포함할 때
     return min(TREASURE_areaSize(polygon),TREASURE_areaSize(treasure));
   }
@@ -218,6 +222,7 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   for(auto& ele: outsidePoly){
     result-=TREASURE_areaSize(ele);
   }
+  cout<<"::::::::::"<<newPolygon.size()<<endl;
   return result;
 }
 void TREASURE(){
