@@ -13,14 +13,15 @@
 using namespace std;
 
 class vector2{  //2차원벡터
+private:
   const double PI=2.0*acos(0.0);
   const double EPSILON=1e-9;
 public:
   double x,y;
   vector2(double x_=0, double y_=0):x(x_),y(y_){}
   vector2 operator=(const vector2& rhs){x=rhs.x;y=rhs.y; return *this;}
-  bool operator==(const vector2& rhs)const {return x==rhs.x&&y==rhs.y; }
-  bool operator<(const vector2& rhs)const {return x!=rhs.x ? x<rhs.x : y<rhs.y; }
+  bool operator==(const vector2& rhs)const {return fabs(x-rhs.x)<EPSILON&&fabs(y-rhs.y)<EPSILON; }
+  bool operator<(const vector2& rhs)const {return fabs(x-rhs.x)<EPSILON ? x<rhs.x : y<rhs.y; }
   vector2 operator+(const vector2& rhs)const {return vector2(x+rhs.x,y+rhs.y); }
   vector2 operator-(const vector2& rhs)const {return vector2(x-rhs.x,y-rhs.y); }
   vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
@@ -59,15 +60,14 @@ public:
     return make_pair(true,*this+(rhs-*this)*((p1-*this).cross(p2-p1)/det));
   }
   pair<bool,vector2> isCross(const vector2& rhs, const vector2& p1, const vector2& p2)const{  //*this-rhs가 p1-p2와의 교점이 있는가
-    //두 직선이 교차관계 인지 먼저 확인
-    if((rhs-*this).cross(p1-*this)*(rhs-*this).cross(p2-*this)>0||(p2-p1).cross(rhs-p1)*(p2-p1).cross(*this-p1)>0){
+    //두 직선의 교점을 구하기
+    auto tmp=this->lineIntersection(rhs,p1,p2);
+    if(!tmp.first){
       return make_pair(false,vector2());
     }
-    //두 직선의 교점을 구하기
-    vector2 crossPoint=this->lineIntersection(rhs,p1,p2).second;
+    vector2 crossPoint=tmp.second;
     //두 직선의 교점이 선분위에 있는지 확인 
     if(crossPoint.onLine(p1,p2)&&crossPoint.onLine(*this,rhs)){
-      cout<<"chkCross:"<<p1<<p2<<(*this)<<rhs<<endl;
       return make_pair(true,crossPoint);
     }else{
       return make_pair(false,vector2());
