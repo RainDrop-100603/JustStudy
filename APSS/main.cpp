@@ -223,9 +223,9 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   for(auto& ele: outsidePoly){
     result-=TREASURE_areaSize(ele);
   }
-  for(auto& ele: newPolygon){
-    cout<<ele;
-  }cout<<endl;
+  // for(auto& ele: newPolygon){
+  //   cout<<ele;
+  // }cout<<endl;
   // double resultttt=0;
   // for(auto& ele: outsidePoly){
   //   resultttt+=TREASURE_areaSize(ele);
@@ -293,7 +293,7 @@ void TREASURE(){
   cin>>testCase;
   //전역변수
   cout<<fixed;
-  cout.precision(3);
+  cout.precision(10);
   //각 테스트케이스
   while(testCase--){
     vector<vector2> polygon,treasure;
