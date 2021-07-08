@@ -21,7 +21,8 @@ public:
   vector2(double x_=0, double y_=0):x(x_),y(y_){}
   vector2 operator=(const vector2& rhs){x=rhs.x;y=rhs.y; return *this;}
   bool operator==(const vector2& rhs)const {return fabs(x-rhs.x)<EPSILON&&fabs(y-rhs.y)<EPSILON; }
-  bool operator<(const vector2& rhs)const {return fabs(x-rhs.x)<EPSILON ? x<rhs.x : y<rhs.y; }
+  bool operator<(const vector2& rhs)const {return x-rhs.x ? x<rhs.x : y<rhs.y; }
+  bool operator<=(const vector2& rhs)const {return this->operator==(rhs)||this->operator<(rhs); }
   vector2 operator+(const vector2& rhs)const {return vector2(x+rhs.x,y+rhs.y); }
   vector2 operator-(const vector2& rhs)const {return vector2(x-rhs.x,y-rhs.y); }
   vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
@@ -31,7 +32,8 @@ public:
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
-  bool onLine(const vector2& p1, const vector2& p2)const {return (*this-p1).dot(p2-p1)==(*this-p1).length()*(p2-p1).length(); }
+  bool onLine(const vector2& p1, const vector2& p2)const {return (*this-p1).dot(p2-p1)==(*this-p1).length()*(p2-p1).length(); }   //직선 위
+  bool onSegment(const vector2& p1, const vector2& p2)const {return this->onLine(p1,p2)&&min(p1,p2)<=*this&&*this<=max(p1,p2); }  //선분 위
   //기타 함수들
   vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
   bool isInside(const vector<vector2>& polygon)const{  //*this가 polygon 내부에 있는가, 경계 포함 x
@@ -48,7 +50,7 @@ public:
   bool onEdge(const vector<vector2>& polygon)const{
     int pSize=polygon.size();
     for(int i=0;i<pSize;i++){
-      if(this->onLine(polygon[i],polygon[(i+1)%pSize])){
+      if(this->onSegment(polygon[i],polygon[(i+1)%pSize])){
         return true;
       }
     }
@@ -67,7 +69,7 @@ public:
     }
     vector2 crossPoint=tmp.second;
     //두 직선의 교점이 선분위에 있는지 확인 
-    if(crossPoint.onLine(p1,p2)&&crossPoint.onLine(*this,rhs)){
+    if(crossPoint.onSegment(p1,p2)&&crossPoint.onSegment(*this,rhs)){
       return make_pair(true,crossPoint);
     }else{
       return make_pair(false,vector2());
@@ -141,7 +143,7 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
       newPoly.push_back(crossPoints.front());
     }else if(crossPoints.size()==2){
       if(crossPoints.front()==crossPoints.back()){
-        continue; //둘이 같으면 모서리란 뜻, 추가하지 않는다.
+        newPoly.push_back(crossPoints.front());
       }else if((now-crossPoints.front()).length()<(now-crossPoints.back()).length()){
         newPoly.push_back(crossPoints.front()); newPoly.push_back(crossPoints.back());
       }else{
@@ -149,9 +151,7 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
       }
     }
   }
-  // cout<<"::::::::::"<<newPoly.size()<<endl;
   // newPoly.erase(unique(newPoly.begin(),newPoly.end())); //treasure의 모서리와 같이, 같은 점이 이어져서 나타나면 제거
-  // cout<<"::::::::::"<<newPoly.size()<<endl;
   //한 polygon이 다른 polygon을 완전히 포함하면, 두 polygon의 원소의 개수가 같다.
   if(polygon.size()==newPoly.size()){
     return vector<vector2>();
@@ -223,6 +223,9 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
     result-=TREASURE_areaSize(ele);
   }
   cout<<"::::::::::"<<newPolygon.size()<<endl;
+  for(auto& ele: newPolygon){
+    cout<<ele<<" ";
+  }cout<<endl;
   return result;
 }
 void TREASURE(){
@@ -279,7 +282,7 @@ void TREASURE(){
   cin>>testCase;
   //전역변수
   cout<<fixed;
-  cout.precision(14);
+  cout.precision(5);
   //각 테스트케이스
   while(testCase--){
     vector<vector2> polygon,treasure;
