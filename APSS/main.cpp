@@ -16,13 +16,18 @@ class vector2{  //2차원벡터
 private:
   const double PI=2.0*acos(0.0);
   const double EPSILON=1e-9;
+  int cmpDBL(double a, double b)const {
+    if(fabs(a-b)<EPSILON){return 0; }
+    else if(a<b){return -1; }
+    else{return 1; }
+  }
 public:
   double x,y;
   vector2(double x_=0, double y_=0):x(x_),y(y_){}
   vector2 operator=(const vector2& rhs){x=rhs.x;y=rhs.y; return *this;}
-  bool operator==(const vector2& rhs)const {return fabs(x-rhs.x)<EPSILON&&fabs(y-rhs.y)<EPSILON; }
-  bool operator<(const vector2& rhs)const {return x-rhs.x ? x<rhs.x : y<rhs.y; }
-  bool operator<=(const vector2& rhs)const {return this->operator==(rhs)||this->operator<(rhs); }
+  bool operator==(const vector2& rhs)const {return cmpDBL(x,rhs.x)==0&&cmpDBL(y,rhs.y)==0; }
+  bool operator<(const vector2& rhs)const {return this->operator==(rhs) ? false : (cmpDBL(x,rhs.x)==0 ? y<rhs.y : x<rhs.x); }
+  bool operator<=(const vector2& rhs)const {return this->operator==(rhs) ? true : (cmpDBL(x,rhs.x)==0 ? y<rhs.y : x<rhs.x); }
   vector2 operator+(const vector2& rhs)const {return vector2(x+rhs.x,y+rhs.y); }
   vector2 operator-(const vector2& rhs)const {return vector2(x-rhs.x,y-rhs.y); }
   vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
@@ -32,7 +37,7 @@ public:
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
-  bool onLine(const vector2& p1, const vector2& p2)const {return (*this-p1).dot(p2-p1)==(*this-p1).length()*(p2-p1).length(); }   //직선 위
+  bool onLine(const vector2& p1, const vector2& p2)const {return cmpDBL((*this-p1).dot(p2-p1),(*this-p1).length()*(p2-p1).length())==0; }   //직선 위
   bool onSegment(const vector2& p1, const vector2& p2)const {return this->onLine(p1,p2)&&min(p1,p2)<=*this&&*this<=max(p1,p2); }  //선분 위
   //기타 함수들
   vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
@@ -40,7 +45,7 @@ public:
     int crossCount(0),pSize(polygon.size());
     for(int i=0;i<pSize;i++){
       vector2 p1(polygon[i]),p2(polygon[(i+1)%pSize]);
-      if((p1.y>this->y)!=(p2.y>this->y)){ 
+      if((cmpDBL(p1.y,this->y)==-1)!=(cmpDBL(p2.y,this->y)==-1)){ 
         double crossX=(this->y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
         if(this->x<crossX){crossCount++;}
       }
@@ -58,7 +63,7 @@ public:
   }
   pair<bool,vector2> lineIntersection(const vector2& rhs, const vector2& p1, const vector2& p2)const{
     double det=(rhs-*this).cross(p2-p1);
-    if(fabs(det)<EPSILON) return make_pair(false,vector2()); //평행인 경우
+    if(cmpDBL(det,0)==0) return make_pair(false,vector2()); //평행인 경우
     return make_pair(true,*this+(rhs-*this)*((p1-*this).cross(p2-p1)/det));
   }
   pair<bool,vector2> isCross(const vector2& rhs, const vector2& p1, const vector2& p2)const{  //*this-rhs가 p1-p2와의 교점이 있는가
@@ -287,6 +292,17 @@ void TREASURE(){
   while(testCase--){
     vector<vector2> polygon,treasure;
     TREASURE_Input(polygon,treasure);
+    // for(int i=0;i<4;i++){
+    //   vector2 p1(polygon[1]),p2(polygon[2]),p3(treasure[i]),p4(treasure[(i+1)%4]);
+    //   auto tmp=p1.isCross(p2,p3,p4);
+    //   auto tmp2=p1.lineIntersection(p2,p3,p4);
+    //   cout<<min(p1,p2)<<max(p1,p2)<<min(p3,p4)<<max(p3,p4)<<":";
+    //   cout<<(min(p1,p2)<=tmp2.second)<<(tmp.second<=max(p1,p2))<<(min(p3,p4)<=tmp2.second)<<(tmp.second<=max(p3,p4))<<":";
+    //   cout<<tmp2.second.onSegment(p1,p2)<<tmp2.second.onSegment(p3,p4)<<":";
+    //   cout<<tmp2.second.onLine(p1,p2)<<tmp2.second.onLine(p3,p4)<<":";
+    //   cout<<tmp.first<<":"<<tmp.second<<":";
+    //   cout<<tmp2.first<<":"<<tmp2.second<<endl;
+    // }
     auto result=TREASURE_Algo(polygon,treasure);
     //cout<<"::::";
     cout<<result<<endl;
