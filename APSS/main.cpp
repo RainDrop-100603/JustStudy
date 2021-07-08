@@ -178,24 +178,22 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
 vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> treasure,int begin,int end){
   //기본 polygon 생성
   vector<vector2> result;
-  for(int i=begin;i<end;i++){
-    result.push_back(polygon[i]);
+  int pSize=polygon.size();
+  for(int i=begin;i<=end;i++){
+    result.push_back(polygon[i%pSize]);
   }
   //result[last]의 다음 위치로 와야할 treasure의 꼭짓점을 찾는다.
   vector2 last=result.back();
   int startPoint;
-  if(last.y==treasure[1].y){
-    startPoint=1;
-  }else if(last.x==treasure[2].x){
-    startPoint=2;
-  }else if(last.y==treasure[3].y){
-    startPoint=3;
-  }else{
-    startPoint=0;
+  for(int i=0;i<4;i++){
+    if(last.onLine(treasure[i],treasure[(i+1)%4])){
+      startPoint=i;
+      break;
+    }
   }
   //꼭짓점이 포함되면 추가한다.
   for(int i=0;i<4;i++){
-    if(treasure[(i+startPoint+4-i)%4].isInside(result)){
+    if(treasure[(startPoint+4-i)%4].isInside(result)){
       result.push_back(treasure[(i+startPoint+4-i)%4]);
     }
   }
@@ -204,8 +202,6 @@ vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> tr
 double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
   vector<vector2> newPolygon=TREASURE_newPoly(polygon, treasure);
-  cout<<"::::::::::"<<polygon.size()<<endl;
-  cout<<"::::::::::"<<newPolygon.size()<<endl;
   if(newPolygon.empty()){ // 하나가 다른 하나를 완전히 포함할 때
     return min(TREASURE_areaSize(polygon),TREASURE_areaSize(treasure));
   }
@@ -213,13 +209,15 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   int polySize=newPolygon.size();
   int begin(-1);
   vector<vector<vector2>> outsidePoly;
-  for(int idx=0;idx<polySize;idx++){  /////////////////이부분과 outsidepoly 부분 체크 
-    int status=TREASURE_pos(newPolygon,treasure,idx);
-    if(status==1){ //내부에서 외부로 가는 경계의 점
-      begin=idx;
-    }else if(begin!=-1&&status==-1){ //외부에서 내부로 가는 경계의 점
-      outsidePoly.push_back(TREASURE_outsidePoly(newPolygon,treasure,begin,idx));
-      begin=-1;
+  for(int idx=0;idx<=polySize;idx++){  /////////////////이부분과 outsidepoly 부분 체크 
+    if(newPolygon[idx%polySize].onEdge(treasure)){
+      if(begin != -1){
+        outsidePoly.push_back(TREASURE_outsidePoly(newPolygon,treasure,begin,idx));
+        begin = -1;
+      }
+      if(TREASURE_pos(newPolygon,treasure,idx%polySize)==1){
+        begin = idx;
+      }
     }
   }
   //결과계산
@@ -227,10 +225,12 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   for(auto& ele: outsidePoly){
     result-=TREASURE_areaSize(ele);
   }
-  cout<<"::::::::::"<<newPolygon.size()<<endl;
-  for(auto& ele: newPolygon){
-    cout<<ele<<" ";
-  }cout<<endl;
+  // for(auto& ele:outsidePoly){
+  //   for(auto& ele2:ele){
+  //     cout<<ele2;
+  //   }
+  //   cout<<endl;
+  // }
   return result;
 }
 void TREASURE(){
@@ -287,22 +287,11 @@ void TREASURE(){
   cin>>testCase;
   //전역변수
   cout<<fixed;
-  cout.precision(5);
+  cout.precision(10);
   //각 테스트케이스
   while(testCase--){
     vector<vector2> polygon,treasure;
     TREASURE_Input(polygon,treasure);
-    // for(int i=0;i<4;i++){
-    //   vector2 p1(polygon[1]),p2(polygon[2]),p3(treasure[i]),p4(treasure[(i+1)%4]);
-    //   auto tmp=p1.isCross(p2,p3,p4);
-    //   auto tmp2=p1.lineIntersection(p2,p3,p4);
-    //   cout<<min(p1,p2)<<max(p1,p2)<<min(p3,p4)<<max(p3,p4)<<":";
-    //   cout<<(min(p1,p2)<=tmp2.second)<<(tmp.second<=max(p1,p2))<<(min(p3,p4)<=tmp2.second)<<(tmp.second<=max(p3,p4))<<":";
-    //   cout<<tmp2.second.onSegment(p1,p2)<<tmp2.second.onSegment(p3,p4)<<":";
-    //   cout<<tmp2.second.onLine(p1,p2)<<tmp2.second.onLine(p3,p4)<<":";
-    //   cout<<tmp.first<<":"<<tmp.second<<":";
-    //   cout<<tmp2.first<<":"<<tmp2.second<<endl;
-    // }
     auto result=TREASURE_Algo(polygon,treasure);
     //cout<<"::::";
     cout<<result<<endl;
