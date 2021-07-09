@@ -200,14 +200,32 @@ vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> tr
 double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
   vector<vector2> newPolygon=TREASURE_newPoly(polygon, treasure);
-  if(newPolygon.size()==polygon.size()){ // 하나가 다른 하나를 완전히 포함할 때 
-    return min(TREASURE_areaSize(polygon),TREASURE_areaSize(treasure));
+  //서로 겹치는지 확인
+  bool isDupl(false);
+  for(int i=0;i<4;i++){
+    if(treasure[i].isInside(polygon)){
+      isDupl=true;
+      break;
+    }
+  }
+  for(int i=0;i<polygon.size();i++){
+    if(polygon[i].isInside(treasure)){
+      isDupl=true;
+      break;
+    }
+  }
+  if(!isDupl){
+    return 0;
+  }
+  //겹치긴 하지만 교점이 없다면, 하나가 다른 하나를 완전히 포함 
+  if(polygon.size()==newPolygon.size()){
+    return min(TREASURE_areaSize(treasure),TREASURE_areaSize(polygon));
   }
   //제거해야하는 outsidePolygon을 구한다
   int polySize=newPolygon.size();
   int begin(-1);
   vector<vector<vector2>> outsidePoly;
-  for(int idx=0;idx<=polySize;idx++){  /////////////////이부분과 outsidepoly 부분 체크 
+  for(int idx=0;idx<=polySize;idx++){  
     if(newPolygon[idx%polySize].onEdge(treasure)){
       if(begin != -1){
         outsidePoly.push_back(TREASURE_outsidePoly(newPolygon,treasure,begin,idx));
