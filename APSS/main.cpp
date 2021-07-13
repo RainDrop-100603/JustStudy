@@ -52,12 +52,13 @@ public:
     return false;
   }
   bool isInside(const vector<vector2>& polygon)const{  //*this가 polygon 내부에 있는가, 경계 포함 x
+    if(this->onEdge(polygon)) {return false; }
     int crossCount(0),pSize(polygon.size());
     for(int i=0;i<pSize;i++){
       vector2 p1(polygon[i]),p2(polygon[(i+1)%pSize]);
       if((cmpDBL(p1.y,this->y)==-1)!=(cmpDBL(p2.y,this->y)==-1)){ 
         double crossX=(this->y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
-        if(this->x<crossX){crossCount++;}
+        if(cmpDBL(this->x,crossX)==-1){crossCount++;}
       }
     }
     return crossCount%2>0;
@@ -317,7 +318,7 @@ void TREASURE(){
     vector<vector2> polygon,treasure;
     TREASURE_Input(polygon,treasure);
     auto result=TREASURE_Algo(polygon,treasure);
-    //cout<<"::::";
+    cout<<"::::";
     cout<<result<<endl;
   }
 }
@@ -334,3 +335,59 @@ int main(void){
 
 
 
+// 10
+// 5 5 15 15 4
+// 0 10
+// 10 0
+// 20 10
+// 10 20
+// 5 5 15 15 4
+// 20 5
+// 30 5
+// 30 15
+// 20 15
+// 5 5 15 15 4
+// 15 10
+// 20 5
+// 25 10
+// 20 15
+// 5 5 15 15 4
+// 15 10
+// 14 11
+// 13 10
+// 14 9
+// 5 5 15 15 4
+// 15 5
+// 25 5
+// 25 15
+// 15 15
+// 5 5 15 15 4
+// 15 8
+// 15 12
+// 12 12
+// 12 8
+// 5 5 15 15 4
+// 7 7
+// 9 7
+// 9 9
+// 7 9
+// 5 5 15 15 4
+// 0 0
+// 20 0
+// 20 20
+// 0 20
+// 5 5 15 15 5
+// 5 5
+// 15 5
+// 20 10
+// 15 15
+// 5 15
+// 5 5 15 15 5
+// 5 5
+// 15 5
+// 10 10
+// 15 15
+// 5 15
+
+// sol
+// 100, 0, 0, 2, 0, 12, 4, 100, 100, 75
