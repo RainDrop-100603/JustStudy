@@ -198,28 +198,53 @@ vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> tr
   }
   return result;
 }
+int TREASURE_chkDupl(vector<vector2>& polygon, vector<vector2>& newPolygon, vector<vector2>& treasure){
+  int pSize=polygon.size();
+  int npSize=newPolygon.size();
+  //교점이 있는경우
+  if(pSize!=npSize){
+    //꼭짓점이 다른 polygon의 내부에 있다
+    for(int i=0;i<4;i++){
+      if(treasure[i].isInside(polygon)){
+        return 0;
+      }
+    }
+    for(int i=0;i<pSize;i++){
+      if(polygon[i].isInside(treasure)){
+        return 0;
+      }
+    }
+    //꼭짓점은 다른 polygon의 내부에 없지만, 분명하게 겹치는 부분이 있다.
+
+  }
+  //하나가 다른 하나를 완전히 포함하는경우
+  for(int i=0;i<=4;i++){
+    if(i==4){
+      return 2;
+    }
+    if(treasure[i].isOutside(polygon)){
+      break;
+    }
+  }
+  for(int i=0;i<=pSize;i++){
+    if(i==pSize){
+      return 2;
+    }
+    if(polygon[i].isOutside(treasure)){
+      break;
+    }
+  }
+  //겹치는 부분이 없는경우
+  return 1;
+}
 double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
   vector<vector2> newPolygon=TREASURE_newPoly(polygon, treasure);
   //서로 겹치는지 확인
-  bool isDupl(false);
-  for(int i=0;i<4;i++){
-    if(treasure[i].isInside(polygon)){
-      isDupl=true;
-      break;
-    }
-  }
-  for(int i=0;i<polygon.size();i++){
-    if(polygon[i].isInside(treasure)){
-      isDupl=true;
-      break;
-    }
-  }
-  if(!isDupl){
+  int chk=TREASURE_chkDupl(polygon,newPolygon,treasure);
+  if(chk==1){ //전혀 겹치치 않는 경우
     return 0;
-  }
-  //겹치긴 하지만 교점이 없다면, 하나가 다른 하나를 완전히 포함 
-  if(polygon.size()==newPolygon.size()){
+  }else if(chk==2){ //하나가 다른 하나를 포함하는 경우
     return min(TREASURE_areaSize(treasure),TREASURE_areaSize(polygon));
   }
   //제거해야하는 outsidePolygon을 구한다
@@ -296,6 +321,12 @@ void TREASURE(){
             보물영역 내부에서 외부로 나가는 교점을 시작으로, 외부에서 내부로 들어가는 교점을 끝으로 하는 polygon을 구한다.
             해당 polygon의 마지막 점에서, polygon내부에 포함되는, 보물영역의 꼭짓점을 시계방향으로 추가한다. -> O(4)
         섬의 영역에서 보물영역 외부에 있는 영역을 빼준다.
+    2-1)섬의 영역을 구한 후, 보물 영역을 경계로 섬을 잘라서 외부 영역의 크기를 구한다.
+      구현방법
+        섬의 영역을 구한다.
+        보물영역 모서리를 직선으로 하여, 섬을 자른다. 보물 영역을 포함하지 않는 부분의 영역을 구한다.
+        자른 섬을 또다시 다른 모서리를 기준으로 자른다. 총 4번 반복하면 보물영역 외부의 크기를 구할 수 있다.
+        자르는 방법 
   */
   /*전략
   전략1
@@ -318,7 +349,7 @@ void TREASURE(){
     vector<vector2> polygon,treasure;
     TREASURE_Input(polygon,treasure);
     auto result=TREASURE_Algo(polygon,treasure);
-    cout<<"::::";
+    // cout<<"::::";
     cout<<result<<endl;
   }
 }
@@ -332,62 +363,78 @@ int main(void){
   return 0;
 }
 
+12
+5 5 15 15 4
+0 10
+10 0
+20 10
+10 20
+5 5 15 15 4
+20 5
+30 5
+30 15
+20 15
+5 5 15 15 4
+15 10
+20 5
+25 10
+20 15
+5 5 15 15 4
+15 10
+14 11
+13 10
+14 9
+5 5 15 15 4
+15 5
+25 5
+25 15
+15 15
+5 5 15 15 4
+15 8
+15 12
+12 12
+12 8
+5 5 15 15 4
+7 7
+9 7
+9 9
+7 9
+5 5 15 15 4
+0 0
+20 0
+20 20
+0 20
+5 5 15 15 5
+5 5
+15 5
+20 10
+15 15
+5 15
+5 5 15 15 5
+5 5
+15 5
+10 10
+15 15
+5 15
+5 5 15 15 4
+5 5
+15 5
+15 15
+5 15
+5 5 15 15 8
+15 5
+25 5
+25 15
+15 15
+15 13
+15 11
+15 9
+15 7
 
 
+sol
+100, 0, 0, 2, 0, 12, 4, 100, 100, 75, 100,0 
 
-// 10
-// 5 5 15 15 4
-// 0 10
-// 10 0
-// 20 10
-// 10 20
-// 5 5 15 15 4
-// 20 5
-// 30 5
-// 30 15
-// 20 15
-// 5 5 15 15 4
-// 15 10
-// 20 5
-// 25 10
-// 20 15
-// 5 5 15 15 4
-// 15 10
-// 14 11
-// 13 10
-// 14 9
-// 5 5 15 15 4
-// 15 5
-// 25 5
-// 25 15
-// 15 15
-// 5 5 15 15 4
-// 15 8
-// 15 12
-// 12 12
-// 12 8
-// 5 5 15 15 4
-// 7 7
-// 9 7
-// 9 9
-// 7 9
-// 5 5 15 15 4
-// 0 0
-// 20 0
-// 20 20
-// 0 20
-// 5 5 15 15 5
-// 5 5
-// 15 5
-// 20 10
-// 15 15
-// 5 15
-// 5 5 15 15 5
-// 5 5
-// 15 5
-// 10 10
-// 15 15
-// 5 15
-
-// sol
-// 100, 0, 0, 2, 0, 12, 4, 100, 100, 75
+선분이 treasure영역내부로 들어가는지(treasure이 직사각형이므로, 교점이 두개인지만 확인하면 됨) 확인한다 -> 들어가면 겹치는 영역 있음
+한 폴리곤이 다른 폴리곤 내부에 포함되는지 확인한다 
+모두 해당하지 않으면, 서로 겹치지 않는 것이다.
