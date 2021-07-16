@@ -64,11 +64,17 @@ int main(int argc, char** argv)
       //back track
       if(aGroup[nowIdx]==1&&bGroup[targetIdx]==0){
         int tmpIdx=nowIdx;
+        aGroup[tmpIdx]=0;
         while(true){
-          aGroup[tmpIdx]=0;
-          aGroup[tmpIdx-kValue*2]=1;
-          tmpIdx-=kValue*2;
-          if(tmpIdx-kValue<0){break; }
+          if(tmpIdx-kValue*2<0){
+            break;
+          }
+          if(bGroup[tmpIdx-kValue]==1&&aGroup[tmpIdx-kValue*2]==0){
+            aGroup[tmpIdx-kValue*2]=1;
+            tmpIdx-=2*kValue;
+          }else{
+            break;
+          }
         }
       }
       //go forward
