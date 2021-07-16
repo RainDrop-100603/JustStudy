@@ -64,7 +64,7 @@ public:
     return crossCount%2>0;
   }
   bool isOutside(const vector<vector2>& polygon)const{return !(this->isInside(polygon)||this->onEdge(polygon)); }
-  pair<bool,vector2> lineIntersection(const vector2& rhs, const vector2& p1, const vector2& p2)const{
+  pair<bool,vector2> lineIntersection(const vector2& rhs, const vector2& p1, const vector2& p2)const{//직선의 교점, 평행(일치)는 제외
     double det=(rhs-*this).cross(p2-p1);
     if(cmpDBL(det,0)==0) return make_pair(false,vector2()); //평행인 경우
     return make_pair(true,*this+(rhs-*this)*((p1-*this).cross(p2-p1)/det));
@@ -201,23 +201,7 @@ vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> tr
 int TREASURE_chkDupl(vector<vector2>& polygon, vector<vector2>& newPolygon, vector<vector2>& treasure){
   int pSize=polygon.size();
   int npSize=newPolygon.size();
-  //교점이 있는경우
-  if(pSize!=npSize){
-    //꼭짓점이 다른 polygon의 내부에 있다
-    for(int i=0;i<4;i++){
-      if(treasure[i].isInside(polygon)){
-        return 0;
-      }
-    }
-    for(int i=0;i<pSize;i++){
-      if(polygon[i].isInside(treasure)){
-        return 0;
-      }
-    }
-    //꼭짓점은 다른 polygon의 내부에 없지만, 분명하게 겹치는 부분이 있다.
-
-  }
-  //하나가 다른 하나를 완전히 포함하는경우
+  //하나가 다른 하나를 완전히 포함하는경우 
   for(int i=0;i<=4;i++){
     if(i==4){
       return 2;
@@ -234,7 +218,36 @@ int TREASURE_chkDupl(vector<vector2>& polygon, vector<vector2>& newPolygon, vect
       break;
     }
   }
-  //겹치는 부분이 없는경우
+  //꼭짓점이 다른 polygon의 내부에 있다 -> 공유 영역이 존재
+  for(int i=0;i<4;i++){
+    if(treasure[i].isInside(polygon)){
+      return 0;
+    }
+  }
+  for(int i=0;i<pSize;i++){
+    if(polygon[i].isInside(treasure)){
+      return 0;
+    }
+  }
+  //교점이 있는경우, 없는경우
+  if(pSize!=npSize){
+    //교점이 있으면서 각 polygon의 꼭짓점이 상대 polygon의 내부에 없는것은, 두가지 경우다
+    //treasure와의 교점이 2개인 모서리가 존재하는 경우-> treasure내부를 들어가는 모서리(일치 제외)
+    for(int i=0;i<pSize;i++){
+      int count=0;
+      vector2 now=polygon[i],next=polygon[(i+1)%pSize];
+      for(int j=0;j<4;j++){
+        if(now.isCross(next,treasure[i],treasure[(i+1)%4]).first){
+          count++;
+        }
+      }
+      if(count==2){
+        return 0;
+      }
+    }
+    //모든 모서리의 treasure와의 교점이 1개이하인 경우-> treasure와 섬은 외부에서 접한다. 
+  }
+  //서로 겹치는 영역이 없다
   return 1;
 }
 double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
@@ -267,20 +280,6 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   for(auto& ele: outsidePoly){
     result-=TREASURE_areaSize(ele);
   }
-  // for(auto& ele: newPolygon){
-  //   cout<<ele;
-  // }cout<<endl;
-  // double resultttt=0;
-  // for(auto& ele: outsidePoly){
-  //   resultttt+=TREASURE_areaSize(ele);
-  // }
-  // cout<<TREASURE_areaSize(polygon)<<":"<<resultttt<<endl;
-  // for(auto& ele:outsidePoly){
-  //   for(auto& ele2:ele){
-  //     cout<<ele2;
-  //   }
-  //   cout<<endl;
-  // }
   return result;
 }
 void TREASURE(){
@@ -349,7 +348,7 @@ void TREASURE(){
     vector<vector2> polygon,treasure;
     TREASURE_Input(polygon,treasure);
     auto result=TREASURE_Algo(polygon,treasure);
-    // cout<<"::::";
+    //cout<<"::::";
     cout<<result<<endl;
   }
 }
@@ -363,78 +362,3 @@ int main(void){
   return 0;
 }
 
-12
-5 5 15 15 4
-0 10
-10 0
-20 10
-10 20
-5 5 15 15 4
-20 5
-30 5
-30 15
-20 15
-5 5 15 15 4
-15 10
-20 5
-25 10
-20 15
-5 5 15 15 4
-15 10
-14 11
-13 10
-14 9
-5 5 15 15 4
-15 5
-25 5
-25 15
-15 15
-5 5 15 15 4
-15 8
-15 12
-12 12
-12 8
-5 5 15 15 4
-7 7
-9 7
-9 9
-7 9
-5 5 15 15 4
-0 0
-20 0
-20 20
-0 20
-5 5 15 15 5
-5 5
-15 5
-20 10
-15 15
-5 15
-5 5 15 15 5
-5 5
-15 5
-10 10
-15 15
-5 15
-5 5 15 15 4
-5 5
-15 5
-15 15
-5 15
-5 5 15 15 8
-15 5
-25 5
-25 15
-15 15
-15 13
-15 11
-15 9
-15 7
-
-
-sol
-100, 0, 0, 2, 0, 12, 4, 100, 100, 75, 100,0 
-
-선분이 treasure영역내부로 들어가는지(treasure이 직사각형이므로, 교점이 두개인지만 확인하면 됨) 확인한다 -> 들어가면 겹치는 영역 있음
-한 폴리곤이 다른 폴리곤 내부에 포함되는지 확인한다 
-모두 해당하지 않으면, 서로 겹치지 않는 것이다.
