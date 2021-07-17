@@ -124,3 +124,6 @@ int main(int argc, char** argv)
 
 	return 0;//Your program should return 0 on normal termination.
 }
+
+//31점(lowest point)
+//중복되는 패턴은 DP로 해결했어야 하는 문제 
