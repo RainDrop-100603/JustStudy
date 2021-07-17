@@ -16,8 +16,48 @@ using namespace std;
 
 string Answer;
 
-void input(vector<int>& arr, int maxIdx, int idx, int value){
-  if(idx>=0&&idx<maxIdx){arr[idx]=value;}
+bool zigzag(vector<int>& arr,const vector<int>& target, int kValue, int start){
+  int length=arr.size();
+  int nowIdx(start),targetIdx(nowIdx+kValue),nextIdx(targetIdx+kValue);
+  bool valid(true);
+  while(true){
+    //기저
+    if(nextIdx>=length){
+      if(targetIdx<length){
+        if(arr[nowIdx]==target[targetIdx]){return true; }
+        break;
+      }
+      return true;
+    }  
+    if(arr[nextIdx]!=-1){
+      if((arr[nowIdx]|arr[nextIdx])!=target[targetIdx]){break; }
+      return true;
+    }
+    //algo
+    if(target[targetIdx]==0){
+      if(arr[nowIdx]==1){
+        break;
+      }
+      arr[nextIdx]=0;
+      nowIdx+=kValue*2;targetIdx+=kValue*2;nextIdx+=kValue*2;
+    }else{  //target value is 1
+      if(arr[nowIdx]==0){
+        arr[nextIdx]=1;
+        nowIdx+=kValue*2;targetIdx+=kValue*2;nextIdx+=kValue*2;
+      }else{  //now=1; target=1;
+        arr[nextIdx]=0;
+        if(!zigzag(arr,target,kValue,nextIdx)){
+          arr[nextIdx]=1;
+        }
+      }
+    }
+  }
+  //only break when invalid
+  while(true){
+    if(nowIdx<=start){return false; }
+    arr[nowIdx]=-1;
+    nowIdx-=kValue*2;
+  }
 }
 
 int main(int argc, char** argv)
@@ -49,53 +89,24 @@ int main(int argc, char** argv)
     }
     //pre
     for(int i=0;i<kValue;i++){
-      input(aGroup,length,i+kValue,bGroup[i]);
-      input(aGroup,length,length-1-i-kValue,bGroup[length-1-i]);
+      if(i+kValue<length){aGroup[i+kValue]=bGroup[i]; }
+      if(length-1-i-kValue>=0){aGroup[length-1-i-kValue]=bGroup[length-1-i]; }
     }
     //algo
-    for(int i=0;i<length-kValue;i++){
-      // cout<<":::";
-      // for(auto ele:aGroup){
-      //   cout<<ele<<",";
-      // }cout<<endl;
-      int nowIdx(i),targetIdx(i+kValue),nextIdx(i+2*kValue);
-      //idx chk
-      if(targetIdx>=length&&aGroup[nowIdx]==-1){aGroup[nowIdx]=0; }
-      //back track
-      if(aGroup[nowIdx]==1&&bGroup[targetIdx]==0){
-        int tmpIdx=nowIdx;
-        while(true){
-          aGroup[tmpIdx]=0;
-          aGroup[tmpIdx-kValue*2]=1;
-          tmpIdx-=kValue*2;
-          if(tmpIdx-kValue<0){break; }
-        }
-      }
-      //go forward
-      int &now=aGroup[nowIdx],target=bGroup[targetIdx];
-      if(now==0){
-        input(aGroup,length,nextIdx,target);
-      }else if(now==-1){
-        if(target==0){
-          now=0;
-          input(aGroup,length,nextIdx,0);
-        }else{  //target==1
-          if(nextIdx<length){
-            if(aGroup[nextIdx]==0){
-              now=1;
-            }else{
-              now=0;
-              aGroup[nextIdx]=1;
-            }
-          }else{
-            now=1;
-          }
+    for(int i=0;i<min(2*kValue,length);i++){
+      if(aGroup[i]!=-1){
+        zigzag(aGroup,bGroup,kValue,i);
+      }else{
+        aGroup[i]=0;
+        if(!zigzag(aGroup,bGroup,kValue,i)){
+          aGroup[i]=1;
+          zigzag(aGroup,bGroup,kValue,i);
         }
       }
     }
-    for(int i=length-kValue;i<length;i++){
-      if(aGroup[i]==-1){
-        aGroup[i]=0;
+    for(auto& ele:aGroup){
+      if(ele==-1){
+        ele=0;
       }
     }
     //make answer
