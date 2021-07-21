@@ -42,35 +42,30 @@ public:
   bool onSegment(const vector2& p1, const vector2& p2)const {return this->onLine(p1,p2)&&min(p1,p2)<=*this&&*this<=max(p1,p2); }  //선분 위
   //기타 함수들
   vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
-  int position(const vector<vector2>& polygon)const{  // -1: outside, 0: edge, 1: inside (of polygon)
-    int pSize=polygon.size();
-    //on Edge
-    for(int i=0;i<pSize;i++){
-      if(this->onSegment(polygon[i],polygon[(i+1)%pSize])){return 0;}
-    }
-    //inside or outside
-    int crossCount(0);
+  int position(const vector<vector2>& polygon)const{  // -1: inside, 0: edge, 1: outside (of polygon)
+    int crossCount(0),pSize(polygon.size());
     for(int i=0;i<pSize;i++){
       vector2 p1(polygon[i]),p2(polygon[(i+1)%pSize]);
       if((cmpDBL(p1.y,this->y)==-1)!=(cmpDBL(p2.y,this->y)==-1)){ 
         double crossX=(this->y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
+        if(cmpDBL(this->x,crossX)==0){return 0; } //on Edge
         if(cmpDBL(this->x,crossX)==-1){crossCount++;}
       }
     }
     if(crossCount%2){
-      return 1; //inside
+      return -1; //inside
     }else{
-      return -1;  //outside
+      return 1;  //outside
     }
   }
-  pair<bool,vector2> lineIntersection(const vector2& rhs, const vector2& p1, const vector2& p2)const{//직선의 교점, 평행(일치)는 제외
+  pair<bool,vector2> lineCross(const vector2& rhs, const vector2& p1, const vector2& p2)const{//직선의 교점, 평행(일치)는 제외
     double det=(rhs-*this).cross(p2-p1);
     if(cmpDBL(det,0)==0) return make_pair(false,vector2()); //평행인 경우
     return make_pair(true,*this+(rhs-*this)*((p1-*this).cross(p2-p1)/det));
   }
-  pair<bool,vector2> isCross(const vector2& rhs, const vector2& p1, const vector2& p2)const{  //*this-rhs가 p1-p2와의 교점이 있는가
+  pair<bool,vector2> segCross(const vector2& rhs, const vector2& p1, const vector2& p2)const{  //*this-rhs가 p1-p2와의 교점이 있는가
     //두 직선의 교점을 구하기
-    auto tmp=this->lineIntersection(rhs,p1,p2);
+    auto tmp=this->lineCross(rhs,p1,p2);
     if(!tmp.first){
       return make_pair(false,vector2());
     }
@@ -112,11 +107,11 @@ double TREASURE_areaSize(vector<vector2>& polygon){
   }
   return result/2;
 }
-int TREASURE_pos(vector<vector2>& polygon, vector<vector2>& treasure, int idx){
+int TREASURE_direction(vector<vector2>& polygon, vector<vector2>& treasure, int idx){
   vector2 now=polygon[idx];
   vector2 next=polygon[(idx+1)%polygon.size()];
-  if(now.onEdge(treasure)){
-    if(next.isOutside(treasure)){
+  if(now.position(treasure)==0){
+    if(next.position(treasure)==1){
       return 1; //바깥으로 나가는 점
     }else{
       return -1;  //모서리에 머무르거나, 내부로 들어가는 점
@@ -134,7 +129,7 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
     vector<vector2> crossPoints;
     //treasure와의 교점을 구한다.
     for(int i=0;i<4;i++){
-      auto tmp=now.isCross(next,treasure[i],treasure[(i+1)%4]);
+      auto tmp=now.segCross(next,treasure[i],treasure[(i+1)%4]);
       if(tmp.first){
         crossPoints.push_back(tmp.second);
       }
@@ -163,7 +158,7 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
   int npSize=newPoly.size();
   int idx=0;
   for(;idx<npSize;idx++){
-    if(TREASURE_pos(newPoly,treasure,idx)==1){
+    if(TREASURE_direction(newPoly,treasure,idx)==1){
       break;
     }
   }
@@ -191,84 +186,52 @@ vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> tr
   }
   //꼭짓점이 포함되면 추가한다.
   for(int i=0;i<4;i++){
-    if(treasure[(startPoint+4-i)%4].isInside(result)){
+    if(treasure[(startPoint+4-i)%4].position(result)==-1){
       result.push_back(treasure[(i+startPoint+4-i)%4]);
     }
   }
   return result;
 }
 int TREASURE_polyOverlap(const vector<vector2>& poly1, const vector<vector2>& poly2){
+  //1: 완전 포함, 2: 일부 겹침, 3: 겹침 없음
   int p1Size=poly1.size(),p2Size=poly2.size();
-  //하나가 다른 하나를 완전히 포함하거나 겹치지 않는경우
-  bool inside(true),outside(true);
+  //하나가 다른 하나를 완전히 포함하는 경우, 완전 포함
+  bool p1Inside(true),p2Inside(true),noInside(true);
   for(int i=0;i<p1Size;i++){
-    if(!inside&&!outside){break; }
-    if(poly1[i].isInside(poly2)){
-      outside=false;
-    }else if(poly1[i].isOutside(poly2)){
-      inside=false;
-    }
-  }
-  if(inside){return 1; }
-  if(outside){return 2; }
-  for(int i=0;i<=4;i++){
-    if(i==4){
-      return 2;
-    }
-    if(treasure[i].isOutside(polygon)){
+    int tmp=poly1[i].position(poly2);
+    if(noInside&&tmp==-1){noInside=false; }
+    if(tmp==1){
+      p1Inside=false;
       break;
     }
   }
-  for(int i=0;i<=pSize;i++){
-    if(i==pSize){
-      return 2;
-    }
-    if(polygon[i].isOutside(treasure)){
+  if(p1Inside){return 1;}
+    //
+  for(int i=0;i<p2Size;i++){
+    int tmp=poly2[i].position(poly1);
+    if(noInside&&tmp==-1){noInside=false; }
+    if(tmp==1){
+      p2Inside=false;
       break;
     }
   }
-  //꼭짓점이 다른 polygon의 내부에 있다 -> 공유 영역이 존재
-  for(int i=0;i<4;i++){
-    if(treasure[i].isInside(polygon)){
-      return 0;
-    }
-  }
-  for(int i=0;i<pSize;i++){
-    if(polygon[i].isInside(treasure)){
-      return 0;
-    }
-  }
-  //교점이 있는경우, 없는경우
-  if(pSize!=npSize){
-    //교점이 있으면서 각 polygon의 꼭짓점이 상대 polygon의 내부에 없는것은, 두가지 경우다
-    //treasure와의 교점이 2개인 모서리가 존재하는 경우-> treasure내부를 들어가는 모서리(일치 제외)
-    for(int i=0;i<pSize;i++){
-      int count=0;
-      vector2 now=polygon[i],next=polygon[(i+1)%pSize];
-      for(int j=0;j<4;j++){
-        if(now.isCross(next,treasure[i],treasure[(i+1)%4]).first){
-          count++;
-        }
-      }
-      if(count==2){
-        return 0;
-      }
-    }
-    //모든 모서리의 treasure와의 교점이 1개이하인 경우-> treasure와 섬은 외부에서 접한다. 
-  }
-  //서로 겹치는 영역이 없다
-  return 1;
+  if(p2Inside){return 1;}
+  //내부에 다른 점이 있지만, 완전히 포함하는 경우는 아닌경우, 일부 겹침
+  if(!noInside){return 2;}
+  //모든 점은 다른 polygon의 내부에 없다, 이때 일부 겹침 혹은 겹침 없음
+    //일부 겹침
+    //겹침 없음 
 }
 double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
+  //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
+  vector<vector2> newPolygon=TREASURE_newPoly(polygon, treasure);
   //서로 겹치는지 확인
-  int chk=TREASURE_polyOverlap(polygon,treasure);
+  int chk=TREASURE_polyOverlap(newPolygon,treasure);
   if(chk==1){ //전혀 겹치치 않는 경우
     return 0;
   }else if(chk==2){ //하나가 다른 하나를 포함하는 경우
     return min(TREASURE_areaSize(treasure),TREASURE_areaSize(polygon));
   }
-  //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
-  vector<vector2> newPolygon=TREASURE_newPoly(polygon, treasure);
   //제거해야하는 outsidePolygon을 구한다
   int polySize=newPolygon.size();
   int begin(-1);
@@ -279,7 +242,7 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
         outsidePoly.push_back(TREASURE_outsidePoly(newPolygon,treasure,begin,idx));
         begin = -1;
       }
-      if(TREASURE_pos(newPolygon,treasure,idx%polySize)==1){
+      if(TREASURE_direction(newPolygon,treasure,idx%polySize)==1){
         begin = idx;
       }
     }
