@@ -37,6 +37,7 @@ public:
   vector2 polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); }
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
+  int ccw(const vector2& a, const vector2& b)const {return cmpDBL((b-a).cross(*this-a),0)==1; } // 1:counterclockwise, 0: 평행, -1:clockwise
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
   bool onLine(const vector2& p1, const vector2& p2)const {return cmpDBL((*this-p1).dot(p2-p1),(*this-p1).length()*(p2-p1).length())==0; }   //직선 위
   bool onSegment(const vector2& p1, const vector2& p2)const {return this->onLine(p1,p2)&&min(p1,p2)<=*this&&*this<=max(p1,p2); }  //선분 위
@@ -85,7 +86,7 @@ ostream& operator<<(ostream& os, const vector2& vec){
   return os;
 }
 
-// 계산 기하, vector의 이용, double이용시 오차범위 항상 유의
+// @*@*@* 계산 기하, polygon clipping, 예외가 많아보이는 방법이라면, 모든 예외를 처리하는것도 좋지만, 다른 방법을 생각해보자
 void TREASURE_Input(vector<vector2>& polygon, vector<vector2>& treasure){
   int x1,y1,x2,y2,N;
   cin>>x1>>y1>>x2>>y2>>N;
@@ -98,16 +99,13 @@ void TREASURE_Input(vector<vector2>& polygon, vector<vector2>& treasure){
 }
 double TREASURE_areaSize(vector<vector2>& polygon){
   int pSize=polygon.size();
-  if(pSize<3){
-    return 0;
-  }
   double result=0;
   for(int i=0;i<pSize;i++){
     result+=polygon[i].cross(polygon[(i+1)%pSize]);
   }
   return result/2;
 }
-int TREASURE_direction(vector<vector2>& polygon, vector<vector2>& treasure, int idx){
+int TREASURE_Fail_direction(vector<vector2>& polygon, vector<vector2>& treasure, int idx){
   vector2 now=polygon[idx];
   vector2 next=polygon[(idx+1)%polygon.size()];
   if(now.position(treasure)==0){
@@ -119,7 +117,7 @@ int TREASURE_direction(vector<vector2>& polygon, vector<vector2>& treasure, int 
   }
   return 0; //경계에 있지 않고, 내부 혹은 외부에 있는 점 
 }
-vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& treasure){
+vector<vector2> TREASURE_Fail_newPoly(vector<vector2>& polygon, vector<vector2>& treasure){
   int pSize=polygon.size();
   vector<vector2> newPoly;
   newPoly.push_back(polygon[0]);
@@ -158,7 +156,7 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
   int npSize=newPoly.size();
   int idx=0;
   for(;idx<npSize;idx++){
-    if(TREASURE_direction(newPoly,treasure,idx)==1){
+    if(TREASURE_Fail_direction(newPoly,treasure,idx)==1){
       break;
     }
   }
@@ -168,7 +166,7 @@ vector<vector2> TREASURE_newPoly(vector<vector2>& polygon, vector<vector2>& trea
   }
   return result;
 }
-vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> treasure,int begin,int end){
+vector<vector2> TREASURE_Fail_outsidePoly(vector<vector2>& polygon,vector<vector2> treasure,int begin,int end){
   //기본 polygon 생성
   vector<vector2> result;
   int pSize=polygon.size();
@@ -192,7 +190,7 @@ vector<vector2> TREASURE_outsidePoly(vector<vector2>& polygon,vector<vector2> tr
   }
   return result;
 }
-int TREASURE_polyOverlap(const vector<vector2>& poly1, const vector<vector2>& poly2){
+int TREASURE_Fail_polyOverlap(const vector<vector2>& poly1, const vector<vector2>& poly2){
   //1: 완전 포함, 2: 일부 겹침, 3: 겹침 없음
   int p1Size=poly1.size(),p2Size=poly2.size();
   //하나가 다른 하나를 완전히 포함하는 경우, 완전 포함
@@ -222,11 +220,11 @@ int TREASURE_polyOverlap(const vector<vector2>& poly1, const vector<vector2>& po
     //일부 겹침
     //겹침 없음 
 }
-double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
+double TREASURE_Fail_Algo(vector<vector2> polygon, vector<vector2> treasure){
   //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
-  vector<vector2> newPolygon=TREASURE_newPoly(polygon, treasure);
+  vector<vector2> newPolygon=TREASURE_Fail_newPoly(polygon, treasure);
   //서로 겹치는지 확인
-  int chk=TREASURE_polyOverlap(newPolygon,treasure);
+  int chk=TREASURE_Fail_polyOverlap(newPolygon,treasure);
   if(chk==1){ //전혀 겹치치 않는 경우
     return 0;
   }else if(chk==2){ //하나가 다른 하나를 포함하는 경우
@@ -237,12 +235,12 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   int begin(-1);
   vector<vector<vector2>> outsidePoly;
   for(int idx=0;idx<=polySize;idx++){  
-    if(newPolygon[idx%polySize].onEdge(treasure)){
+    if(newPolygon[idx%polySize].position(treasure)==0){
       if(begin != -1){
-        outsidePoly.push_back(TREASURE_outsidePoly(newPolygon,treasure,begin,idx));
+        outsidePoly.push_back(TREASURE_Fail_outsidePoly(newPolygon,treasure,begin,idx));
         begin = -1;
       }
-      if(TREASURE_direction(newPolygon,treasure,idx%polySize)==1){
+      if(TREASURE_Fail_direction(newPolygon,treasure,idx%polySize)==1){
         begin = idx;
       }
     }
@@ -254,6 +252,35 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   }
   return result;
 }
+vector<vector2> TREASURE_cutPoly(const vector<vector2>& polygon, vector2 p1, vector2 p2){
+  vector<vector2> result;
+  int pSize=polygon.size();
+  int nextCCW=polygon[0].ccw(p1,p2),nowCCW;
+  for(int i=0;i<pSize;i++){
+    nowCCW=nextCCW;
+    nextCCW=polygon[(i+1)%pSize].ccw(p1,p2);
+    if(nowCCW>=0){
+      result.push_back(polygon[i]);
+    }
+    if((nowCCW>=0)!=(nextCCW>=0)){
+      result.push_back(polygon[i].lineCross(polygon[(i+1)%pSize],p1,p2).second);
+    }
+  }
+  return result;
+}
+double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
+  //섬을 보물영역의 모서리에 대해 자른다.
+  vector<vector2> result=polygon;
+  int tSize=treasure.size();
+  for(int i=0;i<tSize;i++){
+    result=TREASURE_cutPoly(result,treasure[i],treasure[(i+1)%tSize]);
+    for(auto& ele:result){
+      cout<<ele;
+    }cout<<endl;
+  }
+  //잘라진 섬의 넓이를 구한다.
+  return TREASURE_areaSize(result);
+} 
 void TREASURE(){
   // TREASURE
   /*설명 및 입력
@@ -298,6 +325,10 @@ void TREASURE(){
         보물영역 모서리를 직선으로 하여, 섬을 자른다. 보물 영역을 포함하지 않는 부분의 영역을 구한다.
         자른 섬을 또다시 다른 모서리를 기준으로 자른다. 총 4번 반복하면 보물영역 외부의 크기를 구할 수 있다.
         자르는 방법 
+    정답)
+      섬의 영역을 보물 영역의 모서리로 자른다.
+        이때, 모서리의 왼쪽 부분이 섬 내부에 포함되는 영역이다.(꼭짓점이 반시계로 주어지기 때문)
+        모든 모서리에 대해 수행하면, 보물영역에 포함되는 섬의 영역을 구할 수 있다.
   */
   /*전략
   전략1
@@ -308,6 +339,15 @@ void TREASURE(){
     크기
       O(n)
     개선 및 보완
+  정답
+    벡터를 이용한다
+    방법
+      다각형의 꼭짓점을 시계 반대방향으로 정렬한다(문제에서 주어짐)
+      섬을 보물영역의 한 모서리로 자른다. 자른영역의 왼쪽 부분이 새로운 섬의 영역이다. -> O(n) * n times
+        시계반대 반대방향이기 때문에, 왼쪽 영역이 보물영역을 포함한다
+      모든 모서리에 대해 수행하면, 보물 영역 내부의 섬의 크기가 구해진다. -> O(n)
+    시간: O(n^2)
+    크기: O(n)
   */
   //Sol
   int testCase;
