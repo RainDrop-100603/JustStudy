@@ -37,7 +37,7 @@ public:
   vector2 polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); }
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
-  int ccw(const vector2& a, const vector2& b)const {return cmpDBL((b-a).cross(*this-a),0)==1; } // 1:counterclockwise, 0: 평행, -1:clockwise
+  int ccw(const vector2& a, const vector2& b)const {return cmpDBL((b-a).cross(*this-a),0); } // 1:counterclockwise, 0: 평행, -1:clockwise
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
   bool onLine(const vector2& p1, const vector2& p2)const {return cmpDBL((*this-p1).dot(p2-p1),(*this-p1).length()*(p2-p1).length())==0; }   //직선 위
   bool onSegment(const vector2& p1, const vector2& p2)const {return this->onLine(p1,p2)&&min(p1,p2)<=*this&&*this<=max(p1,p2); }  //선분 위
@@ -105,153 +105,153 @@ double TREASURE_areaSize(vector<vector2>& polygon){
   }
   return result/2;
 }
-int TREASURE_Fail_direction(vector<vector2>& polygon, vector<vector2>& treasure, int idx){
-  vector2 now=polygon[idx];
-  vector2 next=polygon[(idx+1)%polygon.size()];
-  if(now.position(treasure)==0){
-    if(next.position(treasure)==1){
-      return 1; //바깥으로 나가는 점
-    }else{
-      return -1;  //모서리에 머무르거나, 내부로 들어가는 점
-    }
-  }
-  return 0; //경계에 있지 않고, 내부 혹은 외부에 있는 점 
-}
-vector<vector2> TREASURE_Fail_newPoly(vector<vector2>& polygon, vector<vector2>& treasure){
-  int pSize=polygon.size();
-  vector<vector2> newPoly;
-  newPoly.push_back(polygon[0]);
-  for(int idx=0;idx<pSize;idx++){
-    vector2 now=polygon[idx];
-    vector2 next=polygon[(idx+1)%pSize];
-    vector<vector2> crossPoints;
-    //treasure와의 교점을 구한다.
-    for(int i=0;i<4;i++){
-      auto tmp=now.segCross(next,treasure[i],treasure[(i+1)%4]);
-      if(tmp.first){
-        crossPoints.push_back(tmp.second);
-      }
-    }
-    //가까운 순서대로 정리
-    if(crossPoints.size()==2&&(now-crossPoints.front()).length()>(now-crossPoints.back()).length()){
-      vector2 last=crossPoints.back();
-      crossPoints.pop_back();
-      crossPoints.insert(crossPoints.begin(),last);
-    }
-    crossPoints.insert(crossPoints.begin(),now);
-    //순서대로 newPoly에 추가
-    for(auto& ele:crossPoints){
-      if(newPoly.back()!=ele){
-        newPoly.push_back(ele);
-      }
-    }
-  }
-  if(newPoly.size()>=2){
-    if(newPoly.front()==newPoly.back()){
-      newPoly.pop_back();
-    }
-  }
-  // newPoly.erase(unique(newPoly.begin(),newPoly.end())); //treasure의 모서리와 같이, 같은 점이 이어져서 나타나면 제거
-  //newPoly의 시작점이, 내부에서 외부로 가는 경계의 점이 되도록 하자
-  int npSize=newPoly.size();
-  int idx=0;
-  for(;idx<npSize;idx++){
-    if(TREASURE_Fail_direction(newPoly,treasure,idx)==1){
-      break;
-    }
-  }
-  vector<vector2> result;
-  for(int i=0;i<npSize;i++){
-    result.push_back(newPoly[(i+idx)%npSize]);
-  }
-  return result;
-}
-vector<vector2> TREASURE_Fail_outsidePoly(vector<vector2>& polygon,vector<vector2> treasure,int begin,int end){
-  //기본 polygon 생성
-  vector<vector2> result;
-  int pSize=polygon.size();
-  for(int i=begin;i<=end;i++){
-    result.push_back(polygon[i%pSize]);
-  }
-  //result[last]의 다음 위치로 와야할 treasure의 꼭짓점을 찾는다.
-  vector2 last=result.back();
-  int startPoint;
-  for(int i=0;i<4;i++){
-    if(last.onLine(treasure[i],treasure[(i+1)%4])){
-      startPoint=i;
-      break;
-    }
-  }
-  //꼭짓점이 포함되면 추가한다.
-  for(int i=0;i<4;i++){
-    if(treasure[(startPoint+4-i)%4].position(result)==-1){
-      result.push_back(treasure[(i+startPoint+4-i)%4]);
-    }
-  }
-  return result;
-}
-int TREASURE_Fail_polyOverlap(const vector<vector2>& poly1, const vector<vector2>& poly2){
-  //1: 완전 포함, 2: 일부 겹침, 3: 겹침 없음
-  int p1Size=poly1.size(),p2Size=poly2.size();
-  //하나가 다른 하나를 완전히 포함하는 경우, 완전 포함
-  bool p1Inside(true),p2Inside(true),noInside(true);
-  for(int i=0;i<p1Size;i++){
-    int tmp=poly1[i].position(poly2);
-    if(noInside&&tmp==-1){noInside=false; }
-    if(tmp==1){
-      p1Inside=false;
-      break;
-    }
-  }
-  if(p1Inside){return 1;}
-    //
-  for(int i=0;i<p2Size;i++){
-    int tmp=poly2[i].position(poly1);
-    if(noInside&&tmp==-1){noInside=false; }
-    if(tmp==1){
-      p2Inside=false;
-      break;
-    }
-  }
-  if(p2Inside){return 1;}
-  //내부에 다른 점이 있지만, 완전히 포함하는 경우는 아닌경우, 일부 겹침
-  if(!noInside){return 2;}
-  //모든 점은 다른 polygon의 내부에 없다, 이때 일부 겹침 혹은 겹침 없음
-    //일부 겹침
-    //겹침 없음 
-}
-double TREASURE_Fail_Algo(vector<vector2> polygon, vector<vector2> treasure){
-  //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
-  vector<vector2> newPolygon=TREASURE_Fail_newPoly(polygon, treasure);
-  //서로 겹치는지 확인
-  int chk=TREASURE_Fail_polyOverlap(newPolygon,treasure);
-  if(chk==1){ //전혀 겹치치 않는 경우
-    return 0;
-  }else if(chk==2){ //하나가 다른 하나를 포함하는 경우
-    return min(TREASURE_areaSize(treasure),TREASURE_areaSize(polygon));
-  }
-  //제거해야하는 outsidePolygon을 구한다
-  int polySize=newPolygon.size();
-  int begin(-1);
-  vector<vector<vector2>> outsidePoly;
-  for(int idx=0;idx<=polySize;idx++){  
-    if(newPolygon[idx%polySize].position(treasure)==0){
-      if(begin != -1){
-        outsidePoly.push_back(TREASURE_Fail_outsidePoly(newPolygon,treasure,begin,idx));
-        begin = -1;
-      }
-      if(TREASURE_Fail_direction(newPolygon,treasure,idx%polySize)==1){
-        begin = idx;
-      }
-    }
-  }
-  //결과계산
-  double result=TREASURE_areaSize(polygon);
-  for(auto& ele: outsidePoly){
-    result-=TREASURE_areaSize(ele);
-  }
-  return result;
-}
+// int TREASURE_Fail_direction(vector<vector2>& polygon, vector<vector2>& treasure, int idx){
+//   vector2 now=polygon[idx];
+//   vector2 next=polygon[(idx+1)%polygon.size()];
+//   if(now.position(treasure)==0){
+//     if(next.position(treasure)==1){
+//       return 1; //바깥으로 나가는 점
+//     }else{
+//       return -1;  //모서리에 머무르거나, 내부로 들어가는 점
+//     }
+//   }
+//   return 0; //경계에 있지 않고, 내부 혹은 외부에 있는 점 
+// }
+// vector<vector2> TREASURE_Fail_newPoly(vector<vector2>& polygon, vector<vector2>& treasure){
+//   int pSize=polygon.size();
+//   vector<vector2> newPoly;
+//   newPoly.push_back(polygon[0]);
+//   for(int idx=0;idx<pSize;idx++){
+//     vector2 now=polygon[idx];
+//     vector2 next=polygon[(idx+1)%pSize];
+//     vector<vector2> crossPoints;
+//     //treasure와의 교점을 구한다.
+//     for(int i=0;i<4;i++){
+//       auto tmp=now.segCross(next,treasure[i],treasure[(i+1)%4]);
+//       if(tmp.first){
+//         crossPoints.push_back(tmp.second);
+//       }
+//     }
+//     //가까운 순서대로 정리
+//     if(crossPoints.size()==2&&(now-crossPoints.front()).length()>(now-crossPoints.back()).length()){
+//       vector2 last=crossPoints.back();
+//       crossPoints.pop_back();
+//       crossPoints.insert(crossPoints.begin(),last);
+//     }
+//     crossPoints.insert(crossPoints.begin(),now);
+//     //순서대로 newPoly에 추가
+//     for(auto& ele:crossPoints){
+//       if(newPoly.back()!=ele){
+//         newPoly.push_back(ele);
+//       }
+//     }
+//   }
+//   if(newPoly.size()>=2){
+//     if(newPoly.front()==newPoly.back()){
+//       newPoly.pop_back();
+//     }
+//   }
+//   // newPoly.erase(unique(newPoly.begin(),newPoly.end())); //treasure의 모서리와 같이, 같은 점이 이어져서 나타나면 제거
+//   //newPoly의 시작점이, 내부에서 외부로 가는 경계의 점이 되도록 하자
+//   int npSize=newPoly.size();
+//   int idx=0;
+//   for(;idx<npSize;idx++){
+//     if(TREASURE_Fail_direction(newPoly,treasure,idx)==1){
+//       break;
+//     }
+//   }
+//   vector<vector2> result;
+//   for(int i=0;i<npSize;i++){
+//     result.push_back(newPoly[(i+idx)%npSize]);
+//   }
+//   return result;
+// }
+// vector<vector2> TREASURE_Fail_outsidePoly(vector<vector2>& polygon,vector<vector2> treasure,int begin,int end){
+//   //기본 polygon 생성
+//   vector<vector2> result;
+//   int pSize=polygon.size();
+//   for(int i=begin;i<=end;i++){
+//     result.push_back(polygon[i%pSize]);
+//   }
+//   //result[last]의 다음 위치로 와야할 treasure의 꼭짓점을 찾는다.
+//   vector2 last=result.back();
+//   int startPoint;
+//   for(int i=0;i<4;i++){
+//     if(last.onLine(treasure[i],treasure[(i+1)%4])){
+//       startPoint=i;
+//       break;
+//     }
+//   }
+//   //꼭짓점이 포함되면 추가한다.
+//   for(int i=0;i<4;i++){
+//     if(treasure[(startPoint+4-i)%4].position(result)==-1){
+//       result.push_back(treasure[(i+startPoint+4-i)%4]);
+//     }
+//   }
+//   return result;
+// }
+// int TREASURE_Fail_polyOverlap(const vector<vector2>& poly1, const vector<vector2>& poly2){
+//   //1: 완전 포함, 2: 일부 겹침, 3: 겹침 없음
+//   int p1Size=poly1.size(),p2Size=poly2.size();
+//   //하나가 다른 하나를 완전히 포함하는 경우, 완전 포함
+//   bool p1Inside(true),p2Inside(true),noInside(true);
+//   for(int i=0;i<p1Size;i++){
+//     int tmp=poly1[i].position(poly2);
+//     if(noInside&&tmp==-1){noInside=false; }
+//     if(tmp==1){
+//       p1Inside=false;
+//       break;
+//     }
+//   }
+//   if(p1Inside){return 1;}
+//     //
+//   for(int i=0;i<p2Size;i++){
+//     int tmp=poly2[i].position(poly1);
+//     if(noInside&&tmp==-1){noInside=false; }
+//     if(tmp==1){
+//       p2Inside=false;
+//       break;
+//     }
+//   }
+//   if(p2Inside){return 1;}
+//   //내부에 다른 점이 있지만, 완전히 포함하는 경우는 아닌경우, 일부 겹침
+//   if(!noInside){return 2;}
+//   //모든 점은 다른 polygon의 내부에 없다, 이때 일부 겹침 혹은 겹침 없음
+//     //일부 겹침
+//     //겹침 없음 
+// }
+// double TREASURE_Fail_Algo(vector<vector2> polygon, vector<vector2> treasure){
+//   //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
+//   vector<vector2> newPolygon=TREASURE_Fail_newPoly(polygon, treasure);
+//   //서로 겹치는지 확인
+//   int chk=TREASURE_Fail_polyOverlap(newPolygon,treasure);
+//   if(chk==1){ //전혀 겹치치 않는 경우
+//     return 0;
+//   }else if(chk==2){ //하나가 다른 하나를 포함하는 경우
+//     return min(TREASURE_areaSize(treasure),TREASURE_areaSize(polygon));
+//   }
+//   //제거해야하는 outsidePolygon을 구한다
+//   int polySize=newPolygon.size();
+//   int begin(-1);
+//   vector<vector<vector2>> outsidePoly;
+//   for(int idx=0;idx<=polySize;idx++){  
+//     if(newPolygon[idx%polySize].position(treasure)==0){
+//       if(begin != -1){
+//         outsidePoly.push_back(TREASURE_Fail_outsidePoly(newPolygon,treasure,begin,idx));
+//         begin = -1;
+//       }
+//       if(TREASURE_Fail_direction(newPolygon,treasure,idx%polySize)==1){
+//         begin = idx;
+//       }
+//     }
+//   }
+//   //결과계산
+//   double result=TREASURE_areaSize(polygon);
+//   for(auto& ele: outsidePoly){
+//     result-=TREASURE_areaSize(ele);
+//   }
+//   return result;
+// }
 vector<vector2> TREASURE_cutPoly(const vector<vector2>& polygon, vector2 p1, vector2 p2){
   vector<vector2> result;
   int pSize=polygon.size();
@@ -262,7 +262,7 @@ vector<vector2> TREASURE_cutPoly(const vector<vector2>& polygon, vector2 p1, vec
     if(nowCCW>=0){
       result.push_back(polygon[i]);
     }
-    if((nowCCW>=0)!=(nextCCW>=0)){
+    if(nowCCW!=0&&nowCCW==-1*nextCCW){
       result.push_back(polygon[i].lineCross(polygon[(i+1)%pSize],p1,p2).second);
     }
   }
@@ -274,9 +274,6 @@ double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
   int tSize=treasure.size();
   for(int i=0;i<tSize;i++){
     result=TREASURE_cutPoly(result,treasure[i],treasure[(i+1)%tSize]);
-    for(auto& ele:result){
-      cout<<ele;
-    }cout<<endl;
   }
   //잘라진 섬의 넓이를 구한다.
   return TREASURE_areaSize(result);
@@ -360,7 +357,7 @@ void TREASURE(){
     vector<vector2> polygon,treasure;
     TREASURE_Input(polygon,treasure);
     auto result=TREASURE_Algo(polygon,treasure);
-    cout<<"::::";
+    // cout<<"::::";
     cout<<result<<endl;
   }
 }
