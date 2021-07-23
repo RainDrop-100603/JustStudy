@@ -34,7 +34,8 @@ public:
   vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
   double length()const {return hypot(x,y); }
   vector2 normalize()const {return vector2(x/length(),y/length()); }
-  vector2 polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); }
+  vector2 polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); } //x축에서의 각
+  vector2 angleBetween(const vector2& rhs)const {return rhs.polar()>this->polar()? rhs.polar()-this->polar() : rhs.polar()-this->polar()+2*PI; } //this에서 rhs방향으로의 각도
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
   int ccw(const vector2& a, const vector2& b)const {return cmpDBL((b-a).cross(*this-a),0); } // 1:counterclockwise, 0: 평행, -1:clockwise
@@ -97,31 +98,66 @@ void NERDS_Input(int& peopleNum, vector<vector<int>>& peopleInfo){
     ele=vector<int>{nerd,foot,type};
   }
 }
-vector<vector2> NERDS_getEdge(vector<vector<int>>& peopleInfo,int isNerd){
-  vector<vector2> points;
-  for(auto& ele:peopleInfo){
-    if(ele[0]==isNerd){
-      points.push_back(vector2(ele[1],ele[2]));
+vector<vector2> NERDS_getEdge(const vector<vector2>& group){
+  int groupSize=group.size();
+  for(int base=0;base<groupSize;base++){
+    bool isEdge(true);
+    vector2 right(group[base]),left(group[(base+1)%groupSize]);
+    for(int idx=1;idx<groupSize;idx++){
+      if(group[(base+idx)%groupSize].ccw(left,right)==-1){
+        isEdge=false;
+        break;
+      }
+    }
+    if(isEdge){return vector<vector2>{left,right}; }
+    //반대방향
+    for(int idx=1;idx<groupSize;idx++){
+      if(group[(base+idx)%groupSize].ccw(right,left)==-1){
+        isEdge=false;
+        break;
+      }
+    }
+    if(isEdge){return vector<vector2>{right,left}; }
+  }
+}
+vector<vector2> NERDS_getPoly(vector<vector2>& group, vector<vector2>& edge){
+  vector<vector2> polygon=edge;
+  while(true){
+    vector2 prev(*(polygon.rbegin()++)),now(polygon.back()),next;
+    double angle=1000;
+    for(auto& ele: polygon){
+      if(ele==now||ele==prev){continue; }
+      double tmpAngle=(now-prev).angleBetween(ele-now);
+      if(tmpAngle<angle){
+        angle=tmpAngle;
+        next=ele;
+      }else if(tmpAngle==angle){
+        if((next-now).length()<(ele-now).length())
+        여기처리
+      }
     }
   }
-  //
-  for()
 }
 string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //nerd와 notNerd를 구분한다
-  아랫부분에서 0과 1을 제거하고, nerd와 notNerd만 이용한다.
-  //시작 모서리를 구한다. nerds는 모서리
   vector<vector2> nerds,notNerds;
-  notNerds=NERDS_getEdge(peopleInfo,0);  
-  nerds=NERDS_getEdge(peopleInfo,1);
+  for(auto& ele: peopleInfo){
+    if(ele[0]==0){notNerds.push_back(vector2(ele[1],ele[2])); }
+    else{nerds.push_back(vector2(ele[1],ele[2])); }
+  }
+  //시작 모서리를 구한다. nerds는 모서리
+  vector<vector2> nerdEdge,notNerdEdge;
+  nerdEdge=NERDS_getEdge(nerds);  
+  notNerdEdge=NERDS_getEdge(notNerds);
   //두 다각형을 구한다. nerds는 다각형
-  notNerds=NERDS_getPoly(peopleInfo,0,notNerds);
-  nerds=NERDS_getPoly(peopleInfo,1,nerds);
+  vector<vector2> nerdPoly,notNerdPoly;
+  nerdPoly=NERDS_getPoly(nerds,nerdEdge);
+  notNerdPoly=NERDS_getPoly(notNerds,notNerdEdge);
   //두 다각형의 겹치는 영역을 구한다.
-  int nerdSize=nerds.size();
-  vector<vector2> sharedArea=notNerds;
+  int nerdSize=nerdPoly.size();
+  vector<vector2> sharedArea=notNerdPoly;
   for(int i=0;i<nerdSize;i++){
-    sharedArea=NERDS_cutPoly(sharedArea,nerds[i],nerds[(i+1)%nerdSize]);
+    sharedArea=NERDS_cutPoly(sharedArea,nerdPoly[i],nerdPoly[(i+1)%nerdSize]);
   }
   //결과 반환
   if(sharedArea.empty()){
