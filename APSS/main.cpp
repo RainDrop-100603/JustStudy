@@ -108,6 +108,8 @@ vector<vector2> NERDS_getEdge(vector<vector<int>>& peopleInfo,int isNerd){
   for()
 }
 string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
+  //nerd와 notNerd를 구분한다
+  아랫부분에서 0과 1을 제거하고, nerd와 notNerd만 이용한다.
   //시작 모서리를 구한다. nerds는 모서리
   vector<vector2> nerds,notNerds;
   notNerds=NERDS_getEdge(peopleInfo,0);  
