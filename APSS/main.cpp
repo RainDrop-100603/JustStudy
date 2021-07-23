@@ -97,6 +97,16 @@ void NERDS_Input(int& peopleNum, vector<vector<int>>& peopleInfo){
     ele=vector<int>{nerd,foot,type};
   }
 }
+vector<vector2> NERDS_getEdge(vector<vector<int>>& peopleInfo,int isNerd){
+  vector<vector2> points;
+  for(auto& ele:peopleInfo){
+    if(ele[0]==isNerd){
+      points.push_back(vector2(ele[1],ele[2]));
+    }
+  }
+  //
+  for()
+}
 string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //시작 모서리를 구한다. nerds는 모서리
   vector<vector2> nerds,notNerds;
