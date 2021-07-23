@@ -88,248 +88,66 @@ ostream& operator<<(ostream& os, const vector2& vec){
 
 // @*@*@* 계산 기하, simple polygon clipping, 배열 접근시, 배열의 크기가 0인 경우도 반드시 생각하자 
 //        예외가 많아보이는 방법이라면, 모든 예외를 처리하는것도 좋지만, 더 간단한 방법은 없는지 생각해보자
-void TREASURE_Input(vector<vector2>& polygon, vector<vector2>& treasure){
-  int x1,y1,x2,y2,N;
-  cin>>x1>>y1>>x2>>y2>>N;
-  treasure.push_back(vector2(x1,y1));treasure.push_back(vector2(x2,y1));
-  treasure.push_back(vector2(x2,y2));treasure.push_back(vector2(x1,y2));
-  polygon.resize(N);
-  for(auto& ele:polygon){
-    cin>>ele.x>>ele.y;
+void NERDS_Input(int& peopleNum, vector<vector<int>>& peopleInfo){
+  cin>>peopleNum;
+  peopleInfo.resize(peopleNum);
+  for(auto& ele:peopleInfo){
+    int nerd,foot,type;
+    cin>>nerd>>foot>>type;
+    ele=vector<int>{nerd,foot,type};
   }
 }
-double TREASURE_areaSize(vector<vector2>& polygon){
-  int pSize=polygon.size();
-  double result=0;
-  for(int i=0;i<pSize;i++){
-    result+=polygon[i].cross(polygon[(i+1)%pSize]);
-  }
-  return result/2;
-}
-// int TREASURE_Fail_direction(vector<vector2>& polygon, vector<vector2>& treasure, int idx){
-//   vector2 now=polygon[idx];
-//   vector2 next=polygon[(idx+1)%polygon.size()];
-//   if(now.position(treasure)==0){
-//     if(next.position(treasure)==1){
-//       return 1; //바깥으로 나가는 점
-//     }else{
-//       return -1;  //모서리에 머무르거나, 내부로 들어가는 점
-//     }
-//   }
-//   return 0; //경계에 있지 않고, 내부 혹은 외부에 있는 점 
-// }
-// vector<vector2> TREASURE_Fail_newPoly(vector<vector2>& polygon, vector<vector2>& treasure){
-//   int pSize=polygon.size();
-//   vector<vector2> newPoly;
-//   newPoly.push_back(polygon[0]);
-//   for(int idx=0;idx<pSize;idx++){
-//     vector2 now=polygon[idx];
-//     vector2 next=polygon[(idx+1)%pSize];
-//     vector<vector2> crossPoints;
-//     //treasure와의 교점을 구한다.
-//     for(int i=0;i<4;i++){
-//       auto tmp=now.segCross(next,treasure[i],treasure[(i+1)%4]);
-//       if(tmp.first){
-//         crossPoints.push_back(tmp.second);
-//       }
-//     }
-//     //가까운 순서대로 정리
-//     if(crossPoints.size()==2&&(now-crossPoints.front()).length()>(now-crossPoints.back()).length()){
-//       vector2 last=crossPoints.back();
-//       crossPoints.pop_back();
-//       crossPoints.insert(crossPoints.begin(),last);
-//     }
-//     crossPoints.insert(crossPoints.begin(),now);
-//     //순서대로 newPoly에 추가
-//     for(auto& ele:crossPoints){
-//       if(newPoly.back()!=ele){
-//         newPoly.push_back(ele);
-//       }
-//     }
-//   }
-//   if(newPoly.size()>=2){
-//     if(newPoly.front()==newPoly.back()){
-//       newPoly.pop_back();
-//     }
-//   }
-//   // newPoly.erase(unique(newPoly.begin(),newPoly.end())); //treasure의 모서리와 같이, 같은 점이 이어져서 나타나면 제거
-//   //newPoly의 시작점이, 내부에서 외부로 가는 경계의 점이 되도록 하자
-//   int npSize=newPoly.size();
-//   int idx=0;
-//   for(;idx<npSize;idx++){
-//     if(TREASURE_Fail_direction(newPoly,treasure,idx)==1){
-//       break;
-//     }
-//   }
-//   vector<vector2> result;
-//   for(int i=0;i<npSize;i++){
-//     result.push_back(newPoly[(i+idx)%npSize]);
-//   }
-//   return result;
-// }
-// vector<vector2> TREASURE_Fail_outsidePoly(vector<vector2>& polygon,vector<vector2> treasure,int begin,int end){
-//   //기본 polygon 생성
-//   vector<vector2> result;
-//   int pSize=polygon.size();
-//   for(int i=begin;i<=end;i++){
-//     result.push_back(polygon[i%pSize]);
-//   }
-//   //result[last]의 다음 위치로 와야할 treasure의 꼭짓점을 찾는다.
-//   vector2 last=result.back();
-//   int startPoint;
-//   for(int i=0;i<4;i++){
-//     if(last.onLine(treasure[i],treasure[(i+1)%4])){
-//       startPoint=i;
-//       break;
-//     }
-//   }
-//   //꼭짓점이 포함되면 추가한다.
-//   for(int i=0;i<4;i++){
-//     if(treasure[(startPoint+4-i)%4].position(result)==-1){
-//       result.push_back(treasure[(i+startPoint+4-i)%4]);
-//     }
-//   }
-//   return result;
-// }
-// int TREASURE_Fail_polyOverlap(const vector<vector2>& poly1, const vector<vector2>& poly2){
-//   //1: 완전 포함, 2: 일부 겹침, 3: 겹침 없음
-//   int p1Size=poly1.size(),p2Size=poly2.size();
-//   //하나가 다른 하나를 완전히 포함하는 경우, 완전 포함
-//   bool p1Inside(true),p2Inside(true),noInside(true);
-//   for(int i=0;i<p1Size;i++){
-//     int tmp=poly1[i].position(poly2);
-//     if(noInside&&tmp==-1){noInside=false; }
-//     if(tmp==1){
-//       p1Inside=false;
-//       break;
-//     }
-//   }
-//   if(p1Inside){return 1;}
-//     //
-//   for(int i=0;i<p2Size;i++){
-//     int tmp=poly2[i].position(poly1);
-//     if(noInside&&tmp==-1){noInside=false; }
-//     if(tmp==1){
-//       p2Inside=false;
-//       break;
-//     }
-//   }
-//   if(p2Inside){return 1;}
-//   //내부에 다른 점이 있지만, 완전히 포함하는 경우는 아닌경우, 일부 겹침
-//   if(!noInside){return 2;}
-//   //모든 점은 다른 polygon의 내부에 없다, 이때 일부 겹침 혹은 겹침 없음
-//     //일부 겹침
-//     //겹침 없음 
-// }
-// double TREASURE_Fail_Algo(vector<vector2> polygon, vector<vector2> treasure){
-//   //newPolygon에 교점도 모두 포함시키기 시작점은 내부에서 외부로 나가는 경계의 점이다.
-//   vector<vector2> newPolygon=TREASURE_Fail_newPoly(polygon, treasure);
-//   //서로 겹치는지 확인
-//   int chk=TREASURE_Fail_polyOverlap(newPolygon,treasure);
-//   if(chk==1){ //전혀 겹치치 않는 경우
-//     return 0;
-//   }else if(chk==2){ //하나가 다른 하나를 포함하는 경우
-//     return min(TREASURE_areaSize(treasure),TREASURE_areaSize(polygon));
-//   }
-//   //제거해야하는 outsidePolygon을 구한다
-//   int polySize=newPolygon.size();
-//   int begin(-1);
-//   vector<vector<vector2>> outsidePoly;
-//   for(int idx=0;idx<=polySize;idx++){  
-//     if(newPolygon[idx%polySize].position(treasure)==0){
-//       if(begin != -1){
-//         outsidePoly.push_back(TREASURE_Fail_outsidePoly(newPolygon,treasure,begin,idx));
-//         begin = -1;
-//       }
-//       if(TREASURE_Fail_direction(newPolygon,treasure,idx%polySize)==1){
-//         begin = idx;
-//       }
-//     }
-//   }
-//   //결과계산
-//   double result=TREASURE_areaSize(polygon);
-//   for(auto& ele: outsidePoly){
-//     result-=TREASURE_areaSize(ele);
-//   }
-//   return result;
-// }
-vector<vector2> TREASURE_cutPoly(const vector<vector2>& polygon, vector2 p1, vector2 p2){
-  vector<vector2> result;
-  int pSize=polygon.size();
-  if(pSize==0){
-    return result;
-  }
-  int nextCCW=polygon[0].ccw(p1,p2),nowCCW;
-  for(int i=0;i<pSize;i++){
-    nowCCW=nextCCW;
-    nextCCW=polygon[(i+1)%pSize].ccw(p1,p2);
-    if(nowCCW>=0){
-      result.push_back(polygon[i]);
-    }
-    if(nowCCW!=0&&nowCCW==-1*nextCCW){
-      result.push_back(polygon[i].lineCross(polygon[(i+1)%pSize],p1,p2).second);
-    }
-  }
-  return result;
-}
-double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure){
+string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //섬을 보물영역의 모서리에 대해 자른다.
-  vector<vector2> result=polygon;
-  int tSize=treasure.size();
-  for(int i=0;i<tSize;i++){
-    result=TREASURE_cutPoly(result,treasure[i],treasure[(i+1)%tSize]);
-  }
+  bool result;
   //잘라진 섬의 넓이를 구한다.
-  return TREASURE_areaSize(result);
+  if(result){
+    return string("THEORY HOLDS");
+  }else{
+    return string("THEORY IS INVALID");
+  }
 } 
-void TREASURE(){
+void NERDS(){
   // TREASURE
   /*설명 및 입력
   설명
-    섬의 지도가 위 그림과 같이 N개의 점을 갖는 다각형으로 주어질 때, 
-      보물이 묻혀 있을 수 있는 곳은 두 점 (x1,y1)과 (x2,y2) 를 서로 대칭인 꼭지점으로 갖고, 
-      네 변이 모두 x축 혹은 y축에 평행한 직사각형 내부입니다. 
-    우리는 이 직사각형 내에 포함된 육지를 전부 조사하고 싶습니다. 
-    우리가 조사해야 할 부분의 넓이를 계산하는 프로그램을 작성하세요.
+    Algospot.com's annual programming contest admit only the "true nerds"
+    JongMan came up with a theory that whether a person's nerdiness is dependent on a linear combination of two factors: 
+      their shoe size and their typing speed per minute. In his theory, the nerd score
+    F = A * (shoe size) + B * (typing speed per minute)
+      The higher the score, the nerdier the guy is. We intend to set a threshold T; we will only admit people with scores equal to or above T.
+    However, will this theory work? To find it out, we grabbed the data from some people we personally know.
+      We know their shoe size and typing speeds, and we know whether each of them is a nerd or not.
+      Will there be a set of parameters A, B and T which can successfully separate nerds from the others?
+    Please note that A, B and T can be arbitrary real numbers.
   입력
-    입력의 첫 줄에는 테스트 케이스의 수 C (C <= 50) 가 주어집니다. 
-    각 테스트 케이스의 첫 줄에는 다섯 개의 정수로 직사각형의 꼭지점의 좌표 x1 , y1 , x2 , y2 (0 <= x1 < x2 <= 100,0 <= y1 < y2 <= 100) 
-      그리고 섬의 지도를 나타내는 다각형 꼭지점의 수 N (3 <= N <= 100) 이 주어집니다. 
-      그 후 N 줄에 각 2개의 정수로 각 꼭지점의 좌표 Xi , Yi (0 <= Xi, Yi <= 100) 가 주어집니다. 
-      꼭지점은 시계 반대 방향으로 주어지며, 마지막 점은 첫 번째 점과 연결되어 있습니다.
-    주어진 섬의 면적이 0이거나, 섬의 경계선이 자기 자신과 교차하거나 겹치는 경우는 없습니다.
+    The first line of the input file will contain the number of test cases, C (C = 50). 
+      Each test case begins n (6 <= n <= 5,000) with the number of people we personally know. 
+        n lines will follow with three nonnegative integers in each line. 
+          The first integer is 1 if the person is a nerd, and 0 otherwise. 
+          The second number and the third number will represent the person's shoe size and typing speed per minute. 
+            These two numbers will be in the range [0, 10000].
+    There will be always at least three people from both group of people - nerds and non-nerds. 
+      Also, for each group, the two vectors formed by gathering their shoe sizes and typing speed, will be linearly independent. 
+      That is, for one group, we make one vector [shoe[0], shoe[1], shoe[2], ..] 
+        and another vector [speed[0], speed[1], speed[2], ..] and they will be linearly independent.
   출력
-    각 테스트 케이스마다 한 줄에 조사해야 할 육지의 넓이를 출력합니다. 
-    10-7 이하의 절대/상대 오차를 갖는 답은 정답으로 인정됩니다.
+    For each test case, print one line. 
+      The line must contain "THEORY HOLDS" if there are one or more set of parameters which satisfies the given data. 
+      "THEORY IS INVALID" should be printed in the other case. 
+    See the sample output for details.
   제한조건
-    1초, 64MB
+    3초, 64MB
   */
   /*힌트
-    섬은 단순 다각형(simple polygon)이다.
-    1)보물영역 내부에 포함되는 다각형 영역을 찾는 방법
-      1. 하나의 단순 다각형
-      2. 여러개의 단순 다각형
-    2)섬의 영역에서, 보물영역 외부에 있는 다각형들을 제거하는 방법
-      섬 내부의 다각형은 구할 필요가 없다.
-      구현방법
-        섬과 보물영역의 교점도 꼭짓점으로 추가해준다.
-        섬의 시작점은, 보물영역 내부에서 외부로 이어지는 선분의 꼭짓점 중 하나로 한다. -> O(n)
-          다음 꼭짓점이 외부면 나가는것, 경계거나 내부면 들어가는 것 
-        섬의 꼭짓점을 반시계 방향으로 순회한다. -> O(n)
-          보물영역 외부에 있는 섬의 영역polygon을 구한다.
-            보물영역 내부에서 외부로 나가는 교점을 시작으로, 외부에서 내부로 들어가는 교점을 끝으로 하는 polygon을 구한다.
-            해당 polygon의 마지막 점에서, polygon내부에 포함되는, 보물영역의 꼭짓점을 시계방향으로 추가한다. -> O(4)
-        섬의 영역에서 보물영역 외부에 있는 영역을 빼준다.
-    2-1)섬의 영역을 구한 후, 보물 영역을 경계로 섬을 잘라서 외부 영역의 크기를 구한다.
-      구현방법
-        섬의 영역을 구한다.
-        보물영역 모서리를 직선으로 하여, 섬을 자른다. 보물 영역을 포함하지 않는 부분의 영역을 구한다.
-        자른 섬을 또다시 다른 모서리를 기준으로 자른다. 총 4번 반복하면 보물영역 외부의 크기를 구할 수 있다.
-        자르는 방법 
-    정답)
-      섬의 영역을 보물 영역의 모서리로 자른다.
-        이때, 모서리의 왼쪽 부분이 섬 내부에 포함되는 영역이다.(꼭짓점이 반시계로 주어지기 때문)
-        모든 모서리에 대해 수행하면, 보물영역에 포함되는 섬의 영역을 구할 수 있다.
+    nerd와 non-nerd를 그룹지어서, 두 영역을 직선으로 나눌 수 있는지 확인하는 방법
+      아이디어
+        신발 사이즈를 x축, 타이핑 스피드를 y축이라 하자
+          F=A*신발사이즈+B*타이핑스피드는, 해당 평면에서의 직선이다.(F=Ax+By)
+        즉, nerd그룹과 non-nerd그룹을 구한 후, 두 영역이 어떤 직선으로 나눠질 수 있는지를 파악하면 된다.
+      구현
+        두 영역을 구하는 방법
+        두 영역을 나누는 직선을 구하는 방법
   */
   /*전략
   전략1
@@ -358,9 +176,10 @@ void TREASURE(){
   cout.precision(10);
   //각 테스트케이스
   while(testCase--){
-    vector<vector2> polygon,treasure;
-    TREASURE_Input(polygon,treasure);
-    auto result=TREASURE_Algo(polygon,treasure);
+    int peopleNum;
+    vector<vector<int>> peopleInfo;
+    NERDS_Input(peopleNum,peopleInfo);
+    auto result=NERDS_Algo(peopleNum,peopleInfo);
     // cout<<"::::";
     cout<<result<<endl;
   }
@@ -369,7 +188,7 @@ void TREASURE(){
 int main(void){
     //clock_t start,end;
     //start=clock();
-  TREASURE();
+  NERDS();
     //end=clock();;
     //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
