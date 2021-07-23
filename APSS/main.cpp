@@ -86,8 +86,8 @@ ostream& operator<<(ostream& os, const vector2& vec){
   return os;
 }
 
-// @*@*@* 계산 기하, polygon clipping, 예외가 많아보이는 방법이라면, 모든 예외를 처리하는것도 좋지만, 더 간단한 방법은 없는지 생각해보자, 
-//        배열 접근시, 배열의 크기가 0인 경우도 반드시 생각하자 
+// @*@*@* 계산 기하, simple polygon clipping, 배열 접근시, 배열의 크기가 0인 경우도 반드시 생각하자 
+//        예외가 많아보이는 방법이라면, 모든 예외를 처리하는것도 좋지만, 더 간단한 방법은 없는지 생각해보자
 void TREASURE_Input(vector<vector2>& polygon, vector<vector2>& treasure){
   int x1,y1,x2,y2,N;
   cin>>x1>>y1>>x2>>y2>>N;

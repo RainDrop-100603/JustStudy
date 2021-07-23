@@ -340,3 +340,16 @@ pair<int,vector2> PINBALL_ifMet(vector<int>& centerX,vector<int>& centerY,vector
 vector<int> PINBALL_func(vector<int>& centerX,vector<int>& centerY,vector<int>& radius,vector2 ballPoint, vector2 ballVector, int count);
 vector<int> PINBALL_Algo(int xPos,int yPos,int dx,int dy,int num,vector<int> centerX,vector<int> centerY,vector<int> radius);
 void PINBALL();
+
+// @*@*@* 계산 기하, simple polygon clipping, 배열 접근시, 배열의 크기가 0인 경우도 반드시 생각하자 
+//        예외가 많아보이는 방법이라면, 모든 예외를 처리하는것도 좋지만, 더 간단한 방법은 없는지 생각해보자
+void TREASURE_Input(vector<vector2>& polygon, vector<vector2>& treasure);
+double TREASURE_areaSize(vector<vector2>& polygon);
+// int TREASURE_Fail_direction(vector<vector2>& polygon, vector<vector2>& treasure, int idx);
+// vector<vector2> TREASURE_Fail_newPoly(vector<vector2>& polygon, vector<vector2>& treasure);
+// vector<vector2> TREASURE_Fail_outsidePoly(vector<vector2>& polygon,vector<vector2> treasure,int begin,int end);
+// int TREASURE_Fail_polyOverlap(const vector<vector2>& poly1, const vector<vector2>& poly2);
+// double TREASURE_Fail_Algo(vector<vector2> polygon, vector<vector2> treasure);
+vector<vector2> TREASURE_cutPoly(const vector<vector2>& polygon, vector2 p1, vector2 p2);
+double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure);
+void TREASURE();
