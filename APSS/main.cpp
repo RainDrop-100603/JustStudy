@@ -34,8 +34,8 @@ public:
   vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
   double length()const {return hypot(x,y); }
   vector2 normalize()const {return vector2(x/length(),y/length()); }
-  vector2 polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); } //x축에서의 각
-  vector2 angleBetween(const vector2& rhs)const {return rhs.polar()>this->polar()? rhs.polar()-this->polar() : rhs.polar()-this->polar()+2*PI; } //this에서 rhs방향으로의 각도
+  double polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); } //x축에서의 각
+  double angleBetween(const vector2& rhs)const {return rhs.polar()>this->polar()? rhs.polar()-this->polar() : rhs.polar()-this->polar()+2*PI; } //this에서 rhs방향으로의 각도
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
   int ccw(const vector2& a, const vector2& b)const {return cmpDBL((b-a).cross(*this-a),0); } // 1:counterclockwise, 0: 평행, -1:clockwise
@@ -102,22 +102,22 @@ vector<vector2> NERDS_getEdge(const vector<vector2>& group){
   int groupSize=group.size();
   for(int base=0;base<groupSize;base++){
     bool isEdge(true);
-    vector2 right(group[base]),left(group[(base+1)%groupSize]);
+    vector2 next(group[base]),prev(group[(base+1)%groupSize]);
     for(int idx=1;idx<groupSize;idx++){
-      if(group[(base+idx)%groupSize].ccw(left,right)==-1){
+      if(group[(base+idx)%groupSize].ccw(prev,next)==-1){
         isEdge=false;
         break;
       }
     }
-    if(isEdge){return vector<vector2>{left,right}; }
+    if(isEdge){return vector<vector2>{prev,next}; }
     //반대방향
     for(int idx=1;idx<groupSize;idx++){
-      if(group[(base+idx)%groupSize].ccw(right,left)==-1){
+      if(group[(base+idx)%groupSize].ccw(next,prev)==-1){
         isEdge=false;
         break;
       }
     }
-    if(isEdge){return vector<vector2>{right,left}; }
+    if(isEdge){return vector<vector2>{next,prev}; }
   }
 }
 vector<vector2> NERDS_getPoly(vector<vector2>& group, vector<vector2>& edge){
@@ -132,11 +132,35 @@ vector<vector2> NERDS_getPoly(vector<vector2>& group, vector<vector2>& edge){
         angle=tmpAngle;
         next=ele;
       }else if(tmpAngle==angle){
-        if((next-now).length()<(ele-now).length())
-        여기처리
+        if((next-now).length()<(ele-now).length()){
+          next=ele;
+        }
       }
     }
+    polygon.push_back(next);
+    if(polygon.front()==polygon.back()){
+      return polygon;
+    }
   }
+}
+vector<vector2> NERDS_cutPoly(vector<vector2>& polygon, vector2 prev, vector2 now){
+  vector<vector2> result;
+  if(polygon.empty()){
+    return result;
+  }
+  vector2 nowPoint(polygon.back()),prevPoint;
+  for(auto& ele:polygon){
+    prevPoint=nowPoint;
+    nowPoint=ele;
+    int prevCCW(prevPoint.ccw(prev,now)),nowCCW(nowPoint.ccw(prev,now));
+    if(prevCCW>=0){
+      result.push_back(prevPoint);
+    }
+    if(prevCCW!=0&&nowCCW==-1*prevCCW){
+      result.push_back(nowPoint.lineCross(prevPoint,now,prev).second);
+    }
+  }
+  return result;
 }
 string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //nerd와 notNerd를 구분한다
