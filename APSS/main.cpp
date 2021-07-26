@@ -35,7 +35,7 @@ public:
   double length()const {return hypot(x,y); }
   vector2 normalize()const {return vector2(x/length(),y/length()); }
   double polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); } //x축에서의 각
-  double angleBetween(const vector2& rhs)const {return rhs.polar()>this->polar()? rhs.polar()-this->polar() : rhs.polar()-this->polar()+2*PI; } //this에서 rhs방향으로의 각도
+  double polarFrom(const vector2& rhs)const {return rhs.polar()>this->polar()? this->polar()+2*PI-rhs.polar() : this->polar()-rhs.polar(); } //rhs에서의 각
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
   int ccw(const vector2& a, const vector2& b)const {return cmpDBL((b-a).cross(*this-a),0); } // 1:counterclockwise, 0: 평행, -1:clockwise
@@ -102,22 +102,22 @@ vector<vector2> NERDS_getEdge(const vector<vector2>& group){
   int groupSize=group.size();
   for(int base=0;base<groupSize;base++){
     bool isEdge(true);
-    vector2 next(group[base]),prev(group[(base+1)%groupSize]);
-    for(int idx=1;idx<groupSize;idx++){
-      if(group[(base+idx)%groupSize].ccw(prev,next)==-1){
+    vector2 next(group[(base+1)%groupSize]),now(group[base]);
+    for(int idx=2;idx<groupSize;idx++){
+      if(group[(base+idx)%groupSize].ccw(now,next)==-1){
         isEdge=false;
         break;
       }
     }
-    if(isEdge){return vector<vector2>{prev,next}; }
+    if(isEdge){return vector<vector2>{now,next}; }
     //반대방향
-    for(int idx=1;idx<groupSize;idx++){
-      if(group[(base+idx)%groupSize].ccw(next,prev)==-1){
+    for(int idx=2;idx<groupSize;idx++){
+      if(group[(base+idx)%groupSize].ccw(next,now)==-1){
         isEdge=false;
         break;
       }
     }
-    if(isEdge){return vector<vector2>{next,prev}; }
+    if(isEdge){return vector<vector2>{next,now}; }
   }
 }
 vector<vector2> NERDS_getPoly(vector<vector2>& group, vector<vector2>& edge){
@@ -127,7 +127,7 @@ vector<vector2> NERDS_getPoly(vector<vector2>& group, vector<vector2>& edge){
     double angle=1000;
     for(auto& ele: polygon){
       if(ele==now||ele==prev){continue; }
-      double tmpAngle=(now-prev).angleBetween(ele-now);
+      double tmpAngle=(ele-now).polarFrom(now-prev);
       if(tmpAngle<angle){
         angle=tmpAngle;
         next=ele;
@@ -224,7 +224,7 @@ void NERDS(){
   */
   /*힌트
     nerd와 non-nerd를 그룹지어서, 두 영역을 직선으로 나눌 수 있는지 확인하는 방법
-      아이디어
+      아이디어1
         신발 사이즈를 x축, 타이핑 스피드를 y축이라 하자
           F=A*신발사이즈+B*타이핑스피드는, 해당 평면에서의 직선이다.(F=Ax+By)
         즉, nerd그룹과 non-nerd그룹을 구한 후, 두 영역이 어떤 직선으로 나눠질 수 있는지를 파악하면 된다.
@@ -234,11 +234,14 @@ void NERDS(){
           오목다각형일때와 볼록다각형일때 모두 안겹치는 경우 -> 둘 사이를 지나는 직선이 존재한다.
       구현
         두 영역을 나타내는 볼록다각형을 구한다
-          시작 모서리를 구한다
-            한 점에대해, 다른점과의 직선을 구해 우측에 점이 있는지 확인한다.
+          시작 모서리를 구한다 
+            1:한 점에대해, 다른점과의 직선을 구해 우측에 점이 있는지 확인한다. -> O(n^3)
               우측에 점이 있다면, 다른 점을 찾아본다
               우측에 점이 없다면, 해당 점이 볼록다각형의 모서리이다.
               모든 점에대해 우측에 점이 있다면, 기준점은 볼록다각형 내부에 있는 점이다.
+            2:한 점에 대해, 다른 점과 직선이 이루는 polar를 구한다. -> O(n^2)
+              직선들이 이루는 각도가 PI 이내라면, 해당 점은 모서리이다.
+              이루는 각도 = 2PI-max(직선간의 각도)
           시작모서리부터 시작해서, 해당 모서리와 다른 점과의 각도를 구한다.
           각도가 가장 작은 점이 다음 점이다.
           시작점으로 돌아올때까지 반복한다.
@@ -249,20 +252,7 @@ void NERDS(){
   */
   /*전략
   전략1
-    구현
-      두 영역을 나타내는 볼록다각형을 구한다 -> O(n^2)
-        시작 모서리를 구한다 -> O(n^2)
-          한 점에대해, 다른점과의 직선을 구해 우측에 점이 있는지 확인한다.
-            우측에 점이 있다면, 다른 점을 찾아본다
-            우측에 점이 없다면, 해당 점이 볼록다각형의 모서리이다.
-            모든 점에대해 우측에 점이 있다면, 기준점은 볼록다각형 내부에 있는 점이다.
-        시작모서리부터 시작해서, 해당 모서리와 다른 점과의 각도를 구한다. -> O(n) * n
-          각도가 가장 작은 점이 다음 점이다.
-          시작점으로 돌아올때까지 반복한다.
-      두 볼록다각형이 겹치는지 확인한다. -> O(n^2)
-        한 다각형을, 다른 다각형의 모서리-직선으로 자른고, 왼쪽영역과 교점만 유효한 다각형으로 포함시킨다. -> O(n) * n
-          다각형의 모든 모서리에 대해 수행한다.
-          수행 후, 결과 다각형이 비어있다면 교점이 없는 것이고, 비어있지 않다면 교점이 있는 것이다.
+    아이디어 1
     시간
       O(n^2)
     크기
