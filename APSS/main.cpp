@@ -13,17 +13,12 @@
 using namespace std;
 
 class vector2{  //2차원벡터
-private:
+public:
   const double PI=2.0*acos(0.0);
   const double EPSILON=1e-11;
-  int cmpDBL(double a, double b)const {
-    if(fabs(a-b)<EPSILON){return 0; }
-    else if(a<b){return -1; }
-    else{return 1; }
-  }
-public:
   double x,y;
   vector2(double x_=0, double y_=0):x(x_),y(y_){}
+  int cmpDBL(double a, double b)const {if(fabs(a-b)<EPSILON){return 0; }else if(a<b){return -1; }else{return 1; } }
   vector2 operator=(const vector2& rhs){x=rhs.x;y=rhs.y; return *this;}
   bool operator==(const vector2& rhs)const {return cmpDBL(x,rhs.x)==0&&cmpDBL(y,rhs.y)==0; }
   bool operator!=(const vector2& rhs)const {return !this->operator==(rhs); }
@@ -42,9 +37,7 @@ public:
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
   bool onLine(const vector2& p1, const vector2& p2)const {return cmpDBL((*this-p1).dot(p2-p1),(*this-p1).length()*(p2-p1).length())==0; }   //직선 위
   bool onSegment(const vector2& p1, const vector2& p2)const {return this->onLine(p1,p2)&&min(p1,p2)<=*this&&*this<=max(p1,p2); }  //선분 위
-  //기타 함수들
-  double pie()const {return PI; }
-  double epsilon()const {return EPSILON; }
+  //기타 함수들  
   vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
   int position(const vector<vector2>& polygon)const{  // -1: inside, 0: edge, 1: outside (of polygon)
     int crossCount(0),pSize(polygon.size());
@@ -102,7 +95,7 @@ void NERDS_Input(int& peopleNum, vector<vector<int>>& peopleInfo){
 }
 vector<vector2> NERDS_getEdge(const vector<vector2>& group){
   int groupSize=group.size();
-  double PI=vector2().pie();
+  double PI=vector2().PI;
   int base=0;
   for(;base<groupSize;base++){
     //다른 점과 이루는 직선의 polar구하기
@@ -127,7 +120,7 @@ vector<vector2> NERDS_getEdge(const vector<vector2>& group){
       target=polars.back().second;
     }
     //모서리가 될 수 있는지 판별
-    if(tmpMax-PI<=vector2().epsilon()){continue; }
+    if(tmpMax-PI<=vector2().EPSILON){continue; }
     //모서리 구하고 반환, 
     bool isEdge(true);
     for(int i=0;i<groupSize;i++){
@@ -188,6 +181,23 @@ vector<vector2> NERDS_cutPoly(vector<vector2>& polygon, vector2 prev, vector2 no
   }
   return result;
 }
+bool NERDS_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
+  int nerdSize=nerdPoly.size();
+  vector2 voidVector;
+  for(int i=0;i<nerdSize;i++){
+    vector2 from(nerdPoly[i]),to(nerdPoly[(i+1)%nerdSize]);
+    bool isValid(true);
+    for(auto& ele: notNerdPoly){
+      if(ele.ccw(from,to)==-1){continue; }
+      if(ele.ccw(from,to)==0&&ele.position(nerdPoly)==1){continue; }
+      isValid=false; break;
+    }
+    if(!isValid){continue; }
+    double polar((to-from).polar()),PI(voidVector.PI);
+    if(voidVector.cmpDBL(polar,0)==0){return true}
+  }
+  return false;
+}
 string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //nerd와 notNerd를 구분한다
   vector<vector2> nerds,notNerds;
@@ -208,14 +218,7 @@ string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   for(auto& ele: nerdPoly){cout<<ele;}cout<<endl;
   for(auto& ele: notNerdPoly){cout<<ele;}cout<<endl;
   //한 nerd의 모서리-직선에 대해, non-nerd가 모두 왼쪽에 있는지 확인한다.
-  int nerdSize(nerdPoly.size());
-  for(int i=0;i<nerdSize;i++){
-    bool isLeft(true);
-    for()
-    sharedArea=NERDS_cutPoly(sharedArea,nerdPoly[i],nerdPoly[(i+1)%nerdSize]);
-  }
-  //결과 반환
-  if(sharedArea.empty()){
+  if(NERDS_determine(notNerdPoly,nerdPoly)){
     return string("THEORY HOLDS");
   }else{
     return string("THEORY IS INVALID");
@@ -266,8 +269,12 @@ void NERDS(){
         edge부터 순회하여 다각형을 구한다. -> O(n^2)
       해당 볼록다각형이 접하거나 겹친다면, 두 영역을 나누는 직선이 존재하지 않는다. -> O(n^2)
         한 다각형의 모든 모서리-직선에 대해, 다른 다각형을 자르면 된다.
-      개선점
-        선분을 기준으로 아래에 non-nerd, 위에 nerd가 있어야하는데, 이 방법은 그것을 구분할 수 없다. 
+        개선점
+          선분을 기준으로 아래에 non-nerd, 위에 nerd가 있어야하는데, 이 방법은 그것을 구분할 수 없다. 
+          개선방법
+            nerd의 각 모서리-직선에 대해, non-nerd의 모든점이 직선위에 있거나 우측에 있는 모서리를 찾는다.
+              직선위에 있는 경우는,nerd에 포함되는 경우는 제한다.
+            이때 모서리 직선의 polar는 270~360도 사이여야 한다.
     아이디어 2 -> O(n^2 * n)
       같은 영역의 속하는 두 점을 임의로 골라 직선을 만든다. -> O(n^2)
       다른 모든점이 해당 직선에 대해 나누어진다면, 두 영역을 나누는 직선이 존재하는 것이다. -> O(n)
