@@ -199,14 +199,19 @@ string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   vector<vector2> nerdEdge,notNerdEdge;
   nerdEdge=NERDS_getEdge(nerds);  
   notNerdEdge=NERDS_getEdge(notNerds);
+  for(auto& ele: nerdEdge){cout<<ele;}cout<<endl;
+  for(auto& ele: notNerdEdge){cout<<ele;}cout<<endl;
   //두 다각형을 구한다. nerds는 다각형
   vector<vector2> nerdPoly,notNerdPoly;
   nerdPoly=NERDS_getPoly(nerds,nerdEdge);
   notNerdPoly=NERDS_getPoly(notNerds,notNerdEdge);
-  //두 다각형의 겹치는 영역을 구한다.
-  int nerdSize=nerdPoly.size();
-  vector<vector2> sharedArea=notNerdPoly;
+  for(auto& ele: nerdPoly){cout<<ele;}cout<<endl;
+  for(auto& ele: notNerdPoly){cout<<ele;}cout<<endl;
+  //한 nerd의 모서리-직선에 대해, non-nerd가 모두 왼쪽에 있는지 확인한다.
+  int nerdSize(nerdPoly.size());
   for(int i=0;i<nerdSize;i++){
+    bool isLeft(true);
+    for()
     sharedArea=NERDS_cutPoly(sharedArea,nerdPoly[i],nerdPoly[(i+1)%nerdSize]);
   }
   //결과 반환
@@ -261,10 +266,18 @@ void NERDS(){
         edge부터 순회하여 다각형을 구한다. -> O(n^2)
       해당 볼록다각형이 접하거나 겹친다면, 두 영역을 나누는 직선이 존재하지 않는다. -> O(n^2)
         한 다각형의 모든 모서리-직선에 대해, 다른 다각형을 자르면 된다.
+      개선점
+        선분을 기준으로 아래에 non-nerd, 위에 nerd가 있어야하는데, 이 방법은 그것을 구분할 수 없다. 
     아이디어 2 -> O(n^2 * n)
       같은 영역의 속하는 두 점을 임의로 골라 직선을 만든다. -> O(n^2)
       다른 모든점이 해당 직선에 대해 나누어진다면, 두 영역을 나누는 직선이 존재하는 것이다. -> O(n)
         ccw를 이용하면 된다. 
+    아이디어 3
+      각 영역에서 임의의 한 점을 구하고, 그 점을 이어 직선을 만든다.
+      직선의 좌측엔 nerd, 우측엔 non-nerd가 있도록 새로운 직선을 만든다.
+        직선에 우측에 위치한 nerd중, 가장 많이 회전해야하는 점을 선택한다(회전의 기준점은, 맨 처음에 선택한 점)
+        직선의 좌측에 위치한 non-nerd중, 가장 많이 회전해해야하는 점을 선택한다.
+      새로 선택한 점을 통해 새로운 직선을 만든다.
   */
   /*전략
   전략1
