@@ -142,24 +142,24 @@ vector<vector2> NERDS_getPoly(vector<vector2>& group, vector<vector2>& edge){
   vector2 prev,now(polygon.front());
   while(true){
     prev=now;now=polygon.back();
-    vector2 tmpValue;
+    vector2 currentValue;
     double currentAngle=1000;
-    for(auto& ele: group){
-      if(ele==now||ele==prev){continue; }
-      double tmpAngle=(ele-now).polarFrom(now-prev);
+    for(auto& tmpValue: group){
+      if(tmpValue==now||tmpValue==prev){continue; }
+      double tmpAngle=(tmpValue-now).polarFrom(now-prev);
       if(tmpAngle<currentAngle){
         currentAngle=tmpAngle;
-        tmpValue=ele;
+        currentValue=tmpValue;
       }else if(tmpAngle==currentAngle){
-        if((tmpValue-now).length()<(ele-now).length()){
-          tmpValue=ele;
+        if((currentValue-now).length()<(tmpValue-now).length()){
+          currentValue=tmpValue;
         }
       }
     }
-    if(tmpValue==polygon.front()){
+    if(currentValue==polygon.front()){
       return polygon;
     }
-    polygon.push_back(tmpValue);
+    polygon.push_back(currentValue);
   }
 }
 vector<vector2> NERDS_cutPoly(vector<vector2>& polygon, vector2 prev, vector2 now){
@@ -183,18 +183,21 @@ vector<vector2> NERDS_cutPoly(vector<vector2>& polygon, vector2 prev, vector2 no
 }
 bool NERDS_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   int nerdSize=nerdPoly.size();
-  vector2 voidVector;
   for(int i=0;i<nerdSize;i++){
-    vector2 from(nerdPoly[i]),to(nerdPoly[(i+1)%nerdSize]);
+    vector2 from(nerdPoly[i]),to(nerdPoly[(i+1)%nerdSize]),line(to-from);
+    //polar가 -90이상 90미만인지 확인한다.
+    if(line.polar()>=vector2{0,1}.polar()&&line.polar()<vector2{0,-1}.polar()){
+      continue;
+    }
+    //notNerdPoly의 원소가 모드 우측에 있는지 확인
     bool isValid(true);
     for(auto& ele: notNerdPoly){
       if(ele.ccw(from,to)==-1){continue; }
       if(ele.ccw(from,to)==0&&ele.position(nerdPoly)==1){continue; }
-      isValid=false; break;
+      isValid=false; 
+      break;
     }
-    if(!isValid){continue; }
-    double polar((to-from).polar()),PI(voidVector.PI);
-    if(voidVector.cmpDBL(polar,0)==0){return true}
+    if(isValid){return true; }
   }
   return false;
 }
