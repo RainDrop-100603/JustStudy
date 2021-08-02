@@ -12,6 +12,9 @@
 
 using namespace std;
 
+//vector2에 대한 정리
+//polygon생성?
+
 class vector2{  //2차원벡터
 public:
   const double PI=2.0*acos(0.0);
@@ -229,82 +232,6 @@ string NERDS_1_Algo(int peopleNum, vector<vector<int>> peopleInfo){
     return string("THEORY IS INVALID");
   }
 } 
-bool NERDS_2_lineControl(vector<vector2>& nerds,vector<vector2>& notNerds,vector<vector2>& line,vector2 point,bool isNerd){
-  if(isNerd){
-    line.back()=point;
-    //성질을 유지하는지 확인
-    for(auto& ele:nerds){
-      auto position=ele.ccw(line.front(),line.back());
-      if(position==)
-    }
-    for(auto& ele:notNerds){
-      auto position=ele.ccw(line.front(),line.back());
-      if(position==){
-
-      }
-    }
-  }else{
-
-  }
-}
-string NERDS_2_Algo(int peopleNum, vector<vector<int>> peopleInfo){
-  //최초의 직선 생성
-  vector2 firstNerd(-1,-1),firstNot(-1,-1),validTest(-1,-1);
-  for(auto& ele: peopleInfo){
-    if(firstNerd==validTest&&ele[0]==1){
-      firstNerd=vector2(ele[1],ele[2]);
-    }else if(firstNot==validTest&&ele[0]==0){
-      firstNot==vector2(ele[1],ele[2]);
-    }
-    if(firstNerd!=validTest&&firstNot!=validTest){break; }
-  }
-  vector<vector2> line{firstNot,firstNerd};
-  //추가 입력에 따른 직선 변화
-  vector<vector2> nerds,notNerds;
-  for(auto& ele:peopleInfo){
-    vector2 point(ele[1],ele[2]);
-    bool isNerd(ele[0]==1);
-    if(isNerd){
-      switch(point.ccw(line.front(),line.back())){
-        case(-1):
-          nerds.push_back(point);
-          break;
-        case(0):
-          if(point<=line.front()){return string("THEORY IS INVALID"); }
-          else if(point<=line.back()){line.back()=point;}
-          nerds.push_back(point);
-          break;
-        case(1):
-          if(NERDS_2_lineControl(nerds,notNerds,line,point,isNerd)==false){return string("THEORY IS INVALID"); }
-          break;
-        default:
-          cout<<"something error";
-          break;
-      }
-    }else{
-      switch(point.ccw(line.front(),line.back())){
-        case(1):
-          notNerds.push_back(point);
-          break;
-        case(0):
-          if(line.back()<=point){return string("THEORY IS INVALID"); }
-          else if(line.front()<=point){line.front()=point;}
-          notNerds.push_back(point);
-          break;
-        case(-1):
-          if(NERDS_2_lineControl(nerds,notNerds,line,point,isNerd)==false){return string("THEORY IS INVALID"); }
-          break;
-        default:
-          cout<<"something error";
-          break;
-      }
-    }
-  }
-  //각도 구하기
-  double polar=(line.back()-line.front()).polar();
-  if(polar<vector2{0,1}.polar()||polar>=vector2{0,-1}.polar()){return string("THEORY HOLDS"); }
-  else{return string("THEORY IS INVALID"); }
-}
 void NERDS(){
   // TREASURE
   /*설명 및 입력
@@ -340,37 +267,36 @@ void NERDS(){
   /*힌트
     신발 사이즈와 타이핑 스피드를 각각 x,y축이라 생각하면, 각 점을 수평면에 놓을 수 있다.
       F=A*신발사이즈+B*타이핑스피드는, 해당 평면에서의 직선이다.(F=Ax+By)
-    nerd와 non-nerd를 그룹지어서, 두 영역을 직선으로 나눌 수 있는지 확인하는 방법이라 생각할 수 있다.
-    아이디어1 -> O(n^2 + n^2)
-      각 그룹의 최외각의 점들로 단순 볼록다각형을 만든다(최외각의 점의 경우 반드시 단순 볼록 다각형이 된다). -> O(n^2 + n^2)
-        최외각의 있는 점 하나를 구하고, edge를 하나 구한다. -> O(n^2)
-          최외각의 있는 점은, 기준점에서 다른점으로의 직선의 polar를 구한 뒤, 각 polar의 간극을 구한다.
-          2PIE-max(간극)이, 다른 점들이 존재하는 범위이며, 이것이 PIE이하라면 최외각의 점이다
-        edge부터 순회하여 다각형을 구한다. -> O(n^2)
-      해당 볼록다각형이 접하거나 겹친다면, 두 영역을 나누는 직선이 존재하지 않는다. -> O(n^2)
-        한 다각형의 모든 모서리-직선에 대해, 다른 다각형을 자르면 된다.
-        개선점
-          선분을 기준으로 아래에 non-nerd, 위에 nerd가 있어야하는데, 이 방법은 그것을 구분할 수 없다. 
-          개선방법
-            nerd의 각 모서리-직선에 대해, non-nerd의 모든점이 직선위에 있거나 우측에 있는 모서리를 찾는다.
-              직선위에 있는 경우는,nerd에 포함되는 경우는 제한다.
-            이때 모서리 직선의 polar는 270~360도 사이여야 한다.
-    아이디어 2 -> O(n^2 * n)
-      같은 영역의 속하는 두 점을 임의로 골라 직선을 만든다. -> O(n^2)
-      다른 모든점이 해당 직선에 대해 나누어진다면, 두 영역을 나누는 직선이 존재하는 것이다. -> O(n)
-        ccw를 이용하면 된다. 
-    아이디어 3
-      각 영역에서 임의의 한 점을 구하고, 그 점을 이어 직선을 만든다.
-      직선의 좌측엔 nerd, 우측엔 non-nerd가 있도록 새로운 직선을 만든다.
-        직선에 우측에 위치한 nerd중, 가장 많이 회전해야하는 점을 선택한다(회전의 기준점은, 맨 처음에 선택한 점)
-        직선의 좌측에 위치한 non-nerd중, 가장 많이 회전해해야하는 점을 선택한다.
-      새로 선택한 점을 통해 새로운 직선을 만든다.
+    nerd와 not-nerd를 그룹지어서, 두 영역을 직선으로 나눌 수 있는지 확인하는 방법이라 생각할 수 있다.
+    두 영역을 나눌 때, not-nerd의 점수가 더 높게 나오는 경우도 생각해야한다.
+      추가바람
+    단순 볼록 다각형을 만드는 법
+      gift wrapping O(n^2)
+        최외각의 점을 하나 구한다
+          1. 한 점에서 다른 모든 점으로의 직선의 polar를 구한다. 간극의 최댓값이 180도이하라면 최외각 점이다.
+          2. 가장 좌측하단에 있는 점은 반드시 최외각 점이다(STL의 min_element를 이용할 수 있다, 우상단 우하단 좌상단도 최외각)
+        최외각의 점에서, ccw방향 회전각이 가장 작은것이 다음 점이다.(가장 오른쪽에 있는 점)
+          만약 회전각이 같다면, 거리가 더 먼 것을 선택한다.
+        처음 위치로 돌아오기까지 반복
+      Graham Scan O(nlgn)
+    아이디어 1
+      각 그룹의 영역을 포함하는 단순 볼록다각형을 만든다. 
+      볼록 다각형이 겹치지 않는다면, 두 다각형 사이에는 반드시 직선이 존재한다.
+        다각형 간의 포함관계를 먼저 확인하고, 모서리 사이의 교점이 있는지 확인한다.
   */
   /*전략
   전략1
-    아이디어 2
+    아이디어1
+      각 그룹의 영역을 포함하는 단순 볼록다각형을 만든다. -> O(n^2)
+        STL min_element를 이용하여 최외각 점을 구한다. -> O(n)
+        반시계 방향으로 점을 구한다(반시계 방향 각도가 가장 작은 것). -> O(n^2)
+      두 볼록 다각형이 겹치는지 확인한다.
+        포함관계를 확인한다.  -> O(n^2)
+        모서리의 겹침을 확인한다. ->O(n^2)
+      nerd볼록다각형이 not-nerd볼록다각형보다 value가 큰지(직선의 위쪽에 있는지) 확인한다.
+        추가바람
     시간
-      O(n^3)
+      O(n^2)
     크기
       O(n)
   */
