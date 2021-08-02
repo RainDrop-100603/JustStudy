@@ -24,6 +24,8 @@ public:
   bool operator!=(const vector2& rhs)const {return !this->operator==(rhs); }
   bool operator<(const vector2& rhs)const {return this->operator==(rhs) ? false : (cmpDBL(x,rhs.x)==0 ? y<rhs.y : x<rhs.x); }
   bool operator<=(const vector2& rhs)const {return this->operator==(rhs) ? true : (cmpDBL(x,rhs.x)==0 ? y<rhs.y : x<rhs.x); }
+  bool operator>(const vector2& rhs)const {return !this->operator<=(rhs); }
+  bool operator>=(const vector2& rhs)const {return !this->operator<(rhs); }
   vector2 operator+(const vector2& rhs)const {return vector2(x+rhs.x,y+rhs.y); }
   vector2 operator-(const vector2& rhs)const {return vector2(x-rhs.x,y-rhs.y); }
   vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
@@ -93,7 +95,7 @@ void NERDS_Input(int& peopleNum, vector<vector<int>>& peopleInfo){
     ele=vector<int>{nerd,foot,type};
   }
 }
-vector<vector2> NERDS_getEdge(const vector<vector2>& group){
+vector<vector2> NERDS_1_getEdge(const vector<vector2>& group){
   int groupSize=group.size();
   double PI=vector2().PI;
   int base=0;
@@ -137,7 +139,7 @@ vector<vector2> NERDS_getEdge(const vector<vector2>& group){
     }
   }
 }
-vector<vector2> NERDS_getPoly(vector<vector2>& group, vector<vector2>& edge){
+vector<vector2> NERDS_1_getPoly(vector<vector2>& group, vector<vector2>& edge){
   vector<vector2> polygon=edge;
   vector2 prev,now(polygon.front());
   while(true){
@@ -162,7 +164,7 @@ vector<vector2> NERDS_getPoly(vector<vector2>& group, vector<vector2>& edge){
     polygon.push_back(currentValue);
   }
 }
-vector<vector2> NERDS_cutPoly(vector<vector2>& polygon, vector2 prev, vector2 now){
+vector<vector2> NERDS_1_cutPoly(vector<vector2>& polygon, vector2 prev, vector2 now){
   vector<vector2> result;
   if(polygon.empty()){
     return result;
@@ -181,7 +183,7 @@ vector<vector2> NERDS_cutPoly(vector<vector2>& polygon, vector2 prev, vector2 no
   }
   return result;
 }
-bool NERDS_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
+bool NERDS_1_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   int nerdSize=nerdPoly.size();
   for(int i=0;i<nerdSize;i++){
     vector2 from(nerdPoly[i]),to(nerdPoly[(i+1)%nerdSize]),line(to-from);
@@ -201,7 +203,7 @@ bool NERDS_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   }
   return false;
 }
-string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
+string NERDS_1_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //nerd와 notNerd를 구분한다
   vector<vector2> nerds,notNerds;
   for(auto& ele: peopleInfo){
@@ -210,24 +212,77 @@ string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   }
   //시작 모서리를 구한다. nerds는 모서리
   vector<vector2> nerdEdge,notNerdEdge;
-  nerdEdge=NERDS_getEdge(nerds);  
-  notNerdEdge=NERDS_getEdge(notNerds);
+  nerdEdge=NERDS_1_getEdge(nerds);  
+  notNerdEdge=NERDS_1_getEdge(notNerds);
   for(auto& ele: nerdEdge){cout<<ele;}cout<<endl;
   for(auto& ele: notNerdEdge){cout<<ele;}cout<<endl;
   //두 다각형을 구한다. nerds는 다각형
   vector<vector2> nerdPoly,notNerdPoly;
-  nerdPoly=NERDS_getPoly(nerds,nerdEdge);
-  notNerdPoly=NERDS_getPoly(notNerds,notNerdEdge);
+  nerdPoly=NERDS_1_getPoly(nerds,nerdEdge);
+  notNerdPoly=NERDS_1_getPoly(notNerds,notNerdEdge);
   for(auto& ele: nerdPoly){cout<<ele;}cout<<endl;
   for(auto& ele: notNerdPoly){cout<<ele;}cout<<endl;
   //한 nerd의 모서리-직선에 대해, non-nerd가 모두 왼쪽에 있는지 확인한다.
-  if(NERDS_determine(notNerdPoly,nerdPoly)){
+  if(NERDS_1_determine(notNerdPoly,nerdPoly)){
     return string("THEORY HOLDS");
   }else{
     return string("THEORY IS INVALID");
   }
 } 
-
+string NERDS_2_Algo(int peopleNum, vector<vector<int>> peopleInfo){
+  //최초의 직선 생성
+  vector2 firstNerd(-1,-1),firstNot(-1,-1),validTest(-1,-1);
+  for(auto& ele: peopleInfo){
+    if(firstNerd==validTest&&ele[0]==1){
+      firstNerd=vector2(ele[1],ele[2]);
+    }else if(firstNot==validTest&&ele[0]==0){
+      firstNot==vector2(ele[1],ele[2]);
+    }
+    if(firstNerd!=validTest&&firstNot!=validTest){break; }
+  }
+  vector<vector2> line{firstNot,firstNerd};
+  //추가 입력에 따른 직선 변화
+  vector<vector2> nerds,notNerds;
+  for(auto& ele:peopleInfo){
+    vector2 point(ele[1],ele[2]);
+    bool isNerd(ele[0]==1);
+    if(isNerd){
+      switch(point.ccw(line.front(),line.back())){
+        case(-1):
+          nerds.push_back(point);
+          break;
+        case(0):
+          if(point<=line.front()){return string("THEORY IS INVALID");}
+          else if(point<=line.back()){line.back()=point;}
+          nerds.push_back(point);
+          break;
+        case(1):
+          if(NERDS_2_lineControl(nerds,notNerds,line,point,1)==false){return string("THEORY IS INVALID");}
+          break;
+        default:
+          cout<<"something error";
+          break;
+      }
+    }else{
+      switch(point.ccw(line.front(),line.back())){
+        case(1):
+          notNerds.push_back(point);
+          break;
+        case(0):
+          if(line.back()<=point){return string("THEORY IS INVALID");}
+          else if(line.front()<=point){line.front()=point;}
+          notNerds.push_back(point);
+          break;
+        case(-1):
+          if(NERDS_2_lineControl(nerds,notNerds,line,point,0)==false){return string("THEORY IS INVALID");}
+          break;
+        default:
+          cout<<"something error";
+          break;
+      }
+    }
+  }
+}
 void NERDS(){
   // TREASURE
   /*설명 및 입력
@@ -308,7 +363,7 @@ void NERDS(){
     int peopleNum;
     vector<vector<int>> peopleInfo;
     NERDS_Input(peopleNum,peopleInfo);
-    auto result=NERDS_Algo(peopleNum,peopleInfo);
+    auto result=NERDS_1_Algo(peopleNum,peopleInfo);
     // cout<<"::::";
     cout<<result<<endl;
   }
