@@ -229,6 +229,24 @@ string NERDS_1_Algo(int peopleNum, vector<vector<int>> peopleInfo){
     return string("THEORY IS INVALID");
   }
 } 
+bool NERDS_2_lineControl(vector<vector2>& nerds,vector<vector2>& notNerds,vector<vector2>& line,vector2 point,bool isNerd){
+  if(isNerd){
+    line.back()=point;
+    //성질을 유지하는지 확인
+    for(auto& ele:nerds){
+      auto position=ele.ccw(line.front(),line.back());
+      if(position==)
+    }
+    for(auto& ele:notNerds){
+      auto position=ele.ccw(line.front(),line.back());
+      if(position==){
+
+      }
+    }
+  }else{
+
+  }
+}
 string NERDS_2_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //최초의 직선 생성
   vector2 firstNerd(-1,-1),firstNot(-1,-1),validTest(-1,-1);
@@ -252,12 +270,12 @@ string NERDS_2_Algo(int peopleNum, vector<vector<int>> peopleInfo){
           nerds.push_back(point);
           break;
         case(0):
-          if(point<=line.front()){return string("THEORY IS INVALID");}
+          if(point<=line.front()){return string("THEORY IS INVALID"); }
           else if(point<=line.back()){line.back()=point;}
           nerds.push_back(point);
           break;
         case(1):
-          if(NERDS_2_lineControl(nerds,notNerds,line,point,1)==false){return string("THEORY IS INVALID");}
+          if(NERDS_2_lineControl(nerds,notNerds,line,point,isNerd)==false){return string("THEORY IS INVALID"); }
           break;
         default:
           cout<<"something error";
@@ -269,12 +287,12 @@ string NERDS_2_Algo(int peopleNum, vector<vector<int>> peopleInfo){
           notNerds.push_back(point);
           break;
         case(0):
-          if(line.back()<=point){return string("THEORY IS INVALID");}
+          if(line.back()<=point){return string("THEORY IS INVALID"); }
           else if(line.front()<=point){line.front()=point;}
           notNerds.push_back(point);
           break;
         case(-1):
-          if(NERDS_2_lineControl(nerds,notNerds,line,point,0)==false){return string("THEORY IS INVALID");}
+          if(NERDS_2_lineControl(nerds,notNerds,line,point,isNerd)==false){return string("THEORY IS INVALID"); }
           break;
         default:
           cout<<"something error";
@@ -282,6 +300,10 @@ string NERDS_2_Algo(int peopleNum, vector<vector<int>> peopleInfo){
       }
     }
   }
+  //각도 구하기
+  double polar=(line.back()-line.front()).polar();
+  if(polar<vector2{0,1}.polar()||polar>=vector2{0,-1}.polar()){return string("THEORY HOLDS"); }
+  else{return string("THEORY IS INVALID"); }
 }
 void NERDS(){
   // TREASURE
