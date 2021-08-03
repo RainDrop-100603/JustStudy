@@ -183,6 +183,35 @@ bool NERDS_determine2(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   //아무결격이 없다면 true
   return true;
 }
+bool NERDS_determine3(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
+  int nerdSize=nerdPoly.size();
+  int notSize=notNerdPoly.size();
+  vector<vector2> minusLine(2);  //기울기가 음수인 직선 저장
+  //직선의 기울기들을 구한다.
+  vector2 prev,now(notNerdPoly.back()),next(notNerdPoly.front());
+  for(int i=0;i<notSize;i++){
+    prev=now; now=next; next=notNerdPoly[(i+1)%notSize];
+    //직선의 한계 기울기를 구한다. 한계 기울기를 벗어나는 직선은 만들어 질 수 없다.
+    double polarMin((now-prev).polar()),polarMax((next-now).polar());
+    //가장 왼쪽으로 가는 직선을 구한다.
+    vector<vector2> lineLeft{now,nerdPoly[0]},lineRight(lineLeft);
+    for(int j=0;j<nerdSize;j++){
+      vector2 target=nerdPoly[j];
+      //가장 왼쪽으로 가는 직선
+      if(target.ccw(now,lineLeft.back()==1)){lineLeft.back()=target;}
+      //가장 오른쪽으로 가는 직선
+      if(target.ccw(now,lineRight.back()==-1)){lineRight.back()=target;}
+    }
+    //직선이 유효 범위내에 있는지 확인한다.
+    //left일 경우 not nerd 가 좌측에 존재하는지, right일 경우 우측에 존재하는지 확인한다.
+    //left가 유효할 경우 직선의 범위는 left.polar()~polarMAX 이다.
+    //right가 유효할 경우 직선의 범위는 polarMIN~right.polar()이다.
+  }
+  //기울기가 plus인 직선이 하나도 없다면, minus인 직선만 있다
+  //직선이 우하단을 바라본다면, 좌상단을 바라보도록 변경
+  //not nerd가 직선의 좌측에 있다면 true, 우측에 있다면 false 반환
+}
+
 string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //nerd와 notNerd를 구분한다
   vector<vector2> nerds,notNerds;
@@ -194,8 +223,8 @@ string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   vector<vector2> nerdPoly,notNerdPoly;
   nerdPoly=NERDS_getPoly(nerds);  
   notNerdPoly=NERDS_getPoly(notNerds);
-  //한 nerd의 모서리-직선에 대해, non-nerd가 모두 왼쪽에 있는지 확인한다.
-  if(NERDS_determine2(notNerdPoly,nerdPoly)){
+  //두 polygon이 겹치지 않는지, 직선의 기울기가 음수일 때 not-nerd polygon이 직선 아래에 존재하는지 확인한다.
+  if(NERDS_determine2(notNerdPoly,nerdPoly)&&NERDS_determine3(notNerdPoly,nerdPoly)){
     return string("THEORY HOLDS");
   }else{
     return string("THEORY IS INVALID");
@@ -238,7 +267,12 @@ void NERDS(){
       F=A*신발사이즈+B*타이핑스피드는, 해당 평면에서의 직선이다.(F=Ax+By)
     nerd와 not-nerd를 그룹지어서, 두 영역을 직선으로 나눌 수 있는지 확인하는 방법이라 생각할 수 있다.
     두 영역을 나눌 때, not-nerd의 점수가 더 높게 나오는 경우도 생각해야한다.
-      추가바람
+      A>0, B<0 인 경우, 분리만 되면 된다. A<0, B>0인 경우도 마찬가지
+      A<0, B<0 인 경우는 모두가 nerd가 아닌경우이다.
+      A>0, B>0 인 경우, 직선 아랫부분이 not-nerd, 윗부분이 nerd여야 한다.
+      -> 두 polygon을 나눌 수 있는 직선(이때 직선은 각각의 polygon에서의 점을 하나씩 이용한다.)을 만든다
+        기울기가 0~90, 180~270 범위인 직선이 하나라도 있다면, A와 B의 부호가 다른 경우이다 : 항상 true
+        직선이 모두 위의 기울기에 포함되지 않는다면, 직선 하나를 선택하여 직선 아래에 polygon이 있는지 확인한다.
     단순 볼록 다각형을 만드는 법
       gift wrapping O(n^2)
         최외각의 점을 하나 구한다
