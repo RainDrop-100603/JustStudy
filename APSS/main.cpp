@@ -98,51 +98,19 @@ void NERDS_Input(int& peopleNum, vector<vector<int>>& peopleInfo){
     ele=vector<int>{nerd,foot,type};
   }
 }
-vector<vector2> NERDS_1_getEdge(const vector<vector2>& group){
-  int groupSize=group.size();
-  double PI=vector2().PI;
-  int base=0;
-  for(;base<groupSize;base++){
-    //다른 점과 이루는 직선의 polar구하기
-    vector<pair<double,int>> polars;
-    for(int i=0;i<groupSize;i++){
-      if(i==base){continue; }
-      polars.push_back(make_pair((group[i]-group[base]).polar(),i));
-    }
-    sort(polars.begin(),polars.end());
-    //간극의 최대값 구하기
-    double tmpMax=0;
-    int target;
-    for(int i=0;i<polars.size()-1;i++){
-      auto tmpValue=polars[i+1].first-polars[i].first;
-      if(tmpValue>tmpMax){
-        tmpMax=tmpValue;
-        target=polars[i].second;
-      }
-    }
-    if(polars.front().first+2*PI-polars.back().first>tmpMax){
-      tmpMax=polars.front().first+2*PI-polars.back().first;
-      target=polars.back().second;
-    }
-    //모서리가 될 수 있는지 판별
-    if(tmpMax-PI<=vector2().EPSILON){continue; }
-    //모서리 구하고 반환, 
-    bool isEdge(true);
-    for(int i=0;i<groupSize;i++){
-      if(i==base||i==target){continue; }
-      if(group[i].ccw(base,target)==-1){
-        isEdge=false;
-        break;
-      }
-    }
-    if(isEdge){
-      return vector<vector2>{group[base],group[target]};
-    }else{
-      return vector<vector2>{group[target],group[base]};
-    }
+vector<vector2> NERDS_getEdge(const vector<vector2>& group){
+  //죄하단 점은 반드시 최외각 점이다
+  vector2 point1=*min_element(group.begin(),group.end());
+  //다음 점은 시계방향으로 가장 먼 위치에 있는 점이다.
+  vector2 next=group[0];
+  for(auto& ele: group){
+    if(ele.ccw(point1,next)<0){next=ele; continue; }
+    if(ele.ccw(point1,next)==0&&(ele-point1).length()>(next-point1).length()){next=ele;}
   }
+  //반환
+  return vector<vector2>{point1,next};
 }
-vector<vector2> NERDS_1_getPoly(vector<vector2>& group, vector<vector2>& edge){
+vector<vector2> NERDS_getPoly(vector<vector2>& group, vector<vector2>& edge){
   vector<vector2> polygon=edge;
   vector2 prev,now(polygon.front());
   while(true){
@@ -167,26 +135,7 @@ vector<vector2> NERDS_1_getPoly(vector<vector2>& group, vector<vector2>& edge){
     polygon.push_back(currentValue);
   }
 }
-vector<vector2> NERDS_1_cutPoly(vector<vector2>& polygon, vector2 prev, vector2 now){
-  vector<vector2> result;
-  if(polygon.empty()){
-    return result;
-  }
-  vector2 nowPoint(polygon.back()),prevPoint;
-  for(auto& ele:polygon){
-    prevPoint=nowPoint;
-    nowPoint=ele;
-    int prevCCW(prevPoint.ccw(prev,now)),nowCCW(nowPoint.ccw(prev,now));
-    if(prevCCW>=0){
-      result.push_back(prevPoint);
-    }
-    if(prevCCW!=0&&nowCCW==-1*prevCCW){
-      result.push_back(nowPoint.lineCross(prevPoint,now,prev).second);
-    }
-  }
-  return result;
-}
-bool NERDS_1_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
+bool NERDS_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   int nerdSize=nerdPoly.size();
   for(int i=0;i<nerdSize;i++){
     vector2 from(nerdPoly[i]),to(nerdPoly[(i+1)%nerdSize]),line(to-from);
@@ -206,7 +155,7 @@ bool NERDS_1_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   }
   return false;
 }
-string NERDS_1_Algo(int peopleNum, vector<vector<int>> peopleInfo){
+string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //nerd와 notNerd를 구분한다
   vector<vector2> nerds,notNerds;
   for(auto& ele: peopleInfo){
@@ -215,18 +164,18 @@ string NERDS_1_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   }
   //시작 모서리를 구한다. nerds는 모서리
   vector<vector2> nerdEdge,notNerdEdge;
-  nerdEdge=NERDS_1_getEdge(nerds);  
-  notNerdEdge=NERDS_1_getEdge(notNerds);
+  nerdEdge=NERDS_getEdge(nerds);  
+  notNerdEdge=NERDS_getEdge(notNerds);
   for(auto& ele: nerdEdge){cout<<ele;}cout<<endl;
   for(auto& ele: notNerdEdge){cout<<ele;}cout<<endl;
   //두 다각형을 구한다. nerds는 다각형
   vector<vector2> nerdPoly,notNerdPoly;
-  nerdPoly=NERDS_1_getPoly(nerds,nerdEdge);
-  notNerdPoly=NERDS_1_getPoly(notNerds,notNerdEdge);
+  nerdPoly=NERDS_getPoly(nerds,nerdEdge);
+  notNerdPoly=NERDS_getPoly(notNerds,notNerdEdge);
   for(auto& ele: nerdPoly){cout<<ele;}cout<<endl;
   for(auto& ele: notNerdPoly){cout<<ele;}cout<<endl;
   //한 nerd의 모서리-직선에 대해, non-nerd가 모두 왼쪽에 있는지 확인한다.
-  if(NERDS_1_determine(notNerdPoly,nerdPoly)){
+  if(NERDS_determine(notNerdPoly,nerdPoly)){
     return string("THEORY HOLDS");
   }else{
     return string("THEORY IS INVALID");
@@ -311,7 +260,7 @@ void NERDS(){
     int peopleNum;
     vector<vector<int>> peopleInfo;
     NERDS_Input(peopleNum,peopleInfo);
-    auto result=NERDS_1_Algo(peopleNum,peopleInfo);
+    auto result=NERDS_Algo(peopleNum,peopleInfo);
     // cout<<"::::";
     cout<<result<<endl;
   }
