@@ -122,8 +122,10 @@ vector<vector2> NERDS_getPoly(const vector<vector2>& group){
     polygon.push_back(next);
   }
 }
-bool NERDS_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
+bool NERDS_determine1(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   int nerdSize=nerdPoly.size();
+  int notSize=notNerdPoly.size();
+  //nerd의 모서리에 대해 비교
   for(int i=0;i<nerdSize;i++){
     vector2 from(nerdPoly[i]),to(nerdPoly[(i+1)%nerdSize]),line(to-from);
     //polar가 -90이상 90미만인지 확인한다.
@@ -140,6 +142,24 @@ bool NERDS_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
     }
     if(isValid){return true; }
   }
+  //notnerd의 모서리에 대해 비교
+  for(int i=0;i<notSize;i++){
+    vector2 from(notNerdPoly[i]),to(notNerdPoly[(i+1)%notSize]),line(to-from);
+    //polar가 90도 이상 180도 미만인지 확인한다.
+    if(line.polar()<vector2(0,1).polar()||line.polar()>=vector2(0,-1).polar()){
+      continue;
+    }
+    //nerdPoly의 원소가 모두 우측에 있는지 확인
+    bool isValid(true);
+    for(auto& ele: nerdPoly){
+      if(ele.ccw(from,to)==-1){continue; }
+      if(ele.ccw(from,to)==0&&!ele.onLine(from,to)){continue; }
+      isValid=false; 
+      break;
+    }
+    if(isValid){return true; }
+  }
+  //어느 경우도 없는경우
   return false;
 }
 bool NERDS_determine2(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
@@ -248,6 +268,9 @@ void NERDS(){
       O(n^2)
     크기
       O(n)
+    피드백
+      determine1: 두 영역이 "ㅁㅁ"와 같이 있을 때(왼쪽 너드), 함수는 false를 반환하지만, 실제로는 너드가 위로오도록 직선을 그을 수 있다.
+      determine2: not-nerd가 명백히 위에 있는 경우에도 true를 반환한다.
   */
   //Sol
   int testCase;
