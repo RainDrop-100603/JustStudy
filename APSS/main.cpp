@@ -34,7 +34,7 @@ public:
   vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
   double length()const {return hypot(x,y); }
   vector2 normalize()const {return vector2(x/length(),y/length()); }
-  double polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); } //x축에서의 각
+  double polar()const {return fmod(atan2(y,x)+2*PI, 2*PI); } //x축에서의 각
   double polarFrom(const vector2& rhs)const {return rhs.polar()>this->polar()? this->polar()+2*PI-rhs.polar() : this->polar()-rhs.polar(); } //rhs에서의 각
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
@@ -127,7 +127,7 @@ bool NERDS_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   for(int i=0;i<nerdSize;i++){
     vector2 from(nerdPoly[i]),to(nerdPoly[(i+1)%nerdSize]),line(to-from);
     //polar가 -90이상 90미만인지 확인한다.
-    if(line.polar()>=vector2{0,1}.polar()&&line.polar()<vector2{0,-1}.polar()){
+    if(line.polar()>=vector2(0,1).polar()&&line.polar()<vector2(0,-1).polar()){
       continue;
     }
     //notNerdPoly의 원소가 모두 우측에 있는지 확인
@@ -142,6 +142,27 @@ bool NERDS_determine(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   }
   return false;
 }
+bool NERDS_determine2(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
+  int nerdSize=nerdPoly.size();
+  int notSize=notNerdPoly.size();
+  //포함관계 확인 
+  for(auto& ele:nerdPoly){
+    if(ele.position(notNerdPoly)!=1){return false;}
+  }
+  for(auto& ele:notNerdPoly){
+    if(ele.position(nerdPoly)!=1){return false;}
+  }
+  //겹치는 선 확인
+  for(int i=0;i<nerdSize;i++){
+    for(int j=0;j<notSize;j++){
+      if(nerdPoly[i].segCross(nerdPoly[(i+1)%nerdSize],notNerdPoly[j],notNerdPoly[(j+1)%notSize]).first){
+        return false;
+      }
+    }
+  }
+  //아무결격이 없다면 true
+  return true;
+}
 string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //nerd와 notNerd를 구분한다
   vector<vector2> nerds,notNerds;
@@ -153,10 +174,8 @@ string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   vector<vector2> nerdPoly,notNerdPoly;
   nerdPoly=NERDS_getPoly(nerds);  
   notNerdPoly=NERDS_getPoly(notNerds);
-  for(auto& ele: nerdPoly){cout<<ele;}cout<<endl;
-  for(auto& ele: notNerdPoly){cout<<ele;}cout<<endl;
   //한 nerd의 모서리-직선에 대해, non-nerd가 모두 왼쪽에 있는지 확인한다.
-  if(NERDS_determine(notNerdPoly,nerdPoly)){
+  if(NERDS_determine2(notNerdPoly,nerdPoly)){
     return string("THEORY HOLDS");
   }else{
     return string("THEORY IS INVALID");
