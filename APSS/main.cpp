@@ -192,7 +192,7 @@ bool NERDS_determine3(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   for(int i=0;i<notSize;i++){
     prev=now; now=next; next=notNerdPoly[(i+1)%notSize];
     //가장 왼쪽으로 가는 직선, 가장 오른쪽으로 가는 직선을 구한다. now~left(right)Point 직선
-    vector2 leftPoint(nerdPoly[0]),rightPoint(lineLeft);
+    vector2 leftPoint(nerdPoly[0]),rightPoint(nerdPoly[0]);
     for(int j=0;j<nerdSize;j++){
       vector2 target=nerdPoly[j];
       //가장 왼쪽으로 가는 직선
