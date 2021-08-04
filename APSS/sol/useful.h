@@ -416,39 +416,74 @@ void moveTest_vec();  //move가 제대로 이루어 졌는지 확인하는 방�
 
 //class
 class vector2{  //2차원벡터
-  const double PI=2.0*acos(0.0);
 public:
+  const double PI=2.0*acos(0.0);
+  const double EPSILON=1e-11;
   double x,y;
   vector2(double x_=0, double y_=0):x(x_),y(y_){}
+  int cmpDBL(double a, double b)const {if(fabs(a-b)<EPSILON){return 0; }else if(a<b){return -1; }else{return 1; } }
   vector2 operator=(const vector2& rhs){x=rhs.x;y=rhs.y; return *this;}
-  bool operator==(const vector2& rhs)const {return x==rhs.x&&y==rhs.y; }
-  bool operator<(const vector2& rhs)const {return x!=rhs.x ? x<rhs.x : y<rhs.y; }
+  bool operator==(const vector2& rhs)const {return cmpDBL(x,rhs.x)==0&&cmpDBL(y,rhs.y)==0; }
+  bool operator!=(const vector2& rhs)const {return !this->operator==(rhs); }
+  bool operator<(const vector2& rhs)const {return this->operator==(rhs) ? false : (cmpDBL(x,rhs.x)==0 ? y<rhs.y : x<rhs.x); }
+  bool operator<=(const vector2& rhs)const {return this->operator==(rhs) ? true : (cmpDBL(x,rhs.x)==0 ? y<rhs.y : x<rhs.x); }
+  bool operator>(const vector2& rhs)const {return !this->operator<=(rhs); }
+  bool operator>=(const vector2& rhs)const {return !this->operator<(rhs); }
   vector2 operator+(const vector2& rhs)const {return vector2(x+rhs.x,y+rhs.y); }
   vector2 operator-(const vector2& rhs)const {return vector2(x-rhs.x,y-rhs.y); }
   vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
   double length()const {return hypot(x,y); }
   vector2 normalize()const {return vector2(x/length(),y/length()); }
-  vector2 polar()const {return fmod(atan2(x,y)+2*PI, 2*PI); }
+  double polar()const {return fmod(atan2(y,x)+2*PI, 2*PI); } //x축에서의 각, 0~2PI
+  double polar2()const {return atan2(y,x); }  //x축에서의 각, -PI~PI
+  double polarFrom(const vector2& rhs)const {return rhs.polar()>this->polar()? this->polar()+2*PI-rhs.polar() : this->polar()-rhs.polar(); } //rhs에서의 각
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
+  int ccw(const vector2& from, const vector2& to)const {return cmpDBL((to-from).cross(*this-from),0); } // 1:counterclockwise, 0: 평행, -1:clockwise
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }
-  //기타 함수들
+  bool onLine(const vector2& p1, const vector2& p2)const {return cmpDBL((*this-p1).dot(p2-p1),(*this-p1).length()*(p2-p1).length())==0; }   //직선 위
+  bool onSegment(const vector2& p1, const vector2& p2)const {return this->onLine(p1,p2)&&min(p1,p2)<=*this&&*this<=max(p1,p2); }  //선분 위
+  //기타 함수들  
   vector2 pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
-  bool isInside(const vector<vector2>& polygon){  //*this가 polygon 내부에 있는가
-    int crossCount,pSize(polygon.size());
+  int position(const vector<vector2>& polygon)const{  // -1: inside, 0: edge, 1: outside (of polygon)
+    int crossCount(0),pSize(polygon.size());
     for(int i=0;i<pSize;i++){
       vector2 p1(polygon[i]),p2(polygon[(i+1)%pSize]);
-      if(p1.y>this->y != p2.y>this->y){ 
+      if((cmpDBL(p1.y,this->y)==-1)!=(cmpDBL(p2.y,this->y)==-1)){ 
         double crossX=(this->y-p1.y)*(p2.x-p1.x)/(p2.y-p1.y)+p1.x;
-        if(this->x<crossX){crossCount++;}
+        if(cmpDBL(this->x,crossX)==0){return 0; } //on Edge
+        if(cmpDBL(this->x,crossX)==-1){crossCount++;}
       }
     }
-    return crossCount%2>0;
+    if(crossCount%2){
+      return -1; //inside
+    }else{
+      return 1;  //outside
+    }
+  }
+  pair<bool,vector2> lineCross(const vector2& rhs, const vector2& p1, const vector2& p2)const{//직선의 교점, 평행(일치)는 제외
+    double det=(rhs-*this).cross(p2-p1);
+    if(cmpDBL(det,0)==0) return make_pair(false,vector2()); //평행인 경우
+    return make_pair(true,*this+(rhs-*this)*((p1-*this).cross(p2-p1)/det));
+  }
+  pair<bool,vector2> segCross(const vector2& rhs, const vector2& p1, const vector2& p2)const{  //*this-rhs가 p1-p2와의 교점이 있는가
+    //두 직선의 교점을 구하기
+    auto tmp=this->lineCross(rhs,p1,p2);
+    if(!tmp.first){
+      return make_pair(false,vector2());
+    }
+    vector2 crossPoint=tmp.second;
+    //두 직선의 교점이 선분위에 있는지 확인 
+    if(crossPoint.onSegment(p1,p2)&&crossPoint.onSegment(*this,rhs)){
+      return make_pair(true,crossPoint);
+    }else{
+      return make_pair(false,vector2());
+    }
   }
   //전역함수 오버로딩
-  friend ostream& operator<<(ostream& os, vector2& vec);
+  friend ostream& operator<<(ostream& os, const vector2& vec);
 };
-ostream& operator<<(ostream& os, vector2& vec){
+ostream& operator<<(ostream& os, const vector2& vec){
   os<<"("<<vec.x<<","<<vec.y<<")";
   return os;
 }

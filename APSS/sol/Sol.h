@@ -353,3 +353,14 @@ double TREASURE_areaSize(vector<vector2>& polygon);
 vector<vector2> TREASURE_cutPoly(const vector<vector2>& polygon, vector2 p1, vector2 p2);
 double TREASURE_Algo(vector<vector2> polygon, vector<vector2> treasure);
 void TREASURE();
+
+// @*@*@* 계산 기하, 여러개의 점으로 convex hull 만드는법, convex hull을 나누느 직선이 있는지 구하는 법
+//        두 convex hull을 나누는 직선의 범위를 구하는 법, 원의 각도에서 포함관계를 구하는 법, determine3 개선여지 있음
+void NERDS_Input(int& peopleNum, vector<vector<int>>& peopleInfo);
+vector<vector2> NERDS_getPoly(const vector<vector2>& group);
+bool NERDS_determine1(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly);
+bool NERDS_determine2(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly);
+bool NERDS_isInside(vector2 rangeFrom,vector2 rangeTo, vector2 targetFrom, vector2 targetTo);
+bool NERDS_determine3(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly);
+string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo);
+void NERDS();

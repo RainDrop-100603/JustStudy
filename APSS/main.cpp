@@ -34,7 +34,8 @@ public:
   vector2 operator*(double rhs)const {return vector2(x*rhs,y*rhs); }  //실수 곱
   double length()const {return hypot(x,y); }
   vector2 normalize()const {return vector2(x/length(),y/length()); }
-  double polar()const {return fmod(atan2(y,x)+2*PI, 2*PI); } //x축에서의 각
+  double polar()const {return fmod(atan2(y,x)+2*PI, 2*PI); } //x축에서의 각, 0~2PI
+  double polar2()const {return atan2(y,x); }  //x축에서의 각, -PI~PI
   double polarFrom(const vector2& rhs)const {return rhs.polar()>this->polar()? this->polar()+2*PI-rhs.polar() : this->polar()-rhs.polar(); } //rhs에서의 각
   double dot(const vector2& rhs)const {return x*rhs.x+y*rhs.y; }
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }
@@ -87,8 +88,8 @@ ostream& operator<<(ostream& os, const vector2& vec){
   return os;
 }
 
-// @*@*@* 계산 기하, simple polygon clipping, 배열 접근시, 배열의 크기가 0인 경우도 반드시 생각하자 
-//        예외가 많아보이는 방법이라면, 모든 예외를 처리하는것도 좋지만, 더 간단한 방법은 없는지 생각해보자
+// @*@*@* 계산 기하, 여러개의 점으로 convex hull 만드는법, convex hull을 나누느 직선이 있는지 구하는 법
+//        두 convex hull을 나누는 직선의 범위를 구하는 법, 원의 각도에서 포함관계를 구하는 법
 void NERDS_Input(int& peopleNum, vector<vector<int>>& peopleInfo){
   cin>>peopleNum;
   peopleInfo.resize(peopleNum);
@@ -183,12 +184,33 @@ bool NERDS_determine2(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   //아무결격이 없다면 true
   return true;
 }
+bool NERDS_isInside(vector2 rangeFrom,vector2 rangeTo, vector2 targetFrom, vector2 targetTo){
+  //target범위가 range범위에 포함되는지 확인 
+  if(rangeFrom<=rangeTo){  
+    if(targetFrom>=rangeFrom&&targetFrom<=rangeTo){return true;}
+    if(targetTo>=rangeFrom&&targetTo<=rangeTo){return true;}
+  }else{  //0=360도를 포함하는 범위를 구할때
+    if(targetFrom>=rangeFrom||targetFrom<=rangeTo){return true;}
+    if(targetTo>=rangeFrom||targetTo<=rangeTo){return true;}
+  }
+  //range범위가 target범위에 포함되는지 확인
+  if(targetFrom<=targetTo){
+    if(rangeFrom>=targetFrom&&rangeFrom<=targetTo){return true;}
+    if(rangeTo>=targetFrom&&rangeTo<=targetTo){return true;}
+  }else{  //0=360도를 포함하는 범위를 구할때
+    if(rangeFrom>=targetFrom||rangeFrom<=targetTo){return true;}
+    if(rangeTo>=targetFrom||rangeTo<=targetTo){return true;}
+  }
+  //아무 조건에도 안걸릴 경우
+  return false;
+}
 bool NERDS_determine3(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   int nerdSize=nerdPoly.size();
   int notSize=notNerdPoly.size();
-  vector<vector2> minusLine(2);  //기울기가 음수인 직선 저장
   //직선의 기울기들을 구한다.
   vector2 prev,now(notNerdPoly.back()),next(notNerdPoly.front());
+  vector<vector2> minusLine(2);  //기울기가 음수인 직선 저장
+  double PI=vector2().PI;
   for(int i=0;i<notSize;i++){
     prev=now; now=next; next=notNerdPoly[(i+1)%notSize];
     //가장 왼쪽으로 가는 직선, 가장 오른쪽으로 가는 직선을 구한다. now~left(right)Point 직선
@@ -196,22 +218,44 @@ bool NERDS_determine3(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
     for(int j=0;j<nerdSize;j++){
       vector2 target=nerdPoly[j];
       //가장 왼쪽으로 가는 직선
-      if(target.ccw(now,leftPoint==1)){leftPoint=target;}
+      if(target.ccw(now,leftPoint)==1){leftPoint=target;}
       //가장 오른쪽으로 가는 직선
-      if(target.ccw(now,rightPoint==-1)){rightPoint=target;}
+      if(target.ccw(now,rightPoint)==-1){rightPoint=target;}
     }
     //유효 범위 확인, 기울기가 plus인 직선이 있다면 true 반환 
     if(leftPoint.ccw(prev,now)>=0&&leftPoint.ccw(now,next)<0){
-      
+      double leftPolar=(leftPoint-now).polar();
+      double maxPolar=(next-now).polar();
+      if(NERDS_isInside(0,0.5*PI,leftPolar,maxPolar)){return true;}
+      if(NERDS_isInside(PI,1.5*PI,leftPolar,maxPolar)){return true;}
+      minusLine=vector<vector2>{now,leftPoint};
     }
     if(rightPoint.ccw(now,prev)>0&&rightPoint.ccw(next,now)<=0){
-      
+      double rightPolar=(rightPoint-now).polar();
+      double minPolar=(prev-now).polar();
+      if(NERDS_isInside(0,0.5*PI,minPolar,rightPolar)){return true;}
+      if(NERDS_isInside(PI,1.5*PI,minPolar,rightPolar)){return true;}
+      minusLine=vector<vector2>{now,rightPoint};
     }
   }
   //기울기가 plus인 직선이 하나도 없다면, minus인 직선만 있다
-  //not nerd가 직선의 좌측에 있다면 true, 우측에 있다면 false 반환
+  double linePolar=(minusLine.back()-minusLine.front()).polar();
+  if(linePolar>=1.5*PI){
+    for(auto& ele: notNerdPoly){
+      int tmp=ele.ccw(minusLine.front(),minusLine.back());
+      if(tmp==0){continue;}
+      else if(tmp==1){return false;}
+      else{return true;}
+    }
+  }else{
+    for(auto& ele: notNerdPoly){
+      int tmp=ele.ccw(minusLine.front(),minusLine.back());
+      if(tmp==0){continue;}
+      else if(tmp==-1){return false;}
+      else{return true;}
+    }
+  }
 }
-
 string NERDS_Algo(int peopleNum, vector<vector<int>> peopleInfo){
   //nerd와 notNerd를 구분한다
   vector<vector2> nerds,notNerds;
@@ -304,7 +348,8 @@ void NERDS(){
       O(n)
     피드백
       determine1: 두 영역이 "ㅁㅁ"와 같이 있을 때(왼쪽 너드), 함수는 false를 반환하지만, 실제로는 너드가 위로오도록 직선을 그을 수 있다.
-      determine2: not-nerd가 명백히 위에 있는 경우에도 true를 반환한다.
+      determine2: not-nerd가 명백히 위에 있는 경우에도 true를 반환한다. - 문제에서는 구분하지 못하지만, 명백히 오답이다.
+      determine3: not-nerd가 위에 있는 경우를 보완해준다.
   */
   //Sol
   int testCase;
