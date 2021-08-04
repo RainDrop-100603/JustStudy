@@ -158,6 +158,8 @@ algorithm tips
       좌측하단 점은 항상 최외각 점임을 이용한다(STL: min_element 이용가능)
       gift Wrapping - O(n^2) : ccw를 이용해 가장 우측인 점을 구하면서 순회한다
       Graham Scan - O(nlgn)
+  라인 스위핑 (plane sweeping or line sweeping)
+    
 
 여러가지 유형의 문제들의 해법
   기본적인 접근방법
