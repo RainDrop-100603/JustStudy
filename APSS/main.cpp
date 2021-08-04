@@ -191,24 +191,24 @@ bool NERDS_determine3(vector<vector2>& notNerdPoly,vector<vector2>& nerdPoly){
   vector2 prev,now(notNerdPoly.back()),next(notNerdPoly.front());
   for(int i=0;i<notSize;i++){
     prev=now; now=next; next=notNerdPoly[(i+1)%notSize];
-    //직선의 한계 기울기를 구한다. 한계 기울기를 벗어나는 직선은 만들어 질 수 없다.
-    double polarMin((now-prev).polar()),polarMax((next-now).polar());
-    //가장 왼쪽으로 가는 직선을 구한다.
-    vector<vector2> lineLeft{now,nerdPoly[0]},lineRight(lineLeft);
+    //가장 왼쪽으로 가는 직선, 가장 오른쪽으로 가는 직선을 구한다. now~left(right)Point 직선
+    vector2 leftPoint(nerdPoly[0]),rightPoint(lineLeft);
     for(int j=0;j<nerdSize;j++){
       vector2 target=nerdPoly[j];
       //가장 왼쪽으로 가는 직선
-      if(target.ccw(now,lineLeft.back()==1)){lineLeft.back()=target;}
+      if(target.ccw(now,leftPoint==1)){leftPoint=target;}
       //가장 오른쪽으로 가는 직선
-      if(target.ccw(now,lineRight.back()==-1)){lineRight.back()=target;}
+      if(target.ccw(now,rightPoint==-1)){rightPoint=target;}
     }
-    //직선이 유효 범위내에 있는지 확인한다.
-    //left일 경우 not nerd 가 좌측에 존재하는지, right일 경우 우측에 존재하는지 확인한다.
-    //left가 유효할 경우 직선의 범위는 left.polar()~polarMAX 이다.
-    //right가 유효할 경우 직선의 범위는 polarMIN~right.polar()이다.
+    //유효 범위 확인, 기울기가 plus인 직선이 있다면 true 반환 
+    if(leftPoint.ccw(prev,now)>=0&&leftPoint.ccw(now,next)<0){
+      
+    }
+    if(rightPoint.ccw(now,prev)>0&&rightPoint.ccw(next,now)<=0){
+      
+    }
   }
   //기울기가 plus인 직선이 하나도 없다면, minus인 직선만 있다
-  //직선이 우하단을 바라본다면, 좌상단을 바라보도록 변경
   //not nerd가 직선의 좌측에 있다면 true, 우측에 있다면 false 반환
 }
 
