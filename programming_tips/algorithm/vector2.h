@@ -39,13 +39,13 @@ public:
   double cross(const vector2& rhs)const {return x*rhs.y-y*rhs.x; }  
   int ccw(const vector2& from, const vector2& to)const {return cmpDBL((to-from).cross(*this-from),0); } // 1:counterclockwise, 0: 평행, -1:clockwise
   vector2 project(const vector2& rhs)const {return rhs.normalize()*(rhs.normalize().dot(*this)); }  //rhs로의 projection
+  vector2 vector2::pFoot(const vector2& p1,const vector2& p2)const {return p1+(*this-p1).project(p2-p1); } //*this에서 직선ab에 내린 수선의 발
   //기타 함수들, cpp 파일에 정의 
   bool onLine(const vector2& p1, const vector2& p2)const;   //this가 직선 위에 존재하는가
   bool onSegment(const vector2& p1, const vector2& p2)const;  //this가 선분 위에 존재하는가
-  vector2 pFoot(const vector2& p1,const vector2& p2)const;  //this에서 직선에 내린 수선의 발
-  int isInside(const vector<vector2>& polygon)const;  //this가 polygon 내부에 있는가? 1: 내부, 0: 경계, -1:외부
   pair<bool,vector2> lineCross(const vector2& rhs, const vector2& p1, const vector2& p2)const;  //this-rhs와 p1-p2직선간의 교점이 존재하는가(평행 제외)
   pair<bool,vector2> segCross(const vector2& rhs, const vector2& p1, const vector2& p2)const;  //this-rhs와 p1-p2선분과의 교점이 존재하는가(평행 제외)
+  int isInside(const vector<vector2>& polygon)const;  //this가 polygon 내부에 있는가? 1: 내부, 0: 경계, -1:외부
   //전역함수 오버로딩
   friend ostream& operator<<(ostream& os, const vector2& vec);
 };

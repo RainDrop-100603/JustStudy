@@ -1,6 +1,7 @@
 #include "vector2.h"
 
-vector2 vector2::pFoot(const vector2& point,const vector2& vec)const {return point+(*this-point).project(vec); } //*this에서 직선ab에 내린 수선의 발
+//직선, 선분
+on Line을 수학적으로 변경하거나 다른 방법을 쓰자 
 bool vector2::onLine(const vector2& p1, const vector2& p2)const {return cmpDBL((*this-p1).dot(p2-p1),(*this-p1).length()*(p2-p1).length())==0; }   //직선 위
 bool vector2::onSegment(const vector2& p1, const vector2& p2)const {return this->onLine(p1,p2)&&min(p1,p2)<=*this&&*this<=max(p1,p2); }  //선분 위
 pair<bool,vector2> vector2::lineCross(const vector2& rhs, const vector2& p1, const vector2& p2)const{//직선의 교점, 평행(일치)는 제외
@@ -23,7 +24,7 @@ pair<bool,vector2> vector2::segCross(const vector2& rhs, const vector2& p1, cons
   }
 }
   
-//polygon 관련
+//polygon 
 int vector2::isInside(const vector<vector2>& polygon)const{  //this가 polygon 내부에 있는가? 1: 내부, 0: 경계, -1:외부
   int crossCount(0),pSize(polygon.size());
   for(int i=0;i<pSize;i++){
