@@ -1,5 +1,5 @@
-#ifndef ____USEFUL_H___
-#define ____USEFUL_H___
+#ifndef ___USEFUL_H___
+#define ___USEFUL_H___
 
 #include <iostream>
 #include <vector>
@@ -365,7 +365,7 @@ string to something
 
 //유용한 함수
 vector<int> getPrimeVector(int num);  //[0,num] 범위의 소수를 저장하는 vector<int>를 반환
-int  getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
+int getGCD(int A, int B); //유클리드 호제법을 이용한 A와 B의 GCD
 // LCM=A*B/GCD(A*B);
 pair<long long,long long> euclidAlgo(long long A,long long B);  //유클리드 알고리즘"Ax+By=gcd(A,B)"의 해(x,y), 
 int fastSum(int n); //1~n까지의 합을 구한다. 분할정복방식
