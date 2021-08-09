@@ -194,3 +194,25 @@ algorithm tips
 기타 팁
   i~i+1번째 ele를 비교하는 함수를 사용할 때, (n-1)~0까지 한번에 비교하게 만들고 싶다면, point[(i+1)%n]처럼 표시하면 된다. 
     
+자료구조
+  tree
+  graph
+  기타 자료구조 
+    비트마스크
+      장점
+        빠른 수행시간, 간결한 코드, 적은 메모리 사용량, 연관 배열을 배열로 대체(vector<bool> -> int or long long)
+      팁
+        켜진 비트의 개수 구하기: 각 컴파일러(visual c++, gcc/g++) 혹은 언어(java)에서 자체적으로 지원한다.
+        켜져있는 least significant bit(최하위 비트) 구하기: 컴파일러/언어별로 지원한다. g++의 내장함수는 0에 대해 정의 X 
+        최소 원소(2^최하위비트) 구하기 : number & -number (2의보수에서 가장 먼저 1이 나오는 위치는, 꺼져있는 최하위 비트의 위치다.)
+        최소 원소 지우기: number &= (number-1)
+          2의 거듭제곱을 구할 때 유용하다: 2의거듭제곱은 하나의 비트만 켜져있기 때문에, 최소원소를 지우면 0이 된다.
+          모든 부분집합 순회하기: for(int subset=pizza;subset;subset=((subset-1)&pizza)) : 최소원소를 지우며 순회한다.
+      유의사항
+        연산자 우선순위 주의 
+        c++에서 상수는 int로 취급되므로, 적절한 접미사를 사용하자(u:unsigned int, ull: unsigned long long)
+        unsigned 자료형을 사용하는것이 좋다.
+        비트크기 이상으로 shift left하는것은 정의되어 있지 않다.(unsigned int의 경우 32비트이상 <<하지 않는다.)
+    동적배열과 연결리스트
+    큐와 스택
+    문자열 탐색과 매칭
