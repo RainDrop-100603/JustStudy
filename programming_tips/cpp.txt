@@ -5,3 +5,6 @@ c++ tips
 
 https://seastar105.tistory.com/65
 explicit 생성자에 대한 내용 
+
+long long 과 int는 수행시간에 차이가 난다. long long이 필요한 것이 아니라면 int를 사용하자 
+  int, long long, double, float 연산 수행시간 추가바람 
