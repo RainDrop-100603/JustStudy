@@ -45,61 +45,6 @@ int fastSum(int n){
   return 2*fastSum(n/2)+(n/2)*(n/2);
 }
 
-//실수 비교
-int cmpDouble_Abs(double a, double b, double absTolerance){  // 1:(a>b), 0:(a==b), -1:(a<b)
-  //큰 수는 비교하기 어렵다.
-  double diff=a-b;
-  if(fabs(diff)<=absTolerance) 
-    return 0;
-  return diff>0 ? 1: -1;
-}
-int cmpDouble_Rel(double a, double b, double relTolerance){  // 1:(a>b), 0:(a==b), -1:(a<b)
-  //0에 아주 가까운 작은 값은 비교하기 어렵다
-  double diff=a-b;
-  if(fabs(diff)<=relTolerance*max(fabs(a),fabs(b))) 
-    return 0;
-  return diff>0 ? 1: -1;
-}
-int cmpDouble_AbsRel(double a, double b, double absTolerance, double relTolerance){  // 1:(a>b), 0:(a==b), -1:(a<b)
-  double diff=a-b;
-  if(fabs(diff)<=absTolerance) // absolute compare
-    return 0;  
-  if(fabs(diff)<=relTolerance*max(fabs(a),fabs(b))) // relative compare
-    return 0; 
-  return diff>0 ? 1: -1;
-}
-int cmpDouble_Ulps(double a, double b, int ulpsTolerance){  // 1:(a>b), 0:(a==b), -1:(a<b)
-  //bit를 double이 아닌 long long(64bit)으로 해석하여, 두 값을 정수형태로 비교, 상대오차 비교와 유사
-  //주의할 것은 double->long long으로 형을 변환한것이 아닌, 비트 자체는 그대로 두고 long long으로 해석한 것
-  double diff=a-b;
-  long long na=*((long long*)&a); //bit를 long long형식으로 해석했을경우
-  long long nb=*((long long*)&b);
-  //부호비트를 비교, 부호가 다를경우 처리
-  if((na&0x8000000000000000)!=(nb&0x8000000000000000)){
-    if(a==b) //0은 double에서 +0과 -0으로 처리되므로, 부호비트가 다를수도 있다.
-      return 0;  
-    return diff>0 ? 1: -1;  //부호가 다르면 비교가 easy
-  }
-  long long ulpsDiff=abs(na-nb); //ulps 비교
-  if(ulpsDiff<=ulpsTolerance) 
-    return 0;
-  return (diff>0) ? 1: -1; 
-}
-int cmpDouble_UlpsAbs(double a, double b, int absTolerance, int ulpsTolerance){  // 1:(a>b), 0:(a==b), -1:(a<b)
-  double diff=a-b;
-  if(fabs(diff)<=absTolerance) 
-    return 0;
-  long long na=*((long long*)&a); 
-  long long nb=*((long long*)&b);
-  if((na&0x8000000000000000)!=(nb&0x8000000000000000)) 
-    return diff>0 ? 1: -1;  
-  long long ulpsDiff=abs(na-nb); 
-  if(ulpsDiff<=ulpsTolerance) 
-    return 0;
-  return (diff>0) ? 1: -1;
-}
-
-
 //유용한 테스트
 void moveTest_vec(){
   vector<int> vec1(3,1);
