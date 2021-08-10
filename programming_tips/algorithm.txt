@@ -208,6 +208,8 @@ algorithm tips
         최소 원소 지우기: number &= (number-1)
           2의 거듭제곱을 구할 때 유용하다: 2의거듭제곱은 하나의 비트만 켜져있기 때문에, 최소원소를 지우면 0이 된다.
           모든 부분집합 순회하기: for(int subset=pizza;subset;subset=((subset-1)&pizza)) : 최소원소를 지우며 순회한다.
+        비트하나 단위로 할 필요 없이, 여러개를 묶어서 단위로 사용해도 된다.(n개 비트는 2^n개 상태 표시)
+        priority queue에서, 우선순위의 범위가 제한되었을때 이용 가능. least significant bit = 가장 빠른 우선순위 
       유의사항
         연산자 우선순위 주의 
         c++에서 상수는 int로 취급되므로, 적절한 접미사를 사용하자(u:unsigned int, ull: unsigned long long)
