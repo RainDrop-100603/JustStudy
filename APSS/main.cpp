@@ -40,7 +40,23 @@ void GRADUATION_Input(int& classNum,int& classTarget,int& semesterNum,int& class
   }
 }
 int GRADUATION_func1(int classNum,int classTarget,int semesterNum,int classLimit,vector<int>& preClass,vector<int>& semesterInfo,int myClass,int semesterCount,int thisSemester){
-  cout<<"test";           
+  //기저
+  if(__builtin_popcount(myClass)>=classTarget){return semesterCount;}
+  if(thisSemester==semesterNum){return semesterNum+1;}
+  //모든 경우의 수 만들기 
+  vector<int> choices;
+
+  //각 경우의 수를 선택하고 재귀
+  int semesterMin=100;
+  for(auto choice:choices){
+    semesterMin=min(semesterMin,GRADUATION_func1(classNum,classTarget,semesterNum,classLimit,preClass,semesterInfo,myClass|choice,semesterCount+1,thisSemester+1));
+  }
+  //경우의 수가 없는경우
+  if(semesterMin==0){ 
+    return GRADUATION_func1(classNum,classTarget,semesterNum,classLimit,preClass,semesterInfo,myClass,semesterCount,thisSemester+1);
+  }
+  //반환
+  return semesterMin;          
 }
 string GRADUATION_Algo(int classNum,int classTarget,int semesterNum,int classLimit,vector<int> preClass,vector<int> semesterInfo){
   //재귀함수
