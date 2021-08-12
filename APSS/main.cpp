@@ -12,6 +12,7 @@
 
 using namespace std;
 
+
 // @*@*@* 계산 기하, 여러개의 점으로 convex hull 만드는법, convex hull을 나누느 직선이 있는지 구하는 법
 //        두 convex hull을 나누는 직선의 범위를 구하는 법, 원의 각도에서 포함관계를 구하는 법
 void GRADUATION_Input(int& classNum,int& classTarget,int& semesterNum,int& classLimit,vector<int>& preClass,vector<int>& semesterInfo){
@@ -39,29 +40,66 @@ void GRADUATION_Input(int& classNum,int& classTarget,int& semesterNum,int& class
     }
   }
 }
-int GRADUATION_func1(int classNum,int classTarget,int semesterNum,int classLimit,vector<int>& preClass,vector<int>& semesterInfo,int myClass,int semesterCount,int thisSemester){
+vector<int> GRADUATION_getCombination(int option,int bitmaskLen, int select){
+  //bitmask를 집합으로 바꿔준다
+  vector<int> set;
+  for(int i=0;i<bitmaskLen;i++){
+    if((1<<i)&option){
+      set.push_back(i);
+    }
+  }
+  //모든 조합 찾기
+  int total=__builtin_popcount(option);
+    //조합을 위한 key 만들기(0과1로 이루어진 순열, 같은 숫자끼리는 구별하지 않으므로 ,조합과 같다)
+  vector<int> key;
+  for(int i=0;i<select;i++){key.push_back(1);}
+  for(int i=0;i<total-select;i++){key.push_back(0);}
+    //조합 생성 
+  vector<int> combinations;
+  do{
+    int tmp=0;
+    for(int i=0;i<total;i++){
+      if(key[i]==1){tmp|=(1<<set[i]);}
+    }
+    combinations.push_back(tmp);
+  }while(prev_permutation(key.begin(),key.end()));
+  return combinations;
+}
+int GRADUATION_func1(int classNum,int classTarget,int semesterNum,int classLimit,vector<int>& preClass,vector<int>& semesterInfo,int classTaken,int semesterCount,int thisSemester){
   //기저
-  if(__builtin_popcount(myClass)>=classTarget){return semesterCount;}
+  if(__builtin_popcount(classTaken)>=classTarget){return semesterCount;}
   if(thisSemester==semesterNum){return semesterNum+1;}
   //모든 경우의 수 만들기 
-  vector<int> choices;
-
-  //각 경우의 수를 선택하고 재귀
-  int semesterMin=100;
-  for(auto choice:choices){
-    semesterMin=min(semesterMin,GRADUATION_func1(classNum,classTarget,semesterNum,classLimit,preClass,semesterInfo,myClass|choice,semesterCount+1,thisSemester+1));
+  int option=semesterInfo[thisSemester];
+    //수강한 과목 제외
+  option&= ~classTaken;
+    //선수강 과목 확인
+  for(int i=0;i<classNum;i++){
+    if(((1<<i)&option)>0){
+      if((classTaken&preClass[i])!=preClass[i]){
+        option-=(1<<i);
+      }
+    }
   }
-  //경우의 수가 없는경우
-  if(semesterMin==0){ 
-    return GRADUATION_func1(classNum,classTarget,semesterNum,classLimit,preClass,semesterInfo,myClass,semesterCount,thisSemester+1);
-  }
-  //반환
-  return semesterMin;          
+  //각 경우 선택 후 반환
+  int optionNum=__builtin_popcount(option);
+  if(optionNum==0){
+    return GRADUATION_func1(classNum,classTarget,semesterNum,classLimit,preClass,semesterInfo,classTaken,semesterCount,thisSemester+1);
+  }else if(optionNum<=classLimit){
+    return GRADUATION_func1(classNum,classTarget,semesterNum,classLimit,preClass,semesterInfo,classTaken|option,semesterCount+1,thisSemester+1);
+  }else{
+    vector<int> choices=GRADUATION_getCombination(option,classNum,classLimit);
+    int semesterMin=100;
+    for(auto choice:choices){
+      semesterMin=min(semesterMin,GRADUATION_func1(classNum,classTarget,semesterNum,classLimit,preClass,semesterInfo,classTaken|choice,semesterCount+1,thisSemester+1));
+    }
+    return semesterMin;
+  }     
 }
 string GRADUATION_Algo(int classNum,int classTarget,int semesterNum,int classLimit,vector<int> preClass,vector<int> semesterInfo){
   //재귀함수
-  int myClass(0),semesterCount(0),thisSemester(0);
-  int semesterMin=GRADUATION_func1(classNum,classTarget,semesterNum,classLimit,preClass,semesterInfo,myClass,semesterCount,thisSemester);
+  int classTaken(0),semesterCount(0),thisSemester(0);
+  int semesterMin=GRADUATION_func1(classNum,classTarget,semesterNum,classLimit,preClass,semesterInfo,classTaken,semesterCount,thisSemester);
   //반환
   if(semesterMin>semesterNum){
     return string("IMPOSSIBLE");
@@ -116,6 +154,7 @@ void GRADUATION(){
       time complexity: 측정하기가 어렵다
       mem complexity: O(n), 비트마스크 사용으로 용량이 작다 
     피드백
+      오답
   */
   //Sol
   int testCase;
