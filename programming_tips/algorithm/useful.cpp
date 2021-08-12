@@ -24,3 +24,40 @@ vector<unsigned char> useful_eratosthenes(int num){
   //return
   return eratosthenes;
 }
+
+//순열과 조합
+vector<vector<int>> useful_getPermutation(vector<int> set){
+  //기저
+  if(set.empty()){return vector<vector<int>>();}
+  //next_permutation함수는 더 높은(후순위)순열을 찾는 함수
+  //set의 모든 순열을 찾으려면, 오름차순 정렬을 해주어야 한다.
+  sort(set.begin(),set.end());
+  //모든 순열 찾기
+  vector<vector<int>> permutations;
+  do{
+    permutations.push_back(set);
+  }while(next_permutation(set.begin(),set.end()));
+  return permutations;
+}
+vector<vector<int>> useful_getCombination(vector<int> set, int select){
+  //기저
+  int total=set.size();
+  if(set.empty()){return vector<vector<int>>();}
+  if(total<select){cout<<"select exceed total"<<endl; return vector<vector<int>>();}
+  //순서과 상관없는 조합, select개의 1과 (set size-select)개의 0을 만들고, 0과1의 순열을 만든다.
+  //set을 정렬할 필요는 없지만, 오름차순으로 조합을 만들기 위해 정렬을 해준다.
+  sort(set.begin(),set.end());
+  //모든 조합 찾기
+  vector<vector<int>> combinations;
+  vector<int> key;
+  for(int i=0;i<select;i++){key.push_back(1);}
+  for(int i=0;i<total-select;i++){key.push_back(0);}
+  do{
+    vector<int> tmp;
+    for(int i=0;i<total;i++){
+      if(key[i]==1){tmp.push_back(set[i]);}
+    }
+    combinations.push_back(tmp);
+  }while(prev_permutation(key.begin(),key.end()));
+  return combinations;
+}
