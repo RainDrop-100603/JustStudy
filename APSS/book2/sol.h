@@ -14,3 +14,10 @@ vector<int> GRADUATION_getCombination(int option,int bitmaskLen, int select);
 int GRADUATION_func1(int classNum,int classTarget,int semesterNum,int classLimit,vector<int>& preClass,vector<int>& semesterInfo,int classTaken,int semesterCount,int thisSemester);
 string GRADUATION_Algo(int classNum,int classTarget,int semesterNum,int classLimit,vector<int> preClass,vector<int> semesterInfo);
 void GRADUATION();
+
+// 부분 합, greedy, mod k ==0 에서 함수의 작동이 달라짐을 유의, scanf > cin > getline + substr
+void CHRISTMAS_Input(int& childrenNum,int& boxNum,vector<int>& boxInfo);
+void CHRISTMAS_Input2(int& childrenNum,int& boxNum,vector<int>& boxInfo);
+void CHRISTMAS_Input3(int& childrenNum,int& boxNum,vector<int>& boxInfo);
+pair<int,int> CHRISTMAS_Algo(int childrenNum,int boxNum,vector<int> boxInfo);
+void CHRISTMAS();
