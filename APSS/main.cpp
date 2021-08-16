@@ -12,7 +12,7 @@
 
 using namespace std;
 
-
+test
 // 비트마스크, combination의 이용, time complexity 구하는 것 유의 
 void GRADUATION_Input(int& classNum,int& classTarget,int& semesterNum,int& classLimit,vector<int>& preClass,vector<int>& semesterInfo){
   cin>>classNum>>classTarget>>semesterNum>>classLimit;
