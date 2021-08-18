@@ -12,6 +12,7 @@
 
 using namespace std;
 test
+test2
 // 부분 합, greedy, mod k ==0 에서 함수의 작동이 달라짐을 유의, scanf > cin > getline + substr
 void CHRISTMAS_Input(int& childrenNum,int& boxNum,vector<int>& boxInfo){
   cin>>boxNum>>childrenNum;
