@@ -102,8 +102,8 @@ pair<int,int> CHRISTMAS_Algo(int childrenNum,int boxNum,vector<int> boxInfo){
   }
   result.first=q1Result;
   //3. mod value arr을 이용해, 가장 짧은 구간들을 구하여 끝나는 순으로 오름차순 정렬하고, greedy하게 2번답 구하기
-  result.second=CHRISTMAS_GREEDY(partialSumMod,modValueIdx,childrenNum);
-  //result.second=CHRISTMAS_GREEDY2(partialSumMod,childrenNum);
+  //result.second=CHRISTMAS_GREEDY(partialSumMod,modValueIdx,childrenNum);
+  result.second=CHRISTMAS_GREEDY2(partialSumMod,childrenNum);
   //result.second=CHRISTMAS_DP(partialSumMod,modValueIdx,childrenNum);
   return result;
 } 
@@ -170,7 +170,7 @@ void CHRISTMAS(){
   while(testCase--){
     int childrenNum, boxNum;
     vector<int> boxInfo; 
-    CHRISTMAS_Input3(childrenNum,boxNum,boxInfo);
+    CHRISTMAS_Input(childrenNum,boxNum,boxInfo);
     auto result=CHRISTMAS_Algo(childrenNum,boxNum,boxInfo);
     // cout<<"::::";
     cout<<result.first<<" "<<result.second<<endl;
