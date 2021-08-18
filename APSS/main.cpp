@@ -11,10 +11,8 @@
 #include <ctime>
 
 using namespace std;
-test
-test2
-test32sdf
-// 부분 합, greedy, mod k ==0 에서 함수의 작동이 달라짐을 유의, scanf > cin > getline + substr
+
+// @* 부분 합, greedy, 간단한 작업을 통해 mod k==0일 경우에도 동일하게 작동하도록 했다, scanf > cin > getline + substr
 void CHRISTMAS_Input(int& childrenNum,int& boxNum,vector<int>& boxInfo){
   cin>>boxNum>>childrenNum;
   boxInfo.resize(boxNum);
@@ -41,41 +39,11 @@ void CHRISTMAS_Input3(int& childrenNum,int& boxNum,vector<int>& boxInfo){
     cin>>ele;
   }
 }
-pair<int,int> CHRISTMAS_Algo(int childrenNum,int boxNum,vector<int> boxInfo){
-  pair<int,int> result; //1번답, 2번답
-  //1. 부분 합 mod childrenNum, mod value arr 구하기
-  vector<int> partialSumMod(boxNum);
-  vector<vector<int>> modValueIdx(childrenNum);
-  partialSumMod[0]=boxInfo[0]%childrenNum;
-  modValueIdx[boxInfo[0]%childrenNum].push_back(0);
-  for(int i=1;i<boxNum;i++){
-    int modValue=(partialSumMod[i-1]+boxInfo[i])%childrenNum;
-    partialSumMod[i]=modValue;
-    modValueIdx[modValue].push_back(i);
-  }
-  //2. mod value arr을 이용해 정답 1번 구하기
-  int q1Result(((modValueIdx[0].size()*(modValueIdx[0].size()+1ll))/2)%20091101); 
-    //mod Value가 0일때와 아닐때의 동작이 다르다.
-  for(int i=1;i<modValueIdx.size();i++){
-    q1Result+=((modValueIdx[i].size()*(modValueIdx[i].size()-1ll))/2)%20091101;
-    q1Result%=20091101;
-  }
-  result.first=q1Result;
-  //3. mod value arr을 이용해, 가장 짧은 구간들을 구하여 끝나는 순으로 오름차순 정렬하고, greedy하게 2번답 구하기
-  int q2Result(0);
+int CHRISTMAS_GREEDY(vector<int>& pSum, vector<vector<int>>& modValueIdx, int childrenNum){
+  int result=0;
   vector<pair<int,int>> options;  //first=끝나는 위치, second=시작위치
-  //mod Value ==0
-  auto& tmp=modValueIdx[0];
-  if(tmp.size()==1){
-    options.push_back(make_pair(tmp.front(),0));
-  }else if(tmp.size()>1){
-    options.push_back(make_pair(tmp.front(),0));
-    for(int i=0;i<tmp.size()-1;i++){
-      options.push_back(make_pair(tmp[i+1],tmp[i]+1));
-    }
-  }
-  //mod Value ==k !=0
-  for(int i=1;i<modValueIdx.size();i++){
+  //mod Value
+  for(int i=0;i<modValueIdx.size();i++){
     auto& ele=modValueIdx[i];
     if(ele.size()<2){
       continue;
@@ -89,10 +57,54 @@ pair<int,int> CHRISTMAS_Algo(int childrenNum,int boxNum,vector<int> boxInfo){
   for(auto& ele:options){
     if(ele.second>tmpEnd){  //ele.first = end, ele.second = begin
       tmpEnd=ele.first;
-      q2Result+=1;
+      result+=1;
     }
   }
-  result.second=q2Result;
+  return result;
+}
+int CHRISTMAS_GREEDY2(vector<int>& pSum,int childreNum){
+  //lastIDx==선물그룹 중 마지막 위치, prePosition[modValue]==modValue가 등장한 마지막 idx
+  int lastIdx=-1,result=0;
+  vector<int> prevPosition(childreNum,-2);  
+  prevPosition[0]=-1;  //mod k==0을 위함
+  for(int i=0;i<pSum.size();i++){
+    int nowMod=pSum[i];
+    if(prevPosition[nowMod]>=lastIdx){
+      lastIdx=i;
+      result++;
+    }
+    prevPosition[nowMod]=i;
+  }
+  return result;
+}
+int CHRISTMAS_DP(vector<int>& pSum, int childrenNum){
+
+}
+pair<int,int> CHRISTMAS_Algo(int childrenNum,int boxNum,vector<int> boxInfo){
+  pair<int,int> result; //1번답, 2번답
+  //1. 부분 합 mod childrenNum, mod value arr 구하기
+  vector<int> partialSumMod(boxNum);
+  vector<vector<int>> modValueIdx(childrenNum);
+  modValueIdx[0].push_back(-1); //mod가 0일때는 시작위치부터 세야하므로, -1을 추가해준다.
+  partialSumMod[0]=boxInfo[0]%childrenNum;
+  modValueIdx[boxInfo[0]%childrenNum].push_back(0);
+  for(int i=1;i<boxNum;i++){
+    int modValue=(partialSumMod[i-1]+boxInfo[i])%childrenNum;
+    partialSumMod[i]=modValue;
+    modValueIdx[modValue].push_back(i);
+  }
+  //2. mod value arr을 이용해 정답 1번 구하기
+  int q1Result(0); 
+    //mod Value가 0일때와 아닐때의 동작이 다르다.
+  for(int i=0;i<modValueIdx.size();i++){
+    q1Result+=((modValueIdx[i].size()*(modValueIdx[i].size()-1ll))/2)%20091101;
+    q1Result%=20091101;
+  }
+  result.first=q1Result;
+  //3. mod value arr을 이용해, 가장 짧은 구간들을 구하여 끝나는 순으로 오름차순 정렬하고, greedy하게 2번답 구하기
+  result.second=CHRISTMAS_GREEDY(partialSumMod,modValueIdx,childrenNum);
+  //result.second=CHRISTMAS_GREEDY2(partialSumMod,childrenNum);
+  //result.second=CHRISTMAS_DP(partialSumMod,modValueIdx,childrenNum);
   return result;
 } 
 void CHRISTMAS(){
