@@ -9,202 +9,99 @@
 #include <map>
 #include <queue>
 #include <ctime>
+#include <queue>
 
 using namespace std;
 
-// @* 부분 합, greedy, 간단한 작업을 통해 mod k==0일 경우에도 동일하게 작동하도록 했다, scanf > cin > getline + substr
-//  시간에 대한 테스트 수행: 
-//    greedy2==greedy2_opti(4.0s, O(n))>dp(4.6s, O(n))>>greedy(12.3s, O(nlgn))
-//    참조형이나 벡터의 초기화값(-1이냐 -2냐 등등)은 시간에 사실상 영향을 끼치지 않았으며, 알고리즘의 효율성이 더 큰 영향을 끼쳤다.
-void CHRISTMAS_Input(int& childrenNum,int& boxNum,vector<int>& boxInfo){
-  cin>>boxNum>>childrenNum;
-  boxInfo.resize(boxNum);
-  for(auto& ele:boxInfo){
-    scanf("%d",&ele);
-  }
+// 원형 연결리스트 혹은 
+void JOSEPHUS_Input(int& num, int& move){
+  cin>>num>>move;
 }
-void CHRISTMAS_Input2(int& childrenNum,int& boxNum,vector<int>& boxInfo){
-  cin>>boxNum>>childrenNum; 
-  string tmp;
-  size_t idx;
-  cin.ignore();
-  getline(cin,tmp);
-  boxInfo.resize(boxNum);
-  for(int i=0;i<boxNum;i++){
-    boxInfo[i]=stoi(tmp,&idx);
-    tmp=tmp.substr(idx);
+pair<int,int> JOSEPHUS_Algo(int num, int move){
+  pair<int,int> result;
+  //queue를 이용한 방식
+  queue<int> q;
+  for(int i=1;i<=num;i++){
+    q.push(i);
   }
-}
-void CHRISTMAS_Input3(int& childrenNum,int& boxNum,vector<int>& boxInfo){
-  cin>>boxNum>>childrenNum;
-  boxInfo.resize(boxNum);
-  for(auto& ele:boxInfo){
-    cin>>ele;
-  }
-}
-void CHRISTMAS_randInput(int& childrenNum,int& boxNum,vector<int>& boxInfo,int childFix, int boxFix){
-  childrenNum=childFix;
-  boxNum=boxFix;
-  boxInfo.resize(boxNum);
-  for(auto& ele: boxInfo){
-    ele=rand()+1;
-  }
-}
-int CHRISTMAS_GREEDY(vector<int>& pSum, vector<vector<int>>& modValueIdx, int childrenNum){
-  int result=0;
-  vector<pair<int,int>> options;  //first=끝나는 위치, second=시작위치
-  //mod Value
-  for(int i=0;i<modValueIdx.size();i++){
-    auto& ele=modValueIdx[i];
-    if(ele.size()<2){
-      continue;
-    }
-    for(int j=0; j<ele.size()-1;j++){
-      options.push_back(make_pair(ele[j+1],ele[j]+1));
+  while(q.size()>2){
+    int moving=(move-1)%q.size();
+    q.pop();
+    for(int i=0;i<moving;i++){
+      q.push(q.front());
+      q.pop();
     }
   }
-  sort(options.begin(),options.end());
-  int tmpEnd=-1;
-  for(auto& ele:options){
-    if(ele.second>tmpEnd){  //ele.first = end, ele.second = begin
-      tmpEnd=ele.first;
-      result+=1;
-    }
-  }
-  return result;
-}
-int CHRISTMAS_GREEDY2(vector<int>& pSum,int childreNum){
-  //lastIDx==선물그룹 중 마지막 위치, prePosition[modValue]==modValue가 등장한 마지막 idx
-  int lastIdx=-1,result=0;
-  vector<int> prevPosition(childreNum,-2);  
-  prevPosition[0]=-1;  //mod k==0을 위함
-  for(int i=0;i<pSum.size();i++){
-    int nowMod=pSum[i];
-    if(prevPosition[nowMod]>=lastIdx){
-      lastIdx=i;
-      result++;
-    }
-    prevPosition[nowMod]=i;
-  }
-  return result;
-}
-int CHRISTMAS_GREEDY2_opti(vector<int>& pSum,int childreNum){
-  //lastIDx==선물그룹 중 마지막 위치, prePosition[modValue]==modValue가 등장한 마지막 idx
-  int lastIdx=0,result=0;
-  vector<int> prev(childreNum,-1);  
-  prev[0]=0;  //mod k==0을 위함
-  for(int i=0;i<pSum.size();i++){
-    int& prevIdx=prev[pSum[i]];
-    if(prevIdx>=lastIdx){
-      lastIdx=i;
-      result++;
-    }
-    prevIdx=i;
-  }
-  return result;
-}
-int CHRISTMAS_DP(vector<int>& pSum, int childrenNum){
-  vector<int> prev(childrenNum,-1); 
-  vector<int> result(pSum.size(),-1);
-  prev[0]=0;  //mod Value가 0이면 prev가 없어도 mod Value가 0인 구간을 만들 수 있다.
-  for(int i=0;i<pSum.size();i++){
-    int& now=result[i];
-    //초기화
-    if(i>0){
-      now=result[i-1];
-    }else{
-      now=0;
-    }
-    //연산, pSum[i]==pSum[j] -> sum(i+1 ~ j) mod k == 0
-    int& prevIdx=prev[pSum[i]];
-    if(prevIdx!=-1){
-      now=max(now,result[prevIdx]+1);
-    }
-    //prev갱신
-    prevIdx=i;
-  }
-  return result.back();
-}
-pair<int,int> CHRISTMAS_Algo(int childrenNum,int boxNum,vector<int> boxInfo){
-  pair<int,int> result; //1번답, 2번답
-  //1. 부분 합 mod childrenNum, mod value arr 구하기
-  vector<int> partialSumMod(boxNum);
-  vector<vector<int>> modValueIdx(childrenNum);
-  modValueIdx[0].push_back(-1); //mod가 0일때는 시작위치부터 세야하므로, -1을 추가해준다.
-  partialSumMod[0]=boxInfo[0]%childrenNum;
-  modValueIdx[boxInfo[0]%childrenNum].push_back(0);
-  for(int i=1;i<boxNum;i++){
-    int modValue=(partialSumMod[i-1]+boxInfo[i])%childrenNum;
-    partialSumMod[i]=modValue;
-    modValueIdx[modValue].push_back(i);
-  }
-  //2. mod value arr을 이용해 정답 1번 구하기
-  int q1Result(0); 
-    //mod Value가 0일때와 아닐때의 동작이 다르다.
-  for(int i=0;i<modValueIdx.size();i++){
-    q1Result+=((modValueIdx[i].size()*(modValueIdx[i].size()-1ll))/2)%20091101;
-    q1Result%=20091101;
-  }
-  result.first=q1Result;
-  //3. mod value arr을 이용해, 가장 짧은 구간들을 구하여 끝나는 순으로 오름차순 정렬하고, greedy하게 2번답 구하기
-  //result.second=CHRISTMAS_GREEDY(partialSumMod,modValueIdx,childrenNum);
-  //result.second=CHRISTMAS_GREEDY2(partialSumMod,childrenNum);
-  //result.second=CHRISTMAS_GREEDY2_opti(partialSumMod,childrenNum);
-  result.second=CHRISTMAS_DP(partialSumMod,childrenNum);
+  result.first=min(q.front(),q.back());
+  result.second=max(q.front(),q.back());
+  //array를 이용한 방식
+  // vector<int> arr(num);
+  // for(int i=0;i<num;i++){
+  //   arr[i]=i;
+  // }
+  // int nowIdx,nextIdx=0;
+  // while(arr.size()>2){
+  //   nowIdx=nextIdx;
+  //   nextIdx+=move%arr.size();
+  //   if(nextIdx>=arr.size()){
+  //     nextIdx%=arr.size();
+  //   }else{
+  //     nextIdx--;
+  //   }
+  //   arr.erase(arr.begin()+nowIdx);
+  // }
+  // result.first=min(arr.front(),arr.back())+1;
+  // result.second=max(arr.front(),arr.back())+1;
+  //반환
   return result;
 } 
-void CHRISTMAS(){
+void JOSEPHUS(){
   // TREASURE
   /*설명 및 입력
   설명
-    크리스마스를 맞이하여 산타 할아버지는 전세계의 착한 어린이 K명에게 인형을 사주려고 한다. 
-      산타 할아버지는 인형을 구입하기 위해서 유명한 인형가게인 "놀이터"에 찾아갔다. 
-      놀이터에는 N개의 인형 상자가 한 줄로 진열되어 있고, 각 인형 상자에는 한 개 이상의 인형이 들어 있다. 
-      그리고 놀이터에서는 주문의 편의성을 위해 각 상자에 번호를 붙여 놓았고, 
-      주문은 "H번 상자부터 T번 상자까지 다 주세요."라고만 할 수 있다. (H ≤ T) 
-    산타 할아버지는 한 번 주문할 때마다, 
-      주문한 상자에 있는 인형들을 모두 꺼내서 각각을 K명에게 정확히 같은 수만큼 나누어 주고, 
-      남는 인형이 없도록 한다.
-    1. 한 번 주문할 수 있다면, 가능한 주문 방법은 몇 가지인가?
-    2. 여러 번 주문할 수 있다면, 주문이 겹치지 않게 최대 몇 번 주문할 수 있는가? 
-      (주문이 겹친다는 것은 어떤 두 주문에 같은 번호의 인형 상자가 포함되는 것을 말한다.)
+    조세푸스 문제
+    N명의 사람이 있다.
+      두명이 남을때까지, 한명씩 자살한다.
+      한 사람이 자살하면, 시계방향으로 K번째에 있는 사람이 다음으로 자살한다.
+    마지막 두 명중 하나가 되기 위해서는, 처음 사람으로부터 몇 자리 떨어진 곳에 있어야 하는가?
   입력
-    첫 번째 줄에는 테스트 케이스의 개수 T가 주어진다. ( T ≤ 60 )
-    각 테스트 케이스의 첫 번째 줄에는 인형 상자의 개수 N과 어린이의 수 K가 주어진다.(1 ≤ N, K ≤ 100000)
-    두 번째 줄에는 1번 인형 상자부터 N번 인형 상자까지 각 인형 상자에 들어 있는 인형의 개수 Di가 주어진다. ( 1 ≤ i ≤ N, 1 ≤ Di ≤ 100000 )
+    입력의 첫 번째 줄에는 테스트 케이스의 개수 C (C≤50)가 주어집니다. 
+    각 테스트 케이스는 두 개의 정수 N, K로 주어집니다(3≤N≤1000, 1≤K≤1000).
   출력
-    1번에 대한 답과 2번에 대한 답을 한 줄에 하나의 빈칸으로 나누어 출력한다. 
-    1번 답은 매우 클 수 있으므로 20091101로 나눈 나머지를 출력한다.
+    각 테스트 케이스에 두 개의 정수로, 마지막 살아남는 두 사람의 번호를 오름차순으로 출력합니다. 
+    첫 번째로 자살하는 병사의 번호가 1이며, 다른 사람들의 번호는 첫 번째 병사에서부터 시계 방향으로 정해집니다.
   제한조건
-    10초, 64MB
+    1초, 64MB
   */
   /*힌트
-    입력은 string방식 혹은 scanf (%d) 이용
-      scanf가 더 빠르다 
-    범위가 10만이므로, long long 타입을 적절히 사용하자  
-    부분 합을 이용하여 풀기
-      부분 합에 mod k를 취한다.
-      mod 값이 같은 임의의 위치 a,b에 대해, sum([a+1,b]) mod k == 0 이다. 
-    mod 값이 같은 것들의 집합을 한번에 구하는 법 -> arr[mod value]=mod value's idx 
-      부분합배열을 순회하며, mod값의 idx를 arr에 저장한다. 
-    1번답을 구하는 법
-      mod값이 같은 위치가 n개 이다 -> 조합 가능한 경우의 수는 nC2 = n(n-1)/2
-    2번답을 구하는 법
-      mod값이 같은 위치로, 가장 짧은 구간들을 구한 후(n-1개 구간), 마지막 위치를 기준으로 오름차순 정렬한다.
-      greedy하게 답을 구한다
-    주의: mod k = 0 일때의 동작은 다르므로, 1번답과 2번답을 구할 때 유의하자 
+    원형 연결리스트, 큐, 배열을 이용할 수 있다.
+      원형 연결리스트 - K번 순회 한 위치
+      큐 - K%큐크기 번 deque&enqueue 하고, 가장 앞부분
+      배열 - (현재위치+K)%배열크기 의 위치
+    배열의 재할당은 항상 이루어지는 것이 아니므로 배열이 빠를까?
+
   */
   /*전략
   전략1
-    아이디어: 부분 합, greedy
-      1. 빠른 입력을 받는다, 부분 합(mod k) 배열, mod value idx 배열을 만든다. -> O(n)
-      2. mod 값이 같은 임의의 위치 a,b에 대해, sum([a+1,b]) mod k == 0 임을 이용하여 1번답을 구한다. -> O(k)
-      3. 1번답을 먼저끝나는 상자 순서대로 오름차순 정렬하고, greedy하게 2번답을 구한다. -> O(n + nlgn(정렬))
+    아이디어: 큐
+      1. 큐에 모든 idx를 넣는다. -> O(n)
+      2. 두명이 남을 때 까지 아래 수행을 반복한다. sum(2~n-1) = O(n^2) (한번 수행할때 최대 이동횟수 = 큐의 크기 -> 2 ~ n-1)
+          queue의 front dequeue
+          queue의 front를 queue의 back으로 (K-1)%기존큐크기(큐크기+1) 번 옮김 
     분석
-      time complexity: O(nlgn)
+      time complexity: O(n^2)
       mem complexity: O(n)
     피드백
-      mod k==0일때를 유의하자 
+  전략2
+    아이디어: 배열
+      1. 배열에 모든 idx를 넣는다. 시작 idx를 0으로 정한다. -> O(n)
+      2. 두명이 남을 때 까지 아래 수행을 반복한다. sum(2~n-1) = O(n^2) (한번 수항할때 최대 재할당 횟수 = 배열의 크기 -> 2 ~ n-1)
+          시작 idx를 지운다
+          시작 idx를 갱신한다. idx=(idx+K-1)%arr.size()
+    분석
+      time complexity: O(n^2)
+      mem complexity: O(n)
+    피드백
   */
   //Sol
   int testCase;
@@ -214,22 +111,21 @@ void CHRISTMAS(){
   cout.precision(10);
   //각 테스트케이스
   while(testCase--){
-    int childrenNum, boxNum;
-    vector<int> boxInfo; 
-    //CHRISTMAS_Input(childrenNum,boxNum,boxInfo);
-    CHRISTMAS_randInput(childrenNum,boxNum,boxInfo,131,10000000);
-    auto result=CHRISTMAS_Algo(childrenNum,boxNum,boxInfo);
+    int num, move;
+    JOSEPHUS_Input(num, move);
+    //num=100000, move=131
+    auto result=JOSEPHUS_Algo(num, move);
     // cout<<"::::";
     cout<<result.first<<" "<<result.second<<endl;
   }
 }
 
 int main(void){
-    clock_t start,end;
-    start=clock();
-  CHRISTMAS();
-    end=clock();;
-    cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+    //clock_t start,end;
+    //start=clock();
+  JOSEPHUS();
+    //end=clock();;
+    //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
 
