@@ -197,6 +197,7 @@ int FenceAlgo(vector<int>& fenceData){
     mem complexity
       O(N)
   전략2
+    여기수정여기수정알고리즘에맞게수정
     stack을 이용한 전략
       1. stack에 fence idx를 push한다
           pop operation(fence idx)
