@@ -160,6 +160,9 @@ int Fence_stack(vector<int> fenceData){
     //push func
     if(stack.empty()||fenceData[stack.back()]<fenceData[i]){
       stack.push_back(i);
+    }else if(fenceData[stack.back()]==fenceData[i]){
+      stack.pop_back();
+      stack.push_back(i);
     }
   }
   //stack pop
