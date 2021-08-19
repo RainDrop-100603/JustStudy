@@ -201,10 +201,11 @@ int FenceAlgo(vector<int>& fenceData){
     stack을 이용한 전략
       1. stack에 fence idx를 push한다
           pop operation(fence idx)
-          if fence[stack.top]<fence[fence idx] -> stack.push(fence idx)
+          if stack.empty || fence[stack.top]<fence[fence idx] -> stack.push(fence idx)
+          if fence[stack.top]==fence[fence idx] -> stack.pop, stack.push(fence idx)
       2. pop operation(fence.size)
       func: pop operation(fence idx)
-        while(fence[stack.top]>fence[fence idx])
+        while(!stack.empty && fence[stack.top]>fence[fence idx])
           tmpMax=max(tmpMax,fence[stack.top]*(fence idx - stack.top))
           stack.pop
       time complexity: N*2 (push and pop) = O(N)
