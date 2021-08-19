@@ -13,45 +13,40 @@
 
 using namespace std;
 
-// 원형 연결리스트 혹은 
+// @* 원형 연결리스트 혹은 큐 혹은 배열, 배열이 큐보다 훨씬 빠른데 이유가 무엇일까
+//    가설1: 배열의 재할당의 경우 캐시를 이용하여 한번에 빠르게 옮길 수 있지만, 큐의 이동은 하나씩만 이루어져 최적화가 어렵다.
 void JOSEPHUS_Input(int& num, int& move){
   cin>>num>>move;
 }
 pair<int,int> JOSEPHUS_Algo(int num, int move){
   pair<int,int> result;
   //queue를 이용한 방식
-  queue<int> q;
-  for(int i=1;i<=num;i++){
-    q.push(i);
-  }
-  while(q.size()>2){
-    int moving=(move-1)%q.size();
-    q.pop();
-    for(int i=0;i<moving;i++){
-      q.push(q.front());
-      q.pop();
-    }
-  }
-  result.first=min(q.front(),q.back());
-  result.second=max(q.front(),q.back());
-  //array를 이용한 방식
-  // vector<int> arr(num);
-  // for(int i=0;i<num;i++){
-  //   arr[i]=i;
+  // queue<int> q;
+  // for(int i=1;i<=num;i++){
+  //   q.push(i);
   // }
-  // int nowIdx,nextIdx=0;
-  // while(arr.size()>2){
-  //   nowIdx=nextIdx;
-  //   nextIdx+=move%arr.size();
-  //   if(nextIdx>=arr.size()){
-  //     nextIdx%=arr.size();
-  //   }else{
-  //     nextIdx--;
+  // while(q.size()>2){
+  //   q.pop();
+  //   int moving=(move-1)%q.size();
+  //   for(int i=0;i<moving;i++){
+  //     q.push(q.front());
+  //     q.pop();
   //   }
-  //   arr.erase(arr.begin()+nowIdx);
   // }
-  // result.first=min(arr.front(),arr.back())+1;
-  // result.second=max(arr.front(),arr.back())+1;
+  // result.first=min(q.front(),q.back());
+  // result.second=max(q.front(),q.back());
+  //array를 이용한 방식
+  vector<int> arr(num);
+  for(int i=0;i<num;i++){
+    arr[i]=i;
+  }
+  int nowIdx=0;
+  while(arr.size()>2){
+    arr.erase(arr.begin()+nowIdx);
+    nowIdx=(nowIdx+move-1)%arr.size();
+  }
+  result.first=min(arr.front(),arr.back())+1;
+  result.second=max(arr.front(),arr.back())+1;
   //반환
   return result;
 } 
@@ -76,18 +71,18 @@ void JOSEPHUS(){
   /*힌트
     원형 연결리스트, 큐, 배열을 이용할 수 있다.
       원형 연결리스트 - K번 순회 한 위치
-      큐 - K%큐크기 번 deque&enqueue 하고, 가장 앞부분
-      배열 - (현재위치+K)%배열크기 의 위치
-    배열의 재할당은 항상 이루어지는 것이 아니므로 배열이 빠를까?
-
+      큐 - K번 pop-push한 후 front
+      배열 - (idx+K)%배열크기 
+    K보다 큐/배열의 크기가 작다면, K대신 K%크기 만큼만 이동해도 된다.
+    배열과 큐의 속도차이는 어떻게 될까? 
   */
   /*전략
   전략1
     아이디어: 큐
       1. 큐에 모든 idx를 넣는다. -> O(n)
-      2. 두명이 남을 때 까지 아래 수행을 반복한다. sum(2~n-1) = O(n^2) (한번 수행할때 최대 이동횟수 = 큐의 크기 -> 2 ~ n-1)
+      2. 두명이 남을 때 까지 아래 수행을 반복한다. sum(2~n-1) = O(n^2) (한번 수행할때 최대 이동횟수 = 큐의 크기 -> 2 ~ min(k-1,n-1))
           queue의 front dequeue
-          queue의 front를 queue의 back으로 (K-1)%기존큐크기(큐크기+1) 번 옮김 
+          queue의 front를 queue의 back으로 (K-1)%q.size() 번 옮김 
     분석
       time complexity: O(n^2)
       mem complexity: O(n)
@@ -112,8 +107,8 @@ void JOSEPHUS(){
   //각 테스트케이스
   while(testCase--){
     int num, move;
-    JOSEPHUS_Input(num, move);
-    //num=100000, move=131
+    //JOSEPHUS_Input(num, move);
+    num=5000; move=rand()+1;
     auto result=JOSEPHUS_Algo(num, move);
     // cout<<"::::";
     cout<<result.first<<" "<<result.second<<endl;
@@ -121,11 +116,11 @@ void JOSEPHUS(){
 }
 
 int main(void){
-    //clock_t start,end;
-    //start=clock();
+    clock_t start,end;
+    start=clock();
   JOSEPHUS();
-    //end=clock();;
-    //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+    end=clock();;
+    cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
 

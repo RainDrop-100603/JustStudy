@@ -31,3 +31,8 @@ int CHRISTMAS_DP(vector<int>& pSum, int childrenNum);
 pair<int,int> CHRISTMAS_Algo(int childrenNum,int boxNum,vector<int> boxInfo);
 void CHRISTMAS();
 
+// @* 원형 연결리스트 혹은 큐 혹은 배열, 배열이 큐보다 훨씬 빠른데 이유가 무엇일까
+//    가설1: 배열의 재할당의 경우 캐시를 이용하여 한번에 빠르게 옮길 수 있지만, 큐의 이동은 하나씩만 이루어져 최적화가 어렵다.
+void JOSEPHUS_Input(int& num, int& move);
+pair<int,int> JOSEPHUS_Algo(int num, int move);
+void JOSEPHUS();
