@@ -226,3 +226,9 @@ time complexity 추정
     동적배열과 연결리스트
     큐와 스택
     문자열 탐색과 매칭
+
+수행시간에 영향을 끼치는 것들
+  같은 표현을 참조형으로 하느냐는 코드 가독성에서는 의미가 있지만, 수행시간에는 차이가 없다 (APSS-book2-CHRISTMAS참고)
+  vector배열에서 어떤 값으로 초기화 하느냐가, 수향시간에 영향을 주진 않는다.(-1 이나 -5나 똑같다)
+    APSS-book2-CHRISTMAS에서 int에대해 실험에 보았다. 다만 이것이 general 한지 실험해 보지는 않았다.
+  절대적인 영향은 time complexity 이며, time complexity가 같더라도 최적화 정도에 따라 약간의 수행시간 차이는 있다.(APSS-book2-CHRISTMAS: greedy2 vs dp)

@@ -13,6 +13,9 @@
 using namespace std;
 
 // @* 부분 합, greedy, 간단한 작업을 통해 mod k==0일 경우에도 동일하게 작동하도록 했다, scanf > cin > getline + substr
+//  시간에 대한 테스트 수행: 
+//    greedy2==greedy2_opti(4.0s, O(n))>dp(4.6s, O(n))>>greedy(12.3s, O(nlgn))
+//    참조형이나 벡터의 초기화값(-1이냐 -2냐 등등)은 시간에 사실상 영향을 끼치지 않았으며, 알고리즘의 효율성이 더 큰 영향을 끼쳤다.
 void CHRISTMAS_Input(int& childrenNum,int& boxNum,vector<int>& boxInfo){
   cin>>boxNum>>childrenNum;
   boxInfo.resize(boxNum);
@@ -37,6 +40,14 @@ void CHRISTMAS_Input3(int& childrenNum,int& boxNum,vector<int>& boxInfo){
   boxInfo.resize(boxNum);
   for(auto& ele:boxInfo){
     cin>>ele;
+  }
+}
+void CHRISTMAS_randInput(int& childrenNum,int& boxNum,vector<int>& boxInfo,int childFix, int boxFix){
+  childrenNum=childFix;
+  boxNum=boxFix;
+  boxInfo.resize(boxNum);
+  for(auto& ele: boxInfo){
+    ele=rand()+1;
   }
 }
 int CHRISTMAS_GREEDY(vector<int>& pSum, vector<vector<int>>& modValueIdx, int childrenNum){
@@ -77,8 +88,42 @@ int CHRISTMAS_GREEDY2(vector<int>& pSum,int childreNum){
   }
   return result;
 }
+int CHRISTMAS_GREEDY2_opti(vector<int>& pSum,int childreNum){
+  //lastIDx==선물그룹 중 마지막 위치, prePosition[modValue]==modValue가 등장한 마지막 idx
+  int lastIdx=0,result=0;
+  vector<int> prev(childreNum,-1);  
+  prev[0]=0;  //mod k==0을 위함
+  for(int i=0;i<pSum.size();i++){
+    int& prevIdx=prev[pSum[i]];
+    if(prevIdx>=lastIdx){
+      lastIdx=i;
+      result++;
+    }
+    prevIdx=i;
+  }
+  return result;
+}
 int CHRISTMAS_DP(vector<int>& pSum, int childrenNum){
-
+  vector<int> prev(childrenNum,-1); 
+  vector<int> result(pSum.size(),-1);
+  prev[0]=0;  //mod Value가 0이면 prev가 없어도 mod Value가 0인 구간을 만들 수 있다.
+  for(int i=0;i<pSum.size();i++){
+    int& now=result[i];
+    //초기화
+    if(i>0){
+      now=result[i-1];
+    }else{
+      now=0;
+    }
+    //연산, pSum[i]==pSum[j] -> sum(i+1 ~ j) mod k == 0
+    int& prevIdx=prev[pSum[i]];
+    if(prevIdx!=-1){
+      now=max(now,result[prevIdx]+1);
+    }
+    //prev갱신
+    prevIdx=i;
+  }
+  return result.back();
 }
 pair<int,int> CHRISTMAS_Algo(int childrenNum,int boxNum,vector<int> boxInfo){
   pair<int,int> result; //1번답, 2번답
@@ -103,8 +148,9 @@ pair<int,int> CHRISTMAS_Algo(int childrenNum,int boxNum,vector<int> boxInfo){
   result.first=q1Result;
   //3. mod value arr을 이용해, 가장 짧은 구간들을 구하여 끝나는 순으로 오름차순 정렬하고, greedy하게 2번답 구하기
   //result.second=CHRISTMAS_GREEDY(partialSumMod,modValueIdx,childrenNum);
-  result.second=CHRISTMAS_GREEDY2(partialSumMod,childrenNum);
-  //result.second=CHRISTMAS_DP(partialSumMod,modValueIdx,childrenNum);
+  //result.second=CHRISTMAS_GREEDY2(partialSumMod,childrenNum);
+  //result.second=CHRISTMAS_GREEDY2_opti(partialSumMod,childrenNum);
+  result.second=CHRISTMAS_DP(partialSumMod,childrenNum);
   return result;
 } 
 void CHRISTMAS(){
@@ -170,7 +216,8 @@ void CHRISTMAS(){
   while(testCase--){
     int childrenNum, boxNum;
     vector<int> boxInfo; 
-    CHRISTMAS_Input(childrenNum,boxNum,boxInfo);
+    //CHRISTMAS_Input(childrenNum,boxNum,boxInfo);
+    CHRISTMAS_randInput(childrenNum,boxNum,boxInfo,131,10000000);
     auto result=CHRISTMAS_Algo(childrenNum,boxNum,boxInfo);
     // cout<<"::::";
     cout<<result.first<<" "<<result.second<<endl;
@@ -178,11 +225,11 @@ void CHRISTMAS(){
 }
 
 int main(void){
-    //clock_t start,end;
-    //start=clock();
+    clock_t start,end;
+    start=clock();
   CHRISTMAS();
-    //end=clock();;
-    //cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+    end=clock();;
+    cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
 }
 

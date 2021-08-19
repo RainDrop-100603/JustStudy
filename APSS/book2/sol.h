@@ -15,9 +15,18 @@ int GRADUATION_func1(int classNum,int classTarget,int semesterNum,int classLimit
 string GRADUATION_Algo(int classNum,int classTarget,int semesterNum,int classLimit,vector<int> preClass,vector<int> semesterInfo);
 void GRADUATION();
 
-// 부분 합, greedy, mod k ==0 에서 함수의 작동이 달라짐을 유의, scanf > cin > getline + substr
+// @* 부분 합, greedy, 간단한 작업을 통해 mod k==0일 경우에도 동일하게 작동하도록 했다, scanf > cin > getline + substr
+//  시간에 대한 테스트 수행: 
+//    greedy2==greedy2_opti(4.0s, O(n))>dp(4.6s, O(n))>>greedy(12.3s, O(nlgn))
+//    참조형이나 벡터의 초기화값(-1이냐 -2냐 등등)은 시간에 사실상 영향을 끼치지 않았으며, 알고리즘의 효율성이 더 큰 영향을 끼쳤다.
 void CHRISTMAS_Input(int& childrenNum,int& boxNum,vector<int>& boxInfo);
 void CHRISTMAS_Input2(int& childrenNum,int& boxNum,vector<int>& boxInfo);
 void CHRISTMAS_Input3(int& childrenNum,int& boxNum,vector<int>& boxInfo);
+void CHRISTMAS_randInput(int& childrenNum,int& boxNum,vector<int>& boxInfo,int childFix, int boxFix);
+int CHRISTMAS_GREEDY(vector<int>& pSum, vector<vector<int>>& modValueIdx, int childrenNum);
+int CHRISTMAS_GREEDY2(vector<int>& pSum,int childreNum);
+int CHRISTMAS_GREEDY2_opti(vector<int>& pSum,int childreNum);
+int CHRISTMAS_DP(vector<int>& pSum, int childrenNum);
 pair<int,int> CHRISTMAS_Algo(int childrenNum,int boxNum,vector<int> boxInfo);
 void CHRISTMAS();
+
