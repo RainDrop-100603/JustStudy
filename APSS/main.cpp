@@ -10,7 +10,6 @@
 #include <queue>
 #include <ctime>
 #include <queue>
-#include <stack>
 
 using namespace std;
 
@@ -138,27 +137,42 @@ int Fence_divideConquer(vector<int>& fenceData,int left, int right){
       pivot=i;
     }
   }
-  int leftMax=FenceAlgo(fenceData,left,pivot-1);
-  int rightMax=FenceAlgo(fenceData,pivot+1,right);
+  int leftMax=Fence_divideConquer(fenceData,left,pivot-1);
+  int rightMax=Fence_divideConquer(fenceData,pivot+1,right);
   return max(minValue*(right-left+1),max(leftMax,rightMax));
 }
-int Fence_stack(vector<int>& fenceData){
-  stack<int> s;
-  s.push(0);
+int Fence_stack(vector<int> fenceData){
+  vector<int> stack;
   int result=0;
-  //fence push
-  for(int i=1;i<fenceData.size();i++){
-    if(fenceData[s.top()]<fenceData[i]){
-      s.push(i);
-    }else{
-      //stack pop
-      while(!s.empty()&&fenceData[s.top()]>=fenceData[i]){
-        result=max(result,fenceData[s.top()]*(i-s.top()));
-        s.pop();
+  //stack push
+  for(int i=0;i<fenceData.size();i++){
+    //pop func
+    while(!stack.empty()&&fenceData[stack.back()]>fenceData[i]){
+      int prev; //stack에서 top아래있는 원소의 값
+      if(stack.size()>1){
+        prev=stack[stack.size()-2];
+      }else{
+        prev=-1;
       }
+      result=max(result,fenceData[stack.back()]*(i-prev-1));
+      stack.pop_back();
+    }
+    //push func
+    if(stack.empty()||fenceData[stack.back()]<fenceData[i]){
+      stack.push_back(i);
     }
   }
   //stack pop
+  while(!stack.empty()){
+    int prev; //stack에서 top아래있는 원소의 값
+    if(stack.size()>1){
+      prev=stack[stack.size()-2];
+    }else{
+      prev=-1;
+    }
+    result=max(result,fenceData[stack.back()]*(static_cast<int>(fenceData.size())-prev-1));
+    stack.pop_back();
+  }
   return result;
 }
 int FenceAlgo(vector<int>& fenceData){
@@ -182,17 +196,14 @@ int FenceAlgo(vector<int>& fenceData){
   전략2
     stack을 이용한 전략
       1. stack에 fence idx를 push한다
-          if fence[stack.top]<fence[fence idx] -> push
-          else pop operation and push
-      2. pop operation
-          while(fence[stack.top]>=fence[fence idx])
-            tmpMax=max(tmpMax,fence[stack.top]*(fence idx - stack.top))
-            stack.pop
-      3. fence idx 순회 완료 
-          while(!stack.empty)
-            tmpMax=max(tmpMax,fence[stack.top]*(fence.length - stack.top))
-            stack.pop
-      time complexity: N*2 = O(N)
+          pop operation(fence idx)
+          if fence[stack.top]<fence[fence idx] -> stack.push(fence idx)
+      2. pop operation(fence.size)
+      func: pop operation(fence idx)
+        while(fence[stack.top]>fence[fence idx])
+          tmpMax=max(tmpMax,fence[stack.top]*(fence idx - stack.top))
+          stack.pop
+      time complexity: N*2 (push and pop) = O(N)
       mem complexity: O(N)
   전략 3
     quick sort 전략을 이용한다.
