@@ -14,74 +14,75 @@
 using namespace std;
 
 // stack을 이용한 간단한 문제
-void BRACKETS2_Input(string& inputStr){
-  cin>>inputStr;
+void ITES_Input(int& target,int& length){
+  cin>>target>>length;
 }
-string BRACKETS2_Algo(string& inputStr){
-  vector<int> stack;
-  for(auto ele: inputStr){
-    if(ele=='(' || ele=='{' || ele=='['){
-      stack.push_back(ele);
-    }else{
-      if(ele==')'){
-        ele='(';
-      }else if(ele=='}'){
-        ele='{';
-      }else{
-        ele='[';
-      }
-      if(stack.empty() || stack.back() != ele){
-        return string("NO");
-      }else{
-        stack.pop_back();
-      }
+int ITES_Algo(int target,int length){
+  //준비 및 초기화
+  queue<int> q;
+  int num(1983),qSum(0),result(0);
+  long long modValue=pow(2,32);
+  //순회
+  for(int idx=0;idx<=length;idx++){
+    q.push(num);
+    qSum+=num;
+    while(qSum>target){
+      qSum-=q.front();
+      q.pop();
     }
+    if(qSum==target){
+      result++;
+    }
+    num=(num*214013ll + 2531011)%modValue;
   }
-  if(stack.empty()){
-    return string("YES");
-  }else{
-    return string("NO");
-  }
+  return result;
 } 
-void BRACKETS2(){
-  // TREASURE
+void ITES(){
   /*설명 및 입력
   설명
-    Every bracket has a corresponding pair. ( corresponds to ), [ corresponds to ], et cetera.
-      Every bracket pair is opened first, and closed later.
-      No two pairs "*cross*" each other. For example, [(]) is not well-matched.
-    Write a program to help Best White by checking if each of his formulas is well-matched. 
-      To make the problem easier, everything other than brackets are removed from the formulas.
+    수환이는 외계에서 날아오는 전파를 연구하는 범세계 대규모 프로젝트, ITES@home에 참가하고 있습니다. 
+      외계에서 날아오는 전파는 전처리를 거쳐 각 숫자가 [1,10000] 범위 안에 들어가는 자연수 수열로 주어지는데, 
+      이 전파가 과연 단순한 노이즈인지 아니면 의미 있는 패턴을 가지고 있는 것인지를 파악하고 싶습니다. 
+    수환이는 전파의 부분 수열 중에 합이 K인 것이 유독 많다는 것을 눈치챘습니다. 
+      부분 수열이란 연속된 수열의 일부를 말합니다. 
+      예를 들어 수열 {1,4,2,1,4,3,1,6} 에서 합이 7 인 부분 수열은 모두 5개 있습니다. 
+      {1,4,2} , {4,2,1} , {2,1,4}, {4,3}, {1,6} 이 부분 수열들은 서로 겹쳐도 된다는 데 유의합시다.
+    K가 외계인에게 의미 있는 숫자일까요? 
+      수환이의 가설을 확인하기 위해, 길이 N인 신호 기록이 주어질 때 합이 K인 부분 수열이 몇 개나 있는지 계산하는 프로그램을 작성하세요.
   입력
-    The first line of the input will contain the number of test cases C (1≤C≤100). 
-      Each test is given in a single line as a character string. 
-      The strings will only include characters in "[](){}" (quotes for clarity). 
-      The length of the string will not exceed 10,000.
+    입력의 크기가 큰 관계로, 이 문제에서는 신호 기록을 입력받는 대신 다음과 같은 식을 통해 프로그램 내에서 직접 생성합니다.
+      A[0] = 1983
+      A[i] = (A[i-1] * 214013 + 2531011) % 232
+      이 때 i(1 <= i <= N)번째 입력 신호는 A[i-1] % 10000 + 1입니다. 
+    문제의 해법은 입력을 생성하는 방식과는 아무 상관이 없습니다. 이 규칙에 따르면 첫 5개의 신호는 각각 1984, 8791, 4770, 7665, 3188입니다.
   출력
-    For each test case, print a single line "YES" when the formula is well-matched; 
-      print "NO" otherwise. (quotes for clarity)
+    입력 파일의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 20)가 주어지고, 그 후 C 줄에 각 2개의 정수로 K(1 <= K <= 5,000,000) 과 N(1 <= N <= 50,000,000) 이 주어집니다.
   제한조건
-    1초, 64MB
+    15초, 64MB
   */
   /*힌트
-    stack
-      ( [ { 는 stack에 저장
-      ) ] } 는 stack.top과 매칭되면 stack.pop, 다르다면 return NO
-      모든 문자를 완료했을때 stack이 비어있다면 return true, 아니면 return NO
+    부분 수열은 연속되는 숫자이므로, 연속되는 숫자가 K를 넘으면 무의미하다.
+    stack을 이용하여, stack내부의 숫자가 7 이하로 유지되도록 하면 된다.
+    매번 stack내부의 숫자를 더하지 말고, stack내부의 합을 기록한 숫자를 이용하자(부분합 일부 채용)
+    입력은 number(idx,prev) 함수로 따로 생성한다.
   */
   /*전략
   전략1
     아이디어: 스택
-      1. for( i = [string.begin,string.end))
-        if string[i]== ( { [ -> stack.push
-        else  
-          if stack.empty || string[i] match stack.top -> return NO
-          else -> stack.pop
-      2. if stack.empty -> return YES
-          else -> return NO
+      변수: queue, num(1983), queueSum(0), result(0)
+      1. for( i = [0,N] )
+        queue.push(num)
+        queueSum+=num;
+        while(queueSum>K){
+          queueSum-=queue.front
+          queue.pop
+        }
+        if(queueSum==K)
+          result+=+
+        num=number(idx,num);
     분석
-      time complexity: O(n)
-      mem complexity: O(n)
+      time complexity: O(N)
+      mem complexity: O(N)
     피드백
   */
   //Sol
@@ -92,9 +93,9 @@ void BRACKETS2(){
   cout.precision(10);
   //각 테스트케이스
   while(testCase--){
-    string inputStr;
-    BRACKETS2_Input(inputStr);
-    auto result=BRACKETS2_Algo(inputStr);
+    int target,length;
+    ITES_Input(target,length);
+    auto result=ITES_Algo(target,length);
     // cout<<"::::";
     cout<<result<<endl;
   }
@@ -103,7 +104,7 @@ void BRACKETS2(){
 int main(void){
   //   clock_t start,end;
   //   start=clock();
-  BRACKETS2();
+  ITES();
   //   end=clock();;
   //   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
