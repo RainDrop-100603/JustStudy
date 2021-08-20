@@ -36,3 +36,8 @@ void CHRISTMAS();
 void JOSEPHUS_Input(int& num, int& move);
 pair<int,int> JOSEPHUS_Algo(int num, int move);
 void JOSEPHUS();
+
+// stack을 이용한 간단한 문제
+void BRACKETS2_Input(string& inputStr);
+string BRACKETS2_Algo(string& inputStr);
+void BRACKETS2();
