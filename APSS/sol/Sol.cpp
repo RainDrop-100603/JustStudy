@@ -540,7 +540,7 @@ int Fence_divideConquer(vector<int>& fenceData,int left, int right){
   int rightMax=Fence_divideConquer(fenceData,pivot+1,right);
   return max(minValue*(right-left+1),max(leftMax,rightMax));
 }
-int Fence_stack(vector<int> fenceData){
+int Fence_stack_sweep(vector<int> fenceData){
   vector<int> stack;
   int result=0;
   //stack push
@@ -580,6 +580,12 @@ int Fence_stack(vector<int> fenceData){
   return result;
 }
 int FenceAlgo(vector<int>& fenceData){
+  int result;
+  //result=Fence_divideConquer(fenceData,0,fenceData.size()-1);
+  result=Fence_stack_sweep(fenceData);
+  return result;
+}
+void Fence(){
   /*
   제한시간 1초
   제한메모리 2^16kb=64MB
@@ -598,7 +604,7 @@ int FenceAlgo(vector<int>& fenceData){
     mem complexity
       O(N)
   전략2
-    stack을 이용한 전략
+    stack을 이용하여 line sweeping하는 전략 
       1. stack에 fence idx를 push한다
           pop operation(fence idx, fence[fence idx])
           if stack.empty || fence[stack.top]<fence[fence idx] -> stack.push(fence idx)
@@ -621,12 +627,6 @@ int FenceAlgo(vector<int>& fenceData){
       time complexity: NlgN
       mem complexity: N
   */
-  int result;
-  //result=Fence_divideConquer(fenceData,0,fenceData.size()-1);
-  result=Fence_stack(fenceData);
-  return result;
-}
-void Fence(){
   int testCase;
   cin>>testCase;
   while(testCase--){
