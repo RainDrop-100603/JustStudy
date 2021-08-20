@@ -147,14 +147,15 @@ int Fence_stack(vector<int> fenceData){
   //stack push
   for(int i=0;i<fenceData.size();i++){
     //pop func
+    int end=i;
     while(!stack.empty()&&fenceData[stack.back()]>fenceData[i]){
-      int prev; //stack에서 top아래있는 원소의 값
+      int begin; //stack에서 top아래있는 원소의 값
       if(stack.size()>1){
-        prev=stack[stack.size()-2];
+        begin=stack[stack.size()-2]+1;
       }else{
-        prev=-1;
+        begin=0;
       }
-      result=max(result,fenceData[stack.back()]*(i-prev-1));
+      result=max(result,fenceData[stack.back()]*(end-begin));
       stack.pop_back();
     }
     //push func
@@ -166,14 +167,15 @@ int Fence_stack(vector<int> fenceData){
     }
   }
   //stack pop
+  int end=fenceData.size();
   while(!stack.empty()){
-    int prev; //stack에서 top아래있는 원소의 값
+    int begin; //stack에서 top아래있는 원소의 값
     if(stack.size()>1){
-      prev=stack[stack.size()-2];
+      begin=stack[stack.size()-2]+1;
     }else{
-      prev=-1;
+      begin=0;
     }
-    result=max(result,fenceData[stack.back()]*(static_cast<int>(fenceData.size())-prev-1));
+    result=max(result,fenceData[stack.back()]*(end-begin));
     stack.pop_back();
   }
   return result;
@@ -197,16 +199,16 @@ int FenceAlgo(vector<int>& fenceData){
     mem complexity
       O(N)
   전략2
-    여기수정여기수정알고리즘에맞게수정
     stack을 이용한 전략
       1. stack에 fence idx를 push한다
-          pop operation(fence idx)
+          pop operation(fence idx, fence[fence idx])
           if stack.empty || fence[stack.top]<fence[fence idx] -> stack.push(fence idx)
           if fence[stack.top]==fence[fence idx] -> stack.pop, stack.push(fence idx)
-      2. pop operation(fence.size)
-      func: pop operation(fence idx)
-        while(!stack.empty && fence[stack.top]>fence[fence idx])
-          tmpMax=max(tmpMax,fence[stack.top]*(fence idx - stack.top))
+      2. pop operation(fence.size,-1) 
+      func: pop operation(end idx, end value)
+        while(!stack.empty && fence[stack.top]>end value)
+          begin idx= stack.second(stack.top다음에 있는 원소)+1
+          tmpMax=max(tmpMax,fence[stack.top]*(end idx - begin idx)))
           stack.pop
       time complexity: N*2 (push and pop) = O(N)
       mem complexity: O(N)

@@ -514,75 +514,128 @@
 //   }
 // }
 
-// void FenceInput(vector<int>& fenceData){
-//   int fenceNum,tmp;
-//   cin>>fenceNum;
-//   fenceData.reserve(fenceNum);
-//   for(int i=0;i<fenceNum;i++){
-//     cin>>tmp;
-//     fenceData.push_back(tmp);
-//   }
-// }
-// int FenceAlgo(vector<int>& fenceData,int left, int right){
-//   /*
-//   제한시간 1초
-//   제한메모리 2^16kb=64MB
-//   전략1
-//     기저: left==right일 때, max=leftmax=rightmax=fenceData[left];
-//     재귀: L(left,mid), R(mid+1,right) 재귀
-//     반환: max, leftmax, right max
-//       leftmax= L's leftmax
-//       rightmax= R's right max
-//       newMax=if(fenceData[mid]<fenceData[mid+1])
-//         L's rightmax + R's leftmax*fenceData[mid]/fenceData[mid+1]
-//         else: vice versa
-//       max=max(newMax, L's max, R's max);
-//     time complexity
-//       O(NlgN): lgN 번 호출, O(n) 비교
-//     mem complexity
-//       O(N)
-//   전략2
-//     앞에서부터 뒤로 search
-//       key, prev, now 존재
-//         key 왼쪽으로는 모두 key보다 크거나 같다
-//         prev는 now 직전
-//           now가 prev보다 작다면,
-//     stack을 이용하는 건데 헷갈려
-//   전략 3
-//     quick sort 전략을 이용한다.
-//       가장 작은 pivot을 구한다
-//         분할: (left,pivot-1), (pivot+1,right)로 분리
-//         반환: result= max(pivot*(right-left),func(left,pivot-1),func(pivot+1,right));
-//         기저: right=left -> return fenceData[left];
-//       총 lgN번 구한다
-//       time complexity: NlgN
-//       mem complexity: N
-//   */
-//   //기저
-//   if(right<left){
-//     return 0;
-//   }
-//   //Algo, 
-//   int pivot,minValue(12345);
-//   for(int i=left;i<=right;i++){
-//     if(fenceData[i]<minValue){
-//       minValue=fenceData[i];
-//       pivot=i;
-//     }
-//   }
-//   int leftMax=FenceAlgo(fenceData,left,pivot-1);
-//   int rightMax=FenceAlgo(fenceData,pivot+1,right);
-//   return max(minValue*(right-left+1),max(leftMax,rightMax));
-// }
-// void Fence(){
-//   int testCase;
-//   cin>>testCase;
-//   while(testCase--){
-//     vector<int> fenceData;
-//     FenceInput(fenceData);
-//     cout<<FenceAlgo(fenceData,0,fenceData.size()-1)<<"\n";
-//   }
-// }
+void FenceInput(vector<int>& fenceData){
+  int fenceNum,tmp;
+  cin>>fenceNum;
+  fenceData.reserve(fenceNum);
+  for(int i=0;i<fenceNum;i++){
+    cin>>tmp;
+    fenceData.push_back(tmp);
+  }
+}
+int Fence_divideConquer(vector<int>& fenceData,int left, int right){
+  //기저
+  if(right<left){
+    return 0;
+  }
+  //Algo, 
+  int pivot,minValue(12345);
+  for(int i=left;i<=right;i++){
+    if(fenceData[i]<minValue){
+      minValue=fenceData[i];
+      pivot=i;
+    }
+  }
+  int leftMax=Fence_divideConquer(fenceData,left,pivot-1);
+  int rightMax=Fence_divideConquer(fenceData,pivot+1,right);
+  return max(minValue*(right-left+1),max(leftMax,rightMax));
+}
+int Fence_stack(vector<int> fenceData){
+  vector<int> stack;
+  int result=0;
+  //stack push
+  for(int i=0;i<fenceData.size();i++){
+    //pop func
+    int end=i;
+    while(!stack.empty()&&fenceData[stack.back()]>fenceData[i]){
+      int begin; //stack에서 top아래있는 원소의 값
+      if(stack.size()>1){
+        begin=stack[stack.size()-2]+1;
+      }else{
+        begin=0;
+      }
+      result=max(result,fenceData[stack.back()]*(end-begin));
+      stack.pop_back();
+    }
+    //push func
+    if(stack.empty()||fenceData[stack.back()]<fenceData[i]){
+      stack.push_back(i);
+    }else if(fenceData[stack.back()]==fenceData[i]){
+      stack.pop_back();
+      stack.push_back(i);
+    }
+  }
+  //stack pop
+  int end=fenceData.size();
+  while(!stack.empty()){
+    int begin; //stack에서 top아래있는 원소의 값
+    if(stack.size()>1){
+      begin=stack[stack.size()-2]+1;
+    }else{
+      begin=0;
+    }
+    result=max(result,fenceData[stack.back()]*(end-begin));
+    stack.pop_back();
+  }
+  return result;
+}
+int FenceAlgo(vector<int>& fenceData){
+  /*
+  제한시간 1초
+  제한메모리 2^16kb=64MB
+  전략1
+    기저: left==right일 때, max=leftmax=rightmax=fenceData[left];
+    재귀: L(left,mid), R(mid+1,right) 재귀
+    반환: max, leftmax, right max
+      leftmax= L's leftmax
+      rightmax= R's right max
+      newMax=if(fenceData[mid]<fenceData[mid+1])
+        L's rightmax + R's leftmax*fenceData[mid]/fenceData[mid+1]
+        else: vice versa
+      max=max(newMax, L's max, R's max);
+    time complexity
+      O(NlgN): lgN 번 호출, O(n) 비교
+    mem complexity
+      O(N)
+  전략2
+    stack을 이용한 전략
+      1. stack에 fence idx를 push한다
+          pop operation(fence idx, fence[fence idx])
+          if stack.empty || fence[stack.top]<fence[fence idx] -> stack.push(fence idx)
+          if fence[stack.top]==fence[fence idx] -> stack.pop, stack.push(fence idx)
+      2. pop operation(fence.size,-1) 
+      func: pop operation(end idx, end value)
+        while(!stack.empty && fence[stack.top]>end value)
+          begin idx= stack.second(stack.top다음에 있는 원소)+1
+          tmpMax=max(tmpMax,fence[stack.top]*(end idx - begin idx)))
+          stack.pop
+      time complexity: N*2 (push and pop) = O(N)
+      mem complexity: O(N)
+  전략 3
+    quick sort 전략을 이용한다.
+      가장 작은 pivot을 구한다
+        분할: (left,pivot-1), (pivot+1,right)로 분리
+        반환: result= max(pivot*(right-left),func(left,pivot-1),func(pivot+1,right));
+        기저: right=left -> return fenceData[left];
+      총 lgN번 구한다
+      time complexity: NlgN
+      mem complexity: N
+  */
+  int result;
+  //result=Fence_divideConquer(fenceData,0,fenceData.size()-1);
+  result=Fence_stack(fenceData);
+  return result;
+}
+void Fence(){
+  int testCase;
+  cin>>testCase;
+  while(testCase--){
+    vector<int> fenceData;
+    FenceInput(fenceData);
+    auto result=FenceAlgo(fenceData);
+    cout<<result<<endl;
+  }
+}
 
 // void FanmeetingInput(longNum& member,longNum& fan){
 //   string memberTmp,fanTmp;
