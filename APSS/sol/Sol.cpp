@@ -542,7 +542,8 @@ int Fence_divideConquer(vector<int>& fenceData,int left, int right){
 }
 int Fence_stack_sweep(vector<int> fenceData){
   vector<int> stack;
-  int result=0;
+  int result=0; //end value, stack의 모든 원소를 pop하게 된다.
+  fenceData.push_back(0);
   //stack push
   for(int i=0;i<fenceData.size();i++){
     //pop func
@@ -552,25 +553,13 @@ int Fence_stack_sweep(vector<int> fenceData){
       if(stack.size()>1){
         begin=stack[stack.size()-2]+1;
       }else{
-        begin=0;
+        begin=0;  //왼쪽 끝, begin idx
       }
       result=max(result,fenceData[stack.back()]*(end-begin));
       stack.pop_back();
     }
     //push func
     stack.push_back(i);
-  }
-  //stack pop
-  int end=fenceData.size();
-  while(!stack.empty()){
-    int begin; //stack에서 top아래있는 원소의 값
-    if(stack.size()>1){
-      begin=stack[stack.size()-2]+1;
-    }else{
-      begin=0;
-    }
-    result=max(result,fenceData[stack.back()]*(end-begin));
-    stack.pop_back();
   }
   return result;
 }
@@ -600,13 +589,14 @@ void Fence(){
       O(N)
   전략2
     stack을 이용하여 line sweeping하는 전략 
-      1. stack에 fence idx를 push한다
+      1. fence.push_back(0) (오른쪽 끝, end value)
+      2. for(fence idx = [0,fence.size) )
           pop operation(fence idx, fence[fence idx])
           stack.push(fence idx)
-      2. pop operation(fence.size,-1) 
       func: pop operation(end idx, end value)
         while(!stack.empty && fence[stack.top]>=end value)
           begin idx= stack.second(stack.top다음에 있는 원소)+1
+            if stack.size ==1 -> begin idx = 0
           tmpMax=max(tmpMax,fence[stack.top]*(end idx - begin idx)))
           stack.pop
       time complexity: N*2 (push and pop) = O(N)
