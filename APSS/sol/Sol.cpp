@@ -547,7 +547,7 @@ int Fence_stack_sweep(vector<int> fenceData){
   for(int i=0;i<fenceData.size();i++){
     //pop func
     int end=i;
-    while(!stack.empty()&&fenceData[stack.back()]>fenceData[i]){
+    while(!stack.empty()&&fenceData[stack.back()]>=fenceData[i]){
       int begin; //stack에서 top아래있는 원소의 값
       if(stack.size()>1){
         begin=stack[stack.size()-2]+1;
@@ -558,12 +558,7 @@ int Fence_stack_sweep(vector<int> fenceData){
       stack.pop_back();
     }
     //push func
-    if(stack.empty()||fenceData[stack.back()]<fenceData[i]){
-      stack.push_back(i);
-    }else if(fenceData[stack.back()]==fenceData[i]){
-      stack.pop_back();
-      stack.push_back(i);
-    }
+    stack.push_back(i);
   }
   //stack pop
   int end=fenceData.size();
@@ -607,11 +602,10 @@ void Fence(){
     stack을 이용하여 line sweeping하는 전략 
       1. stack에 fence idx를 push한다
           pop operation(fence idx, fence[fence idx])
-          if stack.empty || fence[stack.top]<fence[fence idx] -> stack.push(fence idx)
-          if fence[stack.top]==fence[fence idx] -> stack.pop, stack.push(fence idx)
+          stack.push(fence idx)
       2. pop operation(fence.size,-1) 
       func: pop operation(end idx, end value)
-        while(!stack.empty && fence[stack.top]>end value)
+        while(!stack.empty && fence[stack.top]>=end value)
           begin idx= stack.second(stack.top다음에 있는 원소)+1
           tmpMax=max(tmpMax,fence[stack.top]*(end idx - begin idx)))
           stack.pop
