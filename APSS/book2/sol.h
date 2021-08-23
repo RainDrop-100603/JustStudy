@@ -41,3 +41,8 @@ void JOSEPHUS();
 void BRACKETS2_Input(string& inputStr);
 string BRACKETS2_Algo(string& inputStr);
 void BRACKETS2();
+
+// queue를 이용한 간단한 문제, unsigend int를 이용한 mod 처리
+void ITES_Input(int& target,int& length);
+int ITES_Algo(int target,int length);
+void ITES();

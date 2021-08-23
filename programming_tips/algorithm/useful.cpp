@@ -61,3 +61,48 @@ vector<vector<int>> useful_getCombination(vector<int> set, int select){
   }while(prev_permutation(key.begin(),key.end()));
   return combinations;
 }
+
+//문자열
+int prefixSuffixMatch(const string& str){
+  int result(0);
+  for(int len=1;len<=str.length()-1;len++){
+    bool isMatch=true;
+    for(int j=0;j<len;j++){
+      if(*(str.begin()+j)!=*(str.end()-len+j)){
+        isMatch=false;
+        break;
+      }
+    }
+    if(isMatch){
+      result=len;
+    }
+  }
+  return result;
+}
+vector<int> KmpSearch(string& base, string& target){
+  vector<int> result;
+  //failure function을 구한다.
+  vector<int> failure(target.size()+1);
+  for(int match=0;match<=target.length();match++){
+    failure[match]=prefixSuffixMatch(target.substr(0,match));
+  }
+  //탐색을 한다.
+  int match=0,begin=0; 
+  while(begin+target.length()<=base.length()){
+    if(match<target.length()&&base[begin+match]==target[match]){
+      match++;
+      if(match==target.length()){
+        result.push_back(begin);
+      }
+    }else{
+      if(match==0){
+        begin++;
+      }else{
+        begin+=match-failure[match];
+        match=failure[match];
+      }
+    }
+  }
+  //반환
+  return result;
+}

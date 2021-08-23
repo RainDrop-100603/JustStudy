@@ -13,7 +13,7 @@
 
 using namespace std;
 
-// stack을 이용한 간단한 문제
+// stack을 이용한 간단한 문제, unsigend int를 이용한 mod 처리
 void ITES_Input(int& target,int& length){
   cin>>target>>length;
 }
@@ -21,7 +21,7 @@ int ITES_Algo(int target,int length){
   //준비 및 초기화
   queue<int> q;
   int qSum(0),result(0);
-  long long num(1983),modValue(pow(2,32));
+  unsigned int num(1983);
   //순회
   for(int idx=0;idx<=length;idx++){
     int input=num%10000+1;
@@ -34,7 +34,7 @@ int ITES_Algo(int target,int length){
     if(qSum==target){
       result++;
     }
-    num=(num*214013 + 2531011)%modValue;
+    num=num*214013 + 2531011;
   }
   return result;
 } 
@@ -66,6 +66,8 @@ void ITES(){
     stack을 이용하여, stack내부의 숫자가 7 이하로 유지되도록 하면 된다.
     매번 stack내부의 숫자를 더하지 말고, stack내부의 합을 기록한 숫자를 이용하자(부분합 일부 채용)
     수열과 입력신호가 다름을 유의하자 
+    mod 2^32는, 33비트 부터는 모두 잘라내는 것을 의미한다.
+      이때 unsigned int는 32비트까지만 사용하므로, unsigned int를 사용하면 자동으로 mod 2^32를 취한 것과 같다.
   */
   /*전략
   전략1
