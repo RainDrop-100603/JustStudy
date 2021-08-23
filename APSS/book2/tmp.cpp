@@ -1,18 +1,3 @@
-//Algorithmic Problem Solving Strategies Book 1, 2
-//대회에서 배우는 알고리즘 문제해결 전략 1, 2
-
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <string>
-#include <cmath>
-#include <map>
-#include <queue>
-#include <ctime>
-#include <queue>
-
-using namespace std;
-
 // stack을 이용한 간단한 문제
 void ITES_Input(int& target,int& length){
   cin>>target>>length;
@@ -100,14 +85,5 @@ void ITES(){
     // cout<<"::::";
     cout<<result<<endl;
   }
-}
-
-int main(void){
-  //   clock_t start,end;
-  //   start=clock();
-  ITES();
-  //   end=clock();;
-  //   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
-  return 0;
 }
 
