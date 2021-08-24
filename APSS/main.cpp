@@ -12,7 +12,7 @@
 #include <queue>
 
 using namespace std;
-test2
+
 // stack을 이용한 간단한 문제, unsigend int를 이용한 mod 처리
 void ITES_Input(int& target,int& length){
   cin>>target>>length;
