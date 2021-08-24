@@ -63,29 +63,25 @@ vector<vector<int>> useful_getCombination(vector<int> set, int select){
 }
 
 //문자열
-int prefixSuffixMatch(const string& str){
-  int result(0);
-  for(int len=1;len<=str.length()-1;len++){
-    bool isMatch=true;
-    for(int j=0;j<len;j++){
-      if(*(str.begin()+j)!=*(str.end()-len+j)){
-        isMatch=false;
+vector<int> useful_getFailure(string& str){
+  //result[idx]=value: str.substr(idx)[0 .. value-1] = str.substr(idx)[idx-value .. idx-1]
+  // 즉, str을 idx길이로 자른 것은, 접두사와 접미사가 value만큼 일치한다.
+  vector<int> result(str.size()+1,0);
+  for(int shift=1;shift<str.length();shift++){
+    for(int match=0;match+shift<str.length();match++){
+      if(str[match]==str[match+shift]){
+        result[match+1+shift]=max(result[match+1+shift],match+1);
+      }else{
         break;
       }
-    }
-    if(isMatch){
-      result=len;
     }
   }
   return result;
 }
-vector<int> KmpSearch(string& base, string& target){
+vector<int> useful_KmpSearch(string& base,string& target){
   vector<int> result;
   //failure function을 구한다.
-  vector<int> failure(target.size()+1);
-  for(int match=0;match<=target.length();match++){
-    failure[match]=prefixSuffixMatch(target.substr(0,match));
-  }
+  vector<int> failure=useful_getFailure(target);
   //탐색을 한다.
   int match=0,begin=0; 
   while(begin+target.length()<=base.length()){
