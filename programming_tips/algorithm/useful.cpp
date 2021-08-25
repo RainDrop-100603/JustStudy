@@ -1,7 +1,14 @@
 #include "useful.h"
 
 //"에라스토테네스의 채"와 bitmask를 이용한 prime 구하기 
-bool useful_isPrime(vector<unsigned char>& eratosthenes, int num){return eratosthenes[num>>3] & ( 1 << (num&7)); }
+bool useful_isPrime(int num, const vector<unsigned char>& eratosthenes){
+  //eratosthenes를 따로 입력하지 않았다면, 스스로 구하고 prime 여부를 반환한다.
+  if(eratosthenes.empty()){
+    auto tmp=useful_eratosthenes(num);
+    return tmp[num>>3] & ( 1 << (num&7)); 
+  }
+  return eratosthenes[num>>3] & ( 1 << (num&7)); 
+}
 bool useful_setComposite(vector<unsigned char>& eratosthenes, int num){return eratosthenes[num>>3] &= (~( 1 << (num&7))); }
 vector<unsigned char> useful_eratosthenes(int num){
   //한칸에 8비트씩 저장, num의 위치는 arr[num/8] & (1<<(num&7)), (num+7)/8 은 num을 8로 나눈것의 올림 
@@ -15,7 +22,7 @@ vector<unsigned char> useful_eratosthenes(int num){
   //에라스토테네스의 채, 짝수는 다 제외시킨다.
   int sqrtNum=sqrt(num);
   for(int i=3;i<=sqrtNum;i+=2){
-    if(useful_isPrime(eratosthenes,i)){
+    if(useful_isPrime(i,eratosthenes)){
       for(int j=i*i;j<=num;j+=i){
         useful_setComposite(eratosthenes,j);
       }
@@ -63,26 +70,6 @@ vector<vector<int>> useful_getCombination(vector<int> set, int select){
 }
 
 //문자열
-vector<int> useful_getFailure(string& str){
-  //result[idx]=value: str.substr(idx)[0 .. value-1] = str.substr(idx)[idx-value .. idx-1]
-  // 즉, str을 idx길이로 자른 것은, 접두사와 접미사가 value만큼 일치한다.
-  vector<int> result(str.length()+1,0);
-  int begin(1),match(0);
-  while(begin+match<str.length()){
-    if(str[begin+match]==str[match]){
-      match++;
-      result[begin+match]=match;
-    }else{
-      if(match==0){
-        begin++;
-      }else{
-        begin+=match-result[match];
-        match=result[match];
-      }
-    }
-  }
-  return result;
-}
 vector<int> useful_KmpSearch(string& base,string& target){
   vector<int> result;
   //failure function을 구한다.
@@ -105,5 +92,26 @@ vector<int> useful_KmpSearch(string& base,string& target){
     }
   }
   //반환
+  return result;
+}
+
+vector<int> useful_getFailure(string& str){
+  //result[idx]=value: str.substr(idx)[0 .. value-1] = str.substr(idx)[idx-value .. idx-1]
+  // 즉, str을 idx길이로 자른 것은, 접두사와 접미사가 value만큼 일치한다.
+  vector<int> result(str.length()+1,0);
+  int begin(1),match(0);
+  while(begin+match<str.length()){
+    if(str[begin+match]==str[match]){
+      match++;
+      result[begin+match]=match;
+    }else{
+      if(match==0){
+        begin++;
+      }else{
+        begin+=match-result[match];
+        match=result[match];
+      }
+    }
+  }
   return result;
 }
