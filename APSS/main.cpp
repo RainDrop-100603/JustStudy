@@ -14,10 +14,10 @@
 using namespace std;
 
 // stack을 이용한 간단한 문제, unsigend int를 이용한 mod 처리
-void ITES_Input(int& target,int& length){
+void NAMING_Input(int& target,int& length){
   cin>>target>>length;
 }
-int ITES_Algo(int target,int length){
+int NAMING_Algo(int target,int length){
   //준비 및 초기화
   queue<int> q;
   int qSum(0),result(0);
@@ -38,10 +38,10 @@ int ITES_Algo(int target,int length){
   }
   return result;
 } 
-void ITES(){
+void NAMING(){
   /*설명 및 입력
   설명
-    수환이는 외계에서 날아오는 전파를 연구하는 범세계 대규모 프로젝트, ITES@home에 참가하고 있습니다. 
+    수환이는 외계에서 날아오는 전파를 연구하는 범세계 대규모 프로젝트, NAMING@home에 참가하고 있습니다. 
       외계에서 날아오는 전파는 전처리를 거쳐 각 숫자가 [1,10000] 범위 안에 들어가는 자연수 수열로 주어지는데, 
       이 전파가 과연 단순한 노이즈인지 아니면 의미 있는 패턴을 가지고 있는 것인지를 파악하고 싶습니다. 
     수환이는 전파의 부분 수열 중에 합이 K인 것이 유독 많다는 것을 눈치챘습니다. 
@@ -97,8 +97,8 @@ void ITES(){
   //각 테스트케이스
   while(testCase--){
     int target,length;
-    ITES_Input(target,length);
-    auto result=ITES_Algo(target,length);
+    NAMING_Input(target,length);
+    auto result=NAMING_Algo(target,length);
     // cout<<"::::";
     cout<<result<<endl;
   }
@@ -107,7 +107,7 @@ void ITES(){
 int main(void){
   //   clock_t start,end;
   //   start=clock();
-  ITES();
+  NAMING();
   //   end=clock();;
   //   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;

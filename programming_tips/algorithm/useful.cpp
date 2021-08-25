@@ -72,21 +72,20 @@ vector<vector<int>> useful_getCombination(vector<int> set, int select){
 //문자열
 vector<int> useful_KmpSearch(string& base,string& target){
   vector<int> result;
-  //failure function을 구한다.
+  //failure function: 일치하지 않을경우, 살릴 수 있는 부분의 길이 : ex) totomato 에서 failure[4]=2, toto~ 에서 to~로 살릴 수 있다.
   vector<int> failure=useful_getFailure(target);
-  //탐색을 한다.
-  int match=0,begin=0; 
-  while(begin+target.length()<=base.length()){
-    if(match<target.length()&&base[begin+match]==target[match]){
+  //탐색을 한다
+  int match=0;
+  for(int idx=0;idx<base.length();idx++){
+    //base에서의 값과 target에서의 값이 일치하지 않는경우, target을 우측으로 민다.
+    while(match>0&&base[idx]!=target[match]){
+      match=failure[match]; //match가 줄어든다 == target을 우측으로 민다.
+    }
+    //일치하는경우
+    if(base[idx]==target[match]){
       match++;
       if(match==target.length()){
-        result.push_back(begin);
-      }
-    }else{
-      if(match==0){
-        begin++;
-      }else{
-        begin+=match-failure[match];
+        result.push_back(idx-match+1);
         match=failure[match];
       }
     }
@@ -94,23 +93,19 @@ vector<int> useful_KmpSearch(string& base,string& target){
   //반환
   return result;
 }
-
 vector<int> useful_getFailure(string& str){
-  //result[idx]=value: str.substr(idx)[0 .. value-1] = str.substr(idx)[idx-value .. idx-1]
-  // 즉, str을 idx길이로 자른 것은, 접두사와 접미사가 value만큼 일치한다.
+  //result[len]=value: len개가 일치했을경우, value개만큼은 살릴 수 있다. totomato 에서 failure[4]=2
   vector<int> result(str.length()+1,0);
-  int begin(1),match(0);
-  while(begin+match<str.length()){
-    if(str[begin+match]==str[match]){
+  int match(0);
+  for(int idx=1;idx<str.length();idx++){
+    //일치하지 않을경우
+    while(match>0&&str[idx]!=str[match]){
+      match=result[match];
+    }
+    //일치할경우
+    if(str[idx]==str[match]){
       match++;
-      result[begin+match]=match;
-    }else{
-      if(match==0){
-        begin++;
-      }else{
-        begin+=match-result[match];
-        match=result[match];
-      }
+      result[idx+1]=match;
     }
   }
   return result;
