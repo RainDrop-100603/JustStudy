@@ -66,13 +66,18 @@ vector<vector<int>> useful_getCombination(vector<int> set, int select){
 vector<int> useful_getFailure(string& str){
   //result[idx]=value: str.substr(idx)[0 .. value-1] = str.substr(idx)[idx-value .. idx-1]
   // 즉, str을 idx길이로 자른 것은, 접두사와 접미사가 value만큼 일치한다.
-  vector<int> result(str.size()+1,0);
-  for(int shift=1;shift<str.length();shift++){
-    for(int match=0;match+shift<str.length();match++){
-      if(str[match]==str[match+shift]){
-        result[match+1+shift]=max(result[match+1+shift],match+1);
+  vector<int> result(str.length()+1,0);
+  int begin(1),match(0);
+  while(begin+match<str.length()){
+    if(str[begin+match]==str[match]){
+      match++;
+      result[begin+match]=match;
+    }else{
+      if(match==0){
+        begin++;
       }else{
-        break;
+        begin+=match-result[match];
+        match=result[match];
       }
     }
   }
