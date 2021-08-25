@@ -14,10 +14,10 @@
 using namespace std;
 
 // stack을 이용한 간단한 문제, unsigend int를 이용한 mod 처리
-void NAMING_Input(int& target,int& length){
+void JAEHASAFE_Input(int& target,int& length){
   cin>>target>>length;
 }
-int NAMING_Algo(int target,int length){
+int JAEHASAFE_Algo(int target,int length){
   //준비 및 초기화
   queue<int> q;
   int qSum(0),result(0);
@@ -38,36 +38,35 @@ int NAMING_Algo(int target,int length){
   }
   return result;
 } 
-void NAMING(){
+void JAEHASAFE(){
   /*설명 및 입력
   설명
-    수환이는 외계에서 날아오는 전파를 연구하는 범세계 대규모 프로젝트, NAMING@home에 참가하고 있습니다. 
-      외계에서 날아오는 전파는 전처리를 거쳐 각 숫자가 [1,10000] 범위 안에 들어가는 자연수 수열로 주어지는데, 
-      이 전파가 과연 단순한 노이즈인지 아니면 의미 있는 패턴을 가지고 있는 것인지를 파악하고 싶습니다. 
-    수환이는 전파의 부분 수열 중에 합이 K인 것이 유독 많다는 것을 눈치챘습니다. 
-      부분 수열이란 연속된 수열의 일부를 말합니다. 
-      예를 들어 수열 {1,4,2,1,4,3,1,6} 에서 합이 7 인 부분 수열은 모두 5개 있습니다. 
-      {1,4,2} , {4,2,1} , {2,1,4}, {4,3}, {1,6} 이 부분 수열들은 서로 겹쳐도 된다는 데 유의합시다.
-    K가 외계인에게 의미 있는 숫자일까요? 
-      수환이의 가설을 확인하기 위해, 길이 N인 신호 기록이 주어질 때 합이 K인 부분 수열이 몇 개나 있는지 계산하는 프로그램을 작성하세요.
+    The safe uses a dial to lock the door, and on the rim of dial are drawn pictures of cute animals instead of numbers. 
+      To open the safe, Jaeha mustb rotate the dial to reach certain positions, alternating direction each time.
+    Jaeha wants to be careful, so he only rotates the dial one tick at a time.  
+      Given a set of dial positions, calculate how many ticks Jaeha has to rotate the dial to open the safe.
   입력
-    입력의 크기가 큰 관계로, 이 문제에서는 신호 기록을 입력받는 대신 다음과 같은 식을 통해 프로그램 내에서 직접 생성합니다.
-      A[0] = 1983
-      A[i] = (A[i-1] * 214013 + 2531011) % 2^32
-      이 때 i(1 <= i <= N)번째 입력 신호는 A[i-1] % 10000 + 1입니다. 
-    문제의 해법은 입력을 생성하는 방식과는 아무 상관이 없습니다. 이 규칙에 따르면 첫 5개의 신호는 각각 1984, 8791, 4770, 7665, 3188입니다.
+    The input consists of T test cases. 
+      The number of test cases T is given in the first line of the input.
+    The first line of each test case will contain an integer N(1 ≤ N ≤ 50), the number of positions Jaeha needs to reach. 
+    The next N + 1 lines will each contain a dial configuration. 
+      A configuration is given by listing the pictures in clockwise order, starting from the topmost picture. 
+      Each type of picture is denoted by an alphabet character, therefore each configuration is given as a string. 
+      The first configuration shows the current dial. 
+    Jaeha will rotate clockwise to reach the second configuration, rotate counterclockwise to reach the third, and so on.
+    The number of pictures on a dial will not exceed 10,000.
+    Two adjacent configurations given in the input will always be different. 
+    It is always possible to open the safe
   출력
-    입력 파일의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 20)가 주어지고, 그 후 C 줄에 각 2개의 정수로 K(1 <= K <= 5,000,000) 과 N(1 <= N <= 50,000,000) 이 주어집니다.
+    Print exactly one line for each test case.
+      The line should contain the minimum number of ticks required to open the safe
   제한조건
-    15초, 64MB
+    1초, 64MB
   */
   /*힌트
-    부분 수열은 연속되는 숫자이므로, 연속되는 숫자가 K를 넘으면 무의미하다.
-    stack을 이용하여, stack내부의 숫자가 7 이하로 유지되도록 하면 된다.
-    매번 stack내부의 숫자를 더하지 말고, stack내부의 합을 기록한 숫자를 이용하자(부분합 일부 채용)
-    수열과 입력신호가 다름을 유의하자 
-    mod 2^32는, 33비트 부터는 모두 잘라내는 것을 의미한다.
-      이때 unsigned int는 32비트까지만 사용하므로, unsigned int를 사용하면 자동으로 mod 2^32를 취한 것과 같다.
+    같은 동물이 나온다고 찾은것이 아니라, 모든 동물의 위차가 맞아야 한다.
+      따라서 idx를 하나씩 돌리며 찾으면 10000 * 10000 * 50 이 걸려서 시간내에 찾을 수 없다.
+    
   */
   /*전략
   전략1
@@ -97,8 +96,8 @@ void NAMING(){
   //각 테스트케이스
   while(testCase--){
     int target,length;
-    NAMING_Input(target,length);
-    auto result=NAMING_Algo(target,length);
+    JAEHASAFE_Input(target,length);
+    auto result=JAEHASAFE_Algo(target,length);
     // cout<<"::::";
     cout<<result<<endl;
   }
@@ -107,7 +106,7 @@ void NAMING(){
 int main(void){
   //   clock_t start,end;
   //   start=clock();
-  NAMING();
+  JAEHASAFE();
   //   end=clock();;
   //   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
