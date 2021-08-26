@@ -46,3 +46,10 @@ void BRACKETS2();
 void ITES_Input(int& target,int& length);
 int ITES_Algo(int target,int length);
 void ITES();
+
+// KMP search 변형문제, circular shift
+void JAEHASAFE_Input(vector<string>& config);
+vector<int> JAEHASAFE_getFailure(const string& str);
+int JAEHASAFE_KmpSearch(const string& base, const string& target);
+int JAEHASAFE_Algo(const vector<string>& config);
+void JAEHASAFE();

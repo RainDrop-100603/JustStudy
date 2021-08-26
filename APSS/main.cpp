@@ -13,7 +13,7 @@
 
 using namespace std;
 
-// KMP search 변형문제 
+// KMP search 변형문제, circular shift
 void JAEHASAFE_Input(vector<string>& config){
   int configNum;
   cin>>configNum;
@@ -36,8 +36,7 @@ vector<int> JAEHASAFE_getFailure(const string& str){
   }
   return result;
 }
-vector<int> JAEHASAFE_KmpSearch(const string& base, const string& target){
-  vector<int> result;
+int JAEHASAFE_KmpSearch(const string& base, const string& target){
   vector<int> failure=JAEHASAFE_getFailure(target);
   int match=0,strLen=base.length();
   for(int idx=0;idx<strLen*2-1;idx++){
@@ -47,24 +46,19 @@ vector<int> JAEHASAFE_KmpSearch(const string& base, const string& target){
     if(base[idx%strLen]==target[match]){
       match++;
       if(match==strLen){
-        result.push_back(idx-match+1);
-        match=failure[match];
+        return idx-match+1;
       }
     }
   }
-  return result;
 }
 int JAEHASAFE_Algo(const vector<string>& config){
-  bool clockwise(true);
   int result(0),strLen(config[0].length()); //strlen==금고의 알파벳 개수 
   for(int i=0;i<config.size()-1;i++){
-    auto tmp=JAEHASAFE_KmpSearch(config[i+1],config[i]);
-    if(clockwise){
-      result+=tmp.front();
+    if(i%2){  
+      result+=JAEHASAFE_KmpSearch(config[i],config[i+1]); //ccw
     }else{
-      result+=strLen-tmp.back();
+      result+=JAEHASAFE_KmpSearch(config[i+1],config[i]); //clockwise
     }
-    clockwise=!clockwise;
   }
   return result;
 } 
@@ -97,8 +91,9 @@ void JAEHASAFE(){
     같은 동물이 나온다고 찾은것이 아니라, 모든 동물의 위차가 맞아야 한다.
       따라서 idx를 하나씩 돌리며 찾으면 10000 * 10000 * 50 이 걸려서 시간내에 찾을 수 없다.
     KMP search를 이용하여 시작위치를 찾을 수 있다.
-      다이얼의 일치상태를 비교하려면 항상 n개(다이얼의 원소의 수)를 비교해야한다.
-        KMP search에서 idx를 두배로 늘리고, 넘어가는 부분은 mod 처리한다.
+      circular shift: 
+        다이얼의 일치상태를 비교하려면 항상 n개(다이얼의 원소의 수)를 비교해야한다.
+          KMP search에서 idx를 두배로 늘리고, 넘어가는 부분은 mod 처리한다.
       시계 방향으로 돌리는것은 KMPresult.front()번 회전
       반시계 방향은 n - KMPresult.back()번 회전
   */
