@@ -110,3 +110,28 @@ vector<int> useful_getFailure(string& str){
   }
   return result;
 }
+vector<int> useful_getSuffixArr(string& str){
+  int strLen=str.length();
+  int t=1;
+  vector<int> group(strLen+1,-1);
+  for(int i=0;i<strLen;i++){group[i]=str[i]; }
+  vector<int> perm(strLen);
+  for(int i=0;i<strLen;i++){perm[i]=i; }
+  while(t<strLen){
+    useful_Comparator cmp2T(group,t);
+    sort(perm.begin(),perm.end(),cmp2T);
+    t*=2;
+    if(t>=strLen){break; }
+    vector<int> tmpGroup(strLen+1,-1);
+    tmpGroup[perm[0]]==0;
+    for(int i=0;i<strLen-1;i++){
+      if(cmp2T(perm[i],perm[i+1])){
+        tmpGroup[perm[i+1]]=tmpGroup[perm[i]]+1;
+      }else{
+        tmpGroup[perm[i+1]]=tmpGroup[perm[i]];
+      }
+    }
+    group=tmpGroup;
+  }
+  return perm;
+}

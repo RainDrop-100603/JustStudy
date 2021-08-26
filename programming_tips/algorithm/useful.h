@@ -24,6 +24,15 @@ vector<vector<int>> useful_getCombination(vector<int> set, int select);  // setS
 //문자열
 vector<int> useful_KmpSearch(string& base, string& target);  //target이 base의 substr 이라면, 시작 idx를 모두 반환한다.
   vector<int> useful_getFailure(string& str); //str의 접두사와 접미사가 얼마나 겹치는지 반환, tomato는 to 2개가 겹치는 것 
-
+vector<int> useful_getSuffixArr(string& str); //str의 접미사들을 사전순으로 반환한다. arr[i] = i~end 접미사의 사전순 순위 
+  struct useful_Comparator{
+    const vector<int>& group;
+    int t;
+    useful_Comparator(const vector<int>& _group, int _t): group(_group),t(_t){}
+    bool operator()(int a, int b){
+      if(group[a] != group[b]){return group[a]<group[b]; }
+      return group[a+t]<group[b+t];
+    }
+  };
 
 #endif
