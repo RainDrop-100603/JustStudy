@@ -1,7 +1,14 @@
 #include "useful.h"
 
 //"에라스토테네스의 채"와 bitmask를 이용한 prime 구하기 
-bool useful_isPrime(vector<unsigned char>& eratosthenes, int num){return eratosthenes[num>>3] & ( 1 << (num&7)); }
+bool useful_isPrime(int num, const vector<unsigned char>& eratosthenes){
+  //eratosthenes를 따로 입력하지 않았다면, 스스로 구하고 prime 여부를 반환한다.
+  if(eratosthenes.empty()){
+    auto tmp=useful_eratosthenes(num);
+    return tmp[num>>3] & ( 1 << (num&7)); 
+  }
+  return eratosthenes[num>>3] & ( 1 << (num&7)); 
+}
 bool useful_setComposite(vector<unsigned char>& eratosthenes, int num){return eratosthenes[num>>3] &= (~( 1 << (num&7))); }
 vector<unsigned char> useful_eratosthenes(int num){
   //한칸에 8비트씩 저장, num의 위치는 arr[num/8] & (1<<(num&7)), (num+7)/8 은 num을 8로 나눈것의 올림 
@@ -15,7 +22,7 @@ vector<unsigned char> useful_eratosthenes(int num){
   //에라스토테네스의 채, 짝수는 다 제외시킨다.
   int sqrtNum=sqrt(num);
   for(int i=3;i<=sqrtNum;i+=2){
-    if(useful_isPrime(eratosthenes,i)){
+    if(useful_isPrime(i,eratosthenes)){
       for(int j=i*i;j<=num;j+=i){
         useful_setComposite(eratosthenes,j);
       }
@@ -63,46 +70,68 @@ vector<vector<int>> useful_getCombination(vector<int> set, int select){
 }
 
 //문자열
-int prefixSuffixMatch(const string& str){
-  int result(0);
-  for(int len=1;len<=str.length()-1;len++){
-    bool isMatch=true;
-    for(int j=0;j<len;j++){
-      if(*(str.begin()+j)!=*(str.end()-len+j)){
-        isMatch=false;
-        break;
-      }
-    }
-    if(isMatch){
-      result=len;
-    }
-  }
-  return result;
-}
-vector<int> KmpSearch(string& base, string& target){
+vector<int> useful_KmpSearch(string& base,string& target){
   vector<int> result;
-  //failure function을 구한다.
-  vector<int> failure(target.size()+1);
-  for(int match=0;match<=target.length();match++){
-    failure[match]=prefixSuffixMatch(target.substr(0,match));
-  }
-  //탐색을 한다.
-  int match=0,begin=0; 
-  while(begin+target.length()<=base.length()){
-    if(match<target.length()&&base[begin+match]==target[match]){
+  //failure function: 일치하지 않을경우, 살릴 수 있는 부분의 길이 : ex) totomato 에서 failure[4]=2, toto~ 에서 to~로 살릴 수 있다.
+  vector<int> failure=useful_getFailure(target);
+  //탐색을 한다
+  int match=0;
+  for(int idx=0;idx<base.length();idx++){
+    //base에서의 값과 target에서의 값이 일치하지 않는경우, target을 우측으로 민다.
+    while(match>0&&base[idx]!=target[match]){
+      match=failure[match]; //match가 줄어든다 == target을 우측으로 민다.
+    }
+    //일치하는경우
+    if(base[idx]==target[match]){
       match++;
       if(match==target.length()){
-        result.push_back(begin);
-      }
-    }else{
-      if(match==0){
-        begin++;
-      }else{
-        begin+=match-failure[match];
+        result.push_back(idx-match+1);
         match=failure[match];
       }
     }
   }
   //반환
   return result;
+}
+vector<int> useful_getFailure(string& str){
+  //result[len]=value: len개가 일치했을경우, value개만큼은 살릴 수 있다. totomato 에서 failure[4]=2
+  vector<int> result(str.length()+1,0);
+  int match(0);
+  for(int idx=1;idx<str.length();idx++){
+    //일치하지 않을경우
+    while(match>0&&str[idx]!=str[match]){
+      match=result[match];
+    }
+    //일치할경우
+    if(str[idx]==str[match]){
+      match++;
+      result[idx+1]=match;
+    }
+  }
+  return result;
+}
+vector<int> useful_getSuffixArr(string& str){
+  int strLen=str.length();
+  int t=1;
+  vector<int> group(strLen+1,-1);
+  for(int i=0;i<strLen;i++){group[i]=str[i]; }
+  vector<int> perm(strLen);
+  for(int i=0;i<strLen;i++){perm[i]=i; }
+  while(t<strLen){
+    useful_Comparator cmp2T(group,t);
+    sort(perm.begin(),perm.end(),cmp2T);
+    t*=2;
+    if(t>=strLen){break; }
+    vector<int> tmpGroup(strLen+1,-1);
+    tmpGroup[perm[0]]==0;
+    for(int i=0;i<strLen-1;i++){
+      if(cmp2T(perm[i],perm[i+1])){
+        tmpGroup[perm[i+1]]=tmpGroup[perm[i]]+1;
+      }else{
+        tmpGroup[perm[i+1]]=tmpGroup[perm[i]];
+      }
+    }
+    group=tmpGroup;
+  }
+  return perm;
 }

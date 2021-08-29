@@ -13,78 +13,100 @@
 
 using namespace std;
 
-// stack을 이용한 간단한 문제, unsigend int를 이용한 mod 처리
-void ITES_Input(int& target,int& length){
-  cin>>target>>length;
+// KMP search 변형문제, circular shift
+void JAEHASAFE_Input(vector<string>& config){
+  int configNum;
+  cin>>configNum;
+  config.resize(configNum+1);
+  for(auto& ele: config){
+    cin>>ele;
+  }
 }
-int ITES_Algo(int target,int length){
-  //준비 및 초기화
-  queue<int> q;
-  int qSum(0),result(0);
-  unsigned int num(1983);
-  //순회
-  for(int idx=0;idx<=length;idx++){
-    int input=num%10000+1;
-    q.push(input);
-    qSum+=input;
-    while(qSum>target){
-      qSum-=q.front();
-      q.pop();
+vector<int> JAEHASAFE_getFailure(const string& str){
+  vector<int> result(str.length()+1,0);
+  int match=0;
+  for(int idx=1;idx<str.length();idx++){
+    while(match>0&&str[idx]!=str[match]){
+      match=result[match];
     }
-    if(qSum==target){
-      result++;
+    if(str[idx]==str[match]){
+      match++;
+      result[idx+1]=match;
     }
-    num=num*214013 + 2531011;
+  }
+  return result;
+}
+int JAEHASAFE_KmpSearch(const string& base, const string& target){
+  vector<int> failure=JAEHASAFE_getFailure(target);
+  int match=0,strLen=base.length();
+  for(int idx=0;idx<strLen*2-1;idx++){
+    while(match>0&&base[idx%strLen]!=target[match]){
+      match=failure[match];
+    }
+    if(base[idx%strLen]==target[match]){
+      match++;
+      if(match==strLen){
+        return idx-match+1;
+      }
+    }
+  }
+}
+int JAEHASAFE_Algo(const vector<string>& config){
+  int result(0),strLen(config[0].length()); //strlen==금고의 알파벳 개수 
+  for(int i=0;i<config.size()-1;i++){
+    if(i%2){  
+      result+=JAEHASAFE_KmpSearch(config[i],config[i+1]); //ccw
+    }else{
+      result+=JAEHASAFE_KmpSearch(config[i+1],config[i]); //clockwise
+    }
   }
   return result;
 } 
-void ITES(){
+void JAEHASAFE(){
   /*설명 및 입력
   설명
-    수환이는 외계에서 날아오는 전파를 연구하는 범세계 대규모 프로젝트, ITES@home에 참가하고 있습니다. 
-      외계에서 날아오는 전파는 전처리를 거쳐 각 숫자가 [1,10000] 범위 안에 들어가는 자연수 수열로 주어지는데, 
-      이 전파가 과연 단순한 노이즈인지 아니면 의미 있는 패턴을 가지고 있는 것인지를 파악하고 싶습니다. 
-    수환이는 전파의 부분 수열 중에 합이 K인 것이 유독 많다는 것을 눈치챘습니다. 
-      부분 수열이란 연속된 수열의 일부를 말합니다. 
-      예를 들어 수열 {1,4,2,1,4,3,1,6} 에서 합이 7 인 부분 수열은 모두 5개 있습니다. 
-      {1,4,2} , {4,2,1} , {2,1,4}, {4,3}, {1,6} 이 부분 수열들은 서로 겹쳐도 된다는 데 유의합시다.
-    K가 외계인에게 의미 있는 숫자일까요? 
-      수환이의 가설을 확인하기 위해, 길이 N인 신호 기록이 주어질 때 합이 K인 부분 수열이 몇 개나 있는지 계산하는 프로그램을 작성하세요.
+    The safe uses a dial to lock the door, and on the rim of dial are drawn pictures of cute animals instead of numbers. 
+      To open the safe, Jaeha mustb rotate the dial to reach certain positions, alternating direction each time.
+    Jaeha wants to be careful, so he only rotates the dial one tick at a time.  
+      Given a set of dial positions, calculate how many ticks Jaeha has to rotate the dial to open the safe.
   입력
-    입력의 크기가 큰 관계로, 이 문제에서는 신호 기록을 입력받는 대신 다음과 같은 식을 통해 프로그램 내에서 직접 생성합니다.
-      A[0] = 1983
-      A[i] = (A[i-1] * 214013 + 2531011) % 2^32
-      이 때 i(1 <= i <= N)번째 입력 신호는 A[i-1] % 10000 + 1입니다. 
-    문제의 해법은 입력을 생성하는 방식과는 아무 상관이 없습니다. 이 규칙에 따르면 첫 5개의 신호는 각각 1984, 8791, 4770, 7665, 3188입니다.
+    The input consists of T test cases. 
+      The number of test cases T is given in the first line of the input.
+    The first line of each test case will contain an integer N(1 ≤ N ≤ 50), the number of positions Jaeha needs to reach. 
+    The next N + 1 lines will each contain a dial configuration. 
+      A configuration is given by listing the pictures in clockwise order, starting from the topmost picture. 
+      Each type of picture is denoted by an alphabet character, therefore each configuration is given as a string. 
+      The first configuration shows the current dial. 
+    Jaeha will rotate clockwise to reach the second configuration, rotate counterclockwise to reach the third, and so on.
+    The number of pictures on a dial will not exceed 10,000.
+    Two adjacent configurations given in the input will always be different. 
+    It is always possible to open the safe
   출력
-    입력 파일의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 20)가 주어지고, 그 후 C 줄에 각 2개의 정수로 K(1 <= K <= 5,000,000) 과 N(1 <= N <= 50,000,000) 이 주어집니다.
+    Print exactly one line for each test case.
+      The line should contain the minimum number of ticks required to open the safe
   제한조건
-    15초, 64MB
+    1초, 64MB
   */
   /*힌트
-    부분 수열은 연속되는 숫자이므로, 연속되는 숫자가 K를 넘으면 무의미하다.
-    stack을 이용하여, stack내부의 숫자가 7 이하로 유지되도록 하면 된다.
-    매번 stack내부의 숫자를 더하지 말고, stack내부의 합을 기록한 숫자를 이용하자(부분합 일부 채용)
-    수열과 입력신호가 다름을 유의하자 
-    mod 2^32는, 33비트 부터는 모두 잘라내는 것을 의미한다.
-      이때 unsigned int는 32비트까지만 사용하므로, unsigned int를 사용하면 자동으로 mod 2^32를 취한 것과 같다.
+    같은 동물이 나온다고 찾은것이 아니라, 모든 동물의 위차가 맞아야 한다.
+      따라서 idx를 하나씩 돌리며 찾으면 10000 * 10000 * 50 이 걸려서 시간내에 찾을 수 없다.
+    KMP search를 이용하여 시작위치를 찾을 수 있다.
+      circular shift: 
+        다이얼의 일치상태를 비교하려면 항상 n개(다이얼의 원소의 수)를 비교해야한다.
+          KMP search에서 idx를 두배로 늘리고, 넘어가는 부분은 mod 처리한다.
+      시계 방향으로 돌리는것은 KMPresult.front()번 회전
+      반시계 방향은 n - KMPresult.back()번 회전
   */
   /*전략
   전략1
-    아이디어: 스택
-      변수: queue, num(1983), queueSum(0), result(0)
-      1. for( i = [0,N] )
-        queue.push(num)
-        queueSum+=num;
-        while(queueSum>K){
-          queueSum-=queue.front
-          queue.pop
-        }
-        if(queueSum==K)
-          result+=+
-        num=number(idx,num);
+    아이디어: KMP search
+      KMP search를 M번 수행하여 시작위치를 찾는다. M * O(2N)
+        항상 N개를 비교해야하므로, idx를 넘어가는 부분은 mod 처리한다.
+        시계방향: KMP result . front
+        반시계방향: N - KMP result . back
+      
     분석
-      time complexity: O(N)
+      time complexity: O(MN) <= 50 * 2 * 10000 
       mem complexity: O(N)
     피드백
   */
@@ -96,9 +118,9 @@ void ITES(){
   cout.precision(10);
   //각 테스트케이스
   while(testCase--){
-    int target,length;
-    ITES_Input(target,length);
-    auto result=ITES_Algo(target,length);
+    vector<string> config;
+    JAEHASAFE_Input(config);
+    auto result=JAEHASAFE_Algo(config);
     // cout<<"::::";
     cout<<result<<endl;
   }
@@ -107,7 +129,7 @@ void ITES(){
 int main(void){
   //   clock_t start,end;
   //   start=clock();
-  ITES();
+  JAEHASAFE();
   //   end=clock();;
   //   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
   return 0;
