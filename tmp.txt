@@ -1,0 +1,9 @@
+utility-first css: 여러 요소가 이미 구현되어 있다.
+
+django: 객체지향, class, inheritance 위주
+
+req: python-콘솔에 python 치면 뜸(path설정 필요)
+ wsl사용하여 파이썬 설치 가능
+	wsl python 검색하여 따라하기
+	https://docs.microsoft.com/ko-kr/windows/python/web-frameworks
+	가상환경 설정을 해야하나?
