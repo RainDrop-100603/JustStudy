@@ -7,3 +7,51 @@ req: python-콘솔에 python 치면 뜸(path설정 필요)
 	wsl python 검색하여 따라하기
 	https://docs.microsoft.com/ko-kr/windows/python/web-frameworks
 	가상환경 설정을 해야하나?
+
+Backend
+Flask, Pyramid: minimal 
+	여러 기능을 직접 만들어야 할 수도 있다.
+Django : not minimal
+	공통적으로 필요한 부분들은 구현되어 있다.
+		관리자패널
+		사용자인증
+		이메일 백엔드
+		보안
+		등등 여러가지 기능	
+	layout을 강요하는편이다.
+		이미 정해진 규격들을 강요한다
+	시간이 덜 걸린다.
+
+Frontend
+React
+	주류
+	다양한 상호작용 가능
+Django Template
+	콘텐츠 위주(상호작용 적다)
+
+사실상 Django 강좌?
+
+Pipenv
+	venv(virtualenv 도 비슷한 역할인듯)
+pip install Django가 안좋은 사람
+두가지설명
+1.파이썬에는 공식 패키지관리자가 없다 (nodeJs의 npm과 같은것)
+	pip는 관리자 역할을 한다 -> 전역(global)으로 설치함
+	파이썬을 위한 npm+ package.json과 같은 것 		
+2.pip는 인터넷으로 패키지를 받는 수단 (package installer for python)
+	global -> 어디에서나 접근 가능	
+	서로 다른버전의 django를 쓰는 프로젝트를 혼용할 수 없다.
+즉, pipenv는 python의 패키지관리자를 목적으로 한다.
+
+https://mickael-k.tistory.com/92
+https://story-of-jony-the-cold.tistory.com/52
+https://nomadcoders.co/airbnb-clone/lectures/852
+	댓글확인 
+	설치시 python이 아니라 python3를 사용해야하는듯
+
+설치후 pipenv 
+
+리눅스에 대한 공부? 
+https://hacktiming.tistory.com/15
+https://docs.microsoft.com/ko-kr/windows/wsl/install-win10#step-4---download-the-linux-kernel-update-package
+	
