@@ -90,3 +90,5 @@ Linter
 	python은 compiled 언어가 아니므로, 에러를 미리 파악할 수 없다.
 	linter는 예상되는 에러를 찾아내준다.
 	python PEP 이라는, 파이썬 작성규악에 따라 코드를 보기좋게 수정할수도 있다.
+
+https://sosomemo.tistory.com/53
