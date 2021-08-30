@@ -90,5 +90,6 @@
     "code-runner.saveFileBeforeRun": true,
     "code-runner.runInTerminal": true,
     "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "python.formatting.provider": "black"
 }
