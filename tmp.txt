@@ -92,3 +92,4 @@ Linter
 	python PEP 이라는, 파이썬 작성규악에 따라 코드를 보기좋게 수정할수도 있다.
 
 https://sosomemo.tistory.com/53
+https://webnautes.tistory.com/1158
