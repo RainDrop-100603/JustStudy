@@ -93,3 +93,9 @@ Linter
 
 https://sosomemo.tistory.com/53
 https://webnautes.tistory.com/1158
+
+vscode 관리
+	1. .vscode로 모두 관리한다
+	2. 언어별로 분리한다
+	3. 공부는 통합 / 프로그램은 분리한다. 
+	
