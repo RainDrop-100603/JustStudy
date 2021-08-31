@@ -228,5 +228,24 @@ model field 종류
 	image field -> Pillow 설치 필요(pipenv로 설치하자)
 	char field -> 글자수제한 필요(max_length=xx)
 		선택지 제한 기능, choices= tuple
-			tuplename=((form data,database data), (2,2), ...)
+			tuplename=((database data,form data), (2,2), ...)
 	textfield -> 일반적인 text field 
+
+black이 갑자기 작동을 안한다면, 문법이 잘못된곳이 없는지 확인해보자. "."을 ","로 썼다던지..
+
+decorator : @을 이용한 선언, class위에 있어야 작동 
+		admin.site.register(Author)을 @admin.register(Author)로 바꾸기 가능 
+	
+admin.ModelAdmin 을 상속했을경우 사용하는 model admin
+	list display : list에서 보여줄 항목을 선택 
+	list filter
+
+UserAdmin: django에서 제공하는 기본 admin 
+	from django.contrib.auth.admin import UserAdmin
+	fieldSet: 하나로 그룹진부분, admin관리에서는 파란색으로 묶인 부분 
+		UserAdmin.fieldsets : 기본 필드셋
+		((field1Name,{"fields":(model1,model2)}),(field2Name,{}),...)
+
+장고는 database랑 통신
+장고 ORM (object relational mapping): 파이썬 코드를 sql문으로 바꿔서 데이터베이스가 알아먹도록 
+	model에 넣는것을 database로 변경
