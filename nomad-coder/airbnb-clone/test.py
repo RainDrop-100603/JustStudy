@@ -1,6 +1,2 @@
-import os
-import sys
-
-
-def main():
-    print('test')
+var1 = "absdklfjsdklflsdjklfjlsdkfljsdkljkfljsdfsfksdjklfsdjfkljsdklfjklsjdklfjskljklfsjkldjfklsdjklfjsdkljklfsdkljfklsdjklfjklsdjfklskldfkls"
+va2 = "sdfklj"
