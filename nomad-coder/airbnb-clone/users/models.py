@@ -5,4 +5,18 @@ from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    """custom user model"""
+
+    GENDER_MALE = "male"
+    GENDER_FEMALE = "female"
+    GENDER_OTHERS = "other"
+
+    GENDER_CHOICES = (
+        (GENDER_MALE, "Male"),
+        (GENDER_FEMALE, "Female"),
+        (GENDER_OTHERS, "Other"),
+    )
+
+    avatar = models.ImageField(null=True, blank=True)
+    gender = models.CharField(choices=GENDER_CHOICES, max_length=10, null=True)
+    bio = models.TextField(default="", blank=True)
