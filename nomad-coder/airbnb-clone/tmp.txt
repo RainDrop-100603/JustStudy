@@ -49,7 +49,22 @@ https://nomadcoders.co/airbnb-clone/lectures/852
 	댓글확인 
 	설치시 python이 아니라 python3를 사용해야하는듯
 
-설치후 pipenv 
+pipenv 설치
+	sudo apt-get update && sudo apt-get upgrade
+	sudo apt install python3-pip
+	pip install --user pipenv
+	PATH 설정 : --user의 경우 local에 설치되어 관리자 권한이 필요없지만, PATH설정을 직접 해주어야 한다.
+		profile에 추가 (https://www.nemonein.xyz/2018/03/355/)
+	pipenv --three : bubble 생성
+	. code : 이제부턴 코드에서 설정 가능하다.
+	pipenv shell : bubble 진입, 새로운 터미널에서 사용시 다시 진입 필요
+	ctrl shift p -> select linter -> flake 8, 설정하고 아무 파이썬파일 클릭하면 우측하단에 설치알림 뜸
+		pipenv로 설치되면 제대로 된것, 아래 명령어 settings.json에 추가
+		"python.linting.pylintEnabled": false, 	(pylint와의 충돌 방지 )
+	pipenv install black --dev --pre : black은 직접 설치 후 settings.json에 설정 추가 
+		"editor.formatOnSave":true,	(저장 시 작동)
+    	"python.formatting.provider": "black",
+	pipenv install Django==2.2.5
 
 리눅스에 대한 공부? 
 https://hacktiming.tistory.com/15
@@ -186,3 +201,5 @@ vscode settinsg json
 	pylint는 flake8과 중복되어 비활성화 
 
 python manage.py makemigrations
+
+
