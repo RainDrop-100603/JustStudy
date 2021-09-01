@@ -13,3 +13,20 @@ core: 다른 application에서 사용 가능한 common 파일을 만들어 줄 �
     AbstractUser도 database에 저장되지 않고 코드에서만 쓰인다?
 
 from . import blabla 에서, . 은 자기가 있는 폴더를 의미함 
+
+third party app
+    django_countries : 모든 나라 
+
+python-django - third party- user app 순서로 import
+
+models.ForeignKey()
+    다른 model을 import하여 사용할 수 있도록?
+    예를들어 superhost는 결국 user model이므로, user model을 가져오기 위해 ForeignKey를 쓴다.
+
+DateField
+    auto_now=True : 필드가 model을 save할 때 date와 time을 기록
+    auto_now_add=True : 이 필드는 model을 생성할 때마다 수시로 업데이트 
+    created = models.DateTimeField(auto_now_add=True)
+        model이 생성된 날짜를 구함
+    updated = models.DateTimeField(auto_now=True)
+        새로운 날짜로 업데이트를 해줌 
