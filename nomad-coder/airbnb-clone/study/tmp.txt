@@ -1,2 +1,15 @@
 study tmp 
 
+핫스팟을 이용한 인터넷 - 게스트 네트워크 - 로컬호스트가 안되는듯 ?
+
+core: 다른 application에서 사용 가능한 common 파일을 만들어 줄 것
+    user을 제외한 모든 app의 model은 core애서부터 확장시켜 나간다.
+        abstractUser는 이미 로그인, 가입을 기록하는 기능이 있어서?
+    core에 있는 model은 database에 저장하는 용도가 아니라, 다른 model에서 가져가는 용도이다.
+            class Meta: 
+                abstarct = True
+        -> Meta: 추가적인정보를 기입하는 class
+            abstract: database에 나타나지 않는 model을 의미함, 대부분 확장용 
+    AbstractUser도 database에 저장되지 않고 코드에서만 쓰인다?
+
+from . import blabla 에서, . 은 자기가 있는 폴더를 의미함 
