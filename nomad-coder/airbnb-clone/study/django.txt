@@ -10,7 +10,7 @@ vscode
     https://webnautes.tistory.com/1158
     vsc 세팅은 추후에 공부하자
     가상화를 지원하는 project (pipenv 등)는, 해당 폴더만 독립적으로 사용하자(linux에서 . code 이용)
-
+    설정: 사용자 원격 작업영역, 작업영역은 현재 vscode 영역, 사용자와 원격은 전역설정과 유사하다고 생각됨
 
 Airbnb - clone setting 
     sudo apt-get update && sudo apt-get upgrage : 무언가를 설치하기 전에 반드시 하자
@@ -68,12 +68,13 @@ pip install --user PACKAGE
         $HOME/.local/bin:$PATH 은 디렉토리 주소같은데, 위에서 따온걸 넣어줘도 되려나?
 
 Frontend
-    React 
-        주류 Frontend
+    Library: React 
+        주류 Frontend(React)
         다양한 상호작용을 하는 프로그램에 적합
-    Django Template
-        layout이 강요된다 - 시간이 적게든다.
+        구조를 직접 자유롭게 만든다.
+    Framework: Django Template
         콘텐츠 위주의 프로그램에 적합 
+        layout이 강요된다 - 시간이 적게든다.
 
 Backend
     minimal : Flask, Pyramid
@@ -85,9 +86,15 @@ Backend
 
 Django
     객체지향 프로그래밍이다. class, inheritance 위주
+        inheritance를 통해 기능을 확장할 수 있다. class name(inherit target)
     Backend와 Frontend 모두 지원한다. 주로 Backend에 이용
     Document에서 필요한 것들을 찾아볼 수 있다.
         https://docs.djangoproject.com/en/2.2/ 
+    Django Project - Applications - functions
+        Project: Airbnb
+        Applications: room, reservation, user ...
+            한 문장으로 설명 가능한 정도로, 작은 단위로 모듈화한다.
+        functions: application의 기능들 
     명령어  
         django-admin : 실행 가능한 명령어들을 보여준다.
         python manage.py runserver: 서버 실행
@@ -95,23 +102,67 @@ Django
             Error: That port is already in use : 서버 종료후 port가 제대로 반환되지 않은 것
                 sudo lsof -t -i tcp:8000 | xargs kill -9 
         python manage.py createsuperuser: 관리자 생성
-        python manage.py makemigrations: 
-        python manage.py migrate 
+        python manage.py makemigrations: 데이터를 통해 migration 생성
+        python manage.py migrate: migration 적용 
     웹사이트
         /admin : 관리자 화면, config/urls.py 에서 접근주소 변경 가능 
-    Project 구조 만들기
-        원하는 이름의 폴더를 생성하고 들어간다.
-        django-admin startproject config : 관리파일 생성
-        생성된 폴더 내부의 파일들을 밖으로 뺀다. 빈 폴더는 삭제 
-    config folder
-        settings.py
-            django의 setting 관리
-            INSTALLED_APPS는 DJANGO_APPS와 PROJECT_APPS로 구분하면 관리가 편하다.
-            AUTH_USER_MODEL = "users.User" : 뭔지 잘 모르겠는데, 선택 가능한 유저 모델중 하나인듯
-            주석으로 Document 등 여러 쓸만한 링크들을 제공한다 
+    migration?
+        django 는 data models를 확인하고 migration을 생성한다?
+            data models - migration - database ? 
+            data model을 장고가 사용하는 데이터 유형으로 동기화 하기 위한 migration?
+            python manage.py migrate
+                데이터를 sql로 migrate
+        데이터에 영향을 주는 것이 생기면 migration을 생성하고 migrate 한다.
+    프로젝트 만들기
+        프로젝트이름으로 폴더를 생성하고 들어간다.
+        필요하면 가상화를 한다 (pipenv)
+        아래에서 생성된 파일명들을 변경하는것은 안되지만, 추가로 생성하는것은 자유롭다.
+        Project 생성
+            django-admin startproject config : 관리파일 생성
+            생성된 폴더 내부의 파일들을 밖으로 뺀다. 빈 폴더는 삭제 
+            settings.py
+                django의 setting 관리
+                INSTALLED_APPS는 DJANGO_APPS와 PROJECT_APPS로 구분하면 관리가 편하다.
+                AUTH_USER_MODEL = "users.User" : 뭔지 잘 모르겠는데, 선택 가능한 유저 모델중 하나인듯
+                주석으로 Document 등 여러 쓸만한 링크들을 제공한다  
+            urls.py
+                url을 컨트롤 하는 것, 원칙적으로 url은 여기에서 추가한다.
+                application에 urls.py를 추가하여 간접적으로 관리가 가능하다.  
+        Application 생성
+            django-admin startapp AppNames: application 생성, 이름은 복수형으로 짓자
+                AppNames는 DJANGO_APPS와 겹치지 않도록 하자. config-setiings.py에서 확인가능 
+                생성후 settings.py의 INSTALLED_APPS에 추가해야 적용된다.
+            admins.py : admin에 반영되는 것들
+            apps.py : cofiguration 파일
+            models.py : database와 form(app)에서 이용할 데이터를 정의한다.
+            views.py : 사용자에게 보여지는곳, html render
+    Applications
+        Django Documentation에서 원하는 기능을 찾으면 된다.
+        data를 추가할 수 있다.
+            database label = models.입력형태()
+            입력형태는 model field로 검색하면 된다.
+            sql database에 data를 빈공간으로 두는 옵션  
+                1. default = blabla : deafult value 설정
+                2. null = True : 빈 필드 허용
+            form 옵션 
+                blank = True : 내용을 채우지 않아도 submit 할 수 있다.
+        User Application
+            AbstarctUser을 상속하여 사용하는것이 일반적이다?
+            User application의 존재의의
+                Django의 admin에서는 user정보를 관리할 수 있지만, 이는 관리자를 위한것이다.
+                사용자가 스스로 user정보를 관리할 수 있도록 user application을 만든다.
+
 
         
+
+SQL Database    
+    여러 종류가 있다. 
+        dq.splite3 
+    첫 행은 변수이름 = 변수형식 으로 지정한다. 다음행부터는 데이터 입력
+
+
 Python  
+    . import : 같은 폴더에 있는 파일들을 import@@@@@@@@@@@@여기 정리
     파이썬 패키지관리자: pipenv, venv
         파이썬에는 nodeJs의 npm과 같은 패키지관리자가 없다.
         pip는 전역으로만 설치하므로, 프로젝트 도구(django등)을 격리하여 다룰 수 없다.
