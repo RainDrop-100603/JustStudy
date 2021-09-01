@@ -11,6 +11,8 @@ core: 다른 application에서 사용 가능한 common 파일을 만들어 줄 �
         -> Meta: 추가적인정보를 기입하는 class
             abstract: database에 나타나지 않는 model을 의미함, 대부분 확장용 
     AbstractUser도 database에 저장되지 않고 코드에서만 쓰인다?
+    abstract = True 는, 중복되는 것들을 방지하기 위해서 쓰인다.
+        중복되는 item을 모든 app에서 hard coding하기는 매우 힘들다.
 
 from . import blabla 에서, . 은 자기가 있는 폴더를 의미함 
 
@@ -61,4 +63,21 @@ string method
                 위와 같이 수정하면, object를 불러올 때 rain과 park라는 str로 불러온다.
                 마찬가지로 self.age를 반환하게 하면, 17과 19라는 str(이름)으로 불러온다.
             
-실행 집에서 다 시켜보기 
+host = models.ForeignKey(user_models.User, on_delete=models.CASCADE)
+    room 의 user_models.User가 삭제되면, 해당 user에 등록된 rooms도 모두 삭제한다
+        CASCADE: 폭포수, 상위 객체가 삭제되면 하위 객체도 삭제됨
+        PROTECT: 하위 객체를 지워야 상위 객체를 지울 수 있다. rooms을 모두 지워야 user을 지울 수 있다.
+        다른 동작들도 documentaion에서 볼 수 있다.
+    many to one 만 on_delete를 가진다.
+
+정보 관리
+    사용자가 직접 내용을 입력
+        model을 admin에 등록 - admin panel에서 수정 가능
+    사용자는 정해진 항목을 선택
+        등록 x - 코딩을 통해서만 항목을 수정 가능 
+        ex: 국가목록의 경우에는 직접 추가하기보다는, 이미 있는 것들만 사용하게 하도록
+
+한번에 여러개 등록 가능하다 
+@admin.register(models.RoomType, models.Facility, ...)
+class ItemAdmin(admin.ModelAdmin):
+    pass 
