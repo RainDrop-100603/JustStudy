@@ -62,7 +62,20 @@ string method
                     return self.name
                 위와 같이 수정하면, object를 불러올 때 rain과 park라는 str로 불러온다.
                 마찬가지로 self.age를 반환하게 하면, 17과 19라는 str(이름)으로 불러온다.
-            
+    room = models.ForeignKey("Room", on_delete=models.CASCADE)
+        Room은 self class보다 아래에서 정의되었다.
+        Room class 는 __str__을 통해 "Room"으로 반환되므로, Room 대신 "Room"을 넣어도 된다.
+        __str__을 이용한 방식은, 정의 시점이 상관 없기 때문에 유용하다.
+    str 비교 2: 아래 두 문장은 같다.
+        host = models.ForeignKey(user_models.User, on_delete=models.CASCADE)
+        host = models.ForeignKey("users.User", on_delete=models.CASCADE)
+        User은 users라는 폴더의 class이다.
+            users의 User이기 때문에, "users.User" 로 해야 찾을 수 있는 듯 하다.
+            같은 폴더에 있는건 굳이 그럴 필요가 없다.
+            쉽게 생각해서, 내 .py파일에 있는 class는 그냥 str==class이름, 
+                다른 위치에 있는 class는 import이름.class이름 인듯 하다.
+            더 자세한건 나중에 더 알아보자 
+
 host = models.ForeignKey(user_models.User, on_delete=models.CASCADE)
     room 의 user_models.User가 삭제되면, 해당 user에 등록된 rooms도 모두 삭제한다
         CASCADE: 폭포수, 상위 객체가 삭제되면 하위 객체도 삭제됨
@@ -81,3 +94,11 @@ host = models.ForeignKey(user_models.User, on_delete=models.CASCADE)
 @admin.register(models.RoomType, models.Facility, ...)
 class ItemAdmin(admin.ModelAdmin):
     pass 
+
+class Meta
+    여러 기능을 추가할 수 있다.
+    verbose_name : 표기되는 이름
+    verbose_name_plural : 복수형으로 표기되는 이름
+    ordering : 정렬기준 
+
+blank=True?
