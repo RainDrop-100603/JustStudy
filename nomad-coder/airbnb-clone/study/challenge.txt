@@ -1,2 +1,5 @@
 chg2 
 https://replit.com/@RainDrop97/2ndAssignmentBoilerplate#users/admin.py
+https://replit.com/@RainDrop97/DelightfulEvilCamel#.replit
+
+chg3 
