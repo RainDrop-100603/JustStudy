@@ -19,14 +19,46 @@ third party app
 
 python-django - third party- user app 순서로 import
 
-models.ForeignKey()
+models.ForeignKey()?
+    한 모델과 다른 모델을 연결
+        room -> user (양방향은 아닌듯?) 
+    many to one relationship
+        many rooms can have one users
+        user can have many rooms
     다른 model을 import하여 사용할 수 있도록?
     예를들어 superhost는 결국 user model이므로, user model을 가져오기 위해 ForeignKey를 쓴다.
 
-DateField
+many to many relationship
+    예시: 나는 형제자매를 여럿 가질 수 있다.
+    여러 room들은 각자 여러개의 room type를 가질 수 있다.
+    ManyToMany() 이용 
+
+many to one relationship
+    예시: 엄마는 여러 자식을 가질 수 있지만, 자식은 한명의 엄마를 가진다.
+
+
+DateField?
     auto_now=True : 필드가 model을 save할 때 date와 time을 기록
     auto_now_add=True : 이 필드는 model을 생성할 때마다 수시로 업데이트 
     created = models.DateTimeField(auto_now_add=True)
         model이 생성된 날짜를 구함
     updated = models.DateTimeField(auto_now=True)
         새로운 날짜로 업데이트를 해줌 
+
+string method
+    파이썬과 장고의 모든 class가 가지고 있는 method
+    작동원리와 관련있다.
+        클래스를 발견하면 string으로 변환한다.
+        파이썬 : __str__ 
+    클래스를 발견하면 string으로 변환하여 보여준다?
+    추측하기로, 어떤 클래스를 가져올 때 어떻게 보여질 것인지
+        예시
+            object1: name=rain, age= 17
+            object2: name=park, age= 19
+            기본적으로 object를 불러오면, object1, object2 라는 str로 가져온다
+                __str__(self): 
+                    return self.name
+                위와 같이 수정하면, object를 불러올 때 rain과 park라는 str로 불러온다.
+                마찬가지로 self.age를 반환하게 하면, 17과 19라는 str(이름)으로 불러온다.
+            
+실행 집에서 다 시켜보기 
