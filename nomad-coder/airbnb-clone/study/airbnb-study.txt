@@ -138,7 +138,7 @@ Django
             views.py : 사용자에게 보여지는곳, html render
     Applications
         Django Documentation에서 원하는 기능을 찾으면 된다.
-        data를 추가할 수 있다.
+        models.py : 데이터를 추가할 수 있다
             database label = models.입력형태()
             입력형태는 model field로 검색하면 된다.
             sql database에 data를 빈공간으로 두는 옵션  
@@ -146,23 +146,34 @@ Django
                 2. null = True : 빈 필드 허용
             form 옵션 
                 blank = True : 내용을 채우지 않아도 submit 할 수 있다.
+            model field 
+                image: Pillow 설치 필요 -> bubble화되어있다면 pipenv 사용하자
+                char: max_length 필수, 선택지 제한 기능(choices = choice_tuple)
+                    choice_tuple = ( (database name 1, form name 1), (2,2), ...)
+                text : 일반적인 text field 
+        admin.py: admin 설정 관리
+            상속 선택지
+                admin.ModelAdmin : 기본값이 없는 상속?
+                UserAdmin : Django가 제공하는 기본 admin    
+                    from django.contrib.auth.admin import UserAdmin
+                    UserAdmin.fleldsets : 기본 admin의 default fieldsets
+                    fildsets = UserAdmin.fieldsets + CustomAdmin 과 같이 혼용 가능 
+            요소
+                list display: 정렬 항목에서 보일 것 선택
+                list filter: 항목 필터에 사용할 것 선택 
+                fieldsets: 정보 입력시 하나로 그룹진 부분, admin에서 파란샊으로 묶인 부분
+                    ( (field 1 name, {"fields":(model1,model2)}), (field 2 name ~) ... )
         User Application
             AbstarctUser을 상속하여 사용하는것이 일반적이다?
             User application의 존재의의
                 Django의 admin에서는 user정보를 관리할 수 있지만, 이는 관리자를 위한것이다.
                 사용자가 스스로 user정보를 관리할 수 있도록 user application을 만든다.
 
-
-        
-
-SQL Database    
-    여러 종류가 있다. 
-        dq.splite3 
-    첫 행은 변수이름 = 변수형식 으로 지정한다. 다음행부터는 데이터 입력
-
-
 Python  
-    . import : 같은 폴더에 있는 파일들을 import@@@@@@@@@@@@여기 정리
+    from . import func : .은 같은 폴더내에 있는 파일들을 의미한다.
+        즉, 같은 폴더내의 있는 파일들의 func를 import 할 수 있다.
+    class definition: 정의 바로 아래 """class definition"""을 추가한다.
+        class name에 커서를 올리면 class definiton이 보인다.
     파이썬 패키지관리자: pipenv, venv
         파이썬에는 nodeJs의 npm과 같은 패키지관리자가 없다.
         pip는 전역으로만 설치하므로, 프로젝트 도구(django등)을 격리하여 다룰 수 없다.
@@ -183,4 +194,15 @@ Python
         따라서 폴더랑 같은 위치에 있는 다른 파일에서, 폴더내의 파일을 사용할 수 있다.
         ex) : manage.py의 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
-    
+
+decorator : @을 이용한 선언, class위에 있어야 작동 
+	admin.site.register(Author)을 @admin.register(Author)로 바꾸기 가능 
+        
+SQL Database    
+    여러 종류가 있다. 
+        dq.splite3 
+    첫 행은 변수이름 = 변수형식 으로 지정한다. 다음행부터는 데이터 입력
+
+장고는 database랑 통신
+장고 ORM (object relational mapping): 파이썬 코드를 sql문으로 바꿔서 데이터베이스가 알아먹도록 
+	model에 넣는것을 database로 변경
