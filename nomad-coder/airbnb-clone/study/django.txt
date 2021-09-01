@@ -1,0 +1,135 @@
+Airbnb - clone 
+    무슨 css : utility-first css, 이미 구현된 디자인 이용
+    Django와 Django Template를 이용한 Backend Frontend 구현 
+
+git ignore: 동기화 하지 않을 파일 선택 
+	프로젝트 최상단에 위치하여야 한다.
+
+vscode
+    https://sosomemo.tistory.com/53
+    https://webnautes.tistory.com/1158
+    vsc 세팅은 추후에 공부하자
+    가상화를 지원하는 project (pipenv 등)는, 해당 폴더만 독립적으로 사용하자(linux에서 . code 이용)
+
+
+Airbnb - clone setting 
+    sudo apt-get update && sudo apt-get upgrage : 무언가를 설치하기 전에 반드시 하자
+    sudo apt upgrade python3 : 선택사항
+    sudo apt install python3-pip : pip설치
+    pip install --user pipenv 
+        pipenv PATH 설정 - 하단참고 
+    pipenv --three : bubble(가상화 생성)
+    . code : pipenv를 code에서도 제대로 이용하려면, 가상화 된 폴더만 따로 취급하는것이 좋은듯하다.
+        이제부터 vsc에서도 터미널을 열어서 수행할 수 있다.
+    pipenv shell: bubble 진입, 새로운 터미널을 열 때마다 해주어야 한다.
+    vsc python 설치 : pylance, Jupyter도 같이 설치된다.
+    좌하단의 python버전을 나의 python 버전 + pipenv로 선택 
+    vsc 명령팔레트(ctrl+shift+p) - select linter - flake 8
+        설정하고 아무 .py클릭하면 알아서 설치한다.
+            pipenv install flake8  --dev 로 설치됨
+        설치후 settings.json 확인, 아래 문구가 추가된다.
+            "python.linting.flake8Enabled": true,
+            "python.linting.enabled": true,
+        아래문구를 추가한다, pylint 충돌 방지 
+            "python.linting.pylintEnabled": false, 
+        linting 사용자 설정 가능
+            string 최대 길이 늘리기: "python.linting.flake8Args": ["--max-line-length=120"]
+    vsc 터미널 - pipenv install black --dev --pre
+        black은 직접 설치한다.
+        설치후 settings.json에 아래 문구를 추가한다.
+            "editor.formatOnSave":true,
+    	    "python.formatting.provider": "black",
+        저장시 black이 작동하면 된 것이다.
+            문법오류 있으면 black이 작동하지 않을 수 있으므로 조심한다.
+    pipenv install Django==2.2.5
+        ==2.2.5 로 버전을 명시하면 해당 버전 설치(강의가 2.2.5)
+        버전을 명시하지 않으면 최신버전 설치 
+
+pip install --user PACKAGE
+    https://www.lesstif.com/python/python-pip-user-mode-95879683.html
+    pip는 PACKAGE를 system경로에 설치한다.
+        -> PACKAGE를 이용할 때마다 root권한을 얻거나, 
+            system디렉토리를 일반 사용자에게도 허용해야한다.
+    --user 모드를 이용하면 root권한 없이 사용자 디렉토리에 설치 가능하다.
+        사용자 디렉토리 주소: /home/rain/.local/bin
+        $ python3 -c 'import site; print(site.USER_BASE)' 을 통해 주소를 얻을 수 있다.
+    사용자 디렉토리는 PATH지정이 안되어 있으므로, 해당 주소를 PATH에 등록해야한다.
+        ~/.profile 편집 vs ~/.bashrc 편집    
+            .profile은 Login Shell을 위한것이고, .bashrc는 Non Login Shell을 위한것이다.
+            Login Shell은 ID/PW를 입력하는 상황, Non..은 GUI에서 터미널을 여는 상황이다.
+            Non.. 은 Login Shell에서 상속받는다.
+            따라서 .profile에 PATH를 추가하는 것이 권장된다.
+        ~/.profile 편집 
+            if [ -d "$HOME/.local/bin" ] ; then
+                PATH="$PATH:$HOME/.local/bin"
+            fi
+        ~/.bashrc 편집
+            export PATH="$HOME/.local/bin:$PATH"
+        $HOME/.local/bin:$PATH 은 디렉토리 주소같은데, 위에서 따온걸 넣어줘도 되려나?
+
+Frontend
+    React 
+        주류 Frontend
+        다양한 상호작용을 하는 프로그램에 적합
+    Django Template
+        layout이 강요된다 - 시간이 적게든다.
+        콘텐츠 위주의 프로그램에 적합 
+
+Backend
+    minimal : Flask, Pyramid
+        다양한 기능을 직접 만들어야 한다.
+        사용자가 원하는대로 구현할 수 있다.
+    not minimal : Django
+        공통적으로 필요한 기능들이 대부분 구현되어있다.
+        layout이 강요된다 - 시간이 적게든다.
+
+Django
+    객체지향 프로그래밍이다. class, inheritance 위주
+    Backend와 Frontend 모두 지원한다. 주로 Backend에 이용
+    Document에서 필요한 것들을 찾아볼 수 있다.
+        https://docs.djangoproject.com/en/2.2/ 
+    명령어  
+        django-admin : 실행 가능한 명령어들을 보여준다.
+        python manage.py runserver: 서버 실행
+            migration에 영향을 주지 않는 내용을 수정하면, 재시작 필요없이 새로고침된다.
+            Error: That port is already in use : 서버 종료후 port가 제대로 반환되지 않은 것
+                sudo lsof -t -i tcp:8000 | xargs kill -9 
+        python manage.py createsuperuser: 관리자 생성
+        python manage.py makemigrations: 
+        python manage.py migrate 
+    웹사이트
+        /admin : 관리자 화면, config/urls.py 에서 접근주소 변경 가능 
+    Project 구조 만들기
+        원하는 이름의 폴더를 생성하고 들어간다.
+        django-admin startproject config : 관리파일 생성
+        생성된 폴더 내부의 파일들을 밖으로 뺀다. 빈 폴더는 삭제 
+    config folder
+        settings.py
+            django의 setting 관리
+            INSTALLED_APPS는 DJANGO_APPS와 PROJECT_APPS로 구분하면 관리가 편하다.
+            AUTH_USER_MODEL = "users.User" : 뭔지 잘 모르겠는데, 선택 가능한 유저 모델중 하나인듯
+            주석으로 Document 등 여러 쓸만한 링크들을 제공한다 
+
+        
+Python  
+    파이썬 패키지관리자: pipenv, venv
+        파이썬에는 nodeJs의 npm과 같은 패키지관리자가 없다.
+        pip는 전역으로만 설치하므로, 프로젝트 도구(django등)을 격리하여 다룰 수 없다.
+        pipenv, venv는 가상화를 통해 프로젝트 도구를 격리시킨다.
+        pipenv: 파이썬을 위한 npm + package.json 
+            pipenv --three: python3를 이용하는 bubble(가상화) 생성
+            pipenv shell : bubble 진입
+            pipenv install PACKAGE : PACKAGE를 bubble에 설치 
+    Linter : flake8, etc...
+        python은 compiled언어가 아니어서, 에러를 컴파일전에 파악할 수 없다.
+        linter는 예상되는 에러를 찾아내준다.
+        python PEP라는 python작성약속에 따라, 보기 좋지 않은 코드도 알려준다.
+    Formatter : black
+        python PEP에 따라 코드를 보기좋게 수정해준다.
+        단순히 보기좋게 수정해주는 것이고, 코드는 건들지 않는다. 
+    __init__.py : 좀 애매한데 추후 다시 공부하자 
+        폴더에 이것을 넣어두면, 파이썬이 이 폴더를 import한 것과 같은 역할이다.
+        따라서 폴더랑 같은 위치에 있는 다른 파일에서, 폴더내의 파일을 사용할 수 있다.
+        ex) : manage.py의 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+
+    
