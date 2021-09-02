@@ -102,3 +102,21 @@ class Meta
     ordering : 정렬기준 
 
 blank=True?
+https://stackoverflow.com/questions/4384098/in-django-models-py-whats-the-difference-between-default-null-and-blank
+
+related_name이용
+    class Person2Person(models.Model):
+        person = models.ForeignKey(Person, related_name='person2persons')
+        friend = models.ForeignKey(Person, related_name='friends')
+
+fieldset: 입력 정보를 구분하는것
+    예를 들어서 회원 가입할 때, 개인정보 탭, 유저정보 탭, 로그인정보 탭으로 나눌 수 있다.
+
+https://stackoverflow.com/questions/30181079/django-limit-choices-to-for-multiple-fields-with-or-condition
+https://docs.djangoproject.com/en/dev/topics/db/queries/#complex-lookups-with-q
+limit choices to : or
+    limit_choices_to=Q(share_holder=True) | Q(distributor=True)
+limit choices to : and  
+    limit_choices_to={'share_holder': True, 'distributor': True}
+
+Q: bool 확인을 하는 것에서 더 다양한 옵션을 주는것 같다.
