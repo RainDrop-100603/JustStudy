@@ -120,3 +120,31 @@ limit choices to : and
     limit_choices_to={'share_holder': True, 'distributor': True}
 
 Q: bool 확인을 하는 것에서 더 다양한 옵션을 주는것 같다.
+
+Admin panel
+    search_field
+    ForeignKey, manytoMany등으로 불러온 class에 접근
+        className__element 방식
+    filter horizontal
+    fieldset
+        class: 추가적인 기능 부여 (hide/open기능 등)
+    ordering
+    many to many lise_display 방법
+        amenities 대신 count_amenities list
+        def django_count_amenities(self,obj):
+            """self: admin class, obj = 현재 row """
+            return "potato"
+        count_amenities.short_description = "hello sexy!"
+            list의 label, 즉 count_amenities 대신 hello sexy가 row의 label이 된다.
+        함수는 클릭해서 정렬 불가
+        obj.amenities.all()
+
+config-settings: third party app은 안 더해도 되나?
+Django get model from string, ForeignKey와 ManyToMany등은 일당 가능 
+    https://stackoverflow.com/questions/4881607/django-get-model-from-string
+    https://docs.djangoproject.com/en/2.2/ref/applications/#initialization-process
+    https://docs.djangoproject.com/en/3.2/ref/applications/#django.apps.AppConfig.get_model
+
+python: __str__ 과 __repr__의 차이 
+    https://shoark7.github.io/programming/python/difference-between-__repr__-vs-__str__
+python: __ini__ 찾아보기 
