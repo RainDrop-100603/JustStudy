@@ -138,6 +138,8 @@ Admin panel
             list의 label, 즉 count_amenities 대신 hello sexy가 row의 label이 된다.
         함수는 클릭해서 정렬 불가
         obj.amenities.all()
+        obj.amenities.count()
+
 
 config-settings: third party app은 안 더해도 되나?
 Django get model from string, ForeignKey와 ManyToMany등은 일당 가능 
@@ -148,3 +150,10 @@ Django get model from string, ForeignKey와 ManyToMany등은 일당 가능
 python: __str__ 과 __repr__의 차이 
     https://shoark7.github.io/programming/python/difference-between-__repr__-vs-__str__
 python: __ini__ 찾아보기 
+
+_set : 나를 (ForeignKey등으로) 지정한 객체들의 리스트 
+    a Foreignkey to B -> B has a_set
+    related_name: a_set의 이름을 바꿔준다
+
+django update to 2.2.24(remove and install)
+5-7장 복습 
