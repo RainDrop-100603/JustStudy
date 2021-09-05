@@ -157,3 +157,23 @@ _set : 나를 (ForeignKey등으로) 지정한 객체들의 리스트
 
 django update to 2.2.24(remove and install)
 5-7장 복습 
+
+relationship
+    relation 대상에 대한 접근을 허용한다.
+    str 방식: class파일명.class이름명
+    종류
+        ForeignKey(many to one)
+        one to one
+        many yo many
+
+from .은 자기 폴더를 의미함 
+__str__
+    이것을 잘 정의하면, print(object.name)대신 print(object)만 해도 된다.
+        오히려 더 원하는 대로 설정 가능 
+
+f"{var} string {var}{var }"
+
+chrome에서 localhost로 접속이 안되는 경우
+    https://solbel.tistory.com/586
+    크롬은 http localhost를 강제로 https localhost로 바꾼다.
+    https설정이 안되어 있다면 접속할 수 없다. 
