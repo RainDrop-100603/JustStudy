@@ -1,133 +1,7 @@
 study tmp 
 
-핫스팟을 이용한 인터넷 - 게스트 네트워크 - 로컬호스트가 안되는듯 ?
-
-core: 다른 application에서 사용 가능한 common 파일을 만들어 줄 것
-    user을 제외한 모든 app의 model은 core애서부터 확장시켜 나간다.
-        abstractUser는 이미 로그인, 가입을 기록하는 기능이 있어서?
-    core에 있는 model은 database에 저장하는 용도가 아니라, 다른 model에서 가져가는 용도이다.
-            class Meta: 
-                abstarct = True
-        -> Meta: 추가적인정보를 기입하는 class
-            abstract: database에 나타나지 않는 model을 의미함, 대부분 확장용 
-    AbstractUser도 database에 저장되지 않고 코드에서만 쓰인다?
-    abstract = True 는, 중복되는 것들을 방지하기 위해서 쓰인다.
-        중복되는 item을 모든 app에서 hard coding하기는 매우 힘들다.
-
-from . import blabla 에서, . 은 자기가 있는 폴더를 의미함 
-
-third party app
-    django_countries : 모든 나라 
-
-python-django - third party- user app 순서로 import
-
-models.ForeignKey()?
-    한 모델과 다른 모델을 연결
-        room -> user (양방향은 아닌듯?) 
-    many to one relationship
-        many rooms can have one users
-        user can have many rooms
-    다른 model을 import하여 사용할 수 있도록?
-    예를들어 superhost는 결국 user model이므로, user model을 가져오기 위해 ForeignKey를 쓴다.
-
-many to many relationship
-    예시: 나는 형제자매를 여럿 가질 수 있다.
-    여러 room들은 각자 여러개의 room type를 가질 수 있다.
-    ManyToMany() 이용 
-
-many to one relationship
-    예시: 엄마는 여러 자식을 가질 수 있지만, 자식은 한명의 엄마를 가진다.
-
-
-DateField?
-    auto_now=True : 필드가 model을 save할 때 date와 time을 기록
-    auto_now_add=True : 이 필드는 model을 생성할 때마다 수시로 업데이트 
-    created = models.DateTimeField(auto_now_add=True)
-        model이 생성된 날짜를 구함
-    updated = models.DateTimeField(auto_now=True)
-        새로운 날짜로 업데이트를 해줌 
-
-string method
-    파이썬과 장고의 모든 class가 가지고 있는 method
-    작동원리와 관련있다.
-        클래스를 발견하면 string으로 변환한다.
-        파이썬 : __str__ 
-    클래스를 발견하면 string으로 변환하여 보여준다?
-    추측하기로, 어떤 클래스를 가져올 때 어떻게 보여질 것인지
-        예시
-            object1: name=rain, age= 17
-            object2: name=park, age= 19
-            기본적으로 object를 불러오면, object1, object2 라는 str로 가져온다
-                __str__(self): 
-                    return self.name
-                위와 같이 수정하면, object를 불러올 때 rain과 park라는 str로 불러온다.
-                마찬가지로 self.age를 반환하게 하면, 17과 19라는 str(이름)으로 불러온다.
-    room = models.ForeignKey("Room", on_delete=models.CASCADE)
-        Room은 self class보다 아래에서 정의되었다.
-        Room class 는 __str__을 통해 "Room"으로 반환되므로, Room 대신 "Room"을 넣어도 된다.
-        __str__을 이용한 방식은, 정의 시점이 상관 없기 때문에 유용하다.
-    str 비교 2: 아래 두 문장은 같다.
-        host = models.ForeignKey(user_models.User, on_delete=models.CASCADE)
-        host = models.ForeignKey("users.User", on_delete=models.CASCADE)
-        User은 users라는 폴더의 class이다.
-            users의 User이기 때문에, "users.User" 로 해야 찾을 수 있는 듯 하다.
-            같은 폴더에 있는건 굳이 그럴 필요가 없다.
-            쉽게 생각해서, 내 .py파일에 있는 class는 그냥 str==class이름, 
-                다른 위치에 있는 class는 import이름.class이름 인듯 하다.
-            더 자세한건 나중에 더 알아보자 
-
-host = models.ForeignKey(user_models.User, on_delete=models.CASCADE)
-    room 의 user_models.User가 삭제되면, 해당 user에 등록된 rooms도 모두 삭제한다
-        CASCADE: 폭포수, 상위 객체가 삭제되면 하위 객체도 삭제됨
-        PROTECT: 하위 객체를 지워야 상위 객체를 지울 수 있다. rooms을 모두 지워야 user을 지울 수 있다.
-        다른 동작들도 documentaion에서 볼 수 있다.
-    many to one 만 on_delete를 가진다.
-
-정보 관리
-    사용자가 직접 내용을 입력
-        model을 admin에 등록 - admin panel에서 수정 가능
-    사용자는 정해진 항목을 선택
-        등록 x - 코딩을 통해서만 항목을 수정 가능 
-        ex: 국가목록의 경우에는 직접 추가하기보다는, 이미 있는 것들만 사용하게 하도록
-
-한번에 여러개 등록 가능하다 
-@admin.register(models.RoomType, models.Facility, ...)
-class ItemAdmin(admin.ModelAdmin):
-    pass 
-
-class Meta
-    여러 기능을 추가할 수 있다.
-    verbose_name : 표기되는 이름
-    verbose_name_plural : 복수형으로 표기되는 이름
-    ordering : 정렬기준 
-
-blank=True?
-https://stackoverflow.com/questions/4384098/in-django-models-py-whats-the-difference-between-default-null-and-blank
-
-related_name이용
-    class Person2Person(models.Model):
-        person = models.ForeignKey(Person, related_name='person2persons')
-        friend = models.ForeignKey(Person, related_name='friends')
-
-fieldset: 입력 정보를 구분하는것
-    예를 들어서 회원 가입할 때, 개인정보 탭, 유저정보 탭, 로그인정보 탭으로 나눌 수 있다.
-
-https://stackoverflow.com/questions/30181079/django-limit-choices-to-for-multiple-fields-with-or-condition
-https://docs.djangoproject.com/en/dev/topics/db/queries/#complex-lookups-with-q
-limit choices to : or
-    limit_choices_to=Q(share_holder=True) | Q(distributor=True)
-limit choices to : and  
-    limit_choices_to={'share_holder': True, 'distributor': True}
-
-Q: bool 확인을 하는 것에서 더 다양한 옵션을 주는것 같다.
 
 Admin panel
-    search_field
-    ForeignKey, manytoMany등으로 불러온 class에 접근
-        className__element 방식
-    filter horizontal
-    fieldset
-        class: 추가적인 기능 부여 (hide/open기능 등)
     ordering
     many to many lise_display 방법
         amenities 대신 count_amenities list
@@ -141,12 +15,7 @@ Admin panel
         obj.amenities.count()
 
 
-config-settings: third party app은 안 더해도 되나?
-Django get model from string, ForeignKey와 ManyToMany등은 일당 가능 
-    https://stackoverflow.com/questions/4881607/django-get-model-from-string
-    https://docs.djangoproject.com/en/2.2/ref/applications/#initialization-process
-    https://docs.djangoproject.com/en/3.2/ref/applications/#django.apps.AppConfig.get_model
-
+   
 python: __str__ 과 __repr__의 차이 
     https://shoark7.github.io/programming/python/difference-between-__repr__-vs-__str__
 python: __ini__ 찾아보기 
@@ -156,28 +25,4 @@ _set : 나를 (ForeignKey등으로) 지정한 객체들의 리스트
     related_name: a_set의 이름을 바꿔준다
         related_name이 같아도 된다? 
 
-django update to 2.2.24(remove and install)
-5-7장 복습 
 
-relationship
-    relation 대상에 대한 접근을 허용한다.
-    str 방식: class파일명.class이름명
-    종류
-        ForeignKey(many to one)
-        one to one
-        many yo many
-
-from .은 자기 폴더를 의미함 
-__str__
-    이것을 잘 정의하면, print(object.name)대신 print(object)만 해도 된다.
-        오히려 더 원하는 대로 설정 가능 
-    항상 str을 반환해야한다. str같아 보여도 아닌것들이 있으니 유의하자 
-
-f"{var} string {var}{var }"
-
-chrome에서 localhost로 접속이 안되는 경우
-    https://solbel.tistory.com/586
-    크롬은 http localhost를 강제로 https localhost로 바꾼다.
-    https설정이 안되어 있다면 접속할 수 없다. 
-
-many to many에서의 blank=True 이용 
