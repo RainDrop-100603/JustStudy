@@ -91,3 +91,29 @@ django.utils timezone
         timezone.now().date() : 현재시각 
 
 funcName.boolean = True : admin panel에서 boolean 형식으로 보여준다. 
+
+python ", ".join(arr) : list의 요소를 모두 이은 str 반환, ""안에 있는 것은 list요소 사이사이에 추가한다. 
+    즉 여기선 "ele1, ele2, ele3, ele4" 와 같은 str이 반환된다.
+
+-------------------------------------ch9
+
+python manage.py customCommands 
+    application - management 폴더 생성 
+    __init__.py 생성 
+    commands폴더 생성, 내부에 __init.py 생성 
+        내부에 customCommand.py 생성 
+            from django.core.management.base import BaseCommand
+            class Command(BaseCommand):
+                help = "description"
+                blabla 
+                def add_arguments(self, parser):
+                    parser.add_argument("--times", help="repeat func")
+                def handle(self, *args, **options) // command의 실제 logic, 반드시 구현해야한다.
+                    times = options.get("times")
+                    for i in range(0,int(times)):
+                        //print("i love you")
+                        self.stdout.write(self.style.SUCCESS("i love you")) //녹색출력
+                        self.stdout.write(self.style.ERROR("i love you")) //적색출력
+                        self.stdout.write(self.style.WARNING("i love you")) //주황색출력 
+
+django seed : 가짜 데이터를 만드는데 사용 
