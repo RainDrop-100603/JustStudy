@@ -70,3 +70,24 @@ class가 아닌 특정 조건을 가진 obj 에 대한 code 도 작성이 가능
     ex: used_by(self,obj): ret obj.rooms.count() -- 특정 facility가 존재하는 room 갯수, 특정 amenity가 존재하는 room 갯수는 동일한 함수를 통해 구현된다. 
 
 
+/////////////////////////////////////////////////////////////////////ch8
+UserAdmin.list_filter 
+
+어떤 기능이 admin panel 뿐 아니라 모든곳(admin,frontend,console ...)에 있기를 원한다 -> admin.py 가 아닌 model.py에서 정의하면 된다.
+
+list_display에 __str__도 넣을 수 있다 
+
+방의 전체 평점을 구하는 방법
+    def total_rating(self):
+        all_reviews = self.reviews.all() // 방이 가진 모든 reivew의 QuerySet 반환 
+        avg = 0
+        for review in all_reviews:
+            avg += review.rating_average()
+        return avg/len(all_reviews)
+
+django.utils timezone
+    django에서 제공하므로 기능호환성이 좋다 
+    함수    
+        timezone.now().date() : 현재시각 
+
+funcName.boolean = True : admin panel에서 boolean 형식으로 보여준다. 
