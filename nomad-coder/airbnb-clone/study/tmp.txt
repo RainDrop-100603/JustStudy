@@ -45,6 +45,7 @@ django에서 python으로 database 다루기
         python manage.py shell
         from usr.models import User : 다루기 원하는 요소 import
     함수
+        exit(): console 종료 
         objects: python을 통해 database에서 정보를 가져올 수 있게끔 한다? 아니면 object(객체)를 다루는 요소, 즉 전체 컨트롤 API의 일부? 
             className.objects.all(): 모든 obj를 QuerySet형식으로 반환한다.
             className.objects.count(): obj의 개수를 반환한다. 
