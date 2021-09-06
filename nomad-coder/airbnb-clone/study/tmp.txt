@@ -26,3 +26,46 @@ _set : 나를 (ForeignKey등으로) 지정한 객체들의 리스트
         related_name이 같아도 된다? 
 
 
+Relationship
+    QuerySet: ManyToMany, Foreignkey
+        ManyToMany, Foreignkey (from) 등으로 지정된 target에는, set_fromName 이라는 QuerySet이 생성된다.
+            related_name="names"를 ManyToMany, Foreignkey의 arg로 넣으면, set_fromName이 names로 이름이 바뀐다.
+            related_name은 같은 target에 대해서는 모두 이름이 달라야 한다. (당연히 중복되면 안된다.)
+                from이 같더라도 target이 다르면 이름이 동일해도 상관없다. 이것은 target에 생성되는 것이지, from에 생성되는 것이 아니기 때문이다.
+    요소 
+        obj.name.count(): ManyToMany
+            개수를 세준다.
+        obj.name.all(): ManyToMany
+            모든 요소를 queryset으로 반환한다.
+
+
+django에서 python으로 database 다루기
+    순서
+        pipenv shell
+        python manage.py shell
+        from usr.models import User : 다루기 원하는 요소 import
+    함수
+        objects: python을 통해 database에서 정보를 가져올 수 있게끔 한다? 아니면 object(객체)를 다루는 요소, 즉 전체 컨트롤 API의 일부? 
+            className.objects.all(): 모든 obj를 QuerySet형식으로 반환한다.
+            className.objects.count(): obj의 개수를 반환한다. 
+        vars(class): return __dic__ of class
+        dirs(class): return list of names in the current local scope(==class)
+    QuerySet
+        QuerySet.filter(조건): 조건에 따른 QuerySet 반환, startswith과 같은 검색조건도 설정 가능하다.
+            ex: User.filter(name__startswith = "sweet") 
+        Get(조건): 조건에 맞는 obj를 반환한다.
+            조건: id=1 or pk(primary key)=1 (idx start from 1), name = "sweet House", etc ...
+            여러개를 찾을경우 ModelClassName.MultipleObjectsReturned 예외 발생 
+            하나도 없을경우 ModelClassName.DoesNotExist 예외 발생 
+    참고
+        Making Queries Documeny를 보면, data model을 만들면 자동으로 database-abstraction API를 생성해준다. (이것이 objects 함수?)
+        파이썬과 같이 변수지정을 할 수 있다. ex: userQuery=User.objects.all()
+        Ctrl + L = clear console 
+        database가 변경되면, console을 재시작 해야한다? migration이 변경되면인가 database가 변경되면인가?
+
+class가 아닌 특정 조건을 가진 obj 에 대한 code 도 작성이 가능하다? 
+
+여러 model Object가 동일한 기능을 구현해야 한다면, 해당 object를 하나의 admin Class 에 register시키는 것도 좋은 방법이다.
+    ex: used_by(self,obj): ret obj.rooms.count() -- 특정 facility가 존재하는 room 갯수, 특정 amenity가 존재하는 room 갯수는 동일한 함수를 통해 구현된다. 
+
+
