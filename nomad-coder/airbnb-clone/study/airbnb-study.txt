@@ -211,10 +211,57 @@ Django
             application - management폴더 생성 : 원하는 app에 management 폴더 생성
             management폴더 내부에 __init__.py, commands폴더 생성 
             commands폴더 내부에 __init__.py, customCommandName.py 생성
-            customCommandName.py에 명령어를 만든다.
-        명령어 생성
-            from django.core.management.base import BaseCommand: BaseCommand상속
-            class Command(BaseCommand): CommandName은 파일명에서만 정의하고, 
+            customCommandName.py 구조
+                명령어의 이름은 파일명에서 정의했으므로, 나머지 구조는 django layout을 따른다.
+                from django.core.management.base import BaseCommand: BaseCommand 상속
+                    Command는 BaseCommand 혹은 그것의 subclass(Doc참고)를 상속해야한다.
+                from polls.models import modelClass: 명령어의 수행과 관련된 class import
+                class Command: command 구현 
+            class Command 구조    
+                help = "explain"
+                def add_arguments(self,parser):   //명령어의 option 추가 
+                    parser.add_argument("--times", other args)
+                        default : --times timesNum 에서 timesNum이 없을경우 default
+                        type = int : 입력 설정
+                        help : 설명 
+                    // arguments들은 handle의 options에 arr형태로 들어간다.
+                    // 따라서 options["times] 혹은 options.get("times")로 times를 얻을 수 있다.
+                def handle(self,*args,**options): //command의 logic, 구현 필수
+                    //self = obj,  
+                    // add_argument로 추가된 arg는 options에 arr형태로 가져온다.
+                    logic
+        명령어들
+            ModelName.objects.create(name = a, ele1 = bla): obj 생성
+                ModelName 의 object를 생성한다.
+                required ele들은 모두 넣어주어야 한다.
+                Amenities와 같이 정해져 있는 것들을 한번에 만들때 유용하다.
+            self.stdout.write(self.style.SUCCESS("strings")): 표준 출력
+                SUCCESS(초록), WARNING(주황), ERROR(빨강) str 출력 
+        THIRD_PARTY_APPS
+            django-seed: fake-data 생성기, install django-seed 필요 
+                구조
+                    seeder=seed.seeder(): seed함수     
+                    seeder.add_entity(User,num,{options}): User obj를 option에따라 num개 생성
+                    seeder.execute(): 생성한것을 적용, 생성한것들의 pk arr 반환
+                        이 pk를 이용하여, 일단 생성한 후 elements를 수정해도 된다.
+                        flatten을 이용하면 편하다?
+                options
+                    {ele1=bla, ele2=blabla, option3, ...} 와 같은 형식 
+                    option으로 정해지지 않은것은 랜덤으로 설정된다.
+                    완전랜덤이 아닌 logic을 원한다면, lambda x: 를 이용하면 된다,
+                    ForeignKey, ManyToMany와 같이 다른 model의 class를 지정하는것은 랜덤생성이 불가하다.
+                        직접 logic을 설계해야한다.
+                        all_users = user_models.User.objects.all() 와 같은 방식으로 target model class를 가져와야한다.
+                            위 방법은 object가 많을 경우 비효율적이므로 권장되지 않는다. 참고만 하자 
+                faker 명령어
+                    seeder.faker.address()
+        기타 요소
+            import random
+                fake data logic을 설계에 유용하게 사용할 수 있다.
+            from django.contrib.admin.utils import flatten
+                정확히 무슨 기능과 용도인지 추가바람 
+            from datetime import datetime, timedelta
+                timedelta(days=random.randint(3, 25)): 시간을 추가하는 용도로 쓰인다.
     기타요소
         class Meta: 추가적인 기능, 정보등을 다루는 class
             abstract: 자체 database를 사용하지 않는 model임을 나타낸다.

@@ -97,40 +97,6 @@ python ", ".join(arr) : list의 요소를 모두 이은 str 반환, ""안에 있
 
 -------------------------------------ch9
 
-python manage.py customCommands 
-    application - management 폴더 생성 
-    __init__.py 생성 
-    commands폴더 생성, 내부에 __init.py 생성 
-        내부에 customCommand.py 생성 
-            from django.core.management.base import BaseCommand
-            class Command(BaseCommand):
-                help = "description"
-                blabla 
-                def add_arguments(self, parser):
-                    parser.add_argument("--times", help="repeat func")
-                def handle(self, *args, **options) // command의 실제 logic, 반드시 구현해야한다.
-                    times = options.get("times")
-                    for i in range(0,int(times)):
-                        //print("i love you")
-                        self.stdout.write(self.style.SUCCESS("i love you")) //녹색출력
-                        self.stdout.write(self.style.ERROR("i love you")) //적색출력
-                        self.stdout.write(self.style.WARNING("i love you")) //주황색출력 
-
-django seed : 가짜 데이터를 만드는데 사용 
-
-
-Code로 amenitiy등 element를 만드는 법
-
-
-seed_amenities.py
-Command
- help
- handle
--import room_models 
--미리 amenities arr을 만든다.
--For a in amenitiesArr
-—Amenity.objects.create(name = a)
-
 Django.seed
  Faker: 스스로 가짜 데이터를 만들어줌
  Install 필요, third party app
