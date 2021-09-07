@@ -16,3 +16,8 @@ ForeignKey필드에 related_name 옵션은 ForeignKey필드가 바라보는 객�
 다대다 관계면 사용하는 ManyToManyField는 ForeignKey필드와 같이 인자로 모델 이름이 필요합니다. related_name 옵션으로 역참조로 사용할 문자열을 설정합니다. 예를 들면 FavList Model에서 books = models.ManyToManyField("books.Book", related_name="fav_lists")으로 정의했습니다. 일대일 관계를 나타내는 OneToOneField는 ForeignKey필드와 같이 인자로 모델 이름이 필요하고 on_delete 옵션이 있습니다. 예를 들면 FavList Model에서 created_by = models.OneToOneField("users.User", on_delete=models.CASCADE)으로 정의했습니다. 애플리케이션에서 사용자 1명당 하나의 FavList를 만들어 주기 위해서 OneToOneField를 사용했습니다.
 저번 챌린지와 마찬가지로 admin.register 데코레이터는 모델 클래스들을 어드민 패널에 등록시키기 위해 Model Admin 클래스를 감싸줍니다. 예를 들면 **@admin** .register(Book) 데코레이터를 사용해서 Book Model이 어드민 패널에 보일 수 있도록 합니다.
 저번 챌린지와 마찬가지로 list_display를 이용해서 리스트 페이지에서 보이는 필드를 결정합니다. list_filter를 이용해서 사이드 바에서 보일 필터를 결정합니다.
+
+chg4
+https://replit.com/@RainDrop97/LoathsomeLazyAbility-1
+https://velog.io/@kmnkit/Django-Seed-Faker%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%A7%8C%EB%93%A4%EA%B8%B0-%EC%B4%9D%EC%A0%95%EB%A6%AC
+https://github.com/Brobin/django-seed/blob/master/django_seed/seeder.py

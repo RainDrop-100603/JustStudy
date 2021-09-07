@@ -247,7 +247,7 @@ Django
                         이 pk를 이용하여, 일단 생성한 후 elements를 수정해도 된다.
                         flatten을 이용하면 편하다?
                 options
-                    {ele1=bla, ele2=blabla, option3, ...} 와 같은 형식 
+                    {ele1:bla, ele2:blabla, option3, ...} 와 같은 형식 
                     option으로 정해지지 않은것은 랜덤으로 설정된다.
                     완전랜덤이 아닌 logic을 원한다면, lambda x: 를 이용하면 된다,
                     ForeignKey, ManyToMany와 같이 다른 model의 class를 지정하는것은 랜덤생성이 불가하다.
@@ -255,12 +255,20 @@ Django
                         all_users = user_models.User.objects.all() 와 같은 방식으로 target model class를 가져와야한다.
                             위 방법은 object가 많을 경우 비효율적이므로 권장되지 않는다. 참고만 하자 
                 faker 명령어
-                    seeder.faker.address()
+                    https://faker.readthedocs.io/en/master/
+                    from faker import Faker     
+                        Faker().text(), and etc ...
+                    lambda x: seeder.faker.text()로 사용 해야 진정한 랜덤 
         기타 요소
             import random
                 fake data logic을 설계에 유용하게 사용할 수 있다.
             from django.contrib.admin.utils import flatten
                 정확히 무슨 기능과 용도인지 추가바람 
+                seeder.execute()가 iterator을 반환하는가?
+                    https://www.programiz.com/python-programming/methods/built-in/filter
+                ret={<class "movies.models.Movie">: [1,2,3,4,5, .. ,num]} 의 형식으로 반환되고
+                ret.values() = ([[1,2,3,4,5, .. ,num]]) 과 같이 반환된다.
+                flatten(ret.values()) = [1,2,3,4,5, .. ,num]
             from datetime import datetime, timedelta
                 timedelta(days=random.randint(3, 25)): 시간을 추가하는 용도로 쓰인다.
     기타요소
