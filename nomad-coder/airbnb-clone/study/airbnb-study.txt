@@ -240,7 +240,8 @@ Django
         THIRD_PARTY_APPS
             django-seed: fake-data 생성기, install django-seed 필요 
                 구조
-                    seeder=seed.seeder(): seed함수     
+                    from django_seed import Seed: Seed import
+                    seeder=Seed.seeder(): seed함수     
                     seeder.add_entity(User,num,{options}): User obj를 option에따라 num개 생성
                     seeder.execute(): 생성한것을 적용, 생성한것들의 pk arr 반환
                         이 pk를 이용하여, 일단 생성한 후 elements를 수정해도 된다.
