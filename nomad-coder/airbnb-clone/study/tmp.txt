@@ -117,3 +117,85 @@ python manage.py customCommands
                         self.stdout.write(self.style.WARNING("i love you")) //주황색출력 
 
 django seed : 가짜 데이터를 만드는데 사용 
+
+
+Code로 amenitiy등 element를 만드는 법
+
+
+seed_amenities.py
+Command
+ help
+ handle
+-import room_models 
+-미리 amenities arr을 만든다.
+-For a in amenitiesArr
+—Amenity.objects.create(name = a)
+
+Django.seed
+ Faker: 스스로 가짜 데이터를 만들어줌
+ Install 필요, third party app
+ 완전 랜덤으로 만들수도 있고, lambda를 통해 만드는 방식을 지정할 수도 있다.
+add_arguments: —number이용하자, default설정 가능,type=int 설정하면 입력을 int형식으로 받는다
+handle:
+-number = options.get(“number”) //—number arg의 갯수를 가져온다
+-seeder=seed.seeder() // seed 함수
+-seeder.add_entity(User,number, {“is_staff”: False, “is_superuser”:False, …}) // 설정따로 안한것들은 알아서 만들어준다.
+-seeder.execute()
+//foreingkey도 랜덤으로선택해주지는 않는다, 따로 설정 필요 : lambda 등 이용 가능
+//방법 1: user_models.User.objects.all()로 모든 유저 가져와서, import random 후  lambda함수에 random.choice(arr)을 통해 랜덤 선택, 이것은 user의 수가 엄청 많을수도 없으므로 권장되는 방식은 아니다.
+
+Photo random import
+미리 파일들을 model폴더에 넣어둔다(ch8참고)
+
+
+Import할 때 class하나만 import해도 된다
+
+Div0에러 조심, 별점의 평균의 경우 발생할 수 있다, if문을 통해 제외하든, max문을 이용하든 자유
+
+Random.randint(min,max)
+
+fake third party app도 doc가 있다(faker providers.address라고 찾아보자)
+
+django.contrib.admin.utils import flatten
+ [[15]] 와 같은것을 15로 만들어준다.
+
+created_photos=seeder.execute()
+// seeder.execute()가 무엇을 반환하나? - object의 id(pk)
+created_clean = flatten(list(creatrd_photos.values()))
+//왜 list로 만들었지?
+for pk in created_clean: 
+- photo = room=room_models.Room.objects.get(pk=pk)
+//생성된 room의 obj id를 가져옴
+- for i in range(3.,random.randint(10,15)):
+-  -Room_models.Photo.objects.create(
+-   -  caption=seeder.faker.sentence()
+-   -  room = room
+-   -  file = room_photos/{random.randint(1,10)}.webp”
+
+ManyToMany를 faker하는 방법, 사진추가와 똑같은 원리
+ For a in amenities
+  MaigcNumber=random.randint(1,15)
+  If magicNumber % 3 == 0
+   Room.amenities.add(a)
+//room은 get을 통해 가져온 obj, 위 경우 추가확률은 33%
+
+
+Seed_ Review
+
+Seed_whatsss 가 비슷한 형식들이라면, 몇몇 이름은 상수화 시켜서 해당 상수만 바꾸면 된다 :  NAME= “review”, 근데 python은 상수가 안겹치나보지?
+
+Array제한
+ Arr[3:7]  : 3에서 7까지만
+
+Seed_reservation
+Chkin과 chkout시간 관리하자
+From datetime import datetime, timedelta
+Chkin: datetime.now()
+Chkout:datetime.now()+timedelta(days=random.randint(1,4))
+
+9.7의 6분 8초 보면, 배열을 한번에 다 추가할수도 있는듯?
+
+9단원 정리 하고
+Challenge하고
+8단원하고 정리하고
+Code 정리하기
