@@ -161,7 +161,114 @@ Chkout:datetime.now()+timedelta(days=random.randint(1,4))
 
 9.7의 6분 8초 보면, 배열을 한번에 다 추가할수도 있는듯?
 
-9단원 정리 하고
-Challenge하고
-8단원하고 정리하고
-Code 정리하기
+9단원 정리 하고  세모
+Challenge하고    O
+8단원하고 정리하고  X
+Code 정리하기   X
+
+------------------ch 10
+장고에서의 url 
+    urlpatterns = [path(url, view)]
+        url은 특정 요청, view는 요청에 대한 답
+            ex: /admin은 admin panel을 보고 싶다는 요청 
+        view는 func :
+            app에서 view에 func를 만든다.
+                config - urls.py에서 urlpattenrs를 직접 다뤄도 되고
+                각 app의 urls.py에서 urlpatterns를 만들고 config - urls.py에 불러와도 된다.
+                    1. core urls에 urlpatterns들을 만든다.
+                        from django.urls import path
+                        from ~bla import view
+                        app_name = "core"       (or other app name )
+                    2. config - urls.py에 해당 urlpatterns들을 추가한다.
+                        from django.ruls import path, include
+                        urlpatterns=[
+                            path("",include("core.urls", namespace="core")), 
+                            path("admin/", admin.site.urls), 
+                            ...
+                        ]
+                    3. urlpattenrs에선 앞에서 정의한 path부터 확인한다? 
+        urlpatterns arg
+            ""는 site_url/ 와 같다, 뒤에 아무것도 안붙은 상태
+                "admin/" = site_url/admin/
+            namespace : app_name과 같아야 한다.
+            name 
+        url divide
+            /room, /user 같은 것은 해당 app으로 보낸다.
+            /home과 같이 특정 app의 이름이 아닌것은 core로 보낸다. 
+    view
+        HTTP Request에 대해 HTTP Response를 응답한다.
+            url이 request? view가 response?
+        django가 request를 받으면 이를 python object로 변경시켜 첫 번째 인자로 준다.
+            def all_rooms(request): //request가 인자로 바뀐것 
+            var(request)를 통해 인자 내용 확인 가능 
+        HttpResponse
+            HttpRequest에 대한 응답 
+            hard coding하고 싶으면 직접 import하여 사용할 수 있다.
+                from django.http import HttpResponse
+            django에서는 일반적으로 render을 이용한다.
+        render
+            html template를 HttpResponse에 넣어서 보내준다.
+        구조
+            from django.shortcuts import render
+            def all_rooms(request):
+                //var
+                all_room=Rooms.objects.all()
+                hungry=True
+                return render(request, "rooms/home.html",     //"rooms/home.html" 은 template 경로
+                            context={"rooms" : all_room, "hungry" : hungry}
+                       )
+        context: template로 보내는 변수 
+            {"template에서의 변수명" : 보내고자 하는 변수}
+            template에서 {{var}} 과 같은 방식으로 이용 가능하다 
+        template
+            settings.py 의 TEMPLATES에 DIRS가 template폴더의 경로를 의미함
+                os.path.join(BASE_DIR,"templates")
+                    os.path.join은 운영체제 단위 경로, 
+                    BASE_DIR은 django project 경로를 나타내는듯.
+                    "templates"는 해당경로에서 어떤 폴더를 선택하는지를 의미하는듯? 
+            변수이용
+                {{var}}
+            python logic
+                {% if %} {% else %} {% endif %}
+                자동완성이 된다?
+                    django snippets
+                {% %} 내부에서는 var을 그냥 써도 된다. {{}} 불필요 
+                들여쓰기는 선택, {% %}로 구분이 되기때문에 없어도 되는것 
+                종류
+                    if : else : endif
+                    for ~ in : endfor
+            html-template tip 
+                구조
+                    template
+                        base.html
+                        partials-folder
+                            header.html
+                        rooms-folder
+                            rooms.html
+                        home-folder
+                        page3-folder
+                html 상속
+                    inheritance가 template에도 존재한다.
+                    base.html
+                        html에서 공통적으로 이용되는 골격,outline을 만든다.
+                    상속 방법
+                        parent
+                            {% block contentName %} {% endblock %} 
+                                : child의 content가 들어갈 위치.
+                        child
+                            {% extends "base.html" %} : 상속
+                            {% block contentName %} contents {% endblock contentName %} 
+                                : parent의 contentName block에 넣을 contents를 적어준다.
+                                사용자가 수정가능한 부분에는 다 들어갈 수 있다.
+                divide & conquer을 적극 차용한다.
+                    partials folder를 이용하여 base.html을 가볍게 만든다.
+                    예시
+                        base
+                            {% include "partials/footer.html" %}
+                        footer
+                            <footer> &copy AIRBNB </footer>
+            기타 html 요소
+                아이콘
+                    &copy
+
+ch10까지는 대부분 기능적인 설명을 위함이고, 세부적인 구현 방식등은 추후 사용하는 방식으로 변경될 수 있다.
