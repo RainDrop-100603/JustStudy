@@ -33,3 +33,6 @@ django_seed는 테스트 DB 만드는 것을 도와줍니다. 테스트 DB를 �
 handle(self, *args, **options)메서드에서 self.stdout.write()함수를 사용해서 콘솔에 문자열을 출력할 수 있습니다.
 seeder = Seed.seeder()는 locale값으로 지역 설정을 할 수 있습니다. locale값의 기본값은 'en_US'입니다. faker 공식문서에서 가능한 locale값들을 찾을 수 있습니다. 참고로 한국 값은 'ko_KR'입니다. Seed.seeder(locale='ko_KR')로 한국에 맞는 값들을 얻을 수 있습니다. 솔루션에서 사용한 seeder.faker.year(), seeder.faker.name(), seeder.faker.sentence()는 'en_US'문서에서 어떤 값을 반환하는지 알 수 있습니다.
 Person.objects.filter(kind=Person.KIND_WRITER)은 kind=Person.KIND_WRITER 조건을 만족하는 Person의 QuerySet을 반환합니다. Category.objects.get_or_create(name=genre, kind=Category.KIND_BOOK)은 name=genre, kind=Category.KIND_BOOK 조건을 만족하는 Category DB가 존재하면 존재하는 것을 반환하고 존재하지 않으면 새로 생성하는 메서드입니다. QuerySet 공식문서를 보면 자세한 사항을 확인할 수 있습니다.
+
+chg5
+https://replit.com/@RainDrop97/JoyfulInsidiousAutomaticvectorization-1
