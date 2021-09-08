@@ -202,6 +202,29 @@ Code 정리하기   X
         url divide
             /room, /user 같은 것은 해당 app으로 보낸다.
             /home과 같이 특정 app의 이름이 아닌것은 core로 보낸다. 
+        include에 대한 이해     
+            1. config.urls.py
+                urlpatterns=[path("blog/"),include("blog.urls")]
+            2. blog - urls.py
+                urlpatterns=[
+                    path("",views1),        //real address = /blog/
+                    path("info/",views2)    //real address = /blog/info
+                ]
+        url namespace
+            URL namespaces allow you to uniquely reverse named URL patterns 
+                even if different applications use the same URL names. 
+            It’s a good practice for third-party apps 
+                to always use namespaced URLs (as we did in the tutorial)
+            추측
+                url을 하드코딩하는 것이 아니라, urlpattenrs에 있는 name을 통해서도 접근할 수 있다.
+                이때 다른 instance들의 name이 같으면 목적지를 알 수 없다.
+                    instance: 실제로 사용할 수 있는, 혹은 사용하고 있는 class 틀 정도라고 생각하면 될듯?
+                namespace를 사용하면, name이 같아도 namespace를 표기함으로서 목적지를 정확히 할 수 없다.
+                    표기는 namespace:name 으로 하려나?
+                config - urls.py에서 namespace를 반드시 명기해야 하는가?
+                    추측하기로는, 이것은 namespace를 django에 등록하는 것인 듯 하다.
+                        django는 framework이므로, 정해진 규칙일수도 있다는 것이다.
+                    
     view
         HTTP Request에 대해 HTTP Response를 응답한다.
             url이 request? view가 response?
