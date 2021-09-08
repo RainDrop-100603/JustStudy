@@ -175,11 +175,17 @@ Code 정리하기   X
             app에서 view에 func를 만든다.
                 config - urls.py에서 urlpattenrs를 직접 다뤄도 되고
                 각 app의 urls.py에서 urlpatterns를 만들고 config - urls.py에 불러와도 된다.
-                    1. core urls에 urlpatterns들을 만든다.
+                    1. core urls에 urlpatterns들을 만든다.  //core는 예시
                         from django.urls import path
-                        from ~bla import view
-                        app_name = "core"       (or other app name )
-                    2. config - urls.py에 해당 urlpatterns들을 추가한다.
+                        from ~bla import views
+                        app_name = "core" 
+                        urlpatterns = [path("customPath/",views.all_rooms, name="home")]  
+                    2. views에 함수를 만든다.
+                        def all_rooms(request):
+                            return render(request, "rooms/home.html",   
+                            context={"rooms" : all_room, "hungry" : hungry}
+                       )    //render 참고 
+                    3. config - urls.py에 해당 urlpatterns들을 추가한다.
                         from django.ruls import path, include
                         urlpatterns=[
                             path("",include("core.urls", namespace="core")), 
@@ -192,6 +198,7 @@ Code 정리하기   X
                 "admin/" = site_url/admin/
             namespace : app_name과 같아야 한다.
             name 
+            include("include하길 원하는 urls.py", namespace="해당 urls.py에서 가져오길원하는 app_name")
         url divide
             /room, /user 같은 것은 해당 app으로 보낸다.
             /home과 같이 특정 app의 이름이 아닌것은 core로 보낸다. 
