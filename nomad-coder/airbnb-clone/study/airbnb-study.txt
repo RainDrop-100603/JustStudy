@@ -139,7 +139,7 @@ Django
                 AppNames는 DJANGO_APPS와 겹치지 않도록 하자. config-setiings.py에서 확인가능 
                 생성후 settings.py의 INSTALLED_APPS에 추가해야 적용된다.
             admins.py : admin에 반영되는 것들
-            apps.py : cofiguration 파일
+            apps.py : configuration 파일
             models.py : database와 form(app)에서 이용할 데이터를 정의한다.
             views.py : 사용자에게 보여지는곳, html render
     Applications
@@ -243,9 +243,12 @@ Django
                     from django_seed import Seed: Seed import
                     seeder=Seed.seeder(): seed함수     
                     seeder.add_entity(User,num,{options}): User obj를 option에따라 num개 생성
-                    seeder.execute(): 생성한것을 적용, 생성한것들의 pk arr 반환
-                        이 pk를 이용하여, 일단 생성한 후 elements를 수정해도 된다.
-                        flatten을 이용하면 편하다?
+                    created=seeder.execute(): 생성한것을 적용, 생성한것들의 pk queryset? 반환
+                        pk를 통해 obj를 불러올 수 있으므로, 일단 생성한 후 elements를 수정해도 된다.
+                            room=room_models.Room.objects.get(pk=pk)
+                    cleaned=flatten(created.values())
+                        created는 깔끔한 list가 아니므로 values만 추출하여 list로 만들었다.
+                        cleaned=flatten(list(created.values())): list없어도 동작하는데?   
                 options
                     {ele1:bla, ele2:blabla, option3, ...} 와 같은 형식 
                     option으로 정해지지 않은것은 랜덤으로 설정된다.
@@ -254,11 +257,25 @@ Django
                         직접 logic을 설계해야한다.
                         all_users = user_models.User.objects.all() 와 같은 방식으로 target model class를 가져와야한다.
                             위 방법은 object가 많을 경우 비효율적이므로 권장되지 않는다. 참고만 하자 
-                faker 명령어
+                가짜데이터 생성
                     https://faker.readthedocs.io/en/master/
                     from faker import Faker     
                         Faker().text(), and etc ...
+                    django-seed 에서 faker를 포함하므로, seed를 통해 사용해도 된다.
+                        seed.Seeder.faker.func()
                     lambda x: seeder.faker.text()로 사용 해야 진정한 랜덤 
+                        lambda가 있어야 매번 fake-data를 생성한다.
+                    ManyToMany
+                        일단 생성 후 pk를 이용하여 다시 불러와서 원소를 넣는다.
+                            Room.amenities.add(a)
+                        random을 이용하여 확률적으로 넣어도 된다.
+                            if random.randint(3,17) % 7 == 5  
+                    OneToOne
+                        미리 target을 지정하여 Book.objects.create() 형식으로 생성하자
+                        중복 pk(id) 필터링은 필수 
+                    ForeignKey
+                        lambda x: random.choices(list) 등을 이용하여 랜덤을으로 지정하자.
+
         기타 요소
             import random
                 fake data logic을 설계에 유용하게 사용할 수 있다.
