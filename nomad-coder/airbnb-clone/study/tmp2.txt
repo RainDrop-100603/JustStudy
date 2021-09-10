@@ -10,6 +10,9 @@ Django queryset은 Lazy하다.
     all=ele.objects.all()를 정의해도, 실제로 사용하기 전까지는 불러오지 않는다.
     따라서 all[:10]은 all에서 10개를 추려내는것이 아니라, 10개만 불러오는 것이다.
 div0 에러를 조심하자
+THIRD_PARTY_APPS를 등록 안하느 이유:    
+    장고에서 사용하는 것이 아니고, 각 앱에서 독립적으로 import되어 사용되기 때문이다.
+    등록되는 앱들은 다 django framework에서 사용하는 것들이다.
 seeder.execute()로 생성된것은 queryset인가?
     cleaned에서 list()를 추가해야 하는가? 
 django에서는 ()을 생략해도 함수라고 쳐 주는가? 
