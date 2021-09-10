@@ -107,3 +107,52 @@ Challenge하고    O
 8단원하고 정리하고  X
 Code 정리하기   X
 
+----ch 11----
+function based view
+    def function을 통해 기능 구현
+    간단해지긴 했지만 여전히 많은 반복작업 필요 (비슷한 기능 매번 구현)
+class based view
+    django가 미리 만들어둔 기능을 class를 통해 상속하여 이용한다.
+        from django.views.generic import bla~
+        urlpatterns - path는 함수만 view로서 갖는다.
+            따라서 class에서 함수를 가져와야 한다.
+            .as_view()를 통해 class에서 정의한 것들을 함수로 바꾸어 반환한다.
+            .as_view()는 이미 내장되어 있다.
+        각 parent마다 정해진 html이 있다.
+            ListView의 경우는 room_list.html 
+        각 기능들은 doc를 봐도 되고, 아래사이트에서 봐도 된다.
+            https://ccbv.co.uk/
+    기능
+        ListView
+            model = models.Room : 다루기 원하는 class model
+                model을 정의하면 알아서 원하는 양식들을 만들어 낸다.
+                html: object_list  
+            paginate_by: 한 페이지에 표현하는 갯수 
+            ordering
+            page_obj : paginator
+    context 수정 방법
+        class내부에 아래 내용을 정의하면 된다.
+        def get_context_data(self,**kwargs)
+            context=super().get_context_data(**kwargs)  //context불러오기
+            context["now"] = timezone.now() //context에 원하는 내용 추가 
+            return context
+    기타
+        function based view에서는 data를 직접 가공해야 했다.
+        class based view는 data의 가공을 대신 해준다. 
+        html에서 직접 구현해야 하는것은 동일하다. 
+    
+
+function based view:
+    def funcName(request)
+    html에 보낼 데이터를 직접 가공한다.
+class based view:
+    class className(parent) 
+    parent class를 상속하여 이용한다. 
+    몇몇 변수를 지정해주면 ,데이터 가공은 class에서 알아서 해준다.
+
+차이점: 데이터 가공을 직접하는가, class가 알아서 해주는가
+공통점: 가공된 데이터로 html을 구성하는것은 직접 해야한다.
+
+queryset .order_by
+    ascending: .order_by("ele")
+    descending: .order_by("-ele")

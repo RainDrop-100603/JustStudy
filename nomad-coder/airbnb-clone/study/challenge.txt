@@ -65,7 +65,31 @@ config/settings.py의 TEMPLATES변수를 통해 어디서 템플릿을 찾을지
 
 chg6
 https://replit.com/@RainDrop97/SecretTightLevel-1
+https://replit.com/@RainDrop97/FairTotalMacrolanguage
+솔루션에서 / URL로 보낸 HTTP 요청을 처리하기 위해서 core.views.resolve_home() 함수를 사용했습니다.
+페이지 값은 URL에 쿼리 파라미터(query parameters)로 입력 받았습니다. 예를 들면 /?page=2 URL은 쿼리 파라미터에 페이지 값이 2가 됩니다.
+resolve_home(request)에서 request.GET에서 쿼리 파라미터 값들을 얻을 수 있습니다. page=request.GET.get('page',1)를 통해서 쿼리 파라미터 값을 입력 받았습니다. 쿼리 파라미터에 페이지 값이 없으면 기본값으로 1이 됩니다.
+resolve_home() 함수에서 최신 영화 리스트를 보내는 것을 살펴봅시다.
+movies = Movie.objects.all().order_by('pk')으로 pk순으로 영화 QuerySet을 얻습니다.
+장고에서 제공하는 Paginator클래스를 사용해서 영화 QuerySet에 대한 페이지네이션을 합니다.
+Paginator 클래스를 살펴보면 Paginator(object_list, per_page, orphans=0, allow_empty_first_page=True)로 Paginator객체를 만듭니다.
+object_list는 필수 인자이고 list, tuple, QuerySet이 입력됩니다. per_page는 필수 인자이고 orphans가 없다면 각 페이지당 최대 개수가 됩니다.
+orphans는 적은 자료를 가진 마지막 페이지를 가지고 싶지 않을 때 사용합니다. 솔루션을 보면 Paginator(movies, 10, orphans=5) 입니다. 마지막 페이지에 영화가 5개가 있다면 페이지를 만들지 않고 마지막 페이지에 15개의 영화가 포함됩니다. orphans의 기본값은 0입니다.
+allow_empty_first_page는 첫 번째 페이지가 빈 페이지일 수 있는지 결정합니다. 기본값은 True이고 False이면 첫 번째 페이지가 빈 페이지일 때 EmptyPage 에러가 발생합니다.
+솔루션에서 movies_paginator = Paginator(movies, 10, orphans=5)로 Paginator객체를 만들어 줬습니다.
+Paginator.page()메서드를 사용해서 Page 객체를 만들어 줍니다. 첫 번째 페이지가 1로 시작합니다.
+솔루션에서는 movies = movies_paginator.page(int(page)) 로 Page 객체를 얻었습니다. Page.object_list 속성을 통해서 해당 페이지의 아이템을 얻을 수 있습니다.
+Page객체는 has_next()메서드가 있어 다음 페이지가 있는지 알려줍니다. 반대로 has_previous() 메서드를 통해 이전 페이지가 있는지 알려줍니다.
+책과 인물의 경우에도 영화와 마찬가지로 동일하게 Page 객체를 만들어 줍니다. django.shortcuts.render()함수로 movies, books, people의 Page객체를 템플릿으로 보내줍니다.
+templates/home.html이 /URL 페이지의 템플릿입니다.
+솔루션에서 장고 내장 템플릿 태그와 필터로 if, for, add를 사용했습니다.
+if와 for는 파이썬에서와 같습니다. 다른 점은 {% endif %} 와 {% endfor %}로 끝내줘야 합니다. 또한 템플릿에서 변수를 사용할 때는 {{ }}로 감싸줍니다.
+add 필터는 값을 더해줄 때 사용합니다. {{ value|add:"2" }}에서 value=4이면 value의 값은 6이 됩니다. first=[1,2,3] 이고 second=[4,5,6]이면 {{ first|add:second }} 는 [1,2,3,4,5,6]이 됩니다. 내장 템플릿 태그와 필터 공식문서를 보면 더 많은 템플릿 태그와 필터를 알 수 있습니다.
 
+함수 뷰(FBV)를 사용해서 HTTP 요청에 대한 응답을 했습니다. Paginator 클래스를 사용해서 요구되는 페이지의 정보를 Page 객체로 반환했습니다.
+django.shortcuts.render() 함수를 통해 템플릿을 보여줬습니다. 템플릿에서 기본적인 태그(if, for)와 필터(add)를 어떻게 사용하는지 알아봤습니다.
 
+int처리 똑바로 안했다. 수정 필요 
 
-()를 생략해도 함수로 치는듯? 
+chg7
+https://replit.com/@RainDrop97/FairTotalMacrolanguage-1

@@ -13,6 +13,8 @@ div0 에러를 조심하자
 seeder.execute()로 생성된것은 queryset인가?
     cleaned에서 list()를 추가해야 하는가? 
 django에서는 ()을 생략해도 함수라고 쳐 주는가? 
+파이썬 super()
+    parent class 의 내용을 사용하고 싶을 때 
 -----ch10-----
 url response
     urls
