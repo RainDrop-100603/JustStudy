@@ -194,3 +194,29 @@ class based view
     objcet이름 바꾸면, html에서 object라는 것을 여전히 사용할 수 있을까?
     pk도이름을 바꿔줄 수 있다 -> pk 대신 potato를 찾아 pk처럼 쓰게 할 수도 있다.
     일부 arg들은 자동으로 찾아준다.
+
+base.html에는 되도록 변수자체보다는, block을 이용하자 
+    변수 자체를 쓰면, context에 매번 변수를 넣어야 한다.
+
+endblock 뒤에 contentsName은 선택사항? 
+
+search 
+    function based view 
+        <form method="get" action = "anyway, url" ></form>: 입력들을 컨트롤, 모든것은 form 내부에        
+            <label for="city">City</label>: label
+            <input name="city"> : 검색창, name은 주소창에 드는 arg
+            선택창: 사용자에게 보이는것은 country.name, 가져가는 arg는 country.code 
+                <select name = "country"> 
+                    {% for country in countries %}
+                    <option value="{{country.code}}">{{country.name}}</option>
+                    {% endfor %} 
+                </select>  
+                selected특성을 이용하여, 현재 페이지의 내용과 내가 고른것의 내용이 같은지 확인할 수 있다.
+                    ex) <option {% if country.code == s_country %}selected{% endif %}>
+                        country.code는 현재 선택된 것, s_country는 이 page의 countrycode 
+            <button> submit </button> : form에 button이 하나뿐이면, 자동으로 submit역할을 한다.
+            name = value로 가져간다.(주소창, 선택창 참고)
+        app마다 각각 검색창이 필요하므로, base.html에 넣어둬야 한다.(not header.html)
+        view에 변수가 너무 많을때
+            특성에 따라 각각의 dict로 나눈다(form, choices, ...)
+            context = {**form, **choices}와 같이 하면 합쳐진다.
