@@ -220,3 +220,100 @@ search
         view에 변수가 너무 많을때
             특성에 따라 각각의 dict로 나눈다(form, choices, ...)
             context = {**form, **choices}와 같이 하면 합쳐진다.
+
+
+--ch 23--
+
+UpdateView
+    class django.views.generic.edit.UpdateView
+    객체를 수정하는 view, Class Based View 
+        validation error을 잡아주며, object를 수정하는 것을 도와준다.
+    요소
+        model : object의 model 지정
+        template_name : edit page의 template 지정
+        fields : edit 할 element 지정 
+    submit 하면 get_aboulute_url로 복귀(반환)
+    보안문제
+        주인이 아니어도, url을 입력하면 edit page등에 접근 가능 
+    default로 pk를 받는다 (굳이 안외워도 에러메시지로 파악 가능하긴 하다.)
+
+Edit page
+    CBV, mixin_LoggedInOnly & UpdateView 상속 
+    def get_objcet: 주어진 pk로 obj를 가져오는 method, 없다면 404error raise 
+        오버라이드 : room.host.pk와 self.request.user.pk가 같은지 확인하여 다르면 404error raise하자 
+
+photo edit page 기능구현 
+    view: DetailView, mixin_LoggedInOnly
+        html에서 img src = "{{ phtoto.file.url }} "을 통해 이미지 표현 
+    delete: FBV, Login_required Decorator(@)
+        room_pk와 photo_pk를 모두 받아야 한다. 
+        Login_required는 settings.py에 LOGIN_URL필요 (역시 에러메시지로 확인 가능)
+            해당 url로 redirect? 
+        QuerySet에서 원소 선택하여 delete 
+            models.Photo.objects.filter(pk=photo_pk).delete()
+            아마 get같은것으로 원소 선택해도 될것같긴 하다. 
+        지운 후 view로 redirect
+        room.host.pk와 user.pk 체크 
+    edit: UpdateView, mixin_LoggedInOnly
+        get_success_url을 override하여 view로 redirect 
+    upload photo: FormView, mixin_LoggedInOnly
+        CreateView vs FormView 
+            CreateView로는 room_pk를 설정할 수 없어서, FormView를 이용한다. 
+        var 설정 
+            model = models.Photo 
+            template_name = "bla"
+            fields = ("caption", "file")
+                정해진 방에 photo를 업로드 하는 것이므로, 유저가 관여하는 field는 위 두개 
+            form_class = forms.CreatePhotoFrom
+                수행할 form을 지정한다. 
+        method override 
+            form_valid(self, form)
+                form이 valid하면 실행한다. 
+                HttpResponse를 ret한다. 
+                form.save(pk)를 통해, 정해진 방(pk=pk)에 photo Object를 저장한다. 
+        form.py: 살펴보기 
+            class CreatePhotoFrom(forms.ModelForm):
+                class Meta: 
+                    model = model.photo 
+                    fields = ("caption", "file")
+                def save(self,pk,*args,**kwargs):
+                    photo = super().save(commit=False)
+                    bla 
+                    photo.save()
+            해석 
+                .save(commit = False) : 생성하자마자 저장하지 않고, 추가 데이터를 수정할 수 있다.
+                    photo.save()를 통해 저장 
+                class Meta: save()를 할 때, 지정되는 것들을 적어놓은듯? 
+        
+
+
+    기타기능 
+        SuccessMessageMixin
+            messages.success(request, "bla") 적절히 활용 (delete success! 등 )
+
+template - mixin 
+    mixin 
+        중복되는 code(기능)을 하나의 class로 지정하여 상속하여 이용하는 것이다.
+            TimeStampedModel은 변수의 중복을 해결한다면, mixin은 함수의 중복을 해결한다?
+            예를 들면, 로그인 한 사람만 접근이 가능하도록 하는 mixin이 있다.
+        다중 상속과 비슷하다고 볼 수도 있다.
+            다중상속을 지원하지 않는 Ruby등에서 사용하려고 만든 것이다.
+            다중상속이 지원되는 언어에서도 mixin이라는 표현을 쓰는것은, mixin의 기능을 강조하기 위해서다
+        django에서 여러 mixin을 지원한다.
+        custom mixin을 이용하고 싶다면, 각 app에 mixins.py를 만들어 정의한다.
+        method 
+            test_func : mixin의 참/거짓을 가르는 함수 (로그인 했는가? Y/N)
+    template 에서의 mixin? 
+        함수엣의 mixin과 같이, 중복 구현을 피하기 위함이다.
+            예를들면 input form을 mixin으로 구현하면 간단하다.
+            include를 이용한다. 
+
+reverse_lazy
+    CBV에서 변수에 주소를 정의할 때 이용한다.
+        method를 override할 때는 lazy를 사용하지 않아도 된다.
+    FBV에서는 이용할 필요없다. 
+    원리
+        class-level 속성의 객체는 import될 때 배치되지만, url-solving 규칙은 import시간에 세팅되지 않는다.
+        그로인해 URLconf 규칙을 인식하지 못하고, 에러를 발생시킨다. 
+
+kwargs = keyward args 

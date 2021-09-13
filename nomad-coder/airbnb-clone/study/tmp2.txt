@@ -18,6 +18,7 @@ seeder.execute()로 생성된것은 queryset인가?
 django에서는 ()을 생략해도 함수라고 쳐 주는가? 
 파이썬 super()
     parent class 의 내용을 사용하고 싶을 때 
+https://tutorial.djangogirls.org/ko/ 참고, 장고 듀토리얼 
 -----ch10-----
 url response
     urls
