@@ -125,3 +125,6 @@ movie_list.html에 맨 위에 {% extends "base.html" %}이 있습니다.
 부모 템플릿인 base.html을 바탕으로 확장(extend)한 것입니다.
 block을 통해 자식 템플릿에서 내용을 추가합니다. 책과 인물의 경우도 동일합니다.
 page_obj은 ListView가 템플릿에 context 을 통해서 보내준 Page객체입니다. 공식문서를 통해서 예시를 확인할 수 있습니다.
+
+chg8 
+https://replit.com/@RainDrop97/FelineLankyDriver-1
