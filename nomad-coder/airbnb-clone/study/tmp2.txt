@@ -1,0 +1,112 @@
+---1차정리 - 2차정리 - 동영상보며 최종정리---
+
+
+
+-----기타-----
+동영상 보며 정리할 단원들이 많다. 
+ch10까지는 대부분 기능적인 base를 설명하기 위함이고, 실제로 사용하는 방식은 추후 변경될 수 있다.
+    예를들면 sql이나 이미지 업로드 
+Django queryset은 Lazy하다.
+    all=ele.objects.all()를 정의해도, 실제로 사용하기 전까지는 불러오지 않는다.
+    따라서 all[:10]은 all에서 10개를 추려내는것이 아니라, 10개만 불러오는 것이다.
+div0 에러를 조심하자
+THIRD_PARTY_APPS를 등록 안하느 이유:    
+    장고에서 사용하는 것이 아니고, 각 앱에서 독립적으로 import되어 사용되기 때문이다.
+    등록되는 앱들은 다 django framework에서 사용하는 것들이다.
+seeder.execute()로 생성된것은 queryset인가?
+    cleaned에서 list()를 추가해야 하는가? 
+django에서는 ()을 생략해도 함수라고 쳐 주는가? 
+파이썬 super()
+    parent class 의 내용을 사용하고 싶을 때 
+https://tutorial.djangogirls.org/ko/ 참고, 장고 듀토리얼 
+-----ch10-----
+url response
+    urls
+        urlpatterns = [path1(url, view), path2(), path3(), ...]
+            url의 HttpRequest에 따른 view실행, view에서는 HttpResponse를 보낸다.
+        다루는 법
+            1. config - urls.py에서 모든 urlpattenrs를 직접 만든다.
+            2. 각 applications에 urls.py를 만들고, config - urls.py에서 이를 불러온다.
+        urls.py를 각각 다루는 법
+            1. cofing - urls에서 app- urls를 include 한다.
+                from django.urls import path, include
+                urlpatterns=[
+                    path("",include("core.urls",namespace="core")),
+                    path("movies/",include("movies.urls",namespace="movies")),
+                    path("admin/",admin.site.urls),
+                ]
+            2. 각 applications에 urls.py를 만든다.
+                from django.urls import path 
+                app_name = "ThisIsNamespace"
+                urlpatterns=[
+                    path("", views.func1, name = "bla1"),
+                    path("p1/", views.func2, name = "bla2"),
+                ]
+            최종 주소
+                config - urls 의 주소에 app - urls의 주소가 합쳐진 형태
+                "/movies/", "/movies/p1/"
+        namespace and name
+            .html에서, 링크를 탈 때, 주소를 하드코딩 하지 않아도 namespace:name을 통해 이동하게 해준다.
+            namespace가 있으므로 name이 겹쳐도 된다는 장점이 있다.
+            주소가 바뀌더라도 namespace:name이 그대로라면, .html을 수정하지 않아도 된다.
+            config - urls에서 namespace도 include하는 것이 필수인지는 모르겠다. 그냥 하자
+        기타 팁: 
+    view
+        HttpRequest가 들어오면 실행되는 함수
+        HttpResponse
+            HttpRequest에 대한 응답
+            하드코딩을 원하면 직접 import하여 사용해도 된다.
+                from django.http import HttpResponse
+            django에서는 일반적으로 render을 이용한다.
+        def viewFunc(request):
+            bla~
+            return render(request,"bla.html",context={"arg1":var1,"arg2":var2})
+        render
+            HttpResponse를 포함한 .html을 만들어준다.
+            bla.html을 반환한다.
+                HttpResponse도 포함? 아직 크게 이해는 안됨 추가바람 
+            bla.html에 context={args}를 전달하여 변수로 이용하게 해준다.
+        request
+            Django는 HttpRequest를 python object로 변환시켜, 첫번째 인자로 준다.
+            var(request)를 통해 인자의 내용을 확인 가능하다.
+            ?name=var1와 같이, 추가적인 입력또한 모두 여기 있다.
+                request.GET.get("name")으로 추출 가능하다.
+    template
+        django에서 .html 파일들은 templates 폴더에 저장된다.
+        경로 설정
+            settings.py의 TEMPLATES의 DIRS=[] : templates 폴더의 경로
+            일반적으로 가장 상단에 배치된다.
+                os.path.join(BASE_DIR,"templates")
+                    BASE_DIR의 경로에 "templates" 경로를 합친 듯
+        html 
+            변수는 {{var}}, 함수는 {% func %} 형식을 통해 이용할 수 있다.
+                함수 내부에서는 변수를 그냥 사용해도 된다.
+                들여쓰기는 필요없다.
+            VSC에서 django를 설치하면 자동완성이 된다.
+            구조 팁
+                base.html
+                partials - folder : base.html의 element를 분리해놓는다.
+                app1 - folder : app1의 html들을 저장한다.
+                app2 - folder 
+        상속과 포함
+            상속과 포함을 통해, 요소들을 분리하여 구현할 수 있다.
+            base.html 과 partials - folder를 통해 outline을 생성한다.
+            extends : 상속
+                parent
+                    {% block contentsName %} {% endblock %}
+                child 
+                    {% extends "base.html" %} : 상속 표시
+                    {% block contentsName %} contents {% endblock contentsName%}
+                        : contentsName에 맞춰 contents를 넣는다.
+            include : 포함
+                {% include "partials/nav.html" %}
+                    : import와 유사하다. 다른 html에 있는 요소를 넣는다.
+        함수    
+            if : else : endif
+            for ~ in : endfor
+        아이콘
+            &copy
+
+
+-----ch?-----  
+make Fake Data

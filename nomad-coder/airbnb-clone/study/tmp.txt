@@ -97,71 +97,223 @@ python ", ".join(arr) : list의 요소를 모두 이은 str 반환, ""안에 있
 
 -------------------------------------ch9
 
-Django.seed
- Faker: 스스로 가짜 데이터를 만들어줌
- Install 필요, third party app
- 완전 랜덤으로 만들수도 있고, lambda를 통해 만드는 방식을 지정할 수도 있다.
-add_arguments: —number이용하자, default설정 가능,type=int 설정하면 입력을 int형식으로 받는다
-handle:
--number = options.get(“number”) //—number arg의 갯수를 가져온다
--seeder=seed.seeder() // seed 함수
--seeder.add_entity(User,number, {“is_staff”: False, “is_superuser”:False, …}) // 설정따로 안한것들은 알아서 만들어준다.
--seeder.execute()
-//foreingkey도 랜덤으로선택해주지는 않는다, 따로 설정 필요 : lambda 등 이용 가능
-//방법 1: user_models.User.objects.all()로 모든 유저 가져와서, import random 후  lambda함수에 random.choice(arr)을 통해 랜덤 선택, 이것은 user의 수가 엄청 많을수도 없으므로 권장되는 방식은 아니다.
-
 Photo random import
 미리 파일들을 model폴더에 넣어둔다(ch8참고)
 
-
-Import할 때 class하나만 import해도 된다
-
-Div0에러 조심, 별점의 평균의 경우 발생할 수 있다, if문을 통해 제외하든, max문을 이용하든 자유
-
-Random.randint(min,max)
-
-fake third party app도 doc가 있다(faker providers.address라고 찾아보자)
-
-django.contrib.admin.utils import flatten
- [[15]] 와 같은것을 15로 만들어준다.
-
-created_photos=seeder.execute()
-// seeder.execute()가 무엇을 반환하나? - object의 id(pk)
-created_clean = flatten(list(creatrd_photos.values()))
-//왜 list로 만들었지?
-for pk in created_clean: 
-- photo = room=room_models.Room.objects.get(pk=pk)
-//생성된 room의 obj id를 가져옴
-- for i in range(3.,random.randint(10,15)):
--  -Room_models.Photo.objects.create(
--   -  caption=seeder.faker.sentence()
--   -  room = room
--   -  file = room_photos/{random.randint(1,10)}.webp”
-
-ManyToMany를 faker하는 방법, 사진추가와 똑같은 원리
- For a in amenities
-  MaigcNumber=random.randint(1,15)
-  If magicNumber % 3 == 0
-   Room.amenities.add(a)
-//room은 get을 통해 가져온 obj, 위 경우 추가확률은 33%
-
-
-Seed_ Review
-
-Seed_whatsss 가 비슷한 형식들이라면, 몇몇 이름은 상수화 시켜서 해당 상수만 바꾸면 된다 :  NAME= “review”, 근데 python은 상수가 안겹치나보지?
-
-Array제한
- Arr[3:7]  : 3에서 7까지만
-
-Seed_reservation
-Chkin과 chkout시간 관리하자
-From datetime import datetime, timedelta
-Chkin: datetime.now()
-Chkout:datetime.now()+timedelta(days=random.randint(1,4))
-
 9.7의 6분 8초 보면, 배열을 한번에 다 추가할수도 있는듯?
 
-9단원 정리 하고
-Challenge하고
-8단원하고 정리하고
-Code 정리하기
+9단원 정리 하고  세모
+Challenge하고    O
+8단원하고 정리하고  X
+Code 정리하기   X
+
+----ch 11----
+function based view
+    def function을 통해 기능 구현
+    간단해지긴 했지만 여전히 많은 반복작업 필요 (비슷한 기능 매번 구현)
+class based view
+    django가 미리 만들어둔 기능을 class를 통해 상속하여 이용한다.
+        from django.views.generic import bla~
+        urlpatterns - path는 함수만 view로서 갖는다.
+            따라서 class에서 함수를 가져와야 한다.
+            .as_view()를 통해 class에서 정의한 것들을 함수로 바꾸어 반환한다.
+            .as_view()는 이미 내장되어 있다.
+        각 parent마다 정해진 html이 있다.
+            ListView의 경우는 room_list.html 
+        각 기능들은 doc를 봐도 되고, 아래사이트에서 봐도 된다.
+            https://ccbv.co.uk/
+    기능
+        ListView
+            변수지정
+                model = models.Room : 다루기 원하는 class model
+                    model을 정의하면 알아서 원하는 양식들을 만들어 낸다.
+                    html: object_list라는 이름으로 들어감, 이름변경 가능   
+                ordering: model ordering
+                paginate_by: 한 페이지에 표현하는 갯수 
+            page_obj : paginator가 이미 정의되어 있다.
+    context 수정 방법
+        class내부에 아래 내용을 정의하면 된다.
+        def get_context_data(self,**kwargs)
+            context=super().get_context_data(**kwargs)  //context불러오기
+            context["now"] = timezone.now() //context에 원하는 내용 추가 
+            return context
+    기타
+        function based view에서는 data를 직접 가공해야 했다.
+        class based view는 data의 가공을 대신 해준다. 
+        html에서 직접 구현해야 하는것은 동일하다. 
+    
+function based view:
+    def funcName(request)
+    html에 보낼 데이터를 직접 가공한다.
+class based view:
+    class className(parent) 
+    parent class를 상속하여 이용한다. 
+    몇몇 변수를 지정해주면 ,데이터 가공은 class에서 알아서 해준다.
+
+차이점: 데이터 가공을 직접하는가, class가 알아서 해주는가
+공통점: 가공된 데이터로 html을 구성하는것은 직접 해야한다.
+
+queryset .order_by
+    ascending: .order_by("ele")
+    descending: .order_by("-ele")
+
+<a href="{% url "core:homepage" %}">
+<a href="{{ url('admin:index') }}">
+
+url dispatcher
+    변수 받아오기
+        urls.py에서 /<int:year>/ 같은 형식으로 지정하면 된다.
+        views.py에서 arg도 추가해야한다. 
+            function based view: def room_detail(request,year)
+            class based view: pk같은 경우는 알아서 받아온다. 다른 변수도 어디 저장할듯?
+        .html
+            hard coding: 그냥 해주면 됨
+            func : {% url "namespace:name" year %} 과 같은 형식
+    models
+        def get_aboulute_url(self)
+            absolute url은 website/ 부터 시작하는 url을 말하는 듯 하다.
+            근데 이거 어디다 써먹어?
+    reverse 
+        .html에서는 {% url "namespace:name" args %}을 통해 이동한다.
+        django에서는 reverse("namespace:name", kwargs={args})를 통해 이동한다.
+    models.Model.DoesNotExist  
+        pk에 해당하는 obj가 없을경우 해당 에러 반환.
+    없는 주소 에러 처리
+        function based view
+            try except를 이용한 redirect
+            try except를 이용한 Http404 에러 raise 
+                from django.http import Http404
+        Class based view 
+            알아서 처리해줌 
+        html
+            templates - 404.html을 통해 꾸밀 수 있다.
+                DEBUG=False, ALLOWED_HOST 설정 필요(ALLOWED_HOST="*" 해도 되네? 12.3)
+
+class based view
+    DetailView
+    objcet이름 바꾸면, html에서 object라는 것을 여전히 사용할 수 있을까?
+    pk도이름을 바꿔줄 수 있다 -> pk 대신 potato를 찾아 pk처럼 쓰게 할 수도 있다.
+    일부 arg들은 자동으로 찾아준다.
+
+base.html에는 되도록 변수자체보다는, block을 이용하자 
+    변수 자체를 쓰면, context에 매번 변수를 넣어야 한다.
+
+endblock 뒤에 contentsName은 선택사항? 
+
+search 
+    function based view 
+        <form method="get" action = "anyway, url" ></form>: 입력들을 컨트롤, 모든것은 form 내부에        
+            <label for="city">City</label>: label
+            <input name="city"> : 검색창, name은 주소창에 드는 arg
+            선택창: 사용자에게 보이는것은 country.name, 가져가는 arg는 country.code 
+                <select name = "country"> 
+                    {% for country in countries %}
+                    <option value="{{country.code}}">{{country.name}}</option>
+                    {% endfor %} 
+                </select>  
+                selected특성을 이용하여, 현재 페이지의 내용과 내가 고른것의 내용이 같은지 확인할 수 있다.
+                    ex) <option {% if country.code == s_country %}selected{% endif %}>
+                        country.code는 현재 선택된 것, s_country는 이 page의 countrycode 
+            <button> submit </button> : form에 button이 하나뿐이면, 자동으로 submit역할을 한다.
+            name = value로 가져간다.(주소창, 선택창 참고)
+        app마다 각각 검색창이 필요하므로, base.html에 넣어둬야 한다.(not header.html)
+        view에 변수가 너무 많을때
+            특성에 따라 각각의 dict로 나눈다(form, choices, ...)
+            context = {**form, **choices}와 같이 하면 합쳐진다.
+
+
+--ch 23--
+
+UpdateView
+    class django.views.generic.edit.UpdateView
+    객체를 수정하는 view, Class Based View 
+        validation error을 잡아주며, object를 수정하는 것을 도와준다.
+    요소
+        model : object의 model 지정
+        template_name : edit page의 template 지정
+        fields : edit 할 element 지정 
+    submit 하면 get_aboulute_url로 복귀(반환)
+    보안문제
+        주인이 아니어도, url을 입력하면 edit page등에 접근 가능 
+    default로 pk를 받는다 (굳이 안외워도 에러메시지로 파악 가능하긴 하다.)
+
+Edit page
+    CBV, mixin_LoggedInOnly & UpdateView 상속 
+    def get_objcet: 주어진 pk로 obj를 가져오는 method, 없다면 404error raise 
+        오버라이드 : room.host.pk와 self.request.user.pk가 같은지 확인하여 다르면 404error raise하자 
+
+photo edit page 기능구현 
+    view: DetailView, mixin_LoggedInOnly
+        html에서 img src = "{{ phtoto.file.url }} "을 통해 이미지 표현 
+    delete: FBV, Login_required Decorator(@)
+        room_pk와 photo_pk를 모두 받아야 한다. 
+        Login_required는 settings.py에 LOGIN_URL필요 (역시 에러메시지로 확인 가능)
+            해당 url로 redirect? 
+        QuerySet에서 원소 선택하여 delete 
+            models.Photo.objects.filter(pk=photo_pk).delete()
+            아마 get같은것으로 원소 선택해도 될것같긴 하다. 
+        지운 후 view로 redirect
+        room.host.pk와 user.pk 체크 
+    edit: UpdateView, mixin_LoggedInOnly
+        get_success_url을 override하여 view로 redirect 
+    upload photo: FormView, mixin_LoggedInOnly
+        CreateView vs FormView 
+            CreateView로는 room_pk를 설정할 수 없어서, FormView를 이용한다. 
+        var 설정 
+            model = models.Photo 
+            template_name = "bla"
+            fields = ("caption", "file")
+                정해진 방에 photo를 업로드 하는 것이므로, 유저가 관여하는 field는 위 두개 
+            form_class = forms.CreatePhotoFrom
+                수행할 form을 지정한다. 
+        method override 
+            form_valid(self, form)
+                form이 valid하면 실행한다. 
+                HttpResponse를 ret한다. 
+                form.save(pk)를 통해, 정해진 방(pk=pk)에 photo Object를 저장한다. 
+        form.py: 살펴보기 
+            class CreatePhotoFrom(forms.ModelForm):
+                class Meta: 
+                    model = model.photo 
+                    fields = ("caption", "file")
+                def save(self,pk,*args,**kwargs):
+                    photo = super().save(commit=False)
+                    bla 
+                    photo.save()
+            해석 
+                .save(commit = False) : 생성하자마자 저장하지 않고, 추가 데이터를 수정할 수 있다.
+                    photo.save()를 통해 저장 
+                class Meta: save()를 할 때, 지정되는 것들을 적어놓은듯? 
+        
+
+
+    기타기능 
+        SuccessMessageMixin
+            messages.success(request, "bla") 적절히 활용 (delete success! 등 )
+
+template - mixin 
+    mixin 
+        중복되는 code(기능)을 하나의 class로 지정하여 상속하여 이용하는 것이다.
+            TimeStampedModel은 변수의 중복을 해결한다면, mixin은 함수의 중복을 해결한다?
+            예를 들면, 로그인 한 사람만 접근이 가능하도록 하는 mixin이 있다.
+        다중 상속과 비슷하다고 볼 수도 있다.
+            다중상속을 지원하지 않는 Ruby등에서 사용하려고 만든 것이다.
+            다중상속이 지원되는 언어에서도 mixin이라는 표현을 쓰는것은, mixin의 기능을 강조하기 위해서다
+        django에서 여러 mixin을 지원한다.
+        custom mixin을 이용하고 싶다면, 각 app에 mixins.py를 만들어 정의한다.
+        method 
+            test_func : mixin의 참/거짓을 가르는 함수 (로그인 했는가? Y/N)
+    template 에서의 mixin? 
+        함수엣의 mixin과 같이, 중복 구현을 피하기 위함이다.
+            예를들면 input form을 mixin으로 구현하면 간단하다.
+            include를 이용한다. 
+
+reverse_lazy
+    CBV에서 변수에 주소를 정의할 때 이용한다.
+        method를 override할 때는 lazy를 사용하지 않아도 된다.
+    FBV에서는 이용할 필요없다. 
+    원리
+        class-level 속성의 객체는 import될 때 배치되지만, url-solving 규칙은 import시간에 세팅되지 않는다.
+        그로인해 URLconf 규칙을 인식하지 못하고, 에러를 발생시킨다. 
+
+kwargs = keyward args 
