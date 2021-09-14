@@ -284,12 +284,46 @@ photo edit page 기능구현
                 .save(commit = False) : 생성하자마자 저장하지 않고, 추가 데이터를 수정할 수 있다.
                     photo.save()를 통해 저장 
                 class Meta: save()를 할 때, 지정되는 것들을 적어놓은듯? 
-        
-
-
     기타기능 
         SuccessMessageMixin
-            messages.success(request, "bla") 적절히 활용 (delete success! 등 )
+        messages.success(request, "bla") 적절히 활용 (delete success! 등 )
+
+Sessions (view)
+    database가 필요없는 정보를 다룰때 쓴다.
+        host mode vs user mode 
+        database에 저장할 필요가 없다. 
+    사용법 
+        session start : session 추가 
+            request.session["is_host"] = True
+        session stop : 2가지 방법
+            1. del request.session["is_host"] : try ~ except KeyError 이용
+            2. request.session.pop["is_host]  : 예외설정 필요없나? 
+        switch_host : session start, stop을 동시에 구현 
+            try (session stop 1) except KeyError (session start)
+    html 
+        request.session 에 저장된다.
+
+Creating Room page 
+    upload photo와 같이 form 필요 (user와 연결해야하기 때문)
+    upload photo와는 다른 방식 이용 
+        form 
+            def save(self, *args, **kwargs): 
+                room = super().save(commit=False)
+                return room 
+        view 
+            def form_valid(self, form):
+                room = from.save()
+                room.host = self.request.user 
+                room.save()
+                form.save_m2m()
+                return redirect(reverse("rooms:detail", kwargs={"pk" : room.pk}))
+        해석 
+            생성한 obj를 form이 아닌 view에서 저장할 수 있다.
+            form에서는 공통된 부분을 만들고, 
+                차이가 있는 부분은 각 view에서 설정하도록 할 수도 있을듯 
+            room의 pk도 다룰 수 있다. 
+            form.save_m2m()
+                ManyToMany는 database에 저장된 후 저장할 수 있다.
 
 template - mixin 
     mixin 
