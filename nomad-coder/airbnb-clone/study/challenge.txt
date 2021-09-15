@@ -150,4 +150,4 @@ model과 fields 값으로 ModelForm클래스를 만들고 context를 통해서 �
 템플릿 파일의 이름은 CreateMovie의 경우와 같습니다. template_name_suffix로 이름을 변경할 수 있는 것도 동일합니다.
 
 chg9 
-https://replit.com/@RainDrop97/EasyUncommonDistributeddatabase-1#.replit
+https://replit.com/@RainDrop97/EasyUncommonDistributeddatabase-2#.replit

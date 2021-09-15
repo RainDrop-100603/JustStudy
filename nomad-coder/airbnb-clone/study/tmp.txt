@@ -430,3 +430,248 @@ createView
     뭔 뜻? GET 요청과 POST요청? 
 updateView 
     GET 요청을 하는 경우 템플릿을 반환하고 PUT이나 POST 요청을 하는 경우 영화 객체를 갱신합니다.
+
+ch 14~15.3====================
+
+View 
+    특징 
+        from django.views import View 
+        가장 기본적인 View 
+    기능 
+        required 
+            def get(self, request):
+            def post(self, request): 
+
+LoginForm 만들기 
+    views.py 
+        class LoginView(View):
+            def get(self, request):
+                form = forms.LoginForm(initial={"email": "itn@las.com})
+                return render(request, "bla.html",{"form":form})
+            def post(self,request):
+                form=forms.LoginForm(request.POST)
+                return render(request, "bla.html",{"form":form})
+        해석
+        기타
+            form.is_valid()
+                forms.py의 clean_bla의 ValidationError와 같은 에러가 발생하면 false 반환 
+            form.cleaned_data
+                clean_함수들을 수행한 후의 data들 
+                clean_함수가 없다면, data원본이 들어가고, 있다면 ret value가 들어간다.
+            authenticate, login, logout 
+                from django.contrib.auth 
+                authenticate(request, username=usr, password=pw)
+                    authenticate는 username에 대해서만 확인한다.
+                    즉 id가 username이다. email로 로그인을 원한다면, id를 email로 해야하는 것이다.
+                    작동 
+                        user= authenticate(bla)
+                        if user is not None:
+                            login(request,user)
+                            redirect(reverse(bla))
+                    login되면 admin에도 이것이 적용된다. admin권한이 있다면 접근 가능
+                    user.is_authenticated: 로그인 되어있는가 확인 
+                    def log_out(request):
+                        logout(request) //logout은 import된 것이므로 def이름과 겹치지 않도록 주의 
+                        return redirect(bla)
+                    
+            context_processor 
+                template에 정보를 자동으로 추가한다
+                예를들어 cookie가 있으면, 그걸 가지고 와서 user를 찾고 template에 자동으로 넣어준다.
+                따라서 로그인이 되었다면, user는 따로 추가하지 않아도 method가 이용 가능하다. 
+    forms.py 
+        class LoginForm(forms.Form):
+            email = forms.EmailField()
+            password = forms.charField(widget=forms.PasswordInput, label="pw")
+            def clean_email(self):
+                email = sef.cleaned_data.get("email")
+                try: 
+                    models.User.objects.get(username=email)
+                    return email
+                except model.User.DoesNotExist:
+                    raise forms.ValidationError("User does not exist")
+                return (cleaned_data)
+            def clean_password(self):
+                14.3 source code 참고
+        해석 
+            특정 field를 지정하여 input을 알아서 확인하고 정리해준다.
+            기본적으로 label은 변수이름이지만, 따로 설정해 줄 수도 있다.
+            def clean_bla()
+                입력값이 이미 존재하는것인지 확인하려면, clean_을 붙여준다.
+                단순히 입력값 확인 뿐 아니라, 여러 용도로도 사용할 듯 
+                    사용자가 원하는 방식대로 clean한 후 return 하는 것인듯 
+                기본적으로 cleaned_data에 모든 입려깅 들어있다(bla뿐아니라 다른것도)
+                try except를 통해 입력값이 존재하는지 확인했다. 
+            user.check_password(password)
+                forms.py의 clean_password에서 이용 
+                id_password가 일치하는지 확인 
+                if true return pw else raise ValidationError("bla")
+            clean_email과 clean_password는 중복되는 부분이 많고, 기능상으로도 상호 연관이 있다.
+                clean(self)이용하자 
+                clean의 logic 은 clean_bla와 동일하다
+                clean의 반환값은 self.cleaned_data이다.
+                    username과 password를 모두 반환해야 하므로
+                    그렇다면, clean에서는 2개의 변수만 다르고 나머지는 clean_bla에서 다룬다면 어떻게할까? 
+            Error 
+                clean_pw 에서 error가 발생하면 pw에서 error가 발생한 것으로 간주
+                clean 의 경우는 default는 non-field 이다.
+                    self.add_error("password", forms.ValidationError("bla"))를 통해 field 설정 가능 
+                
+
+        기타 
+            def clean()
+                여러 입력에 대한 clean을 수행하고 싶을때 이용
+                나중에 다룬다? 
+    template 
+        form 
+            label, input으로 구분됨, 수동으로 만드는건 css part에 나옴 
+            form.as_p와 같이 정해진 형식 사용 가능 
+                <form method="POST" action="{% url "users:login" %}">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <button>Login</button>
+                </form>
+            method: 
+            action: input을 들고갈 link 인듯 
+            CSRF: CSRF항목참고, 해킹사이트를 통한 데이터 탈취 방지
+
+Login Easy Way
+    LoginView 
+    forms.py 
+        username과 password를 필요로 한다.
+    문서 확인 
+    https://docs.djangoproject.com/en/3.2/topics/auth/default/
+        LoginView의외에도, auth와 관련된 많은 View 확인 가능 
+
+FormView - LoginView보다는 까다롭지만 customize 용이 
+    customize하기에 좋다. 
+    Post, Get사용 안함 
+    views.py 
+        required 
+            template_name 
+            form_class 
+            success_url = reverse_lazy(bla)
+                class가 정의될 때 url을 정의하는것이 아니라, url을 사용할 때 정의한다. 
+                사용할 때 정의해서 lazy 
+            def form_valid(self,form)
+                //form이 valid할 경우 실행 
+                return super().form_valid(form) //success url로 redirect 
+        option 
+            initial : 입력값의 초기값 설정 
+
+Signup - FormView 
+    views.py 
+        clean_email의 try-except는, except일 때 email 반환(중복가입방지 )
+    cleaned_data 
+        변수가 정의된 순서대로 clean이 실행된다. 
+            clean_bla를 정의하지 않으면 default_clean: 값이 그대로 들어간다.
+        clean하지 않은 data를 먼저 불러올 순 없다. clean을 해야 data가 존재한다.
+        따라서 password가 정의되고 password1이 정의되었다고 가정하면 
+            password에서는 cleaned_data.get("password1")을 할 수가 없다. 존재하지 않는다.
+            반대로 password1에서는 password를 불러올 수 있다. 
+        
+create user 
+    views.py 
+        def form_valid(self,form):
+            form.save()
+            login logic // 생성하자마자 로그인하고 싶다면 
+            return super().form_valid(form)
+    forms.py 
+        def save(self):
+            first_name = self.cleaned_data.get("first_name")
+            last_name 
+            email
+            password 
+            user = models.User.objects.create_user(email,email,password)
+                // 첫 arg는 username인데, email과 동일하게 할 것이므로 
+                // create_user는 우리가 만든거겠지? 
+            user.first_name=first_name
+            user.last_name 
+                // not required는 나중에 추가해줬다.
+                // 나중에 추가해야만 하는가, 추가해줘도 되는것인가? 
+            user.save()
+
+ModelForm 
+    field를 매번 일일히 지정해주지 않아도 되게 해준다. 
+    clean method, save method 내장 
+    unique field validate 가능 
+    사용법 
+        forms.py 
+            class whatForm(forms.ModelForm):
+                class Meta:
+                    model = models.User
+                    fields = ("first_name","email")
+                password = forms.charField()
+                def save(self, *args, **kwargs):
+                    email=self.cleaned_data.get("email")
+                    password=self.cleaned_data.get("password")
+                    user=super().save(commit=False);
+                    user.username=email
+                    user.set_password(password)
+                    user.save()
+
+        해석 
+            User에 있는 것들을 fields지정함으로서 가져왔다.
+            User에 password는 없으므로? 없는것만 추가했다. 
+                user는 암호화된 password가 필요해서?
+                -> username과 password는 abstractUser에 있는 것이다.
+            이때 Meta에 없는것은 blank상태로 설정되므로, default를 정해주는것도 좋다.
+                default는 models.py에서 정해준다. 
+            save method override 
+                원하는대로 설정하기 위함 
+                commit = False: obj를 만들고 database에 안올림 
+                    obj.save() 해야 database에 올린다. 
+                password를 암호화해서 저장 
+initialize 
+    from_class = forms.LoginForm 는 class를 지정해주는 것이다.__str__을 저장하려나?
+    from_class = forms.LoginForm() 는 LoginForm을 initialize 시킨것의 결과를 저장하는 것이다?
+
+CSRF: Cross Site Request Forgery 
+    로그인을 할때 website는 나에게 cookies를 준다.
+    browser가 backend로 cookies를 보내는 방식은 도메인해 의해 이루어진다.
+    로그인을 하고나서 접속할때, 내가 website에 cookies를 줘서 로그인상태임을 알린다. 
+    그런데 만약 해킹 website가 facebook에 무언가를 요청하는 link, form button, or javascript를 가지고 있다고 가정하자 
+    내가 버튼을 클릭하면, ajax 등을 통해 facebook에 request를 보낸다.
+    근데 그 request는 내 browser에서 일어났으므로, browser는 cookies를 보낸다. 
+    이때 이 해킹사이트가 cookies를 탈취하여 비밀번호를 바꾼다든지 등 악용을 할 수 있다.
+    {% csrf_token%} 
+        input type: hidden, name=bla, value=bla 가 생성된다.
+        이 것은 token이라고 하는데, 이 token을 가지고 POST request를 해야 한다.
+        token을 통해 적절한 웹사이트에서 POST request를 보냈는지 확인할 수 있다.
+
+GET과 POST 
+    HttpRequest의 두가지 방식, POST와 GET 방식 
+        https://mangkyu.tistory.com/17
+    GET 
+        주 용도: 정보를 가져와서 조회하기 위함 
+        URL에 변수(data)를 포함시켜 요청한다.
+            key=value 형태로 전송 
+            BODY는 보통 빈 상태로 전송되며, Content-type 헤더필드 추가안함
+            HTTP자체는 길이의 제한이 없으나, 브라우저에서 최대길이를 제한한다.
+                URL형식에 맞지 않는 파라미터 key나 value는 인코딩해야한다.
+        data를 Header에 포함하여 전송한다.
+        URL에 data를 노출시키므로 보안에 취약하다.
+        캐싱할 수 있다. -> 속도를 높이거나 편리하게 이용 가능 (vsc에서 git사용 생각하자)
+        예시: http://localhost:8080/boardList?name=제목&contents=내용
+    POST 
+        주 용도: 데이터를 서버로 제출하여 추가/수정 하기 위함
+        URL에 변수를 노출하지 않고 요청한다.
+            BODY에 data를 넣어서 전송
+            헤더필드에 Body의 data를 설명하는 Content-type 헤더필드 추가
+            길이의 제한은 없으나 Time Out 존재 
+        데이터를 Body에 포함시킨다.
+        URL에 data가 노출되지 않아 기본적인 보안은 된다.
+        캐싱할 수 없다. 
+        예시: http://localhost:8080/addBoard 
+            addBoard가 Content-type 인듯?
+
+
+
+FBV에서의 get과 post 
+def login_view(request):
+    if request.method == "GET":
+        bla 
+    elif request.method == "POST"
+        bla 
+
+.prittierignore 
+    /templates 적어서 template 내부는 prettier 적용 방지 가능 
