@@ -128,3 +128,26 @@ page_obj은 ListView가 템플릿에 context 을 통해서 보내준 Page객체�
 
 chg8 
 https://replit.com/@RainDrop97/FelineLankyDriver-1
+https://replit.com/@RainDrop97/EasyUncommonDistributeddatabase
+
+영화 애플리케이션의 MovieDetail클래스가 '/movies/<int:pk>' URL에 해당하는 HTTP 요청을 처리했습니다.
+MovieDetail클래스는 DetailView클래스를 상속했습니다. movies/urls.py를 보면 path("<int:pk>", MovieDetail.as_view(), name="movie")에 pk 값이 MovieDetail.as_view()로 입력됩니다.
+DetailView는 pk에 해당하는 영화를 찾고 반환합니다. DetailView템플릿의 이름은 movies/movie_detail.html입니다. 폴더 명은 애플리케이션 이름이고 모델 명 이름 뒤에 _detail이 붙어서 파일 이름이 정해집니다.
+DetailView는 context에 context_object_name값을 키로 영화 정보를 갖습니다.
+솔루션에서 context_object_name="movie"이고 템플릿에서 영화를 {{ movie }}로 사용합니다. 책과 인물의 DetailView도 동일한 방식으로 만들었습니다.
+영화 애플리케이션의 CreateMovie 클래스는 CreateView 클래스를 상속해서 /movies/create URL를 처리했습니다.
+/movies/createURL에 GET요청을 하는 경우 템플릿을 반환합니다. POST요청을 하는 경우 영화 객체를 만들어줍니다.
+CreateMovie클래스에서 form_class속성을 정하거나 model과 fields 속성을 정해서 Form클래스를 만듭니다.
+솔루션에서는 model과 fields 값으로 ModelForm을 만들었습니다.
+context에 form 키 값에 ModelForm이 할당됩니다. 템플릿에서 {{ form }}의 형태로 사용합니다.
+템플릿 이름의 기본값은 movies/movie_form.html이 됩니다. template_name_suffix을 설정해서 템플릿 파일의 이름을 변경할 수 있습니다.
+예를 들면 template_name_suffix = '_create_form' 이면 movies/movie_create_form.html이 됩니다.
+영화 애플리케이션의 UpdateMovie클래스는 UpdateView클래스를 상속해서 /movies/<int:pk>/update를 처리합니다.
+GET 요청을 하는 경우 템플릿을 반환하고 PUT이나 POST 요청을 하는 경우 영화 객체를 갱신합니다.
+UpdateMovie클래스는 URL을 통해서 pk 값을 얻습니다. UpdateMovie 클래스도 CreateMovie 클래스와 마찬가지로 form_class을 이용하거나 model과 fields 속성을 이용해서 Form클래스를 만듭니다.
+솔루션에서 UpdateMovie클래스의 model과 fields속성을 통해서 갱신하려고 하는 객체의 모델과 필드 속성들을 정합니다.
+model과 fields 값으로 ModelForm클래스를 만들고 context를 통해서 템플릿에 입력했습니다.
+템플릿 파일의 이름은 CreateMovie의 경우와 같습니다. template_name_suffix로 이름을 변경할 수 있는 것도 동일합니다.
+
+chg9 
+https://replit.com/@RainDrop97/EasyUncommonDistributeddatabase-1#.replit
