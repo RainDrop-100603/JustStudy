@@ -688,3 +688,17 @@ ModelForm
             commit = False : database에 바로 저장하지 않고, obj를 ret 한다. 이 obj를 받아 수정하고나서 obj.save()하면 그때 저장된다. 
             filters 에 있는 것들은 자동으로 저장해주며, 없는 것들은 obj.ele = what 으로 추가해야 한다. 
         ModelForm에서는 save를 하려면 view에서 할 수밖에 없다. 
+
+
+Class Based View 
+    특징 
+        django에서 미리 정의된 Class를 이용하여, 보다 코딩을 쉽게 해준다.
+        약간의 커스텀은 가능하나, 자유롭지는 않다.
+    종류 
+        Generic Edit : Obj를 생성, 수정, 삭제하는 View 
+            FormView : 비교적 자유롭다. 
+            CreateView, UpdateView,DeleteView  
+        Generic Detail : Obj의 element를 다루는 View 
+            DetailView
+        Generic List : Obj들의 list를 다루는 view, pagiantaion
+            ListView
