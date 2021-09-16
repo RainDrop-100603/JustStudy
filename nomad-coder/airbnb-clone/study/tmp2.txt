@@ -126,13 +126,21 @@ ClassBasedView
             CBV는 data가공을 django class가 대신 해준다. 부분적으로 수정 가능하다. 
             어떤것을 쓰든, HTML은 직접 구현해야 한다. 
     종류 
-        ListView: model을 page로 나누어 보여주는 CBV
+        ListView: model list를 page로 나누어 보여줌
+        DetailView: model의 ele들을 보여줌
+        CreateView: obj 생성 
+        UpdateView: obj를 수정
+        DeleteView: obj 제거
+        LoginView: login 
+        LogoutView: logout 
+        FormView: customize 하기 좋다. 
     변수&함수 설명
         model 
             model = models.Room : 다룰 model Class를 지정해준다. 
                 html에서 object_list라는 이름으로 들어간다. 
             context_object_name = "Room" : HTML에서의 obj이름을 변경한다. 
             ordering = "created_by" : ordering 
+            fields = {"name", } : edit/create 할 element 지정 
             HTML 
                 ListView: object_list 
         context
@@ -165,6 +173,14 @@ URL dispatcher
         html : {% url "core:homepage" kwarg1 kwarg2 %} , kwarg를 같이 보내야한다. 
         reverse : reverse("namespace:name", kwargs={kwarg1,kwarg2,}), kwarg를 추가한다. 
     models.py 
-        get_absolute_url : 
+        get_absolute_url(selif) : 추가바람
+    에러 처리 
+        FBV : try except 를 이용한 redirect or raise Http404
+        CBV : 알아서 처리해줌 
+        Http404 : templates/404.html을 통해 꾸밀 수 있다. 강의 12.3 참고
+    기타 
+        reverse("namespace:name", kwargs={kwarg1,kwarg2,}) : 함수에서 url대신 이용 
+            reverse_lazy: class 에서 reverse대신 이용 
+
 -----ch?-----  
 make Fake Data

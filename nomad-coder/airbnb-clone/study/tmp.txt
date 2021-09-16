@@ -514,8 +514,6 @@ LoginForm 만들기
                 clean_pw 에서 error가 발생하면 pw에서 error가 발생한 것으로 간주
                 clean 의 경우는 default는 non-field 이다.
                     self.add_error("password", forms.ValidationError("bla"))를 통해 field 설정 가능 
-                
-
         기타 
             def clean()
                 여러 입력에 대한 clean을 수행하고 싶을때 이용
