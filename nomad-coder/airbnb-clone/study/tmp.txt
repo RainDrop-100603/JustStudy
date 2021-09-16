@@ -158,7 +158,6 @@ queryset .order_by
     descending: .order_by("-ele")
 
 <a href="{% url "core:homepage" %}">
-<a href="{{ url('admin:index') }}">
 
 url dispatcher
     변수 받아오기

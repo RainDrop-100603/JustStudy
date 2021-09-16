@@ -112,6 +112,59 @@ url response
         아이콘
             &copy
 
+ClassBasedView 
+    설명 
+        from django.views.generic import bla 
+        편하게 볼 수 있는 Doc: https://ccbv.co.uk/
+        django에서 미리 구현되어 있는 classView, 상속하여 이용한다. 
+            변수를 지정하면 알아서 자료들을 만들어 html에 넘긴다. 
+            함수 오버라이딩을 통해, 일부 동작들을 바꿀 수 있다. 
+        urlpatterns에서, class.as_view()를 입력해주어야한다. 
+            class는 view로서 사용할 수 없기 때문에, 내장된 변환 기능을 사용한다. 
+        vs Function Based View 
+            FBV는 data를 직접 가공한다. 사용자가 원하는대로 구현 가능하다. 
+            CBV는 data가공을 django class가 대신 해준다. 부분적으로 수정 가능하다. 
+            어떤것을 쓰든, HTML은 직접 구현해야 한다. 
+    종류 
+        ListView: model을 page로 나누어 보여주는 CBV
+    변수&함수 설명
+        model 
+            model = models.Room : 다룰 model Class를 지정해준다. 
+                html에서 object_list라는 이름으로 들어간다. 
+            context_object_name = "Room" : HTML에서의 obj이름을 변경한다. 
+            ordering = "created_by" : ordering 
+            HTML 
+                ListView: object_list 
+        context
+            def get_context_data(self,**kwargs):    //HTML에 보낼 context 수정 
+                context=super().get_context_data(**kwargs)  //default context를 불러온다.
+                context["now"] = timezone.now() //context의 내용을 수정한다 . 
+                return context 
+        pagination : ListView 
+            paginate_by = 10: 한 page에 들어갈 obj의 갯수를 지정한다.
+            paginate_orphans = 3: 마지막 obj가 10+3개 이하면, 한 page에 모두 표현한다.
+            HTML 
+                page_obj : 현재 page를 다루는 obj 
+                page_obj.paginator : 전체 page를 다루는 obj  
+        기타 
+            template_name : html 경로를 지정해준다. default = appname/classname_CBV.html
+                ListView : appname/classname_list.html 
+            template_name_suffix : _CBV 부분을 변경해준다. 
 
+QuerySet.order_by 
+    ascending: .order_by("ele")
+    descending: .order_by("-ele")
+
+HTML 변수 & 함수 
+    <a href="{% url "core:homepage" kwarg1 kwarg2 %}"> </a> : namespace:name을 통해 url설정 가능 
+
+URL dispatcher
+    kwarg 추가
+        urls.py : /<int:year>/ , 형식:이름 으로 받아올 수 있다.
+        views.py : FBV에서는 함수를 선언할 때 추가해주어야 하고, CBV에서는 self.kwargs에 저장된다.
+        html : {% url "core:homepage" kwarg1 kwarg2 %} , kwarg를 같이 보내야한다. 
+        reverse : reverse("namespace:name", kwargs={kwarg1,kwarg2,}), kwarg를 추가한다. 
+    models.py 
+        get_absolute_url : 
 -----ch?-----  
 make Fake Data
