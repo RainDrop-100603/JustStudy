@@ -190,6 +190,7 @@ Class Based View
     종류 
         Generic Edit : Obj를 생성, 수정, 삭제하는 View 
             FormView : 비교적 자유롭다. 
+            UpdateView : Form을 만들어준다. 
             CreateView, UpdateView,DeleteView  
         Generic Detail : Obj의 element를 다루는 View 
             DetailView

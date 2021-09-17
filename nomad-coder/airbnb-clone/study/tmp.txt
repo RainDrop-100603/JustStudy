@@ -700,6 +700,54 @@ Models
         html에서 namespace:name 대신, url대신, model.get_absolute_url 을 이용할 수 있다. 
         Admin Panel의 user detail에, View On Site 버튼이 생긴다. 
 
-UpdateView 
-    user가 login한 사람이 아니라, UpdateView로 불러온 객체가 되버림 
-    context_object_name = "user_obj" 를 통해, UpdateView가 불러온 obj의 이름을 바꿔주면 된다. 
+Views
+    DetailView 
+        DetailView의 대상으로 불러온 객체의 이름은 default로 user 임 
+            login한 사람을 지정하던 user가, DetailView의 대상으로 바뀌어 버린 것 
+            context_object_name = "user_obj" 를 통해, DetailView의 대상의 이름을 바꿔주면 된다. 
+    UpdateView 
+        Form을 생성하지 않아도 알아서 다 해준다. model, fields 만 지정해주자 
+        def get_object(self, queryset=None): 수정하길 원하는 obj를 반환하는 함수
+            self.request.user(현재 로그인한 유저)를 반환해버리면 됨, 이러면 pk가 필요없다. 
+        작업을 완료하면 get_aboulute_url로 redirect 해줌 
+        form_valid 오버라이딩을 통해 추가적인 업데이트 가능하다. 
+        Template 
+            enctype : text/plain, multipart/form-data, application 인코딩
+                multipart/form-data : 파일을 보내면 잘 작동 
+            enctype설정을 안하면, backend에서 파일을 받지 못한다. 
+    PasswordChagneView 
+        template_name을 설정하지 않으면 admin page로 보내버림 
+
+    CBV 
+        context_data 확장 
+            def get_context_data(self,**kwargs):
+                context =super().get_context_data(**kwargs) 
+                context["hello"] = "Hello!"
+                return context 
+            해석 
+                context_data를 그냥 불러오면, 현재 객체의 context_data를 불러온다. 
+                    즉 데이터를 수정하면 원본데이터를 수정해버리므로 부적절하다. 
+                super().get_context_data(**kwargs)
+                    kwargs와 super()이용하여, 현재 context_data와 똑같은 context_data를 얻는다. 
+                context를 적당히 수정하여 return해주면 된다. 
+        Template    
+            존재하면 표시하도록 하기 : if user_obj.avatar 이용 
+            user 확인 : if user == user_obj
+        mixin을 이용한 divide conquer 
+
+Urls 
+    주소뒤에는 항상 /을 붙여줘야 한다. 
+   
+super() method에 대한 고찰 
+    def form_valid(self,form):
+        // some logic 
+        return super().form_valid(form)
+    위 코드를 살펴보면, logic을 수행한 후에 super().form_valid(form)을 실행한다. 
+    이때 form_valid라는 method는 modelForm등의 parentForm에서 상속받은 것이다. 
+        즉 super().form_valid(form)은, form_valid method의 원형이라고 볼 수 있다(수정하기 전)
+    따라서 위의 method는 원하는 logic을 먼저 수행한 뒤, 원래 정의되어 있던 form_valid를 실행하는 것이라고 볼 수 있다.  
+    
+template include 
+    {% include 'mixins/auth/auth_form.html' with form=form cta="Update Password" %}
+        변수도 전달할 수 있다. 
+    
