@@ -690,3 +690,16 @@ ModelForm
         ModelForm에서는 save를 하려면 view에서 할 수밖에 없다. 
 
 
+--21.3 ~ 21.7 --
+Profile View 
+
+Models
+    get_aboulute_url
+        def get_absolute_url(self):
+            return reverse("users:profile", kwargs={"pk": self.pk}) 
+        html에서 namespace:name 대신, url대신, model.get_absolute_url 을 이용할 수 있다. 
+        Admin Panel의 user detail에, View On Site 버튼이 생긴다. 
+
+UpdateView 
+    user가 login한 사람이 아니라, UpdateView로 불러온 객체가 되버림 
+    context_object_name = "user_obj" 를 통해, UpdateView가 불러온 obj의 이름을 바꿔주면 된다. 
