@@ -179,3 +179,6 @@ post() 메서드에서 request.POST 로 전송된 Form 데이터를 얻습니다
 LoginForm(request.POST) 로 폼 객체를 만들고 authenticate()로 유효한 로그인인지 확인합니다.
 login() 함수로 로그인 유저ID를 장고 세션에 저장합니다.
 로그아웃의 경우 함수 뷰를 사용했습니다. 장고의 logout() 함수를 사용해서 간단하게 세션에서 유저ID 정보를 삭제했습니다. 로그아웃 후에는 장고의 redirect()함수를 사용해서 리다이렉션을 했습니다.
+
+chg10 
+https://replit.com/@RainDrop97/SourValidUnix-1
