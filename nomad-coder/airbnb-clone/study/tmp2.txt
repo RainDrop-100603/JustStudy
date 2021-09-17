@@ -182,5 +182,79 @@ URL dispatcher
         reverse("namespace:name", kwargs={kwarg1,kwarg2,}) : 함수에서 url대신 이용 
             reverse_lazy: class 에서 reverse대신 이용 
 
------ch?-----  
-make Fake Data
+
+Class Based View 
+    특징 
+        django에서 미리 정의된 Class를 이용하여, 보다 코딩을 쉽게 해준다.
+        약간의 커스텀은 가능하나, 자유롭지는 않다.
+    종류 
+        Generic Edit : Obj를 생성, 수정, 삭제하는 View 
+            FormView : 비교적 자유롭다. 
+            CreateView, UpdateView,DeleteView  
+        Generic Detail : Obj의 element를 다루는 View 
+            DetailView
+        Generic List : Obj들의 list를 다루는 view, pagiantaion
+            ListView
+
+Form과 View 
+    What is Form 
+        html에서의 form, 즉 입력을 받을 때 사용하는 서식이다. 
+            서식을 미리 지정해주면, html에서 해당 서식에 맞게 입력을 받는다 (ex: 이메일 서식)
+            html에서는 {{form}} 이라는 형식을 통해 쉽게 표현할 수 있다. 
+    forms.py 
+        동작 : 입력 받을 필드의 이름과 서식(이메일 등)을 미리 지정해둔다. 
+            GET: form 형식에 맞춰서 입력을 만든다. 
+                입력을 받고나서, clean_ 함수를 자동으로 실행하여 후처리를 한다. 
+            clean_ : 입력에 대한 후처리를 한다. 
+                입력을 받은 data는 cleaned_data에 들어가 있다. 후처리를 원한다면 이를 추출하여 처리후 반환한다. 
+                clean_var(self)함수는 var에 대한 clean을 수행하고, clean(self)는 여러 var에 대해 복합적으로 수행한다. 
+                    clean_var이 clean보다 먼저 실행되는 듯 하다. 
+                    cleaned_data.get("var")을 통해 변수를 얻고, 처리한 데이터를 ret을 통해 반환해야 한다. 
+                        clean_var은 var만, clean은 cleaned_data 전부를 반환해야 한다. 
+                clean함수는, 먼저 정의된 변수들만 사용할 수 있다. 
+                    var1, ... var5 순서로 정의되었다면, clean_var3는 var1~3만 이용가능하다. 
+                    추측하기로, 모든 입력을 cleaned_data에 넣고 수행하는 것이 아니라, 순서대로 넣으면서 수행하는 듯 하다. 
+                    확실하지는 않지만, clean함수는 가장 마지막에 실행되는듯 하다(여러 변수를 처리하기 때문)
+                Html form에서 submit해야 전송이 가능하다. 
+                    clean에서 error가 발생하면, 브라우저에 invalid하다는 설명이 나오고 submit이 안된다.
+                    error가 발생하지 않는다면, submit은 정상적으로 수행된다. 
+                    <form method = "post" action = "url"> 과 같은 형식으로 html을 구성하면 된다. 
+            save() : view에서 form을 통해 obj를 만들 때 사용한다. 
+                상세한 구성은 Form과 ModelForm에서 확인하자  
+        Form: 
+            입력 서식을 직접 만든다. 
+            clean함수 오버라이딩이 가능하다. 
+            save함수: 
+                obj = models.User.objeces.create_user(username,email,password) 
+                    : username, email, password 자리에 각 변수를 넣어서 obj를 만든다. 
+                        이때 create_user는 User의 parent의 method이므로, User의 몇몇 변수는 입력이 불가하다. 
+                        obj.first_name=self.cleaned_data.get("first_name")과 같은 방식으로 지정해준다. 
+                obj.save() : save를 해야 database에 저장된다. 
+        ModelForm:
+            class Meta: //whatModel.var 들의 입력서식을 자동으로 만들어준다 
+                model = whatModel 
+                fields = ("var1",...,"varN") 
+            clean함수 오버라이딩이 가능하다. 
+            save함수: 
+                obj=super().save(commit = False) 
+                    : class Meta-fields에 있는 서식들로 obj를 만든다. commit은 database에 저장하는지 여부 
+                obj.email = self.cleaned_data.get("email")과 같은 방법으로, class Meata에 없는 변수를 입력한다. 
+                obj.set_password(self.cleaned_data.get("password"))와 같이 method도 이용 가능하다. 
+                    set_password는 obj(즉 class Meta에서 정한 Model)에 존재하는 method 
+                obj.save() : obj를 database에 저장한다. 
+    views.py 
+        동작 : HttpRequest의 GET 혹은 POST요청에 대응하고, template를 rendering해서 반환한다.
+            일반적으로 GET은 form을 받아오는 역할, POST는 form을 채워서 반환하는 역할이다.  
+        View : 
+                GET: get()을 실행한다. form을 포함함 template를 반환하면 된다. 
+                POST: form = whatForm(request.POST) 로 form 데이터를 얻을 수 있다.
+                    from.is_valid()를 통해 form이 valid한지 확인하고 원하는 작업을 할 수 있다. 
+                    form을 처리하고 난 후, 다시 form을 포함한 template를 반환한다? 
+                    chg9를 보면 둘다 render(request,"users/login.html",{"form":form}) 반환 
+                        추측: post에 대한 HttpResponse를 보내야 하기 때문에 받은것과 같은 형식으로 반환? 
+        FormView : GET요청과 POST요청을 자동으로 처리한다. 
+                template_name, form_class, success_url을 정의해야 한다. 
+                GET: template에 form을 포함하여 반환한다. 
+                POST: form데이터를 받아서 form_valid(self,form)을 자동으로 실행한다. 
+                    오버라이딩을 통해 원하는 작업을 할 수 있다. 
+                    success_url을 반환한다. 

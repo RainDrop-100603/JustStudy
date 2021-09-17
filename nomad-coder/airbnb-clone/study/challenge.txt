@@ -151,3 +151,31 @@ model과 fields 값으로 ModelForm클래스를 만들고 context를 통해서 �
 
 chg9 
 https://replit.com/@RainDrop97/EasyUncommonDistributeddatabase-2#.replit
+https://replit.com/@RainDrop97/SourValidUnix
+
+솔루션에서 SignUpView클래스가 /users/signup URL를 처리했습니다.
+SignUpView 클래스는 FormView클래스를 상속받았습니다.
+FormView클래스는 Form클래스를 이용해서 HTTP 요청을 처리하는 클래스입니다. form_class = SignUpForm속성으로 사용할 Form클래스를 정합니다.
+GET요청을 했을 때는 템플릿에 context를 통해서 form_class를 보내줍니다. template_name = "users/signup.html"속성으로 템플릿 파일의 이름을 설정합니다.
+POST요청을 했을 때는 SignUpView에서 post()메서드를 실행시킵니다.
+form.is_valid()를 통해서 POST요청으로 받은 데이터가 유효한지 검사합니다.
+유효하다면 form_valid()메서드를 실행시키고 유효하지 않다면 form_invalid()메서드를 실행시킵니다.
+FormView의 form_valid()메서드를 변형해서 가입하고자 하는 유저를 등록하고 success_url로 URL 리다이렉션합니다.
+form_valid(self, form)메서드를 살펴보면 우선 form.save()로 DB에 유저를 등록시킵니다.
+장고의 authenticate()함수로 유저의 이메일과 패스워드가 DB에 유효하게 저장됐는지 확인하고 login()함수로 유저를 세션에 저장합니다.
+그리고super().form_valid(form)로 부모 클래스의 form_valid()메서드를 실행시킵니다. 부모 클래스의 form_valid()에서 success_url 로 URL 리다이렉션합니다.
+users/forms.py에서 SignUpView에서 사용한 SignUpForm클래스를 살펴봅시다.
+ModelForm 클래스를 상속했습니다. class Meta에 model과 fields 속성을 설정해서 ModelForm를 만들었습니다.
+model = User, fields = ("first_name", "last_name", "email") 으로 설정해서 User 모델의 first_name, last_name, email 필드에 대한 Form 클래스인 것을 알 수 있습니다.
+필드를 추가하기 위해서 password, password1 속성을 추가했습니다.
+clean_password1()메서드로 password1을 검증합니다.
+self.cleaned_data로 입력된 password1에 접근할 수 있습니다. save()메서드를 변경해서 유저를 저장하고 있습니다.
+user = super().save(commit=False)로 아직 DB에 저장하지는 않은 유저 객체를 얻습니다.
+username값을 저장하고 set_password() 메서드로 해쉬 함수로 암호화된 비밀번호를 저장합니다.
+user.save()가 실행될 때 DB에 유저가 저장됩니다.
+LoginView클래스는 View클래스를 상속했습니다.
+GET요청이 오면 get() 메서드를 실행시키고 POST요청이 오면 post() 메서드를 실행시킵니다.
+post() 메서드에서 request.POST 로 전송된 Form 데이터를 얻습니다.
+LoginForm(request.POST) 로 폼 객체를 만들고 authenticate()로 유효한 로그인인지 확인합니다.
+login() 함수로 로그인 유저ID를 장고 세션에 저장합니다.
+로그아웃의 경우 함수 뷰를 사용했습니다. 장고의 logout() 함수를 사용해서 간단하게 세션에서 유저ID 정보를 삭제했습니다. 로그아웃 후에는 장고의 redirect()함수를 사용해서 리다이렉션을 했습니다.

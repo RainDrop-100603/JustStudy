@@ -690,15 +690,3 @@ ModelForm
         ModelForm에서는 save를 하려면 view에서 할 수밖에 없다. 
 
 
-Class Based View 
-    특징 
-        django에서 미리 정의된 Class를 이용하여, 보다 코딩을 쉽게 해준다.
-        약간의 커스텀은 가능하나, 자유롭지는 않다.
-    종류 
-        Generic Edit : Obj를 생성, 수정, 삭제하는 View 
-            FormView : 비교적 자유롭다. 
-            CreateView, UpdateView,DeleteView  
-        Generic Detail : Obj의 element를 다루는 View 
-            DetailView
-        Generic List : Obj들의 list를 다루는 view, pagiantaion
-            ListView
