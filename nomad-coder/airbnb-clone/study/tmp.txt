@@ -694,10 +694,10 @@ ModelForm
 Profile View 
 
 Models
-    get_aboulute_url
+    get_absoulute_url
         def get_absolute_url(self):
             return reverse("users:profile", kwargs={"pk": self.pk}) 
-        html에서 namespace:name 대신, url대신, model.get_absolute_url 을 이용할 수 있다. 
+        html에서 url "namespace:name" 대신, model.get_absolute_url 을 이용할 수 있다. 
         Admin Panel의 user detail에, View On Site 버튼이 생긴다. 
 
 Views
@@ -737,6 +737,7 @@ Views
 
 Urls 
     주소뒤에는 항상 /을 붙여줘야 한다. 
+    include를 하거나, 딸려오는 arg등이 있을때를 대비해서인듯? 
    
 super() method에 대한 고찰 
     def form_valid(self,form):
@@ -751,3 +752,4 @@ template include
     {% include 'mixins/auth/auth_form.html' with form=form cta="Update Password" %}
         변수도 전달할 수 있다. 
     
+user.get_absolute_url 왜 자꾸 지랄이야 
