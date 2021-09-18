@@ -2,9 +2,6 @@ Airbnb - clone
     무슨 css : utility-first css, 이미 구현된 디자인 이용
     Django와 Django Template를 이용한 Backend Frontend 구현 
 
-git ignore: 동기화 하지 않을 파일 선택 
-	프로젝트 최상단에 위치하여야 한다.
-
 vscode
     https://sosomemo.tistory.com/53
     https://webnautes.tistory.com/1158
