@@ -84,7 +84,7 @@
         "filesystem": "cpp"
     },
     "C_Cpp.clang_format_fallbackStyle": "Google",
-    "editor.tabSize": 2,
+    "editor.tabSize": 4,
     "code-runner.fileDirectoryAsCwd": true,
     "code-runner.saveAllFilesBeforeRun": true,
     "code-runner.saveFileBeforeRun": true,
