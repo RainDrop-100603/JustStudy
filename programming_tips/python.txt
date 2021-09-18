@@ -1,7 +1,70 @@
-python tips
+-----목차-----
+약속 
+기타 
+	라이브러리 
+pip와 pipenv
+	pip install [패키지] : --user 옵션
+	가상화의 필요성
+	pipenv
+Linter & Formatter
+	Linter
+	Formatter
+정리 필요 
 
-https://docs.python.org/3/library/
-검색방법 python "검색어" reference 
+
+-----약속----- 
+변수는 한국어로 [날짜] 와 같은 형식으로 기록하였다.
+
+
+-----기타-----
+	라이브러리: https://docs.python.org/3/library/
+
+      
+-----pip와 pipenv ----- 
+pip install [패키지] : --user 옵션 
+	pip는 [패키지]를 system경로에 설치한다.
+		[패키지]를 이용할 때마다 root권한을 얻거나, 
+		system directory를 일반 사용자에게도 허락해야한다.
+	--user 옵션을 이용하여 root권한 없이 사용자 directory에 설치 가능하다.
+		사용자 directory 주소 : /home/[유저이름]/.local/bin 
+		$ python3 -c 'import site; print(site.USER_BASE)' 을 통해 주소를 얻을 수 있다.
+	사용자 directory는 PATH지정이 안되어 있으므로, PATH지정을 해야한다. 
+		~/.profile 편집 vs ~/.bashrc 편집 
+			.profile은 Login Shell을 위한것이고, .bashrc는 Non Login Shell을 위한것이다.
+			Login Shell은 ID/PW를 입력하는 상황, Non..은 GUI에서 터미널을 여는 상황이다.
+			Non.. 은 Login Shell에서 상속받는다.
+			따라서 .profile에 PATH를 추가하는 것이 권장된다.
+		~/.profile 편집 
+			if [ -d "$HOME/.local/bin" ] ; then
+				PATH="$PATH:$HOME/.local/bin"
+			fi
+		~/.bashrc 편집
+			export PATH="$HOME/.local/bin:$PATH"
+	참고 링크 
+		https://www.lesstif.com/python/python-pip-user-mode-95879683.html
+가상화의 필요성
+	pip는 모든 프로그램을 전역으로 설치한다.
+		각 프로젝트의 도구(django등)를 격리하여 다룰 수 없다.
+	pipenv, venv는 가상화를 지원한다. 
+pipenv
+	bubble - 가상화 이용법
+		pipenv --three : python3를 이용하는 bubble 생성
+		pipenv shell : bubble 진입, bubble 생성/진입을 제외한 작업들은 진입 후 해야한다.
+		pipenv install [패키지] : [패키지]를 bubble에서만 이용하도록 설치한다. 
+		
+
+-----Linter & Formatter-----
+Linter
+	python은 compiled 언어가 아니기 때문에, compile 전에 에러를 파악할 수 없다.
+	linter는 예상되는 에러를 찾아내준다.
+	python PEP 라는 python 작성 약속에 위배되는 코드도 알려준다.
+	flake8 등이 있다.
+Formatter
+	python PEP 에 따라 코드를 보기좋게 수정해준다. 
+	black 등이 있다.
+
+
+-----정리 필요-----
 
 csv module
   데이터를 쓸 때마다 줄바꿈이 생긴다면, 파일을 open할 때 newline을 ""나 "\n"으로설정하자
@@ -9,4 +72,28 @@ csv module
     f=open(filename,mode="w",newline="")
 
 문자열이 길어질경우 아래와 같이 나눌 수 있다.
-  "150문자열"="75문자열""75문자열"                                                                                                                                                  
+  "150문자열"="75문자열""75문자열"            
+
+pipenv 구현원리 추가바람 
+
+Python  
+    from . import func : .은 현재 폴더를 의미한다.
+        즉, 같은 폴더내의 있는 파일들의 func를 import 한다는 뜻의 코드
+    class definition: 정의 바로 아래 """class definition"""을 추가한다.
+        class name에 커서를 올리면 class definition이 보인다
+    __init__.py : 좀 애매한데 추후 다시 공부하자 
+        폴더에 이것을 넣어두면, 파이썬이 이 폴더를 import한 것과 같은 역할이다.
+        따라서 폴더랑 같은 위치에 있는 다른 파일에서, 폴더내의 파일을 사용할 수 있다.
+        ex) : manage.py의 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+    __str__ : 추후 공부 더 필요
+        파이썬과 장고의 모든 class가 가지고 있는 method
+        obj를 발견했을때, 그것을 표현하는 방법이다.
+            기본적으로는 __str__은 obj의 이름을 반환한다.
+            __str__을 수정함으로서, 다양한 str을 반환할 수 있다.
+            obj.ele, "strings", f"{obj.ele} is ele" 등등, str형식이면 다 된다.
+    상속
+        여러개를 상속할 수 있다? django만 가능? 
+
+sudo apt-get update && sudo apt-get upgrage : 무언가를 설치하기 전에 반드시 하자
+    sudo apt upgrade python3 : 선택사항
+    sudo apt install python3-pip : pip설치

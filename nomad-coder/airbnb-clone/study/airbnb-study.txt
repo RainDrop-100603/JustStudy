@@ -45,28 +45,6 @@ Airbnb - clone setting
         ==2.2.5 로 버전을 명시하면 해당 버전 설치(강의가 2.2.5)
         버전을 명시하지 않으면 최신버전 설치 
 
-pip install --user PACKAGE
-    https://www.lesstif.com/python/python-pip-user-mode-95879683.html
-    pip는 PACKAGE를 system경로에 설치한다.
-        -> PACKAGE를 이용할 때마다 root권한을 얻거나, 
-            system디렉토리를 일반 사용자에게도 허용해야한다.
-    --user 모드를 이용하면 root권한 없이 사용자 디렉토리에 설치 가능하다.
-        사용자 디렉토리 주소: /home/rain/.local/bin
-        $ python3 -c 'import site; print(site.USER_BASE)' 을 통해 주소를 얻을 수 있다.
-    사용자 디렉토리는 PATH지정이 안되어 있으므로, 해당 주소를 PATH에 등록해야한다.
-        ~/.profile 편집 vs ~/.bashrc 편집    
-            .profile은 Login Shell을 위한것이고, .bashrc는 Non Login Shell을 위한것이다.
-            Login Shell은 ID/PW를 입력하는 상황, Non..은 GUI에서 터미널을 여는 상황이다.
-            Non.. 은 Login Shell에서 상속받는다.
-            따라서 .profile에 PATH를 추가하는 것이 권장된다.
-        ~/.profile 편집 
-            if [ -d "$HOME/.local/bin" ] ; then
-                PATH="$PATH:$HOME/.local/bin"
-            fi
-        ~/.bashrc 편집
-            export PATH="$HOME/.local/bin:$PATH"
-        $HOME/.local/bin:$PATH 은 디렉토리 주소같은데, 위에서 따온걸 넣어줘도 되려나?
-
 Frontend
     Library: React 
         주류 Frontend(React)
@@ -335,38 +313,6 @@ Django
             https://docs.djangoproject.com/en/3.2/ref/applications/#django.apps.AppConfig.get_model
 
 
-Python  
-    from . import func : .은 현재 폴더를 의미한다.
-        즉, 같은 폴더내의 있는 파일들의 func를 import 한다는 뜻의 코드
-    class definition: 정의 바로 아래 """class definition"""을 추가한다.
-        class name에 커서를 올리면 class definition이 보인다.
-    파이썬 패키지관리자: pipenv, venv
-        파이썬에는 nodeJs의 npm과 같은 패키지관리자가 없다.
-        pip는 전역으로만 설치하므로, 프로젝트 도구(django등)을 격리하여 다룰 수 없다.
-        pipenv, venv는 가상화를 통해 프로젝트 도구를 격리시킨다.
-        pipenv: 파이썬을 위한 npm + package.json 
-            pipenv --three: python3를 이용하는 bubble(가상화) 생성
-            pipenv shell : bubble 진입
-            pipenv install PACKAGE : PACKAGE를 bubble에 설치 
-    Linter : flake8, etc...
-        python은 compiled언어가 아니어서, 에러를 컴파일전에 파악할 수 없다.
-        linter는 예상되는 에러를 찾아내준다.
-        python PEP라는 python작성약속에 따라, 보기 좋지 않은 코드도 알려준다.
-    Formatter : black
-        python PEP에 따라 코드를 보기좋게 수정해준다.
-        단순히 보기좋게 수정해주는 것이고, 코드는 건들지 않는다. 
-    __init__.py : 좀 애매한데 추후 다시 공부하자 
-        폴더에 이것을 넣어두면, 파이썬이 이 폴더를 import한 것과 같은 역할이다.
-        따라서 폴더랑 같은 위치에 있는 다른 파일에서, 폴더내의 파일을 사용할 수 있다.
-        ex) : manage.py의 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
-    __str__ : 추후 공부 더 필요
-        파이썬과 장고의 모든 class가 가지고 있는 method
-        obj를 발견했을때, 그것을 표현하는 방법이다.
-            기본적으로는 __str__은 obj의 이름을 반환한다.
-            __str__을 수정함으로서, 다양한 str을 반환할 수 있다.
-            obj.ele, "strings", f"{obj.ele} is ele" 등등, str형식이면 다 된다.
-    상속
-        여러개를 상속할 수 있다? django만 가능? 
 
 
 decorator
