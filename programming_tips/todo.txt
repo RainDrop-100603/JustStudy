@@ -1,0 +1,5 @@
+django setup등 정리하기 
+
+airbnb-clone 만들기 
+
+추후 todo 만들기 
