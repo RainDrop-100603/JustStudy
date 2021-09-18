@@ -1,6 +1,6 @@
 github tips
 
-.gitignore 파일 : github가 무시할 파일을 지정한다.
+.gitignore 파일 : github가 무시할 파일을 지정한다. 프로젝트 최상단에 위치 
 
 github.io 관리 
 
