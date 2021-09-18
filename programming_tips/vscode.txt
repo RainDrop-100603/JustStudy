@@ -1,8 +1,9 @@
 =====목차===== 
 약속
 기타 
-formatter   
-    작동
+formatter & linter
+    formatter 
+    linter
     cpp 
     python
 python interpreter and pipenv
@@ -16,24 +17,36 @@ python interpreter and pipenv
 
 
 -----기타-----
-와일드카드 : * (아무거나 가능)
-경로 : . 은 현재 폴더를 의미한다. 
+와일드카드: * (아무거나 가능)
+경로: . 은 현재 폴더를 의미한다. 
 
 
------formatter-----
-작동
+-----formatter & linter-----
+formatter
     prettier등의 확장이 설치되어 있지 않다면, 내장 formatter를 사용한다.
     prettier는 주석을 지맘대로 바꾸고 버그도 있어서, 언어별로 따로 설정해주었다.
     settings.json 
         "editor.formatOnSave": true,
+linter
+    code에 에러가 있다면 잡아주는 역할을 한다.
+    cpp와 같은 compiled 언어에서는 불필요하다(컴파일시 에러 잡아냄)
+    python과 같은 언어는 linter가 있으면 유용하다.
 cpp 
+    formatter: vsc default, google style
     settings.json
         "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 120}",
             ColumnLimit을 0으로 둘 경우, 줄바꿈을 수행하지 않는다.
 python 
-    black을 이용하자 
+    formatter: black 
+    linter: flake8
     settings.json 
         "python.formatting.provider": "black",  
+        "python.linting.flake8Enabled": true,
+        "python.linting.pylintEnabled": false,
+            충돌 방지 
+        "python.linting.enabled": true,
+        "python.linting.flake8Args": ["--max-line-length=120"]
+            길이제한 경고기준 설정 
 
 
 -----python interpreter and pipenv-----
@@ -43,7 +56,7 @@ pipenv 이용법
         which python, which python3를 해보면 확인 가능하다.
     문제는, 잘못된 폴더의 가상환경을 선택한다면 모듈화가 꼬일 수 있다.
     따라서 interpreter는 python을 공통적으로 사용하고, pipenv를 통해 가상화에 진입하자 
-    settings.json : 현재 파일에서 터미널이 열리게 해준다.
+    settings.json: 현재 파일에서 터미널이 열리게 해준다.
         "terminal.integrated.cwd": "${fileDirname}"
 
 
