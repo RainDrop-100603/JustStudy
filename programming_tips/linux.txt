@@ -1,64 +1,70 @@
-목차 
-  약속
-  기타 
-    와일드카드
-    경로 
-  명령어 
-    linux 명령어 
-      기본 명령어 
-      명령어 옵션 
-    third-party app 명령어 
-      vsc 
+-----목차----- 
+약속
+기타 
+	와일드카드
+	경로 
+명령어 
+	linux 명령어 
+		기본 명령어 
+		명령어 옵션 
+	third-party app 명령어 
+    	vsc  
 
 
-약속 
-  변수는 한국어로 [날짜] 와 같은 형식으로 기록하였다.
+-----약속----- 
+변수는 한국어로 [날짜] 와 같은 형식으로 기록하였다.
 
 
-기타
-  와일드카드 : * (아무거나 가능)
-  경로 : . 은 현재 폴더를 의미한다. 
+-----기타-----
+와일드카드 : * (아무거나 가능)
+경로 : . 은 현재 폴더를 의미한다. 
 
 
-명령어
-  linux 명령어 
-    기본 명령어 
-      pwd 
-        print working directory
-      ls 
-        list   
-        -l : 최근 업데이트 일자 확인
-        -R : 하위 directory까지 모두 보여줌 
-      cd 
-        change directory, 상대경로와 절대경로 모두 가능 
-      cp 
-        copy, cp [대상파일/디렉토리] [새 이름] 
-        -r 
-      mv 
-        move, mv [대상파일/디렉토리] [경로], 이름을 바꾸는 용도로도 사용 가능하다. 
-      mkdir 
-        make directory
-        -p : 하위 directory까지 한번에 생성, mkdir -p a/b/c/d/e
-      rm 
-        remove, 하위 directory까지 모두 삭제한다. 
-        -f, -r
-      touch 
-        file/directory의 업데이트 시간을 현재시간으로 변경, 존재하지 않으면 빈 file 생성 
-      cat 
-        concatenate, file 내용표시, 생성, 합성하여 새로 만들기, 기존 파일에 합성
-      head 
-        파일의 앞부분을 보고싶은만큼 보여줌, head -[개수], default 개수=10
-      tail 
-        파일의 뒷부분을 보고싶은만큼 보여줌, tail -[개수], deafult 개수=10
-        -F : 명령어가 종료되지 않고 계속 화면을 출력하며, 변경사항 있으면 새로 출력 
-      find 
-        file/directory 검색, find [검색경로] -name [파일명], 와일드카드 이용가능: *.jpg 
-        다양한 옵션이 있으니 더 찾아볼 것 
-    명령어 옵션 
-      --help : 명령어에 대한 자세한 사용방법 
-      -r : directory에 대한 작업
-      -f : 경고 메시지를 띄우지 않음, force인듯
-  third-party app 명령어 
-    vscode 
-      code [경로] 
-        해당 경로를 vsc를 통해 연다.  
+-----명령어-----
+linux 명령어 
+	기본 명령어 
+		pwd 
+			print working directory
+		ls 
+			list   
+			-l : 최근 업데이트 일자 확인
+			-R : 하위 directory까지 모두 보여줌 
+		cd 
+			change directory, 상대경로와 절대경로 모두 가능 
+		cp 
+			copy, cp [대상파일/디렉토리] [새 이름] 
+			-r 
+		mv 
+			move, mv [대상파일/디렉토리] [경로], 이름을 바꾸는 용도로도 사용 가능하다. 
+		mkdir 
+			make directory
+			-p : 하위 directory까지 한번에 생성, mkdir -p a/b/c/d/e
+		rm 
+			remove, 하위 directory까지 모두 삭제한다. 
+			-f, -r
+		touch 
+			file/directory의 업데이트 시간을 현재시간으로 변경, 존재하지 않으면 빈 file 생성 
+		cat 
+			concatenate, file 내용표시, 생성, 합성하여 새로 만들기, 기존 파일에 합성
+		head 
+			파일의 앞부분을 보고싶은만큼 보여줌, head -[개수], default 개수=10
+		tail 
+			파일의 뒷부분을 보고싶은만큼 보여줌, tail -[개수], deafult 개수=10
+			-F : 명령어가 종료되지 않고 계속 화면을 출력하며, 변경사항 있으면 새로 출력 
+		find 
+			file/directory 검색, find [검색경로] -name [파일명], 와일드카드 이용가능: *.jpg 
+			다양한 옵션이 있으니 더 찾아볼 것 
+		명령어 옵션 
+			--help : 명령어에 대한 자세한 사용방법 
+			-r : directory에 대한 작업
+			-f : 경고 메시지를 띄우지 않음, force인듯
+	third-party app 명령어 
+		vscode 
+		code [경로] 
+			해당 경로를 vsc를 통해 연다.  
+
+
+
+
+
+    
