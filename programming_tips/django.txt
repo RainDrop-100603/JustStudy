@@ -25,19 +25,17 @@ using django via vsc
         원하는 폴더에 pipenv를 통해 가상화를 수행한다. 
         code . 을 통해 vsc를 열고, 터미널에서 수행할 수 있다.
     vsc에서 나머지 setup
-        좌하단의 python버전을 나의 python 버전 + pipenv로 선택한다.
         vsc 터미널을 이용한 설치 
             pipenv install django==[장고버전]
-            pipenv install flake8 --dev 
-            pipenv install black --dev --pre 
         .vscode/settings.json에 문구 추가 
+	{
             "python.linting.flake8Enabled": true,
             "python.linting.pylintEnabled": false,
             "python.linting.enabled": true,
             "editor.formatOnSave":true,
             "python.formatting.provider": "black",
             "python.linting.flake8Args": ["--max-line-length=120"]
-                긴 문자열 경고 기준 변경 
+             }
         주의사항 
             vsc확장 - python은 pylint, jupyter와 같이 설치된다.
             formatter,linter는 가상화된 폴더에서 code를 실행해야 작동한다.
@@ -55,3 +53,13 @@ project setup
 
     
 -----정리 필요-----
+
+파이썬 interperter가 대체 뭐야? 꼭 pipenv붙은걸로 설정해야 해? 
+모든 프로젝트마다 formatter, linter를 설치해야 하는거야 ?
+추측하기론 vsc의 인터프리터를 python-pipenv로 설정하면, pipenv shell을 한 것과 같은 효과인 듯 하다.
+    그래서 자기 폴더에 맞는 인터프리터를 선택했다면, pipenv shell을 할 필요가 없는것이다.
+그런데 궁금한것은, 인터프리터는 python으로 두고, pipenv shell을 해도 동일한 효과를 내지 않느냐는 것이다.
+    만약 그렇다면, formatter와 linter는 전역으로 사용할 수 있다.
+https://code.visualstudio.com/docs/python/environments#_select-and-activate-an-environment
+which python3를 해보면, vsc interpreter을 python으로 해도, pipenv shell을 하고 난 후에는 적절한 가상환경을 이용한다.
+    가상 환경을 잘못 선택할 수 있다는 것을 감안하면, 그냥 interperter는 default를 이용하고, pipenv shell로 진입하는게 낫지 않나 싶다.

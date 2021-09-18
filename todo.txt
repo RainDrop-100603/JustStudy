@@ -1,0 +1,9 @@
+django setup등 정리하기 
+
+airbnb-clone 만들기 
+
+code runner 삭제함 - 문제 생기면 다시 설치 
+prettier가 일단은 black이랑도 잘 작동한다.
+근데 주석 뭉쳐버리는거 거슬려서 일단 삭제함 
+
+추후 todo 만들기 

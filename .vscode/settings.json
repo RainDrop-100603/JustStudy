@@ -83,10 +83,13 @@
         "stop_token": "cpp",
         "filesystem": "cpp"
     },
-    "C_Cpp.clang_format_fallbackStyle": "Google",
-    "editor.tabSize": 4,
-    "code-runner.fileDirectoryAsCwd": true,
-    "code-runner.saveAllFilesBeforeRun": true,
-    "code-runner.saveFileBeforeRun": true,
-    "code-runner.runInTerminal": true
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 120}",
+    "python.linting.flake8Enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.enabled": true,
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black",
+    "python.linting.flake8Args": [
+        "--max-line-length=120"
+    ],
 }
