@@ -12,39 +12,6 @@ vscode
     가상화를 지원하는 project (pipenv 등)는, 해당 폴더만 독립적으로 사용하자(linux에서 . code 이용)
     설정: 사용자 원격 작업영역, 작업영역은 현재 vscode 영역, 사용자와 원격은 전역설정과 유사하다고 생각됨
 
-Airbnb - clone setting 
-    sudo apt-get update && sudo apt-get upgrage : 무언가를 설치하기 전에 반드시 하자
-    sudo apt upgrade python3 : 선택사항
-    sudo apt install python3-pip : pip설치
-    pip install --user pipenv 
-        pipenv PATH 설정 - 하단참고 
-    pipenv --three : bubble(가상화 생성)
-    . code : pipenv를 code에서도 제대로 이용하려면, 가상화 된 폴더만 따로 취급하는것이 좋은듯하다.
-        이제부터 vsc에서도 터미널을 열어서 수행할 수 있다.
-    pipenv shell: bubble 진입, 새로운 터미널을 열 때마다 해주어야 한다.
-    vsc python 설치 : pylance, Jupyter도 같이 설치된다.
-    좌하단의 python버전을 나의 python 버전 + pipenv로 선택 
-    vsc 명령팔레트(ctrl+shift+p) - select linter - flake 8
-        설정하고 아무 .py클릭하면 알아서 설치한다.
-            pipenv install flake8  --dev 로 설치됨
-        설치후 settings.json 확인, 아래 문구가 추가된다.
-            "python.linting.flake8Enabled": true,
-            "python.linting.enabled": true,
-        아래문구를 추가한다, pylint 충돌 방지 
-            "python.linting.pylintEnabled": false, 
-        linting 사용자 설정 가능
-            string 최대 길이 늘리기: "python.linting.flake8Args": ["--max-line-length=120"]
-    vsc 터미널 - pipenv install black --dev --pre
-        black은 직접 설치한다.
-        설치후 settings.json에 아래 문구를 추가한다.
-            "editor.formatOnSave":true,
-    	    "python.formatting.provider": "black",
-        저장시 black이 작동하면 된 것이다.
-            문법오류 있으면 black이 작동하지 않을 수 있으므로 조심한다.
-    pipenv install Django==2.2.5
-        ==2.2.5 로 버전을 명시하면 해당 버전 설치(강의가 2.2.5)
-        버전을 명시하지 않으면 최신버전 설치 
-
 Frontend
     Library: React 
         주류 Frontend(React)

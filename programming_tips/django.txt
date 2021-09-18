@@ -1,6 +1,9 @@
 =====목차=====
 약속 
 기타 
+django setup
+    using django via vsc
+    project setup
 정리 필요 
 ==============
 
@@ -10,6 +13,45 @@
 
 
 -----기타-----
-	
+
+
+-----django setup-----
+using django via vsc
+    wsl을 활성화하고 ubuntu를 설치한다.
+    vsc를 설치하고 setup 
+        wsl 확장을 위한 setup (wsl remote)
+        python과 django snippets등 vsc확장 설치
+    pipenv를 설치하고 가상화 
+        원하는 폴더에 pipenv를 통해 가상화를 수행한다. 
+        code . 을 통해 vsc를 열고, 터미널에서 수행할 수 있다.
+    vsc에서 나머지 setup
+        좌하단의 python버전을 나의 python 버전 + pipenv로 선택한다.
+        vsc 터미널을 이용한 설치 
+            pipenv install django==[장고버전]
+            pipenv install flake8 --dev 
+            pipenv install black --dev --pre 
+        .vscode/settings.json에 문구 추가 
+            "python.linting.flake8Enabled": true,
+            "python.linting.pylintEnabled": false,
+            "python.linting.enabled": true,
+            "editor.formatOnSave":true,
+            "python.formatting.provider": "black",
+            "python.linting.flake8Args": ["--max-line-length=120"]
+                긴 문자열 경고 기준 변경 
+        주의사항 
+            vsc확장 - python은 pylint, jupyter와 같이 설치된다.
+            formatter,linter는 가상화된 폴더에서 code를 실행해야 작동한다.
+                pipenv를 통해 가상화된 폴더에 설치해서 그렇다.
+                formatter는 문법오류가 있으면 작동하지 않을 수 있다. 
+            djnago는 버전을 명시하지 않으면 최신버전이 설치된다. 
+project setup
+    project 생성 
+        django-admin startproject [아무이름]
+        [아무이름] 내부 관리파일을 밖으로 빼낸다.
+    application 생성 
+        django-admin startapp [애플리케이션 이름]
+        생성 후 [애플리케이션 이름]을 맘대로 변경해선 안된다.
+        config/settings.py의 INSTALLED_APPS에 추가해야 작동한다.
+
     
 -----정리 필요-----
