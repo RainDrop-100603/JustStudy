@@ -751,5 +751,79 @@ super() method에 대한 고찰
 template include 
     {% include 'mixins/auth/auth_form.html' with form=form cta="Update Password" %}
         변수도 전달할 수 있다. 
-    
-user.get_absolute_url 왜 자꾸 지랄이야 
+
+https://docs.python.org/ko/3/library/random.html#module-random
+
+https://faker.readthedocs.io/en/master/
+
+https://github.com/Brobin/django-seed
+
+
+———ch8
+Phto는 url이 필요하다.
+Media_root
+절대경로가 필요하다
+Print(BASE_DIR)로 구할 수 있다
+Media 폴더를 만들어서 다룰 수 있다
+Media_Root = os.path.join(BASE_DIR, “uploads”)
+Media root를 지정하고 업로드하면, 정해진 root에 사진이 업로드된다. Uploads폴더 이름은 아마 수정해도 될듯?
+ImageField의 upload_to에 경로를 지정하면, uploads폴더 내부에 해당 경로에 해당하는 폴더에 저장한다.
+근데 장고가 이 폴더에 엑세스 권한이 없다.
+Media_url : media/ 경로는 media_root와 같다. 따라서
+경로들/uploads/avatar 은
+/media/avatar과 같은 경로이다.
+이때 앞에 /을 붙여주면 그것은 절대경로를 의미함다. /media/
+상대경로일때는, 내url 뒤에 /media를 추가하는 것이 되어버린다.
+
+django settings는 .으로 하는게 아니라 , django-conf에서 import 해야한다.
+(파일명이 바뀌어도 설정상 settings인것을 import한다?)
+
+파일을 서버에 저장하지 않아도 되는 것은 마지막쯤에 배운다.amazon s3와 같은 별도 서버에 저장하는 방법인 듯
+
+django.conf.urls.static import static
+Static_url 생성?
+Debug=true : 에러가 생기면 웹사이트에서 그대로 보여줌
+If settings.DEBUG:
+urlpatterns+=static(setting.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+위에 사진에서 파일을 제공할때 ,디버그 모드이면 파일을 자체 서버에서 제공하고, 프로그램을 아마존에 올리고 디버그x라면, 나중에 배우는 방법으로 아마존 서버에서 가져온다.
+Database또한 나중에는 아마존 서버등에 저장
+
+
+—ch11
+Django는 게으르다. 즉, User.objects.all()[:10]은, 실제로 10개만 불러온다
+request.GET로request들을 불러올 수 있다.
+Querydict는 .get(key,default)으로 정보를 가져올 수 있다
+User.objects.all()로 obj를 만들어도, 이것을 시제로 사용하지 않으면(print나 기타 등등), 여전히 불러오지는 않는다.
+장고가 게으른거야, 쿼리셋이 게으른거야?
+
+Django builtin filter ref
+
+https://docs.djangoproject.com/ko/3.2/intro/tutorial03/
+
+paginator
+from django.corr.paginator import Pagintaor
+get으로 page arg 가져오기
+필요 요소 : 한 page의 길이, 전체 ele list (ele.objects.all())
+
+요소 obj.
+Dir(obj.paginator)로 확인 가능
+number: 현재 page
+get_page
+paginator.page_count: 전체 page
+paginator.page_range
+object_list
+등등 doc확인하자
+
+Get_page vs page
+전자는 좀 더 간편, 후자는 좀 더 에러컨트롤에 유용
+
+orphans: page길이가 10이라면, 1~9까지가 있는 apge는 orphans
+23개의 ele가 있다면, 10 + 10 + 3대신
+10+ 13으로 만들어준다(oprhans가 3이상이면)
+
+
+Paginator을 하면 paginator obj가 생성된다.
+paginatorObj.get_page(or page)를 하면 page obj가 생성된다.
+page에서 paginator의 method를 쓰려면, pageObj.paginator.method를 하면 된다.
+- page는 paginator의 한 페이지 이므로, page_num 같은건 더 페이지그룹(paginator)에서 구해야한다
