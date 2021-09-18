@@ -32,6 +32,11 @@ linux 명령어
 			-R : 하위 directory까지 모두 보여줌 
 		cd 
 			change directory, 상대경로와 절대경로 모두 가능 
+			이용법 
+				[경로], .(현재 directory), ..(상위 directory), /(최상위 directory)
+				$[변수명](변수에 저장된 경로), -(이전경로)
+			홈 디렉토리: cd, cd $HOME, cd ~
+			다른 사용자의 홈 디렉토리 : cd ~[사용자이름]
 		cp 
 			copy, cp [대상파일/디렉토리] [새 이름] 
 			-r 
