@@ -1,52 +1,6 @@
-Airbnb - clone 
-    무슨 css : utility-first css, 이미 구현된 디자인 이용
-    Django와 Django Template를 이용한 Backend Frontend 구현 
-
-vscode
-    https://sosomemo.tistory.com/53
-    https://webnautes.tistory.com/1158
-    vsc 세팅은 추후에 공부하자
-    가상화를 지원하는 project (pipenv 등)는, 해당 폴더만 독립적으로 사용하자(linux에서 . code 이용)
-    설정: 사용자 원격 작업영역, 작업영역은 현재 vscode 영역, 사용자와 원격은 전역설정과 유사하다고 생각됨
-
-Frontend
-    Library: React 
-        주류 Frontend(React)
-        다양한 상호작용을 하는 프로그램에 적합
-        구조를 직접 자유롭게 만든다.
-    Framework: Django Template
-        콘텐츠 위주의 프로그램에 적합 
-        layout이 강요된다 - 시간이 적게든다.
-
-Backend
-    minimal : Flask, Pyramid
-        다양한 기능을 직접 만들어야 한다.
-        사용자가 원하는대로 구현할 수 있다.
-    not minimal : Django
-        공통적으로 필요한 기능들이 대부분 구현되어있다.
-        layout이 강요된다 - 시간이 적게든다.
 
 Django
-    특징
-        객체지향 프로그래밍이다. class, inheritance 위주
-            inheritance를 통해 기능을 확장할 수 있다. class name(inherit target)
-        Backend와 Frontend 모두 지원한다. 주로 Backend에 이용
-        Document에서 필요한 것들을 찾아볼 수 있다.
-            https://docs.djangoproject.com/en/2.2/ 
-        Django Project - Applications - functions
-            Project: Airbnb
-            Applications: room, reservation, user ...
-                한 문장으로 설명 가능한 정도로, 작은 단위로 모듈화한다.
-            functions: application의 기능들 
-    명령어  
-        django-admin : 실행 가능한 명령어들을 보여준다.
-        python manage.py runserver: 서버 실행
-            migration에 영향을 주지 않는 내용을 수정하면, 재시작 필요없이 새로고침된다.
-            Error: That port is already in use : 서버 종료후 port가 제대로 반환되지 않은 것
-                sudo lsof -t -i tcp:8000 | xargs kill -9 
-        python manage.py createsuperuser: 관리자 생성
-        python manage.py makemigrations: 데이터를 통해 migration 생성
-        python manage.py migrate: migration 적용 
+    
     웹사이트
         /admin : 관리자 화면, config/urls.py 에서 접근주소 변경 가능 
     migration?
@@ -57,36 +11,8 @@ Django
                 데이터를 sql로 migrate
         데이터에 영향을 주는 것이 생기면 migration을 생성하고 migrate 한다.
         migration은 적게 유지하는 것이 좋다. 한개만 있도록 해주자 
-    프로젝트 만들기
-        프로젝트이름으로 폴더를 생성하고 들어간다.
-        필요하면 가상화를 한다 (pipenv)
-        아래에서 생성된 파일명들을 변경하는것은 안되지만, 추가로 생성하는것은 자유롭다.
-        Project 생성
-            django-admin startproject config : 관리파일 생성
-            생성된 폴더 내부의 파일들을 밖으로 뺀다. 빈 폴더는 삭제 
-            settings.py
-                django의 setting 관리
-                INSTALLED_APPS는 DJANGO_APPS와 PROJECT_APPS로 구분하여 관리하면 편하다.
-                THIRD_PARTY_APPS은 INSTALLED_APPS에 추가하지 않는다?
-                    유용한 THIRD_PARTY_APPS
-                        django_countries: 많은 나라의 list
-                AUTH_USER_MODEL = "users.User" : user model을 users application에서 만든 User class로 대체한다.
-                    기본 기능에서 확장을 하고 싶다면, 기본 model을 상속하고 확장하여, 기본 model을 대체하면 된다.
-                주석으로 Document 등 여러 쓸만한 링크들을 제공한다  
-            urls.py
-                url을 컨트롤 하는 것, 원칙적으로 url은 여기에서 추가한다.
-                application에 urls.py를 추가하여 간접적으로 관리가 가능하다.  
-        Application 생성
-            django-admin startapp AppNames: application 생성, 이름은 복수형으로 짓자
-                AppNames는 DJANGO_APPS와 겹치지 않도록 하자. config-setiings.py에서 확인가능 
-                생성후 settings.py의 INSTALLED_APPS에 추가해야 적용된다.
-            admins.py : admin에 반영되는 것들
-            apps.py : configuration 파일
-            models.py : database와 form(app)에서 이용할 데이터를 정의한다.
-            views.py : 사용자에게 보여지는곳, html render
+    프로젝트 만들기   
     Applications
-        Django Documentation에서 원하는 기능을 찾으면 된다.
-        import는 python - django - third_party - user_app 순서로하자 (상위에서 하위로)
         models.py : 데이터를 추가할 수 있다
             database label = models.입력형태()
             입력형태는 model field로 검색하면 된다.
@@ -134,51 +60,9 @@ Django
                         def name(self, obj): return "strings"
                         self = this admin, obj = model that use this admin 
                 ele.short_description: admin panel에서의 항목설명을 바꿀 수 있다.
-        User Application
-            AbstarctUser을 상속하여 사용하는것이 일반적이다?
-            User application의 존재의의
-                Django의 admin에서는 user정보를 관리할 수 있지만, 이는 관리자를 위한것이다.
-                사용자가 스스로 user정보를 관리할 수 있도록 user application을 만든다.
-        Core Application
-            여러 application에서 공통적으로 사용하는 요소들을 정의해둔다.
-            User를 제외한 모든 app의 기능은 core에서 확장시켜 나간다.
-                abstractUser가 이미 쓸만한 기능들이 많아서 그런듯?
-            class Meta: abstract 를 이용하여, 자체 database를 사용하지 않도록 하자
-                즉, 이를 상속한 class의 database에만 정보를 저장하자
-            사용례
-                time stamp: created(auto_now_add), updated(auto_now)
+        
     CustomCommand 만들기
-        python manage.py CustomCommand
-        구조생성
-            application - management폴더 생성 : 원하는 app에 management 폴더 생성
-            management폴더 내부에 __init__.py, commands폴더 생성 
-            commands폴더 내부에 __init__.py, customCommandName.py 생성
-            customCommandName.py 구조
-                명령어의 이름은 파일명에서 정의했으므로, 나머지 구조는 django layout을 따른다.
-                from django.core.management.base import BaseCommand: BaseCommand 상속
-                    Command는 BaseCommand 혹은 그것의 subclass(Doc참고)를 상속해야한다.
-                from polls.models import modelClass: 명령어의 수행과 관련된 class import
-                class Command: command 구현 
-            class Command 구조    
-                help = "explain"
-                def add_arguments(self,parser):   //명령어의 option 추가 
-                    parser.add_argument("--times", other args)
-                        default : --times timesNum 에서 timesNum이 없을경우 default
-                        type = int : 입력 설정
-                        help : 설명 
-                    // arguments들은 handle의 options에 arr형태로 들어간다.
-                    // 따라서 options["times] 혹은 options.get("times")로 times를 얻을 수 있다.
-                def handle(self,*args,**options): //command의 logic, 구현 필수
-                    //self = obj,  
-                    // add_argument로 추가된 arg는 options에 arr형태로 가져온다.
-                    logic
-        명령어들
-            ModelName.objects.create(name = a, ele1 = bla): obj 생성
-                ModelName 의 object를 생성한다.
-                required ele들은 모두 넣어주어야 한다.
-                Amenities와 같이 정해져 있는 것들을 한번에 만들때 유용하다.
-            self.stdout.write(self.style.SUCCESS("strings")): 표준 출력
-                SUCCESS(초록), WARNING(주황), ERROR(빨강) str 출력 
+        
         THIRD_PARTY_APPS
             django-seed: fake-data 생성기, install django-seed 필요 
                 구조
