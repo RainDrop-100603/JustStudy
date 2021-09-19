@@ -1,0 +1,45 @@
+=====목차=====
+약속 
+기타 
+Frontend
+    Library
+    Framework
+Backend 
+    minimal
+    not minimal
+정리 필요 
+==============
+
+
+-----약속-----
+
+
+-----기타-----
+
+
+-----Frontend-----
+Library
+    React: 주류 Frontend
+    다양한 상호작용을 구현하는데 적합 
+    구조를 직접 자유롭게 만든다
+Framework
+    Django Template 
+    contents 위주의 프로그램에 적합 (AirBnB)
+    layout(구조)이 강요된다, 시간이 적게든다.
+
+
+-----Backend----- 
+minimal
+    Flask, Pyramid 
+    다양한 기능을 직접 구현해야 한다.
+    사용자가 원하는대로 구현할 수 있다.
+not minimal
+    Django 
+    공통적으로 필요한 기능들이 대부분 구현되어 있다.
+    layout(구조)이 강요된다, 시간이 적게든다.
+
+
+-----정리 필요----- 
+Airbnb - clone 
+    무슨 css : utility-first css, 이미 구현된 디자인 이용
+    Django와 Django Template를 이용한 Backend Frontend 구현 
