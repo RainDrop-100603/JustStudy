@@ -2,78 +2,213 @@
 약속 
 기타 
     What is Django 
-    구조
 django setup
-    using django via vsc
-    project setup
+    vsc 설정
+    project폴더 가상화 
+    project 시작
+명령어
+    django-admin
+    python manage.py
+    custom 명령어 
+migration
+    *추가바람
+--------------
 config 
     settings.py
+    *admins.py 
+    *apps.py 
+    *models.py 
+    *views.py 
+project
+    구조 
+    주의사항 
+application
+    users
+    core 
+    others
+--------------
+THIRD_PARTY_APPS
 정리 필요 
 ==============
 
 
------약속----- 
+=====약속===== 
+목차, 내용의 *bla는 미완성, 추가 바람을 의미한다.
 변수는 한국어로 [날짜] 와 같은 형식으로 기록하였다.
 
 
------기타-----
+=====기타=====
 What is Django 
-구조 
-    core application
-        핵심이면서 공통적으로 쓰이는 것들을 정의할 때 이용하자.
-        따라서 대부분의 models가 core model을 상속한다.
-        created_at, updated_at과 같은것이 있다.
-    user application
-        장고의 auth기능은 user객체를 제공한다.
-            이를 확장시켜 사용하고 싶다면 user application을 이용하자.
-        확장 
-            User: fields를 변경하진 못하고, methods를 재정의 할 수 있다. 
-            AbstractUser: fields를 추가할 수 있으며, methods는 재정의 할 수 없다.
-                AUTH_USER_MODEL = 'users.User': 사용자가 정의한 User를 사용
-            AbstractBaseUser: 
-                완전히 새로운 User 모델을 상속받아 새로 정의한다. 
-                데이터 스키마에 영향을 많이 주기 때문에 주의하며 사용해야한다. 
-                fields와 methods를 모두 구현해야 한다.
-                model을 관리하는 manager도 정의해야 한다.
-                    BaseUserManager을 상속하여 구현
-                AUTH_USER_MODEL = 'users.User': 사용자가 정의한 User를 사용
+    Frontend : Django Template, Framework 
+    Backend : Django, not minimal  
+    객체 지향 프로그래밍이다. class와 inheritance 위주로 이용한다.
+    Document: https://docs.djangoproject.com/
+    import는 python - django - third_party - user_app 순서로하자
 
 
------django setup-----
-using django via vsc
+=====django setup=====
+vsc 설정
     wsl을 활성화하고 ubuntu를 설치한다.
-    vsc를 설치하고 setup 
-        wsl 확장을 위한 setup (wsl remote)
-        python과 django snippets등 vsc확장 설치
-    pipenv를 설치하고 가상화 
-        원하는 폴더에 pipenv를 통해 가상화를 설정한다.
-        vsc에서 해당 directory위치에 터미널을 열면, 자유롭게 이용 가능하다.
-    vsc 터미널에서 나머지 setup 및 이용
-        vsc 터미널을 이용한 설치 
-            pipenv install django==[장고버전]
-            djnago는 버전을 명시하지 않으면 최신버전이 설치된다. 
-project setup
-    project 생성 
+    vsc확장 설치
+        필수: wsl remote, python 
+        선택: django snippets 
+    가상화를 한 후에 vscode를 통해 이용하자 
+project폴더 가상화
+    가상화를 통해 각 project를 분리시킬 것이므로, project폴더를 먼저 생성한다.
+        폴더 이름은 project이름으로 한다. 
+        pipenv를 통해 폴더를 가상화한다. (pipenv --three)
+    django 및 필요한 프로그램을 설치한다.
+        pipenv install django==[버전] (버전을 명시하지 않으면 최신버전 설치)
+project 시작
+    project 관리파일 생성
+        원래는 project폴더를 생성하는 방법이지만, 
+            가상화를 위해 이미 생성되었으므로 관리파일만 가져온다.
         django-admin startproject [아무이름]
-        [아무이름] 내부 관리파일을 밖으로 빼낸다.
+            [아무이름] 내부 관리파일을 밖으로 빼낸다.
     application 생성 
         django-admin startapp [애플리케이션 이름]
         생성 후 [애플리케이션 이름]을 맘대로 변경해선 안된다.
         config/settings.py의 INSTALLED_APPS에 추가해야 작동한다.
 
 
------config----- 
+=====명령어=====
+django-admin
+    django를 구성하는데 필요한 명령어들 
+        django-admin을 입력하여 목록을 확인할 수 있다.
+    startproject [이름]: project 관리파일을 가진 [이름]폴더를 생성한다.
+    startapp [이름]: application 관리파일을 가진 [이름]폴더를 생성한다.
+        application이름은 소문자, 복수형으로 짓자 
+python manage.py
+    django를 실행하는데 필요한 명령어들 
+    runserver: 서버를 실행한다.
+        Error: That port is already in use (서버 종료후 port를 반환하지 않은 것)
+        sudo lsof -t -i tcp:8000 | xargs kill -9 (서버 반환)
+    makemigrations: migration을 생성한다.
+    migrate: migration을 database에 적용한다.
+custom 명령어 
+    python manage.py [커스텀명령어]
+        fake-data를 만드는 등 커스텀명령어가 필요할 때 이용한다.
+    구조 
+        [앱폴더]/
+            management/
+                __init__.py
+                commands/
+                    __init__.py
+                    [커스텀명령어].py
+    [커스텀명령어].py 구조 
+        import 
+            from django.core.management.base import BaseCommand
+            from [폴더] import models (사용할 model import)
+        class Command(BaseCommand) 생성
+            명령어 logic 구현
+            BaseCommand 혹은 BaseCommand의 subclass 상속(Doc 참고)
+        명령어 logic 
+            help = "explain"
+                (명령어에 대한 설명)
+            def add_arguments(self,parser):
+                (명령어에 option 추가, --help와 같은 것들)
+                parser.add_argument("--[option이름]",[옵션설정])
+                [옵션설정] 
+                    type = int: 입력 type 지정
+                    help = "bla": 설명
+                    default = [기본값]: default값 설정
+            def handle(self, *args, **options):
+                (실제 수행되는 함수, logic)
+                (추가한 arguments들은 options.get("[option이름]")으로 얻는다.)
+                bla bla logic
+        logic에 주로 이용하는 함수, method 
+            self.stdout.write(self.style.SUCCESS("[출력내용]"))
+                표준 출력방식이다.
+                SUCCESS(초록), WARNING(주황), ERROR(빨강)
+            [model이름].objects.create([필드1]=bla, [필드2]=bla, ...)
+                [model이름] object를 생성하고 저장한다.
+                required [필드]는 모두 넣어주어야 한다. 
+                fake-data를 만들거나, 정해진 값(나라목록등)을 추가할 때 유용하다.
+    make fake-data 
+        project를 test하려면 fake-data가 필요하다.
+        import 
+            from django_seed import Seed
+         
+                    
+
+
+=====migration=====
+추가바람
+
+
+=====config===== 
 settings.py
     project의 settings 이 저장된 파일
+        주석들을 읽어보면 doc등 쓸만한 내용들이 있다.
     INSTALLED_APPS
         project에서 실행할 application을 지정한다. 
         DJANGO_APPS, PROJECT_APPS, THIRD_PARTY_APPS 로 나누어서 관리하자 
             INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS 
                 THIRD_PARTY_APPS은 app에서 import하므로 필요없다.
                 즉, THIRD_PARTY_APPS은 관리 용이를 위해 추가한 것이다.
-            PROJECT_APPS은 "[앱이름]].apps.[앱이름]Config"를 가진다.
+            PROJECT_APPS은 "[앱이름].apps.[앱이름]Config"를 가진다.
     AUTH_USER_MODEL = "users.User"
         abstractUser, AbstractBaseUser를 통해 user를 확장하였다면 이용하자 
+urls.py 
+    url control, 원칙적으로 모든 url은 여기서 관리한다.
+        App에 url.py를 생성하고, 여기서 include해서 간접적으로 관리할 수 있다.
+admins.py : admin에 반영되는 것들
+apps.py : configuration 파일
+models.py : database와 form(app)에서 이용할 데이터를 정의한다.
+views.py : 사용자에게 보여지는곳, html render
 
------정리 필요-----
+
+=====project=====
+    구조 
+        Django Project - Applications - functions(or classes) 
+    주의사항 
+        application은 가능한 작은 단위로 모듈화한다.
+        application은 config/settings.py에 추가해야 작동한다.
+        project, application은 django 명령어를 통해서만 생성한다.
+        Framework 언어이므로, 코드를 삭제하거나 수정할 때 유의하자 
+            기능의 확장은 inheritance을 이용하여 구현한다.
+
+
+=====application=====
+users
+    장고의 auth기능은 user객체를 제공한다.
+        이를 확장시켜 사용하고 싶다면 user application을 이용하자.
+    inheritance parent 목록  
+        User: fields를 변경하진 못하고, methods를 재정의 할 수 있다. 
+        AbstractUser: fields를 추가할 수 있으며, methods는 재정의 할 수 없다.
+            AUTH_USER_MODEL = 'users.User': 사용자가 정의한 User를 사용
+        AbstractBaseUser: 
+            완전히 새로운 User 모델을 상속받아 새로 정의한다. 
+            데이터 스키마에 영향을 많이 주기 때문에 주의하며 사용해야한다. 
+            fields와 methods를 모두 구현해야 한다.
+            model을 관리하는 manager도 정의해야 한다.
+                BaseUserManager을 상속하여 구현
+            AUTH_USER_MODEL = 'users.User': 사용자가 정의한 User를 사용
+    *User application의 존재의의?
+        Django의 admin에서는 user정보를 관리할 수 있지만, 이는 관리자를 위한것이다.
+        사용자가 스스로 user정보를 관리할 수 있도록 user application을 만든다.
+core
+    class CoreModel(models.Model):
+        [filed들 정의]
+        class Meta: 
+            abstract = True
+    핵심이면서 공통적으로 쓰이는 것들을 정의할 때 이용하자.
+        대부분의 model은 core를 상속하여 이용한다.
+    database가 필요없다.
+        core는 inheritance를 위해 존재하므로, 자체 database가 필요없다.
+        class Meta: abstract = True 
+            자체 database를 생성하지 않고, 상속받은 class에서만 database를 생성
+    사용례
+        time stamp: from django.db import models
+            created_at = models.DateField(auto_now_add=True)
+            updated_at = models.DateField(auto_now=True)
+others
+    application은 가능한 작은 단위로 모듈화한다.
+    application이름은 소문자, 복수형으로 짓자
+
+
+=====THIRD_PARTY_APPS=====
+    django_countries: 많은 나라의 list를 다룰 수 있다.
+
+=====정리 필요=====
 

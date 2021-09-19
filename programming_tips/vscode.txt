@@ -70,3 +70,8 @@ pipenv 이용법
 https://code.visualstudio.com/docs/python/environments#_select-and-activate-an-environment
 which python3를 해보면, vsc interpreter을 python으로 해도, pipenv shell을 하고 난 후에는 적절한 가상환경을 이용한다.
     가상 환경을 잘못 선택할 수 있다는 것을 감안하면, 그냥 interperter는 default를 이용하고, pipenv shell로 진입하는게 낫지 않나 싶다.
+
+ https://sosomemo.tistory.com/53
+    https://webnautes.tistory.com/1158
+    vsc 세팅은 추후에 공부하자
+    설정: 사용자 원격 작업영역, 작업영역은 현재 vscode 영역, 사용자와 원격은 전역설정과 유사하다고 생각됨
