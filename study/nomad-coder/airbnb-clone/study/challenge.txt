@@ -182,3 +182,24 @@ login() 함수로 로그인 유저ID를 장고 세션에 저장합니다.
 
 chg10 
 https://replit.com/@RainDrop97/SourValidUnix-1
+https://replit.com/@RainDrop97/DefensiveCreativeFeeds
+
+DetailView를 상속해서 UserProfileView클래스를 만들었습니다.
+model=User설정만 해주면 간단하게 클래스 뷰를 만들 수 있습니다. URL을 통해서 pk를 얻고 해당하는 유저를 찾습니다.
+context_object_name = "user_obj"으로 설정하면 템플릿의 context에 'user_obj'키에 유저를 저장합니다.
+UpdateView를 상속해서 UpdateProfileView클래스를 만들었습니다.
+model과 fields속성을 설정해서 modelForm클래스를 만듭니다. 이를 이용해서 데이터 갱신을 합니다.
+template_name을 설정해서 템플릿 파일의 이름을 변경할 수 있습니다.
+솔루션에서는 template_name="users/update_profile.html"로 설정했습니다. 기본값은 "users/user_form.html"입니다.
+get_object() 메서드를 이용해서 로그인한 유저를 self.request.user로 얻습니다.
+request.user는 장고의 Authentication middleware에 의해서 추가됩니다. 만약 로그인하지 않았다면 AnonymousUser 유저 객체가 할당됩니다.
+pk, slug가 URL에 있거나 self.queryset이 있을 경우에는 장고의 get_object()함수를 이용해서 해당 데이터를 얻을 수 있습니다. 로그인한 상태인지 확인하는 것은 다음에 추가할 예정입니다.
+PasswordChangeView를 상속해서 UpdatePasswordView 클래스를 만들었습니다.
+PasswordChangeView를 살펴보면 template_name의 기본값은 registration/password_change_form.html입니다.
+솔루션에서는 template_name="users/update_password.html" 로 수정했습니다. success_url=reverse_lazy("core:home")을 추가하면 비밀번호를 변경하고 첫 페이지로 리다이렉션이 됩니다.
+기본값은 success_url=reverse_lazy('password_change_done')입니다. form_class는 기본 값으로 PasswordChangeForm입니다.
+내부 구현을 살펴보면 SetPasswordForm을 상속받았고 new_password1, new_password2 old_password 필드들이 있습니다.
+장고의 PasswordChangeView를 사용하지 않고 직접 폼 클래스를 만들어서 FormView의 서브클래스 형태로 만들 수 있습니다. 장고에서 제공하는 클래스를 선택할 수도 있고 직접 만드는 방식으로 설정을 자유롭게 줄 수 있습니다.
+
+chg11
+https://replit.com/@RainDrop97/DefensiveCreativeFeeds-1#.replit

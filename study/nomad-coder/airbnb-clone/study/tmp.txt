@@ -827,3 +827,35 @@ Paginator을 하면 paginator obj가 생성된다.
 paginatorObj.get_page(or page)를 하면 page obj가 생성된다.
 page에서 paginator의 method를 쓰려면, pageObj.paginator.method를 하면 된다.
 - page는 paginator의 한 페이지 이므로, page_num 같은건 더 페이지그룹(paginator)에서 구해야한다
+
+html 
+    a: action이 없으면 자기자신으로 보낸다. 있으면 해당 url로 보낸다. 
+
+django template 
+    partials vs mixins 
+        partials: base.html에 포함되는 것들, 좀더 보편적인 것들, header,footer,nav 
+        mixins: 중복으로 구현되는 기능들(ex: POST form)을 모아둠 
+    include 
+        arg를 보낼때는 with을 먼저 써준다.
+            {% include "bla.html" with form=form cta="test" %} 
+
+django form 
+    widgets: 
+        "first_name": forms.TextInput(attrs={"placeholder": "First Name"})
+        field를 좀 더 상세하게 설정하도록 해준다.
+            placeholder와 같은 attribute들도 설정할 수 있다.
+        modelForm 에서의 widget은 규칙에 맞게 설정하면 된다.
+            widgets={ [필드] : forms.[입력스타일](attrs={"placeholder": "First Name"}), }
+
+search 는 chg11 참고 
+    기본적인 원리는 입력값을 받고, 입력값으로 object를 필터해서 queryset을 얻어오는 것이다.
+
+__str__ 
+    class SearchForm(forms.Form):
+    name = forms.ModelChoiceField(
+        queryset=models.Person.objects.all()
+    )
+    위 함수를 보자. html에서 choice를 할 때, 어떤 값으로 보여줄까? 
+        name도 있고 kind도 있고, 다른 멤버변수가 존재할 수도 있다.
+    이때 __str__로 나타내는 것이다. 
+    즉, 객체를 문자열로 표시해야 할 때 표현하는 방식이다.
