@@ -219,3 +219,13 @@ focus:outline-none: 컨테이너에 포커스(focus)되면 컨테이너의 경�
 
 chg12 
 https://replit.com/@RainDrop97/RightFineRuntimelibrary
+https://replit.com/@RainDrop97/Day-24-Details-1
+
+Category Detail Page을 만들기 위해서 categories/urls.py에 있는 urlpatterns 리스트에 path("&lt;int:pk&gt;", CategoryDetail.as_view(), name="category")을 추가해줍니다. 솔루션에서 클래스 뷰를 사용했기 때문에 CategoryDetail.as_view()메서드를 입력합니다.
+솔루션에서 장고의 Detail View를 사용해서 Category Detail Page를 만들었습니다. model = Category 속성(Attribute)과 /categories/&lt;int:pk&gt; URL에서 얻는 pk 값을 이용해서 해당하는 category 를 얻습니다.
+CategoryDetail 클래스에서 context_object_name =category속성은 템플릿 context에서 category 키에 해당하는 카테고리 값이 입력되도록 합니다. 템플릿에서 category.movies.all 또는 category.books.all로 카테고리에 포함되는 영화와 책을 얻습니다.
+DetailView 클래스에서 기본값으로 category_detail.html 파일을 템플릿 파일로 찾습니다. 만약 변경하고 싶다면 template_name 속성을 주면 됩니다. 솔루션에서는 templates/categories/category_detail.html로 만듭니다. category_detail.html이 없다면 CategoryDetail 클래스는 에러를 발생시킵니다. category_detail.html 파일에서 context에 추가된 category를 이용해서 해당 카테고리의 책과 영화를 보여줍니다.
+솔루션에서 search 뷰는 함수 뷰를 사용해서 완성했습니다. request.GET을 이용해서 URL의 쿼리 스트링(Query String)을 얻었습니다. /search?term=xxx 이라면 term = request.GET.get(term)으로 term값 "xxx"를 얻습니다. filter()메서드를 이용해서 DB에서 조건에 맞는 데이터를 얻습니다. 조건 title__startswith=term은 title필드가 term으로 시작하는 데이터를 가지고 온다는 것을 의미합니다. term으로 얻은 책, 영화, 인물을 context에 포함해 render()함수로 템플릿을 반환합니다.
+
+chg13
+https://replit.com/@RainDrop97/Day-24-Details
