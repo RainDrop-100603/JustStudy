@@ -871,3 +871,40 @@ chg12의 solution의 core.views.py의 resolve_search, CategoryDetail을 나의 �
 
 get or none: 
     fav=FavList.objects.filter(created_by=self.request.user).first()
+    https://docs.djangoproject.com/en/3.2/ref/models/querysets/#django.db.models.query.QuerySet.first
+
+custom template tags 
+    https://docs.djangoproject.com/en/3.2/howto/custom-template-tags/#howto-writing-custom-template-tags
+    https://blueshw.github.io/2016/03/03/django-using-custom-templatetags/
+    구조
+        polls/
+            __init__.py
+            models.py
+            templatetags/
+                __init__.py
+                poll_extras.py
+            views.py
+    poll_extras.py
+        from django import template 
+        register = template.Library()    
+        @register.simple_tag([옵션])
+            옵션: takes_context=True
+        def on_favs(a, b, *args, **kwargs): //a가 from, b가 to?
+            blabla 
+            return [원하는 것]
+    IN HTML: 
+        {% load [커스텀태그1] [커스텀태그2] i18n %} 를 통해 load 가능 
+            i18n이 정확히 무엇을 의미하는지는 모르겠다.
+            i18n 등록 안해도 되는거같다.
+    기타 정리바람
+        {% on_favs [kwarg1] [kwarg2] 123 "abcd" book.title warning=message|lower profile=user.profile %}
+            다양한 형태의 kwarg를 제한없이 넣을 수 있다.
+        {% current_time "%Y-%m-%d %I:%M %p" as the_time %}
+        <p>The time is {{ the_time }}.</p>
+            as 를 이용하여 저장하고 나중에 사용할 수 있다.
+
+또 최신버전 chg보면 THIRD PARTY APPS 더해버렸네? 
+    https://replit.com/@RainDrop97/Day-24-Details#config/settings.py
+
+유저 로그인 확인 
+    {% if user.is_authenticated %}
