@@ -229,3 +229,16 @@ DetailView 클래스에서 기본값으로 category_detail.html 파일을 템플
 
 chg13
 https://replit.com/@RainDrop97/Day-24-Details
+https://replit.com/@RainDrop97/ShimmeringWorthwhileQueryplan
+
+favs/urls.py의 urlpatterns리스트에 path("toggle/&lt;int:pk&gt;", resolve_add, name="add")를 추가합니다. fav list에 책 또는 영화를 추가하는 URL을 만들어 줍니다. 솔루션에서는 resolve_add함수 뷰를 사용했고 URL 네임스페이스에서 사용하는 인스턴스 네임은 add입니다.
+favs.views.resolve_add() 함수 뷰를 이용해서 과제의 URL을 처리했습니다. request.GET은 URL의 쿼리 스트링(Query string)을 포함하는 딕셔너리(dictionary)입니다. toggle/&lt;int:pk&gt;?kind=book URL은 request.GET.get(kind)로 "book"값을 없을 수 있습니다.
+장고는 세션과 미들웨어를 사용해서 request.user속성을 제공합니다. 이를 이용해서user.is_authenticated로 로그인한 유저를 확인합니다. (user=request.user) 유효한 유저라면 True를 반환하고 아니라면 False를 반환합니다.
+get_or_create() 메서드를 사용해서 created_by=user 인 fav list가 있다면 존재하는 fav list를 반환하고 아니라면 생성한 뒤 반환합니다.
+책 또는 영화를 fav list에 추가하거나 제거한 뒤 redirect(), reverse()함수를 사용해서 리다이렉트 해줍니다. 영화일 때 redirect(reverse(movies:movie, kwargs={pk: pk})) 를 사용합니다. URL 네임스페이스(namespace)인 movies:movie를 사용해서 리다이렉션을 해줬습니다.
+templates/mixins/fav_button.html 을 보면 on_favs 템플릿 태그를 사용했습니다. 장고의 내장 필터가 아닌 커스텀 필터입니다. favs/templatetags/on_favs.py 파일에 커스텀 필터를 만들었습니다.
+장고는 템플릿 태그를 쉽게 만들게 도와주기 위해서 django.template.Library.simple_tag() 도움 함수를 제공합니다. 템플릿 태그 함수on_favs() 위에 simple_tag() 함수를 데코레이터로 감싸줍니다. 태그 함수가 context에 접근할 수 있도록 하기 위해서 takes_context=True을 설정합니다. on_favs()함수에서 필요한 로직을 처리합니다.
+커스텀 태그를 사용하기 위해서 fav_button.html 파일 맨 위에 {% load on_favs %} 로 태그 함수를 불러들입니다. {% on_favs obj as on_favs_boolean %} 로 on_favs_boolean에 on_favs obj의 반환 값을 저장합니다. 그리고 on_favs_boolean을 이용해서 템플릿을 완성합니다.
+
+final project 
+https://replit.com/@RainDrop97/NimbleMadWorkers#templates/mixins/form/post_form.html

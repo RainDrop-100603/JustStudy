@@ -88,7 +88,9 @@ list_display에 __str__도 넣을 수 있다
 django.utils timezone
     django에서 제공하므로 기능호환성이 좋다 
     함수    
-        timezone.now().date() : 현재시각 
+        timezone.now().date() : 현재 날짜(date까지만)
+        timezone.now(): 현재 시간
+        timezone.timedelta(days=1) : 연산용 delta 
 
 funcName.boolean = True : admin panel에서 boolean 형식으로 보여준다. 
 
@@ -908,3 +910,35 @@ custom template tags
 
 유저 로그인 확인 
     {% if user.is_authenticated %}
+
+현재시간 +특정시간 하는법 
+    default에서는 계산이 안되므로, 함수를 따로 넣어준다. 
+        def one_day_hence():
+            return timezone.now() + timezone.timedelta(days=1)
+        class MyModel(models.Model):
+            ...
+            key_expires = models.DateTimeField(default=one_day_hence)
+
+Foreignkey
+    default를 설정하기 싫다면 null=True를 박아주자 
+
+custom command 
+    python 
+        https://docs.python.org/3/library/argparse.html#module-argparse
+        positional arguments vs optional arguments
+        추가바람
+        --arg를 왜 options["arg"]로 받아와야 하는가? 
+        다른건데, _name은 대체 무엇을 의미하는가 
+        For positional arguments with nargs equal to ? or *, the default value is used when no command-line argument was present:
+        https://stackoverflow.com/questions/15301147/python-argparse-default-value-or-specified-value
+            default vs const 
+                positional arg는 --arg [값] 의 형태를 지닌다.
+                default: --arg가 입력되지 않았을때, 자동으로 --arg가 default를 [값]으로 갖고 입력된다.
+                    즉 default가 있으면, 해당 --arg는 항상 적용된다고 볼 수 있다.
+                const: --arg가 입력되고 [값]이 입력되지 않았을 때, --arg가 const를 [값]으로 갖고 입력된다.
+
+obj clear 
+    obj.objects.all().clear()
+
+django custom filter 
+    SimpleListFilter

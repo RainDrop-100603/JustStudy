@@ -14,3 +14,6 @@ wishlist
 
 추가구조
 calenders - 예약상태 나타냄 
+
+해야할 것
+photos
