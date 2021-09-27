@@ -1,7 +1,8 @@
 //해야할 것
 노트북에서 virtual setting 다시하기
 md파일 작성법 ? 
-이것이 과연 장고와 맞는가? react가 적절하지 않은가? 
+이것이 과연 장고와 맞는가? react가 적절하지 않은가? - 그래도 그냥 일단 만들어보자 
+일단 calender를 만들어보고 구조를 더 다듬자 
 
 //아이디어
 기능
@@ -78,6 +79,8 @@ md파일 작성법 ?
             date:
         YearlySchedule(BaseSchedule)
             date:
+        Func
+            Add/Update/Remove Schedule
     calenders
         BaseCalender
             OneToOne: User
