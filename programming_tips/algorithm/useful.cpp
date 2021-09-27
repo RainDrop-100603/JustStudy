@@ -9,9 +9,7 @@ bool useful_isPrime(int num, const vector<unsigned char>& eratosthenes) {
     }
     return eratosthenes[num >> 3] & (1 << (num & 7));
 }
-bool useful_setComposite(vector<unsigned char>& eratosthenes, int num) {
-    return eratosthenes[num >> 3] &= (~(1 << (num & 7)));
-}
+bool useful_setComposite(vector<unsigned char>& eratosthenes, int num) { return eratosthenes[num >> 3] &= (~(1 << (num & 7))); }
 vector<unsigned char> useful_eratosthenes(int num) {
     //한칸에 8비트씩 저장, num의 위치는 arr[num/8] & (1<<(num&7)), (num+7)/8 은 num을 8로 나눈것의 올림
     vector<unsigned char> eratosthenes((num + 7) / 8, 255);
@@ -126,32 +124,41 @@ vector<int> useful_getFailure(string& str) {
     }
     return result;
 }
-vector<int> useful_getSuffixArr(string& str) {
+vector<int> useful_getSuffixArr(string& str) {  // str[i:] 를 사전순으로 반환하는 접미사 배열
     int strLen = str.length();
-    int t = 1;
-    vector<int> group(strLen + 1, -1);
+    // group[i] = order, str[i:] 의 order
+    vector<int> group(strLen);
     for (int i = 0; i < strLen; i++) {
+        // ASCII CODE 자체가 order라고 봐도 무방하다.
         group[i] = str[i];
     }
+    // perm[order]=i, str[i:]의 order
     vector<int> perm(strLen);
     for (int i = 0; i < strLen; i++) {
         perm[i] = i;
     }
+    //정렬
+    int t = 1;
     while (t < strLen) {
+        // 각 접미사의 2t만큼의 접두사를 비교하여 정렬한다.
         useful_Comparator cmp2T(group, t);
         sort(perm.begin(), perm.end(), cmp2T);
         t *= 2;
         if (t >= strLen) {
             break;
         }
-        vector<int> tmpGroup(strLen + 1, -1);
-        tmpGroup[perm[0]] == 0;
-        for (int i = 0; i < strLen - 1; i++) {
-            if (cmp2T(perm[i], perm[i + 1])) {
-                tmpGroup[perm[i + 1]] = tmpGroup[perm[i]] + 1;
+        // group 갱신
+        vector<int> tmpGroup(strLen);
+        int prev = perm[0];
+        tmpGroup[prev] = 0;
+        for (int i = 1; i < strLen; i++) {
+            int now = perm[i];
+            if (cmp2T(prev, now)) {
+                tmpGroup[now] = tmpGroup[prev] + 1;
             } else {
-                tmpGroup[perm[i + 1]] = tmpGroup[perm[i]];
+                tmpGroup[now] = tmpGroup[prev];
             }
+            prev = now;
         }
         group = tmpGroup;
     }
