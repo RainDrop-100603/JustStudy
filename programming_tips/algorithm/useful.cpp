@@ -127,7 +127,8 @@ vector<int> useful_getFailure(string& str) {
 vector<int> useful_getSuffixArr(string& str) {  // str[i:] 를 사전순으로 반환하는 접미사 배열
     int strLen = str.length();
     // group[i] = order, str[i:] 의 order
-    vector<int> group(strLen);
+    vector<int> group(strLen + 1);  // comparator 연산시 group[strLen]까지 접근한다.
+    group[strLen] = -1;             //문자열 a와 a+b는 사전순으로 a가 더 앞에 온다.
     for (int i = 0; i < strLen; i++) {
         // ASCII CODE 자체가 order라고 봐도 무방하다.
         group[i] = str[i];

@@ -1,137 +1,106 @@
-//Algorithmic Problem Solving Strategies Book 1, 2
+// Algorithmic Problem Solving Strategies Book 1, 2
 //대회에서 배우는 알고리즘 문제해결 전략 1, 2
 
-#include <iostream>
-#include <vector>
 #include <algorithm>
-#include <string>
 #include <cmath>
+#include <ctime>
+#include <iostream>
 #include <map>
 #include <queue>
-#include <ctime>
-#include <queue>
+#include <string>
+#include <vector>
 
 using namespace std;
 
 // KMP search 변형문제, circular shift
-void JAEHASAFE_Input(vector<string>& config){
-  int configNum;
-  cin>>configNum;
-  config.resize(configNum+1);
-  for(auto& ele: config){
-    cin>>ele;
-  }
+void HABIT_Input(string& speech, int& isHabit) { cin >> speech >> isHabit; }
+vector<int> HABIT_suffixArr(const string& str) {}
+int HABIT_strOverlap(const string& str1, const string& str2) {
+    int len = 0;
+    while (len < str1.length() && len < str2.length() && str1[len] == str2[len]) {
+        len++;
+    }
+    return len;
 }
-vector<int> JAEHASAFE_getFailure(const string& str){
-  vector<int> result(str.length()+1,0);
-  int match=0;
-  for(int idx=1;idx<str.length();idx++){
-    while(match>0&&str[idx]!=str[match]){
-      match=result[match];
+int HABIT_stackPop(vector<pair<int, int>>& stack, int idx, int now) {}
+int HABIT_Algo(string speech, int isHabit) {
+    int result = 0;
+    // get suffix arr
+    vector<int> suffixArr = HABIT_suffixArr(speech);
+    int suffixArrLen = suffixArr.size();
+    // use stack
+    vector<pair<int, int>> stack;  // idx, value
+    stack.push_back(make_pair(0, 0));
+    string nowstr = speech.substr(suffixArr[0]);
+    for (int i = 1; i < suffixArrLen; i++) {
+        string prevstr = nowstr;
+        nowstr = speech.substr(suffixArr[i]);
+        int last = stack.back().second;
+        int now = HABIT_strOverlap(nowstr, prevstr);
+        if (now <= last) {
+            result = max(result, HABIT_stackPop(stack, i, now));
+        }
+        stack.push_back(make_pair(i, now));
     }
-    if(str[idx]==str[match]){
-      match++;
-      result[idx+1]=match;
-    }
-  }
-  return result;
+    result = max(result, HABIT_stackPop(stack, suffixArrLen, -1));
+    return result;
 }
-int JAEHASAFE_KmpSearch(const string& base, const string& target){
-  vector<int> failure=JAEHASAFE_getFailure(target);
-  int match=0,strLen=base.length();
-  for(int idx=0;idx<strLen*2-1;idx++){
-    while(match>0&&base[idx%strLen]!=target[match]){
-      match=failure[match];
+void HABIT() {
+    /*설명 및 입력
+    설명
+        정박사가 지금까지 했던 발표들과 강의들에서 했던 말을 모두 음성 인식을 통해 대본으로 만들었습니다.
+        이 때 대본 중 K 번 이상 등장하는 부분 문자열을 "말버릇" 이라고 합시다.
+        대본이 주어질 때 가장 긴 말버릇의 길이를 찾는 프로그램을 작성하세요.
+    입력
+        입력의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 50) 가 주어집니다.
+        각 테스트 케이스는 두 줄로 주어지며, 첫 줄에는 K (1 <= K <= 1000) 가, 두 번째 줄에는 정박사의 발표 대본이 주어집니다.
+        대본은 공백 없이 알파벳 소문자로만 구성된 문자열이며 길이는 1 이상이고 4000 을 넘지 않습니다.
+    출력
+        각 테스트 케이스마다 K 번 이상 등장하는 부분 문자열의 최대 길이를 출력합니다.
+        어떤 부분 문자열도 K 번 이상 등장하지 않는다면 0 을 출력합니다.
+    제한조건
+        1초, 64MB
+    */
+    /*힌트
+         suffix arr의 접두사를 이용하여, 모든 부분문자열을 구할 수 있다.
+            이때 중복등장하는 접두사들은, 접두사들의 suffix가 모두 이웃한다는 점을 이용할 수 있다.
+         이웃하는 suffix가 겹치는 정도를 모두 구하고, stack을 통해 K번 이상 등장한 문자열들의 길이를 구할 수 있다.
+            algospot - fence를 생각하자. 같은 원리이다.
+    */
+    /*전략
+    전략1
+        아이디어: suffix arr, stack
+            suffix arr을 구한다. -> n (lgn)^2
+            suffix arr을 순회하며 -> n * O(n)
+                이웃하는 suffix arr의 겹치는 길이를 구한다. -> O(n)
+                stack을 이용하여 각 부분문자열의 최대길이를 구하자. -> O(1)
+        분석
+            time complexity: O(n(lgn)^2)
+            mem complexity: O(N)
+        피드백
+    */
+    // Sol
+    int testCase;
+    cin >> testCase;
+    //전역변수
+    cout << fixed;
+    cout.precision(10);
+    //각 테스트케이스
+    while (testCase--) {
+        string speech;
+        int isHabit;
+        HABIT_Input(speech, isHabit);
+        auto result = HABIT_Algo(speech, isHabit);
+        // cout<<"::::";
+        cout << result << endl;
     }
-    if(base[idx%strLen]==target[match]){
-      match++;
-      if(match==strLen){
-        return idx-match+1;
-      }
-    }
-  }
-}
-int JAEHASAFE_Algo(const vector<string>& config){
-  int result(0),strLen(config[0].length()); //strlen==금고의 알파벳 개수 
-  for(int i=0;i<config.size()-1;i++){
-    if(i%2){  
-      result+=JAEHASAFE_KmpSearch(config[i],config[i+1]); //ccw
-    }else{
-      result+=JAEHASAFE_KmpSearch(config[i+1],config[i]); //clockwise
-    }
-  }
-  return result;
-} 
-void JAEHASAFE(){
-  /*설명 및 입력
-  설명
-    The safe uses a dial to lock the door, and on the rim of dial are drawn pictures of cute animals instead of numbers. 
-      To open the safe, Jaeha mustb rotate the dial to reach certain positions, alternating direction each time.
-    Jaeha wants to be careful, so he only rotates the dial one tick at a time.  
-      Given a set of dial positions, calculate how many ticks Jaeha has to rotate the dial to open the safe.
-  입력
-    The input consists of T test cases. 
-      The number of test cases T is given in the first line of the input.
-    The first line of each test case will contain an integer N(1 ≤ N ≤ 50), the number of positions Jaeha needs to reach. 
-    The next N + 1 lines will each contain a dial configuration. 
-      A configuration is given by listing the pictures in clockwise order, starting from the topmost picture. 
-      Each type of picture is denoted by an alphabet character, therefore each configuration is given as a string. 
-      The first configuration shows the current dial. 
-    Jaeha will rotate clockwise to reach the second configuration, rotate counterclockwise to reach the third, and so on.
-    The number of pictures on a dial will not exceed 10,000.
-    Two adjacent configurations given in the input will always be different. 
-    It is always possible to open the safe
-  출력
-    Print exactly one line for each test case.
-      The line should contain the minimum number of ticks required to open the safe
-  제한조건
-    1초, 64MB
-  */
-  /*힌트
-    같은 동물이 나온다고 찾은것이 아니라, 모든 동물의 위차가 맞아야 한다.
-      따라서 idx를 하나씩 돌리며 찾으면 10000 * 10000 * 50 이 걸려서 시간내에 찾을 수 없다.
-    KMP search를 이용하여 시작위치를 찾을 수 있다.
-      circular shift: 
-        다이얼의 일치상태를 비교하려면 항상 n개(다이얼의 원소의 수)를 비교해야한다.
-          KMP search에서 idx를 두배로 늘리고, 넘어가는 부분은 mod 처리한다.
-      시계 방향으로 돌리는것은 KMPresult.front()번 회전
-      반시계 방향은 n - KMPresult.back()번 회전
-  */
-  /*전략
-  전략1
-    아이디어: KMP search
-      KMP search를 M번 수행하여 시작위치를 찾는다. M * O(2N)
-        항상 N개를 비교해야하므로, idx를 넘어가는 부분은 mod 처리한다.
-        시계방향: KMP result . front
-        반시계방향: N - KMP result . back
-      
-    분석
-      time complexity: O(MN) <= 50 * 2 * 10000 
-      mem complexity: O(N)
-    피드백
-  */
-  //Sol
-  int testCase;
-  cin>>testCase;
-  //전역변수
-  cout<<fixed;
-  cout.precision(10);
-  //각 테스트케이스
-  while(testCase--){
-    vector<string> config;
-    JAEHASAFE_Input(config);
-    auto result=JAEHASAFE_Algo(config);
-    // cout<<"::::";
-    cout<<result<<endl;
-  }
 }
 
-int main(void){
-  //   clock_t start,end;
-  //   start=clock();
-  JAEHASAFE();
-  //   end=clock();;
-  //   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
-  return 0;
+int main(void) {
+    //   clock_t start,end;
+    //   start=clock();
+    HABIT();
+    //   end=clock();;
+    //   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+    return 0;
 }
-
