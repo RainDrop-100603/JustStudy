@@ -942,3 +942,14 @@ obj clear
 
 django custom filter 
     SimpleListFilter
+
+settings.py 
+    timezone 
+        LANGUAGE_CODE = "ko-kr"
+        TIME_ZONE = "Asia/Seoul"
+        USE_TZ = True
+        해석
+            UTC시간으로 저장하되(USE_TZ = True), template에서 보여주는것은 Asia/Seoul로 한다(TIME_ZONE). 
+            UTC는 timezone.now(), localtime은 timezone.localtime()으로 구할 수 있다.
+    AUTH_USER_MODEL = "users.User"
+        기본 user_model 대체 
