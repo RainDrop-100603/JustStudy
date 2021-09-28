@@ -14,5 +14,3 @@ prettier가 일단은 black이랑도 잘 작동한다.
 vscode python지원?
 https://devblogs.microsoft.com/python/python-in-visual-studio-code-september-2021-release/
 
-calendar만들기 
-https://www.google.com/search?q=python+calendar+module&rlz=1C1FKPE_koKR962KR962&oq=python+calendar+module&aqs=chrome.0.0i512l4j0i22i30l3j69i60.5724j0j7&sourceid=chrome&ie=UTF-8
