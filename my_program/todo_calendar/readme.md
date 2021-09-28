@@ -89,6 +89,8 @@ md파일 작성법 ?
             ManyToManyField: TodoList
         TotalCalender(BaseCalender)
             추가바람
+        Func
+            MonthlyView, WeeklyView, DailyView
     search
         Search
 //required
