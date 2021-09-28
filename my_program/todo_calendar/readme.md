@@ -95,5 +95,5 @@ md파일 작성법 ?
         Search
 //required
     virtualization via pipenv 
-    django == version
+    django == 3.2.7
     tailwind css == version 
