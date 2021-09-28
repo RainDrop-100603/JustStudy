@@ -4,6 +4,12 @@ md파일 작성법 ?
 이것이 과연 장고와 맞는가? react가 적절하지 않은가? - 그래도 그냥 일단 만들어보자 
 일단 calender를 만들어보고 구조를 더 다듬자 
 
+static? 
+    https://docs.djangoproject.com/en/3.2/intro/tutorial06/
+    https://docs.djangoproject.com/en/3.2/howto/static-files/
+calendar만들기 
+    https://www.huiwenteo.com/normal/2018/07/24/django-calendar.html
+
 //아이디어
 기능
     여러개의 todo_list 구현 

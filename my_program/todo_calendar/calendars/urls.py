@@ -6,5 +6,5 @@ app_name = "calendars"
 
 urlpatterns = [
     url(r"^index/$", index, name="index"),
-    url(r"^calendar/$", CalendarView.as_view(), name="calendar"),  # here
+    url("", CalendarView.as_view(), name="calendar"),  # here
 ]
