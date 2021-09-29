@@ -10,6 +10,13 @@ static?
 calendar만들기 
     https://www.huiwenteo.com/normal/2018/07/24/django-calendar.html
 
+//목표
+    1주: calendar 만들기 숙지 
+        python 공부하기 
+    2주: calendar와 todo_list만들기 
+    3주: login_required등 세밀한 구조 만들기
+    4주: 마무리하기 
+
 //아이디어
 기능
     여러개의 todo_list 구현 

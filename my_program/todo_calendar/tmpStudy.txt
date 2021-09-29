@@ -1,0 +1,13 @@
+=====Calendars=====
+
+python module calendar을 이용했다.
+
+Calendar은 utils.py에서 구현하였다.
+
+from django.utils.safestring import mark_safe
+    str에 html tag가 있다면, html에 들어갈 때 tag가 잘 적용되도록 해준다.
+
+-----python-----
+class 공부
+    https://dojang.io/mod/page/view.php?id=2373
+    instance와 object는 같은 의미이다. 다만 class와 관련되었을 때, instance라고 표현하는 것일 뿐이다.
