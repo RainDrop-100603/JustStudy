@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// suffix arr, stack
+// suffix arr,
 void HABIT_Input(string& speech, int& isHabit) { cin >> isHabit >> speech; }
 struct HABIT_Comparator {  // suffixArr에서의 정렬에 사용한다. 각 접미사가 t만큼 비교되어 있을 때, 2t만큼 비교한다.
     const vector<int>& group;

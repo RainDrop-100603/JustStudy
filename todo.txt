@@ -14,3 +14,4 @@ prettier가 일단은 black이랑도 잘 작동한다.
 vscode python지원?
 https://devblogs.microsoft.com/python/python-in-visual-studio-code-september-2021-release/
 
+suffix arr정리 마무리 
