@@ -235,3 +235,15 @@ time complexity 추정
   vector배열에서 어떤 값으로 초기화 하느냐가, 수향시간에 영향을 주진 않는다.(-1 이나 -5나 똑같다)
 	APSS-book2-CHRISTMAS에서 int에대해 실험에 보았다. 다만 이것이 general 한지 실험해 보지는 않았다.
   절대적인 영향은 time complexity 이며, time complexity가 같더라도 최적화 정도에 따라 약간의 수행시간 차이는 있다.(APSS-book2-CHRISTMAS: greedy2 vs dp)
+
+
+======================================== tmp ====================== 
+	stack 연산
+		increasing stack
+			설명: stack에 idx를 저장하며, value[idx_in_stack]은 항상 커지도록(>) 한다. algospot Fence 
+			작동: 
+				while value[stack.back()] >= value[nowIdx]:
+					stack.pop()
+				stack.push(nowIdx)
+	이걸 정리하는게 맞을까?
+
