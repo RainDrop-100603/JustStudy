@@ -12,38 +12,100 @@
 
 using namespace std;
 
-// KMP search 변형문제, circular shift
-void HABIT_Input(string& speech, int& isHabit) { cin >> speech >> isHabit; }
-vector<int> HABIT_suffixArr(const string& str) {}
+// suffix arr, stack
+void HABIT_Input(string& speech, int& isHabit) { cin >> isHabit >> speech; }
+struct HABIT_Comparator {  // suffixArr에서의 정렬에 사용한다. 각 접미사가 t만큼 비교되어 있을 때, 2t만큼 비교한다.
+    const vector<int>& group;
+    int t;
+    HABIT_Comparator(const vector<int>& _group, int _t) : group(_group), t(_t) {}
+    bool operator()(int a, int b) {
+        if (group[a] != group[b]) {
+            return group[a] < group[b];
+        }
+        return group[a + t] < group[b + t];
+    }
+};
+vector<int> HABIT_suffixArr(const string& str) {
+    int strLen = str.length();
+    // group[i] = order, str[i:] 의 order
+    vector<int> group(strLen + 1);  // comparator 연산시 group[strLen]까지 접근한다.
+    group[strLen] = -1;             //문자열 a와 a+b는 사전순으로 a가 더 앞에 온다.
+    for (int i = 0; i < strLen; i++) {
+        // ASCII CODE 자체가 order라고 봐도 무방하다.
+        group[i] = str[i];
+    }
+    // perm[order]=i, str[i:]의 order
+    vector<int> perm(strLen);
+    for (int i = 0; i < strLen; i++) {
+        perm[i] = i;
+    }
+    //정렬
+    int t = 1;
+    while (t < strLen) {
+        // 각 접미사의 2t만큼의 접두사를 비교하여 정렬한다.
+        HABIT_Comparator cmp2T(group, t);
+        sort(perm.begin(), perm.end(), cmp2T);
+        t *= 2;
+        if (t >= strLen) {
+            break;
+        }
+        // group 갱신
+        vector<int> tmpGroup(strLen);
+        int prev = perm[0];
+        tmpGroup[prev] = 0;
+        for (int i = 1; i < strLen; i++) {
+            int now = perm[i];
+            if (cmp2T(prev, now)) {
+                tmpGroup[now] = tmpGroup[prev] + 1;
+            } else {
+                tmpGroup[now] = tmpGroup[prev];
+            }
+            prev = now;
+        }
+        group = tmpGroup;
+    }
+    return perm;
+}
 int HABIT_strOverlap(const string& str1, const string& str2) {
     int len = 0;
-    while (len < str1.length() && len < str2.length() && str1[len] == str2[len]) {
+    while (len < int(str1.length()) && len < int(str2.length()) && str1[len] == str2[len]) {
         len++;
     }
     return len;
 }
-int HABIT_stackPop(vector<pair<int, int>>& stack, int idx, int now) {}
+int HABIT_stackPop(vector<int>& stack, vector<int>& overlap, int isHabit, int nowIdx) {
+    int now = overlap[nowIdx];
+    int last = overlap[stack.back()];
+    int maxHabit = 0;
+    while (now <= last) {
+        stack.pop_back();
+        if (nowIdx - stack.back() >= isHabit) {
+            maxHabit = max(maxHabit, last);
+        }
+        last = overlap[stack.back()];
+    }
+    return maxHabit;
+}
 int HABIT_Algo(string speech, int isHabit) {
-    int result = 0;
+    if (isHabit == 1) {
+        return speech.length();
+    }
+    int maxHabit = 0;
     // get suffix arr
     vector<int> suffixArr = HABIT_suffixArr(speech);
     int suffixArrLen = suffixArr.size();
     // use stack
-    vector<pair<int, int>> stack;  // idx, value
-    stack.push_back(make_pair(0, 0));
-    string nowstr = speech.substr(suffixArr[0]);
+    vector<int> stack;                            // idx
+    vector<int> overlap(suffixArrLen + 1);        // value[idx]
+    overlap[0] = -2, overlap[suffixArrLen] = -1;  // set left wall and right wall
+    stack.push_back(0);                           // push left wall
     for (int i = 1; i < suffixArrLen; i++) {
-        string prevstr = nowstr;
-        nowstr = speech.substr(suffixArr[i]);
-        int last = stack.back().second;
-        int now = HABIT_strOverlap(nowstr, prevstr);
-        if (now <= last) {
-            result = max(result, HABIT_stackPop(stack, i, now));
-        }
-        stack.push_back(make_pair(i, now));
+        overlap[i] = HABIT_strOverlap(speech.substr(suffixArr[i - 1]), speech.substr(suffixArr[i]));
+        maxHabit = max(maxHabit, HABIT_stackPop(stack, overlap, isHabit, i));
+        stack.push_back(i);
     }
-    result = max(result, HABIT_stackPop(stack, suffixArrLen, -1));
-    return result;
+    maxHabit = max(maxHabit, HABIT_stackPop(stack, overlap, isHabit, suffixArrLen));  // push right wall
+    return maxHabit;
 }
 void HABIT() {
     /*설명 및 입력
@@ -75,7 +137,7 @@ void HABIT() {
                 이웃하는 suffix arr의 겹치는 길이를 구한다. -> O(n)
                 stack을 이용하여 각 부분문자열의 최대길이를 구하자. -> O(1)
         분석
-            time complexity: O(n(lgn)^2)
+            time complexity: O(n^2)
             mem complexity: O(N)
         피드백
     */
@@ -91,7 +153,7 @@ void HABIT() {
         int isHabit;
         HABIT_Input(speech, isHabit);
         auto result = HABIT_Algo(speech, isHabit);
-        // cout<<"::::";
+        // cout << "::::";
         cout << result << endl;
     }
 }
