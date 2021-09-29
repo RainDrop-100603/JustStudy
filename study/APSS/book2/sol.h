@@ -54,3 +54,21 @@ vector<int> JAEHASAFE_getFailure(const string& str);
 int JAEHASAFE_KmpSearch(const string& base, const string& target);
 int JAEHASAFE_Algo(const vector<string>& config);
 void JAEHASAFE();
+
+// @* suffix arr, 사용법에 대해 참고해볼 것이 많다.
+void HABIT_Input(string& speech, int& isHabit);
+struct HABIT_Comparator {  // suffixArr에서의 정렬에 사용한다. 각 접미사가 t만큼 비교되어 있을 때, 2t만큼 비교한다.
+    const vector<int>& group;
+    int t;
+    HABIT_Comparator(const vector<int>& _group, int _t) : group(_group), t(_t) {}
+    bool operator()(int a, int b) {
+        if (group[a] != group[b]) {
+            return group[a] < group[b];
+        }
+        return group[a + t] < group[b + t];
+    }
+};
+vector<int> HABIT_suffixArr(const string& str);
+int HABIT_commonprefix(const string& str, int begin1, int begin2);
+int HABIT_Algo(string speech, int isHabit);
+void HABIT();
