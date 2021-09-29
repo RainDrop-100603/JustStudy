@@ -66,47 +66,21 @@ vector<int> HABIT_suffixArr(const string& str) {
     }
     return perm;
 }
-int HABIT_strOverlap(const string& str, int begin1, int begin2) {
+int HABIT_commonprefix(const string& str, int begin1, int begin2) {
     int len = 0;
-    while (len + begin1 < int(str.length()) && len + begin2 < int(str.length()) && str[begin1] == str[begin2]) {
+    while (begin1 < int(str.length()) && begin2 < int(str.length()) && str[begin1] == str[begin2]) {
         len++;
         begin1++;
         begin2++;
     }
     return len;
 }
-int HABIT_stackPop(vector<int>& stack, vector<int>& overlap, int isHabit, int nowIdx) {
-    int now = overlap[nowIdx];
-    int last = overlap[stack.back()];
-    int maxHabit = 0;
-    while (now <= last) {
-        stack.pop_back();
-        if (nowIdx - stack.back() >= isHabit) {
-            maxHabit = max(maxHabit, last);
-        }
-        last = overlap[stack.back()];
-    }
-    return maxHabit;
-}
 int HABIT_Algo(string speech, int isHabit) {
-    if (isHabit == 1) {
-        return speech.length();
-    }
     int maxHabit = 0;
-    // get suffix arr
     vector<int> suffixArr = HABIT_suffixArr(speech);
-    int suffixArrLen = suffixArr.size();
-    // use stack
-    vector<int> stack;                            // idx
-    vector<int> overlap(suffixArrLen + 1);        // value[idx]
-    overlap[0] = -2, overlap[suffixArrLen] = -1;  // set left wall and right wall
-    stack.push_back(0);                           // push left wall
-    for (int i = 1; i < suffixArrLen; i++) {
-        overlap[i] = HABIT_strOverlap(speech, suffixArr[i-1], suffixArr[i]));
-        maxHabit = max(maxHabit, HABIT_stackPop(stack, overlap, isHabit, i));
-        stack.push_back(i);
+    for (int i = 0; i + isHabit <= speech.length(); i++) {
+        maxHabit = max(maxHabit, HABIT_commonprefix(speech, suffixArr[i], suffixArr[i + isHabit - 1]));
     }
-    maxHabit = max(maxHabit, HABIT_stackPop(stack, overlap, isHabit, suffixArrLen));  // push right wall
     return maxHabit;
 }
 void HABIT() {
@@ -142,7 +116,10 @@ void HABIT() {
             time complexity: O(n^2)
             mem complexity: O(N)
         피드백
-            substr을 구하지 않도록 개선 -> ver2
+            최초: 368
+            ver2: substr을 구하지 않도록 개선, 304
+            ver3: stack도 이용할 필요가 없다. 284
+                suffixarr[i]와 suffixarr[i+k-1]의 commonPreifx는, suffixarr[i+1 ~ i+k-2]의 commonPrefix이다.
     */
     // Sol
     int testCase;
