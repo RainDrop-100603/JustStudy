@@ -66,10 +66,12 @@ vector<int> HABIT_suffixArr(const string& str) {
     }
     return perm;
 }
-int HABIT_strOverlap(const string& str1, const string& str2) {
+int HABIT_strOverlap(const string& str, int begin1, int begin2) {
     int len = 0;
-    while (len < int(str1.length()) && len < int(str2.length()) && str1[len] == str2[len]) {
+    while (len + begin1 < int(str.length()) && len + begin2 < int(str.length()) && str[begin1] == str[begin2]) {
         len++;
+        begin1++;
+        begin2++;
     }
     return len;
 }
@@ -100,7 +102,7 @@ int HABIT_Algo(string speech, int isHabit) {
     overlap[0] = -2, overlap[suffixArrLen] = -1;  // set left wall and right wall
     stack.push_back(0);                           // push left wall
     for (int i = 1; i < suffixArrLen; i++) {
-        overlap[i] = HABIT_strOverlap(speech.substr(suffixArr[i - 1]), speech.substr(suffixArr[i]));
+        overlap[i] = HABIT_strOverlap(speech, suffixArr[i-1], suffixArr[i]));
         maxHabit = max(maxHabit, HABIT_stackPop(stack, overlap, isHabit, i));
         stack.push_back(i);
     }
@@ -140,6 +142,7 @@ void HABIT() {
             time complexity: O(n^2)
             mem complexity: O(N)
         피드백
+            substr을 구하지 않도록 개선 -> ver2
     */
     // Sol
     int testCase;
