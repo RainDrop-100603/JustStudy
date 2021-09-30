@@ -14,4 +14,8 @@ prettier가 일단은 black이랑도 잘 작동한다.
 vscode python지원?
 https://devblogs.microsoft.com/python/python-in-visual-studio-code-september-2021-release/
 
-suffix arr정리 마무리 
+
+//https://www.youtube.com/watch?v=x7STjpcKZP8 
+//사회복무요원 교육 
+
+정리방법: 목차에 왠만한 키워드 들어가도록 하기, 상세 정리는 내용에 추가하기 
