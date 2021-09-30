@@ -877,3 +877,95 @@ void HABIT() {
         cout << result << endl;
     }
 }
+
+void TRAVERSAL_Input(int& nodeNum, vector<int>& preorderTraversal, vector<int>& inorderTraversal) {
+    cin >> nodeNum;
+    preorderTraversal.resize(nodeNum);
+    for (auto& ele : preorderTraversal) {
+        cin >> ele;
+    }
+    inorderTraversal.resize(nodeNum);
+    for (auto& ele : inorderTraversal) {
+        cin >> ele;
+    }
+}
+vector<int> TRAVERSAL_Algo(int nodeNum, vector<int> preorderTraversal, vector<int> inorderTraversal) {
+    //기저
+    int treeSize(preorderTraversal.size());
+    if (treeSize == 0) {
+        return vector<int>();
+    }
+    // get root, left subtree size
+    int leftTreeSize, root(preorderTraversal.front());
+    for (int i = 0; i < treeSize; i++) {
+        if (inorderTraversal[i] == root) {
+            leftTreeSize = i;
+        }
+    }
+    // postorder traversal
+    vector<int> leftTreePreorder = vector<int>(preorderTraversal.begin() + 1, preorderTraversal.begin() + 1 + leftTreeSize);
+    vector<int> leftTreeInorder = vector<int>(inorderTraversal.begin(), inorderTraversal.begin() + leftTreeSize);
+    vector<int> rightTreePreorder = vector<int>(preorderTraversal.begin() + 1 + leftTreeSize, preorderTraversal.end());
+    vector<int> rightTreeInorder = vector<int>(inorderTraversal.begin() + 1 + leftTreeSize, inorderTraversal.end());
+    vector<int> result;
+    vector<int> leftTreeResult = TRAVERSAL_Algo(leftTreeSize, leftTreePreorder, leftTreeInorder);
+    vector<int> rightTreeResult = TRAVERSAL_Algo(treeSize - leftTreeSize - 1, rightTreePreorder, rightTreeInorder);
+    result.insert(result.end(), leftTreeResult.begin(), leftTreeResult.end());
+    result.insert(result.end(), rightTreeResult.begin(), rightTreeResult.end());
+    result.push_back(root);
+    return result;
+}
+void TRAVERSAL() {
+    /*설명 및 입력
+    설명
+        어떤 이진 트리를 전위 순회했을 때 노드들의 방문 순서와, 중위 순회했을 때 노드들의 방문 순서가 주어졌다고 합시다.
+        이 트리를 후위 순회했을 때 각 노드들을 어떤 순서대로 방문하게 될지 계산하는 프로그램을 작성하세요.
+    입력
+        입력의 첫 줄에는 테스트 케이스의 수 C (1≤C≤100)가 주어집니다.
+        각 테스트 케이스는 세 줄로 구성되며, 첫 줄에는 트리에 포함된 노드의 수 N (1≤N≤100)이 주어집니다.
+        그 후 두 줄에 각각 트리를 전위 순회했을 때와 중위순회 했을 때의 노드 방문 순서가 N개의 정수로 주어집니다.
+        각 노드는 1000 이하의 자연수로 번호 매겨져 있으며, 한 트리에서 두 노드의 번호가 같은 일은 없습니다.
+    출력
+        각 테스트 케이스마다, 한 줄에 해당 트리의 후위 순회했을 때 노드들의 방문 순서를 출력합니다.
+    제한조건
+        1초, 64MB
+    */
+    /*힌트
+        preorder 순회는 root를 가장 처음에 방문하는 반면, inorder 순회는 left-subtree를 모두 순회하고 방문한다.
+            preorder 순회의 결과를 통해 root를 구하고, inorder에서의 위치를 구한다면, left-subtree의 크기를 구할 수 있다.
+        left-subtree와 right-subtree를 구할 수 있다면, 재귀를 통하여 tree를 순회할 수 있다.
+            이때 tree를 postorder 방식으로 순회한다면, 따로 재구축 할 필요 없이 정답을 출력할 수 있다.
+    */
+    /*전략
+    전략1
+        아이디어: tree
+            root를 구한다 -> O(1)
+            left-subtree와 right-subtree의 크기를 구한다. -> O(n)
+            post-order방식으로 순회한다. n개의 node 재귀 * O(n)
+                left subtree 재귀
+                right subtree 재귀
+                print root
+        분석
+            time complexity: O(n^2)
+            mem complexity: O(N)
+        피드백
+    */
+    // Sol
+    int testCase;
+    cin >> testCase;
+    //전역변수
+    cout << fixed;
+    cout.precision(10);
+    //각 테스트케이스
+    while (testCase--) {
+        int nodeNum;
+        vector<int> preorderTraversal, inorderTraversal;
+        TRAVERSAL_Input(nodeNum, preorderTraversal, inorderTraversal);
+        auto result = TRAVERSAL_Algo(nodeNum, preorderTraversal, inorderTraversal);
+        // cout << "::::";
+        for (auto& ele : result) {
+            cout << ele << " ";
+        }
+        cout << endl;
+    }
+}

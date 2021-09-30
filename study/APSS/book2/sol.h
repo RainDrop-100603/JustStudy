@@ -72,3 +72,8 @@ vector<int> HABIT_suffixArr(const string& str);
 int HABIT_commonprefix(const string& str, int begin1, int begin2);
 int HABIT_Algo(string speech, int isHabit);
 void HABIT();
+
+// @* tree, preorder, inorder, postorder, 적절한 재귀를 통해, tree를 구현하지 않고도 문제를 풀어냈다.
+void TRAVERSAL_Input(int& nodeNum, vector<int>& preorderTraversal, vector<int>& inorderTraversal);
+vector<int> TRAVERSAL_Algo(int nodeNum, vector<int> preorderTraversal, vector<int> inorderTraversal);
+void TRAVERSAL();
