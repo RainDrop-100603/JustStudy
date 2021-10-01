@@ -56,8 +56,7 @@ vector<int> GRADUATION_getCombination(int option, int bitmaskLen, int select) {
     } while (prev_permutation(key.begin(), key.end()));
     return combinations;
 }
-int GRADUATION_func1(int classNum, int classTarget, int semesterNum, int classLimit, vector<int>& preClass, vector<int>& semesterInfo, int classTaken,
-                     int semesterCount, int thisSemester) {
+int GRADUATION_func1(int classNum, int classTarget, int semesterNum, int classLimit, vector<int>& preClass, vector<int>& semesterInfo, int classTaken, int semesterCount, int thisSemester) {
     //기저
     if (__builtin_popcount(classTaken) >= classTarget) {
         return semesterCount;
@@ -79,18 +78,15 @@ int GRADUATION_func1(int classNum, int classTarget, int semesterNum, int classLi
     }
     //각 경우 선택 후 반환
     int optionNum = __builtin_popcount(option);
-    int semesterMin =
-        GRADUATION_func1(classNum, classTarget, semesterNum, classLimit, preClass, semesterInfo, classTaken, semesterCount, thisSemester + 1);
+    int semesterMin = GRADUATION_func1(classNum, classTarget, semesterNum, classLimit, preClass, semesterInfo, classTaken, semesterCount, thisSemester + 1);
     if (optionNum == 0) {
         return semesterMin;
     } else if (optionNum <= classLimit) {
-        return min(semesterMin, GRADUATION_func1(classNum, classTarget, semesterNum, classLimit, preClass, semesterInfo, classTaken | option,
-                                                 semesterCount + 1, thisSemester + 1));
+        return min(semesterMin, GRADUATION_func1(classNum, classTarget, semesterNum, classLimit, preClass, semesterInfo, classTaken | option, semesterCount + 1, thisSemester + 1));
     } else {
         vector<int> choices = GRADUATION_getCombination(option, classNum, classLimit);
         for (auto choice : choices) {
-            semesterMin = min(semesterMin, GRADUATION_func1(classNum, classTarget, semesterNum, classLimit, preClass, semesterInfo,
-                                                            classTaken | choice, semesterCount + 1, thisSemester + 1));
+            semesterMin = min(semesterMin, GRADUATION_func1(classNum, classTarget, semesterNum, classLimit, preClass, semesterInfo, classTaken | choice, semesterCount + 1, thisSemester + 1));
         }
         return semesterMin;
     }
@@ -98,8 +94,7 @@ int GRADUATION_func1(int classNum, int classTarget, int semesterNum, int classLi
 string GRADUATION_Algo(int classNum, int classTarget, int semesterNum, int classLimit, vector<int> preClass, vector<int> semesterInfo) {
     //재귀함수
     int classTaken(0), semesterCount(0), thisSemester(0);
-    int semesterMin =
-        GRADUATION_func1(classNum, classTarget, semesterNum, classLimit, preClass, semesterInfo, classTaken, semesterCount, thisSemester);
+    int semesterMin = GRADUATION_func1(classNum, classTarget, semesterNum, classLimit, preClass, semesterInfo, classTaken, semesterCount, thisSemester);
     //반환
     if (semesterMin > semesterNum) {
         return string("IMPOSSIBLE");
@@ -783,10 +778,14 @@ vector<int> HABIT_suffixArr(const string& str) {
     int t = 1;
     while (t < strLen) {
         // 각 접미사의 2t만큼의 접두사를 비교하여 정렬한다.
-        HABIT_Comparator cmp2T(group, t);
-        sort(perm.begin(), perm.end(), cmp2T);
-        t *= 2;
-        if (t >= strLen) {
+        // lambda 함수: 앞선 t를 먼저 비교하고, 구분이 안된다면 2t까지 비교한다.
+        sort(perm.begin(), perm.end(), [&group, t](int a, int b) -> bool {
+            if (group[a] != group[b]) {
+                return group[a] < group[b];
+            }
+            return group[a + t] < group[b + t];
+        });
+        if (t * 2 >= strLen) {
             break;
         }
         // group 갱신
@@ -795,7 +794,13 @@ vector<int> HABIT_suffixArr(const string& str) {
         tmpGroup[prev] = 0;
         for (int i = 1; i < strLen; i++) {
             int now = perm[i];
-            if (cmp2T(prev, now)) {
+            bool isSmaller;
+            if (group[prev] != group[now]) {
+                isSmaller = group[prev] < group[now];
+            } else {
+                isSmaller = group[prev + t] < group[now + t];
+            }
+            if (isSmaller) {
                 tmpGroup[now] = tmpGroup[prev] + 1;
             } else {
                 tmpGroup[now] = tmpGroup[prev];
@@ -803,6 +808,7 @@ vector<int> HABIT_suffixArr(const string& str) {
             prev = now;
         }
         group = tmpGroup;
+        t *= 2;
     }
     return perm;
 }
@@ -860,6 +866,7 @@ void HABIT() {
             ver2: substr을 구하지 않도록 개선, 304
             ver3: stack도 이용할 필요가 없다. 284
                 suffixarr[i]와 suffixarr[i+k-1]의 commonPreifx는, suffixarr[i+1 ~ i+k-2]의 commonPrefix이다.
+            ver4: struct대신 람다함수 이용, 300
     */
     // Sol
     int testCase;
