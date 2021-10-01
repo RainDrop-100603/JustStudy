@@ -142,10 +142,14 @@ vector<int> useful_getSuffixArr(string& str) {  // str[i:] 를 사전순으로 �
     int t = 1;
     while (t < strLen) {
         // 각 접미사의 2t만큼의 접두사를 비교하여 정렬한다.
-        useful_Comparator cmp2T(group, t);
-        sort(perm.begin(), perm.end(), cmp2T);
-        t *= 2;
-        if (t >= strLen) {
+        // lambda 함수: 앞선 t를 먼저 비교하고, 구분이 안된다면 2t까지 비교한다.
+        sort(perm.begin(), perm.end(), [&group, t](int a, int b) -> bool {
+            if (group[a] != group[b]) {
+                return group[a] < group[b];
+            }
+            return group[a + t] < group[b + t];
+        });
+        if (t * 2 >= strLen) {
             break;
         }
         // group 갱신
@@ -154,7 +158,13 @@ vector<int> useful_getSuffixArr(string& str) {  // str[i:] 를 사전순으로 �
         tmpGroup[prev] = 0;
         for (int i = 1; i < strLen; i++) {
             int now = perm[i];
-            if (cmp2T(prev, now)) {
+            bool isSmaller;
+            if (group[prev] != group[now]) {
+                isSmaller = group[prev] < group[now];
+            } else {
+                isSmaller = group[prev + t] < group[now + t];
+            }
+            if (isSmaller) {
                 tmpGroup[now] = tmpGroup[prev] + 1;
             } else {
                 tmpGroup[now] = tmpGroup[prev];
@@ -162,6 +172,7 @@ vector<int> useful_getSuffixArr(string& str) {  // str[i:] 를 사전순으로 �
             prev = now;
         }
         group = tmpGroup;
+        t *= 2;
     }
     return perm;
 }

@@ -7,6 +7,22 @@ https://seastar105.tistory.com/65
 explicit 생성자에 대한 내용 
 
 long long 과 int는 수행시간에 차이가 난다. long long이 필요한 것이 아니라면 int를 사용하자 
-  int, long long, double, float 연산 수행시간 추가바람 
+	int, long long, double, float 연산 수행시간 추가바람 
 
 register int 라는것이 있다.
+
+lambda function 
+	기본 구성
+		[introducer caputre](parameters) ->returnType {statement}
+		introducer capture: lambda에서 외부 변수를 사용하고 싶을 때 이용한다.
+			&: 모든 외부 변수를 reference로 가져온다. 
+			=: 모든 외부 변수를 value로 가져온다.
+			&, x: 모든 외부변수를 reference로 가져오되, x만 value로 가져온다.
+			=, &x, &y: 모든 외부변수를 value로 가져오되, x y 만 reference로 가져온다.
+		parameters: 함수내부에서 이용할 parameters를 나타낸다. 
+			원본함수(lambda를 이용하는 함수)의 parameters와 같다고 보면된다.
+			없을경우 생략 가능하다. 
+		->returnType: return이 존재할경우 이용한다. 없다면 생략 가능
+		statement: logic을 구성하는 부분
+	참고
+		https://modoocode.com/196
