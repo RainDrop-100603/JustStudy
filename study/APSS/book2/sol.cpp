@@ -997,7 +997,7 @@ bool FORTRESS_isSubtree(vector<int>& fortressXpos, vector<int>& fortressYpos, ve
     }
 }
 pair<int, int> FORTRESS_getHeights(vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius, vector<int>& tree) {
-    // pair.first = subtree의 height, pair.second = subtree내부에서 가장 많이 fortress를 넘어야 하는 횟수
+    // pair.first = subtree의 height = root-leaf, pair.second = leaf-leaf
     //기저
     pair<int, int> results(0, 0);
     if (tree.size() == 1) {
@@ -1028,10 +1028,10 @@ pair<int, int> FORTRESS_getHeights(vector<int>& fortressXpos, vector<int>& fortr
         heights.push_back(tmp.first + 1);
         results.second = max(results.second, tmp.second);
     }
-    // 가장 큰 height 계산
+    // root-leaf = height
     sort(heights.begin(), heights.end(), greater<int>());
     results.first = heights.front();
-    // subtree내부에서 가장 많은 move 계산
+    // leaf-leaf
     int inFortressMove = heights.front();
     if (heights.size() > 1) {
         inFortressMove += heights[1];
@@ -1061,6 +1061,7 @@ void FORTRESS() {
             (0 <= xi, yi <= 1000,1 <= ri <= 1000,0 <= i<N) 이 때 i 번 성벽은 (xi, yi) 를 중심으로 하는 반지름 ri 인 원형으로 설치되어 있습니다.
         편의상 모든 성벽의 두께는 0이라고 가정하며, 입력에 주어지는 성벽들은 서로 겹치거나 닿지 않습니다.
         입력에 주어지는 첫 번째 성벽은 외벽이며, 외벽은 입력에 주어지는 모든 다른 성벽을 포함합니다.
+        node간의 가장 긴 경로는 root-leaf 혹은 leaf-leaf이다.
     출력
         각 테스트 케이스마다 한 줄에 두 지점 간 이동을 위해 최대 몇 번이나 성벽을 넘어야 하는지를 출력하세요.
     제한조건
