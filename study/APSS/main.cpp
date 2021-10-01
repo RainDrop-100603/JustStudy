@@ -13,18 +13,18 @@
 using namespace std;
 
 // @* subtree, tree에 대한 조건/결과는 subtree에도 동일하게 적용됨을 유의하자
-void FORTRESS_Input(int& fortressNum, vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius) {
-    cin >> fortressNum;
-    fortressXpos.resize(fortressNum);
-    fortressYpos.resize(fortressNum);
-    fortressRadius.resize(fortressNum);
-    for (int i = 0; i < fortressNum; i++) {
-        cin >> fortressXpos[i] >> fortressYpos[i] >> fortressRadius[i];
+void NERD2_Input(int& NERD2Num, vector<int>& NERD2Xpos, vector<int>& NERD2Ypos, vector<int>& NERD2Radius) {
+    cin >> NERD2Num;
+    NERD2Xpos.resize(NERD2Num);
+    NERD2Ypos.resize(NERD2Num);
+    NERD2Radius.resize(NERD2Num);
+    for (int i = 0; i < NERD2Num; i++) {
+        cin >> NERD2Xpos[i] >> NERD2Ypos[i] >> NERD2Radius[i];
     }
 }
-bool FORTRESS_isSubtree(vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius, int root, int now) {
-    int rx(fortressXpos[root]), ry(fortressYpos[root]), rr(fortressRadius[root]);
-    int nx(fortressXpos[now]), ny(fortressYpos[now]);
+bool NERD2_isSubtree(vector<int>& NERD2Xpos, vector<int>& NERD2Ypos, vector<int>& NERD2Radius, int root, int now) {
+    int rx(NERD2Xpos[root]), ry(NERD2Ypos[root]), rr(NERD2Radius[root]);
+    int nx(NERD2Xpos[now]), ny(NERD2Ypos[now]);
     double distance = sqrt(pow(rx - nx, 2) + pow(ry - ny, 2));
     if (distance < rr) {
         return true;
@@ -32,8 +32,8 @@ bool FORTRESS_isSubtree(vector<int>& fortressXpos, vector<int>& fortressYpos, ve
         return false;
     }
 }
-pair<int, int> FORTRESS_getHeights(vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius, vector<int>& tree) {
-    // pair.first = subtree의 height, pair.second = subtree내부에서 가장 많이 fortress를 넘어야 하는 횟수
+pair<int, int> NERD2_getHeights(vector<int>& NERD2Xpos, vector<int>& NERD2Ypos, vector<int>& NERD2Radius, vector<int>& tree) {
+    // pair.first = subtree의 height, pair.second = subtree내부에서 가장 많이 NERD2를 넘어야 하는 횟수
     //기저
     pair<int, int> results(0, 0);
     if (tree.size() == 1) {
@@ -46,7 +46,7 @@ pair<int, int> FORTRESS_getHeights(vector<int>& fortressXpos, vector<int>& fortr
         //각 subtree에 포함되는지 확인
         for (auto& subtree : subtrees) {
             int root = subtree.front();
-            if (FORTRESS_isSubtree(fortressXpos, fortressYpos, fortressRadius, root, tree[idx])) {
+            if (NERD2_isSubtree(NERD2Xpos, NERD2Ypos, NERD2Radius, root, tree[idx])) {
                 subtree.push_back(tree[idx]);
                 inserted = true;
                 break;
@@ -60,7 +60,7 @@ pair<int, int> FORTRESS_getHeights(vector<int>& fortressXpos, vector<int>& fortr
     //재귀하기
     vector<int> heights;
     for (auto& subtree : subtrees) {
-        auto tmp = FORTRESS_getHeights(fortressXpos, fortressYpos, fortressRadius, subtree);
+        auto tmp = NERD2_getHeights(NERD2Xpos, NERD2Ypos, NERD2Radius, subtree);
         heights.push_back(tmp.first + 1);
         results.second = max(results.second, tmp.second);
     }
@@ -68,50 +68,53 @@ pair<int, int> FORTRESS_getHeights(vector<int>& fortressXpos, vector<int>& fortr
     sort(heights.begin(), heights.end(), greater<int>());
     results.first = heights.front();
     // subtree내부에서 가장 많은 move 계산
-    int inFortressMove = heights.front();
+    int inNERD2Move = heights.front();
     if (heights.size() > 1) {
-        inFortressMove += heights[1];
+        inNERD2Move += heights[1];
     }
-    results.second = max(results.second, inFortressMove);
+    results.second = max(results.second, inNERD2Move);
     return results;
 }
-int FORTRESS_Algo(int fortressNum, vector<int> fortressXpos, vector<int> fortressYpos, vector<int> fortressRadius) {
-    vector<int> tree(fortressNum);
-    for (int i = 0; i < fortressNum; i++) {
+int NERD2_Algo(int NERD2Num, vector<int> NERD2Xpos, vector<int> NERD2Ypos, vector<int> NERD2Radius) {
+    vector<int> tree(NERD2Num);
+    for (int i = 0; i < NERD2Num; i++) {
         tree[i] = i;
     }
     //항상 큰 성벽이 작은 성벽을 포함하므로, 내림차순 정렬을 해준다.
-    sort(tree.begin(), tree.end(), [&fortressRadius](int a, int b) -> bool { return fortressRadius[a] > fortressRadius[b]; });
-    auto results = FORTRESS_getHeights(fortressXpos, fortressYpos, fortressRadius, tree);
+    sort(tree.begin(), tree.end(), [&NERD2Radius](int a, int b) -> bool { return NERD2Radius[a] > NERD2Radius[b]; });
+    auto results = NERD2_getHeights(NERD2Xpos, NERD2Ypos, NERD2Radius, tree);
     return results.second;
 }
-void FORTRESS() {
+void NERD2() {
     /*설명 및 입력
     설명
-        성벽들의 정보가 주어질 때 가장 성벽을 많이 넘어야 하는 두 지점 간을 이동하기 위해 몇 번이나 성벽을 넘어야 하는지 계산하는 프로그램을 작성하세요.
-        왕래는 성벽 내에서만 이루어집니다.
+        올해에도 참가 신청을 한 사람 중 진정한 프로그래밍 너드들만을 대회에 참가할 수 있도록 받아 주기로 했습니다.
+        종만의 새로운 이론에 따르면, 어떤 사람의 너드 지수는 다음 두 가지 값에 의해 결정됩니다.
+            알고스팟 온라인 채점 시스템에서 푼 문제의 수 p
+            밤 새면서 지금까지 끓여먹은 라면 그릇 수 q
+        이 이론에 따르면 어떤 참가 신청자 a 의 문제 수 pa 와 그릇 수 qa 를 다른 참가 신청자 b 의 문제 수 pb 와 그릇 수 qb 에 각각 비교했을 때,
+            pa < pb, qa < qb 라면 참가 신청자 a 는 너드일 가능성이 없습니다.
+            조직위는 너드일 가능성이 있는 사람들만을 대회에 받아주기로 했습니다.
+        한 사람의 참가 가능 여부는 다른 사람들에 의해 결정되기 때문에, 대회에 참가할 수 있는 사람의 수는 새로운 사람이 참가 신청을 할 때마다 계속 바뀝니다.
+        이렇게 각 사람이 참가 신청을 할 때마다 대회에 참가할 수 있는 사람들의 수가 어떻게 변하는지 계산하는 프로그램을 작성하세요.
     입력
-        입력의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 100) 가 주어집니다.
-        각 테스트 케이스의 첫 줄에는 성벽의 수 N (1 <= N <= 100) 이 주어집니다.
-        그 후 N 줄에는 각 3개의 정수로 각 성벽의 위치와 크기에 대한 정보 xi , yi , ri 가 주어집니다.
-            (0 <= xi, yi <= 1000,1 <= ri <= 1000,0 <= i<N) 이 때 i 번 성벽은 (xi, yi) 를 중심으로 하는 반지름 ri 인 원형으로 설치되어 있습니다.
-        편의상 모든 성벽의 두께는 0이라고 가정하며, 입력에 주어지는 성벽들은 서로 겹치거나 닿지 않습니다.
-        입력에 주어지는 첫 번째 성벽은 외벽이며, 외벽은 입력에 주어지는 모든 다른 성벽을 포함합니다.
+        입력의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 50) 가 주어집니다.
+        각 테스트 케이스의 첫 줄에는 참가 신청한 사람들의 수 N (1 <= N <= 50000) 이 주어집니다.
+        그 후 N 줄에 각 2개의 정수로 각 사람의 문제 수 pi 와 라면 그릇 수 qi 가 참가 신청한 순서대로 주어집니다 (0 <= pi,qi <= 100000) .
+        두 사람의 문제 수나 라면 그릇 수가 같은 경우는 없다고 가정해도 좋습니다.
+        입력의 양이 많으므로 가능한 빠른 입력 함수를 사용하는 것이 좋습니다..
     출력
-        각 테스트 케이스마다 한 줄에 두 지점 간 이동을 위해 최대 몇 번이나 성벽을 넘어야 하는지를 출력하세요.
+        각 사람이 참가 신청을 할 때마다 대회 참가 자격이 되는 사람의 수를 계산한 뒤, 각 테스트 케이스마다 그 합을 출력합니다.
     제한조건
-        1초, 64MB
+        2초, 64MB
     */
     /*힌트
-        각 child를 root로하는 subtree의 원소를 알 수 있다면, 문제를 재귀적으로 풀어나갈 수 있다.
-            만약 성벽이 기존의 child에 포함되거나/포함한다면, 기존 child와 같은 subtree에 존재한다.
-            만약 성벽이 기존의 child중 어느것에도 포함되지 않는다면, 이것은 새로운 child, 즉 새로운 subtree를 생성한다.
-        성벽은 겹치지 않으므로, 한 subtree의 root는 반지름이 가장 큰 것임을 알 수 있다.
-        재귀적 풀이: subtree의 모든 child의 height를 반환하면 된다.
-        성벽은 겹치지 않으므로, 큰 성벽이 작은 성벽을 포함한다. 즉 parent의 radius는 항상 child의 rad보다 크다.
-            성벽의 둘레를 기준으로 내림차순 정렬을 하면, 편하계 계산할 수 있다.
-        한 subtree내부에서 움직이는것이 가장 큰 움직임일 수도 있다.
-    */
+        너드는, 다른 모든 사람과 비교했을 때, p 혹은 q 가 커야한다는 특징이 있다.
+        방법1: p와 q를 각각 tree형태로 저장하고, p와 q 모두 자기보다 큰 사람을 배열에 저장한다.
+                idx번째 입력까지의 결과는, 자기보다 큰 사람을 idx번째 까지의 사람만 인정하는것으로 계산하면 된다.
+            예상되는 시간: 비교시간(O(n)) * 모든사람(n times) + 트리구성(O(nlgn)) + 너드계산(O(n^2)) = O(n^2)
+            문제점: n<=50000이기 때문에 n^2으로는 풀 수 없다.
+        사람이 n명이기 때문에, 각각의 사람에 대해 검사하려면 lgn 시간에 검사를 끝내야한다.
     /*전략
     전략1
         아이디어: tree, 재귀
@@ -139,10 +142,10 @@ void FORTRESS() {
     cout.precision(10);
     //각 테스트케이스
     while (testCase--) {
-        int fortressNum;
-        vector<int> fortressXpos, fortressYpos, fortressRadius;
-        FORTRESS_Input(fortressNum, fortressXpos, fortressYpos, fortressRadius);
-        auto result = FORTRESS_Algo(fortressNum, fortressXpos, fortressYpos, fortressRadius);
+        int NERD2Num;
+        vector<int> NERD2Xpos, NERD2Ypos, NERD2Radius;
+        NERD2_Input(NERD2Num, NERD2Xpos, NERD2Ypos, NERD2Radius);
+        auto result = NERD2_Algo(NERD2Num, NERD2Xpos, NERD2Ypos, NERD2Radius);
         // cout << "::::";
         cout << result << endl;
     }
@@ -151,7 +154,7 @@ void FORTRESS() {
 int main(void) {
     //   clock_t start,end;
     //   start=clock();
-    FORTRESS();
+    NERD2();
     //   end=clock();;
     //   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
     return 0;
