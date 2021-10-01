@@ -12,93 +12,84 @@
 
 using namespace std;
 
-// @* tree, preorder, inorder, postorder, 적절한 재귀를 통해, tree를 구현하지 않고도 문제를 풀어냈다.
+// @* subtree, tree에 대한 조건/결과는 subtree에도 동일하게 적용됨을 유의하자
 void FORTRESS_Input(int& fortressNum, vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius) {
     cin >> fortressNum;
     fortressXpos.resize(fortressNum);
-    for (auto& ele : fortressXpos) {
-        cin >> ele;
-    }
     fortressYpos.resize(fortressNum);
-    for (auto& ele : fortressYpos) {
-        cin >> ele;
-    }
     fortressRadius.resize(fortressNum);
-    for (auto& ele : fortressRadius) {
-        cin >> ele;
+    for (int i = 0; i < fortressNum; i++) {
+        cin >> fortressXpos[i] >> fortressYpos[i] >> fortressRadius[i];
     }
 }
-int FORTRESS_isSubtree(vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius, int root, int idx) {
+bool FORTRESS_isSubtree(vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius, int root, int now) {
     int rx(fortressXpos[root]), ry(fortressYpos[root]), rr(fortressRadius[root]);
-    int nx(fortressXpos[idx]), ny(fortressYpos[idx]), nr(fortressRadius[idx]);
+    int nx(fortressXpos[now]), ny(fortressYpos[now]);
     double distance = sqrt(pow(rx - nx, 2) + pow(ry - ny, 2));
-    //포함하는가, 포함되는가를 따진다.
-    int contain = 1;
-    if (nr > rr) {
-        rr = nr;
-        contain = -1;
-    }
-    //계산
     if (distance < rr) {
-        return contain;
+        return true;
     } else {
-        return 0;
+        return false;
     }
 }
-vector<int> FORTRESS_getHeights(vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius, vector<int>& tree) {
+pair<int, int> FORTRESS_getHeights(vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius, vector<int>& tree) {
+    // pair.first = subtree의 height, pair.second = subtree내부에서 가장 많이 fortress를 넘어야 하는 횟수
     //기저
-    if (tree.size() == 0) {
-        return vector<int>(1, -1);
+    pair<int, int> results(0, 0);
+    if (tree.size() == 1) {
+        return results;
     }
     // subtree 구분하기
-    int rootIdx = tree[0];
     vector<vector<int>> subtrees;
-    for (int idx = 1; idx < subtrees.size(); idx++) {
+    for (int idx = 1; idx < tree.size(); idx++) {
         bool inserted(false);
         //각 subtree에 포함되는지 확인
         for (auto& subtree : subtrees) {
             int root = subtree.front();
-            int is_subtree = FORTRESS_isSubtree(fortressXpos, fortressYpos, fortressRadius, root, idx);
-            if (is_subtree == 1) {
-                subtree.push_back(idx);
-                inserted = true;
-                break;
-            } else if (is_subtree == -1) {
-                subtree.insert(subtree.begin(), idx);
+            if (FORTRESS_isSubtree(fortressXpos, fortressYpos, fortressRadius, root, tree[idx])) {
+                subtree.push_back(tree[idx]);
                 inserted = true;
                 break;
             }
         }
         //어느 subtree에도 포함되지 않는다면, 새로운 subtree(child)이다.
         if (!inserted) {
-            subtrees.push_back(vector<int>(1, idx));
+            subtrees.push_back(vector<int>(1, tree[idx]));
         }
     }
     //재귀하기
     vector<int> heights;
     for (auto& subtree : subtrees) {
-        auto height = FORTRESS_getHeights(fortressXpos, fortressYpos, fortressRadius, subtree);
-        heights.push_back(height[0] + 1);
+        auto tmp = FORTRESS_getHeights(fortressXpos, fortressYpos, fortressRadius, subtree);
+        heights.push_back(tmp.first + 1);
+        results.second = max(results.second, tmp.second);
     }
-    sort(heights.begin(), heights.end(), greater<>());
-    return heights;
+    // 가장 큰 height 계산
+    sort(heights.begin(), heights.end(), greater<int>());
+    results.first = heights.front();
+    // subtree내부에서 가장 많은 move 계산
+    int inFortressMove = heights.front();
+    if (heights.size() > 1) {
+        inFortressMove += heights[1];
+    }
+    results.second = max(results.second, inFortressMove);
+    return results;
 }
 int FORTRESS_Algo(int fortressNum, vector<int> fortressXpos, vector<int> fortressYpos, vector<int> fortressRadius) {
-    vector<int> subtree(fortressNum);
+    vector<int> tree(fortressNum);
     for (int i = 0; i < fortressNum; i++) {
-        subtree[i] = i;
+        tree[i] = i;
     }
-    auto heights = FORTRESS_getHeights(fortressXpos, fortressYpos, fortressRadius, subtree);
-    if (heights.size() == 1) {
-        return heights[0] + 1;  //외벽 밖으로 나갈 수 있다.
-    } else {
-        return heights[0] + heights[1];
-    }
+    //항상 큰 성벽이 작은 성벽을 포함하므로, 내림차순 정렬을 해준다.
+    sort(tree.begin(), tree.end(), [&fortressRadius](int a, int b) -> bool { return fortressRadius[a] > fortressRadius[b]; });
+    auto results = FORTRESS_getHeights(fortressXpos, fortressYpos, fortressRadius, tree);
+    return results.second;
 }
 void FORTRESS() {
     /*설명 및 입력
     설명
         성벽들의 정보가 주어질 때 가장 성벽을 많이 넘어야 하는 두 지점 간을 이동하기 위해 몇 번이나 성벽을 넘어야 하는지 계산하는 프로그램을 작성하세요.
+        왕래는 성벽 내에서만 이루어집니다.
     입력
         입력의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 100) 가 주어집니다.
         각 테스트 케이스의 첫 줄에는 성벽의 수 N (1 <= N <= 100) 이 주어집니다.
@@ -117,6 +108,9 @@ void FORTRESS() {
             만약 성벽이 기존의 child중 어느것에도 포함되지 않는다면, 이것은 새로운 child, 즉 새로운 subtree를 생성한다.
         성벽은 겹치지 않으므로, 한 subtree의 root는 반지름이 가장 큰 것임을 알 수 있다.
         재귀적 풀이: subtree의 모든 child의 height를 반환하면 된다.
+        성벽은 겹치지 않으므로, 큰 성벽이 작은 성벽을 포함한다. 즉 parent의 radius는 항상 child의 rad보다 크다.
+            성벽의 둘레를 기준으로 내림차순 정렬을 하면, 편하계 계산할 수 있다.
+        한 subtree내부에서 움직이는것이 가장 큰 움직임일 수도 있다.
     */
     /*전략
     전략1

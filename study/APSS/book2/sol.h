@@ -54,7 +54,7 @@ int JAEHASAFE_KmpSearch(const string& base, const string& target);
 int JAEHASAFE_Algo(const vector<string>& config);
 void JAEHASAFE();
 
-// @* suffix arr, 사용법에 대해 참고해볼 것이 많다.
+// @* suffix arr, 사용법에 대해 참고해볼 것이 많다. 람다함수를 이용하여 구조체를 이용하지 않고 구현했다.
 void HABIT_Input(string& speech, int& isHabit);
 vector<int> HABIT_suffixArr(const string& str);
 int HABIT_commonprefix(const string& str, int begin1, int begin2);
@@ -65,3 +65,10 @@ void HABIT();
 void TRAVERSAL_Input(int& nodeNum, vector<int>& preorderTraversal, vector<int>& inorderTraversal);
 vector<int> TRAVERSAL_Algo(int nodeNum, vector<int> preorderTraversal, vector<int> inorderTraversal);
 void TRAVERSAL();
+
+// @* subtree, tree에 대한 조건/결과는 subtree에도 동일하게 적용됨을 유의하자
+void FORTRESS_Input(int& fortressNum, vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius);
+bool FORTRESS_isSubtree(vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius, int root, int now);
+pair<int, int> FORTRESS_getHeights(vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius, vector<int>& tree);
+int FORTRESS_Algo(int fortressNum, vector<int> fortressXpos, vector<int> fortressYpos, vector<int> fortressRadius);
+void FORTRESS();
