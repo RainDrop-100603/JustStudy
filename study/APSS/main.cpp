@@ -7,83 +7,43 @@
 #include <iostream>
 #include <map>
 #include <queue>
+#include <set>
 #include <string>
 #include <vector>
 
 using namespace std;
 
 // @* subtree, tree에 대한 조건/결과는 subtree에도 동일하게 적용됨을 유의하자
-void NERD2_Input(int& NERD2Num, vector<int>& NERD2Xpos, vector<int>& NERD2Ypos, vector<int>& NERD2Radius) {
-    cin >> NERD2Num;
-    NERD2Xpos.resize(NERD2Num);
-    NERD2Ypos.resize(NERD2Num);
-    NERD2Radius.resize(NERD2Num);
-    for (int i = 0; i < NERD2Num; i++) {
-        cin >> NERD2Xpos[i] >> NERD2Ypos[i] >> NERD2Radius[i];
+void NERD2_Input(int& applicantsNum, vector<int>& arg1Arr, vector<int>& arg2Arr) {
+    cin >> applicantsNum;
+    arg1Arr.resize(applicantsNum);
+    arg2Arr.resize(applicantsNum);
+    for (int i = 0; i < applicantsNum; i++) {
+        cin >> arg1Arr[i] >> arg2Arr[i];
     }
 }
-bool NERD2_isSubtree(vector<int>& NERD2Xpos, vector<int>& NERD2Ypos, vector<int>& NERD2Radius, int root, int now) {
-    int rx(NERD2Xpos[root]), ry(NERD2Ypos[root]), rr(NERD2Radius[root]);
-    int nx(NERD2Xpos[now]), ny(NERD2Ypos[now]);
-    double distance = sqrt(pow(rx - nx, 2) + pow(ry - ny, 2));
-    if (distance < rr) {
-        return true;
-    } else {
-        return false;
+int NERD2_Algo(int applicantsNum, vector<int> arg1Arr, vector<int> arg2Arr) {
+    // arg1과 arg2를 묶는다.
+    vector<pair<int, int>> argsArr(applicantsNum);
+    for (int i = 0; i < applicantsNum; i++) {
+        argsArr[i].first = arg1Arr[i];
+        argsArr[i].second = arg2Arr[i];
     }
-}
-pair<int, int> NERD2_getHeights(vector<int>& NERD2Xpos, vector<int>& NERD2Ypos, vector<int>& NERD2Radius, vector<int>& tree) {
-    // pair.first = subtree의 height, pair.second = subtree내부에서 가장 많이 NERD2를 넘어야 하는 횟수
-    //기저
-    pair<int, int> results(0, 0);
-    if (tree.size() == 1) {
-        return results;
-    }
-    // subtree 구분하기
-    vector<vector<int>> subtrees;
-    for (int idx = 1; idx < tree.size(); idx++) {
-        bool inserted(false);
-        //각 subtree에 포함되는지 확인
-        for (auto& subtree : subtrees) {
-            int root = subtree.front();
-            if (NERD2_isSubtree(NERD2Xpos, NERD2Ypos, NERD2Radius, root, tree[idx])) {
-                subtree.push_back(tree[idx]);
-                inserted = true;
-                break;
-            }
+    // arg1에 대해 내림차순 정렬한다.
+    sort(argsArr.begin(), argsArr.end(), greater<pair<int, int>>());
+    // tree(set) 에 대하여 input을 해주고, 매번 nerd참가자의 수를 계산하여 정답을 구한다.
+    int result = 0;
+    int nerds = 0;
+    set<int> tree;
+    for (auto& ele : argsArr) {
+        tree.insert(ele.second);
+        if (ele.second == *tree.rbegin()) {
+            nerds++;
         }
-        //어느 subtree에도 포함되지 않는다면, 새로운 subtree(child)이다.
-        if (!inserted) {
-            subtrees.push_back(vector<int>(1, tree[idx]));
-        }
+        result += nerds;
+        cout << ":::" << nerds << endl;
     }
-    //재귀하기
-    vector<int> heights;
-    for (auto& subtree : subtrees) {
-        auto tmp = NERD2_getHeights(NERD2Xpos, NERD2Ypos, NERD2Radius, subtree);
-        heights.push_back(tmp.first + 1);
-        results.second = max(results.second, tmp.second);
-    }
-    // 가장 큰 height 계산
-    sort(heights.begin(), heights.end(), greater<int>());
-    results.first = heights.front();
-    // subtree내부에서 가장 많은 move 계산
-    int inNERD2Move = heights.front();
-    if (heights.size() > 1) {
-        inNERD2Move += heights[1];
-    }
-    results.second = max(results.second, inNERD2Move);
-    return results;
-}
-int NERD2_Algo(int NERD2Num, vector<int> NERD2Xpos, vector<int> NERD2Ypos, vector<int> NERD2Radius) {
-    vector<int> tree(NERD2Num);
-    for (int i = 0; i < NERD2Num; i++) {
-        tree[i] = i;
-    }
-    //항상 큰 성벽이 작은 성벽을 포함하므로, 내림차순 정렬을 해준다.
-    sort(tree.begin(), tree.end(), [&NERD2Radius](int a, int b) -> bool { return NERD2Radius[a] > NERD2Radius[b]; });
-    auto results = NERD2_getHeights(NERD2Xpos, NERD2Ypos, NERD2Radius, tree);
-    return results.second;
+    return result;
 }
 void NERD2() {
     /*설명 및 입력
@@ -115,23 +75,22 @@ void NERD2() {
             예상되는 시간: 비교시간(O(n)) * 모든사람(n times) + 트리구성(O(nlgn)) + 너드계산(O(n^2)) = O(n^2)
             문제점: n<=50000이기 때문에 n^2으로는 풀 수 없다.
         사람이 n명이기 때문에, 각각의 사람에 대해 검사하려면 lgn 시간에 검사를 끝내야한다.
+        방법2: 각각의 사람마다 두가지 값을 시간내에 계산하는것은 불가능하다. 즉, 하나의 값은 미리 계산해놔야 한다는 것이다.
+            p에대해 내림차순 정렬하고, 순서대로 q값을 tree input한다.
+            앞서 tree에 들어간 값들은 모두 now보다 p가 크므로, now는 q가 제일커야, tree에서 제일 커야 nerd가 될 수 있다.
+            정렬시간(nlgn) + tree생성 시간(nlgn) = O(nlgn) 으로 해결이 가능하다.
+            문제점: 참가자가 지원한 순서대로 심사되어야 한다.
     /*전략
     전략1
-        아이디어: tree, 재귀
-            root를 구한다 -> O(1)
-            subtrees를 구분하는 2차원 배열을 만든다.
-                subtrees[i] = i 번째 child를 root로 가지는 subtree의 원소들
-            성벽을 기존의 children과 비교한다 -> O(n^2)
-                기존의 child를 포함하거나/포함된다면, subtrees[i].push_back(now);
-                기존의 child와 관계가 없다면, subtrees.push_back(vector<int>(now));
-            heights를 나타내는 배열을 만든다.
-            각 children에 대해 재귀하여 subtree들의 height를 구한다. -> n times * O(n^2)
-                heights[i] = max(child_subtree_heights)+1
-            return heights
-            마지막으로 반환된 값을 가지고, 가장 큰 값과 그다음 큰 값을 더하면 된다.
+        아이디어: tree, pre-sorting
+            Arr을 p에대해 내림차순 정렬한다.
+            idx=0부터 시작해서, q값을 tree에 input한다.
+                q값이 tree에서 가장 큰 값이라면, 해당 참가자는
+                그렇지 않다면, nerd 참가자 수는 그대로이다.
+            매 input마다 nerd참가자수를 결과값에 더한다.
         분석
-            time complexity: O(n^3)
-            mem complexity: O(N)
+            time complexity: O(nlgn)
+            mem complexity: O(n)
         피드백
     */
     // Sol
@@ -142,10 +101,10 @@ void NERD2() {
     cout.precision(10);
     //각 테스트케이스
     while (testCase--) {
-        int NERD2Num;
-        vector<int> NERD2Xpos, NERD2Ypos, NERD2Radius;
-        NERD2_Input(NERD2Num, NERD2Xpos, NERD2Ypos, NERD2Radius);
-        auto result = NERD2_Algo(NERD2Num, NERD2Xpos, NERD2Ypos, NERD2Radius);
+        int applicantsNum;
+        vector<int> arg1Arr, arg2Arr;
+        NERD2_Input(applicantsNum, arg1Arr, arg2Arr);
+        auto result = NERD2_Algo(applicantsNum, arg1Arr, arg2Arr);
         // cout << "::::";
         cout << result << endl;
     }
