@@ -7,13 +7,12 @@
 #include <iostream>
 #include <map>
 #include <queue>
-#include <set>
 #include <string>
 #include <vector>
 
 using namespace std;
 
-// @* subtree, tree에 대한 조건/결과는 subtree에도 동일하게 적용됨을 유의하자
+// @*@*@*
 void NERD2_Input(int& applicantsNum, vector<int>& arg1Arr, vector<int>& arg2Arr) {
     cin >> applicantsNum;
     arg1Arr.resize(applicantsNum);
@@ -23,25 +22,33 @@ void NERD2_Input(int& applicantsNum, vector<int>& arg1Arr, vector<int>& arg2Arr)
     }
 }
 int NERD2_Algo(int applicantsNum, vector<int> arg1Arr, vector<int> arg2Arr) {
-    // arg1과 arg2를 묶는다.
-    vector<pair<int, int>> argsArr(applicantsNum);
-    for (int i = 0; i < applicantsNum; i++) {
-        argsArr[i].first = arg1Arr[i];
-        argsArr[i].second = arg2Arr[i];
-    }
-    // arg1에 대해 내림차순 정렬한다.
-    sort(argsArr.begin(), argsArr.end(), greater<pair<int, int>>());
-    // tree(set) 에 대하여 input을 해주고, 매번 nerd참가자의 수를 계산하여 정답을 구한다.
-    int result = 0;
-    int nerds = 0;
-    set<int> tree;
-    for (auto& ele : argsArr) {
-        tree.insert(ele.second);
-        if (ele.second == *tree.rbegin()) {
-            nerds++;
+    // tree: map을 생성한다
+    map<int, int> tree;
+    //모든 입력에 대해 순차적으로 처리한다, tree가 빈 경우는 맨 처음밖에 없으므로 미리 처리
+    int result(1);
+    tree.insert(make_pair(arg1Arr[0], arg2Arr[0]));
+    for (int i = 1; i < applicantsNum; i++) {
+        int key = arg1Arr[i];
+        int value = arg2Arr[i];
+        // delete 연산,
+        while (true) {
+            if (tree.lower_bound(key) == tree.begin()) {
+                break;
+            }
+            auto prevIter = (tree.lower_bound(key)--);
+            if (value > prevIter->second) {
+                tree.erase(prevIter);
+            } else {
+                break;
+            }
         }
-        result += nerds;
-        cout << ":::" << nerds << endl;
+        // insert 연산
+        auto nextIter = tree.lower_bound(key);
+        if (nextIter == tree.end() || value > nextIter->second) {
+            tree.insert(make_pair(key, value));
+        }
+        result += tree.size();
+        cout << ":::" << tree.size() << "\n";
     }
     return result;
 }
@@ -80,18 +87,36 @@ void NERD2() {
             앞서 tree에 들어간 값들은 모두 now보다 p가 크므로, now는 q가 제일커야, tree에서 제일 커야 nerd가 될 수 있다.
             정렬시간(nlgn) + tree생성 시간(nlgn) = O(nlgn) 으로 해결이 가능하다.
             문제점: 참가자가 지원한 순서대로 심사되어야 한다.
+        책 참고 힌트: p(가로)와 q(세로)를 축으로 하여 좌표평면위에 나타내보자.
+            nerd에 해당하는 점들만을 표시하면, 해당 점들은 p값이 커질수록 q값이 작아짐을 알 수 있다.
+            즉, nerd에 해당하는 점들은 정리되어 있으므로 이를 참고할 수 있다.
+        방법3: tree(map)에 유효한 값들만 저장한다. pair(p,q)
+            insert & delete:
+                lower_bound를 통해 p값에 해당하는 위치를 찾는다. next= lower_bound(input), prev = next --
+                    q > prev_q: q<prev_q 혹은 prev가 없을 때 까지, prev를 delete한다.
+                    q > next_q: insert
+                    q < next_q: 아무것도 안한다.(nerd가 아니다)
+                매 동작마다 size를 통해 nerd의 수를 구할 수 있다.
+    */
     /*전략
-    전략1
-        아이디어: tree, pre-sorting
-            Arr을 p에대해 내림차순 정렬한다.
-            idx=0부터 시작해서, q값을 tree에 input한다.
-                q값이 tree에서 가장 큰 값이라면, 해당 참가자는
-                그렇지 않다면, nerd 참가자 수는 그대로이다.
-            매 input마다 nerd참가자수를 결과값에 더한다.
+        아이디어: tree(map), 시각화를 통한 문제의 특성 이해
+            입력을 순차적으로 처리한다.
+                insert & delete
+                    lower_bound를 통해 p값에 해당하는 위치를 찾는다. next= lower_bound(입력), prev = next --
+                        q > prev_q: delete, until q<prev_q or there's no prev
+                        q > next_q: insert
+                        q < next_q: nothing, 입력 is not nerd
+                tree.size()를 구하여 정답 계산
         분석
             time complexity: O(nlgn)
+                insert&delete 반복: n회
+                    lower_bound: lgn
+                    delete: 최대 n회, 평균 1회(delete는 각 원소당 최대 1회만 일어남)
+                    insert: 1
+                    tree.size(): 1
             mem complexity: O(n)
         피드백
+            문제를 시각화 하는것이 도움이 될 수 있다.
     */
     // Sol
     int testCase;
@@ -111,10 +136,10 @@ void NERD2() {
 }
 
 int main(void) {
-    //   clock_t start,end;
-    //   start=clock();
+    // clock_t start,end;
+    // start=clock();
     NERD2();
-    //   end=clock();;
-    //   cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
+    // end=clock();;
+    // cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
     return 0;
 }
