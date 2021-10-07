@@ -265,7 +265,7 @@ time complexity 추정
 				전위 순회(preorder tarverse): root -> left child -> right child
 				중위 순회(inorder tarverse): left child -> root -> right child 
 				후위 순회(postorder tarverse): left child -> right child -> root
-	binary search tree(BST), 트립 
+	binary search tree(BST), 트립(treap)
 		개념 
 			binary tree, leftsubtree는 모두 root보다 작으며, rightsubtree는 모두 root보다 크다.
 		기능
@@ -276,9 +276,27 @@ time complexity 추정
 				뒤에 나오는 트립을 이용한다.
 		balanced binary search tree 
 			tree가 치우치면(skewed) 연결리스트와 다를 바가 없다.
-			어떤 입력이 들어와도 tree가 항상 lgN의 높이를 유지하도록, node들을 옮기기도 하면서 tree를 만든다.
+				어떤 입력이 들어와도 tree가 항상 lgN의 높이를 유지하도록, node들을 옮기기도 하면서 tree를 만든다.
 			red-black tree는 대중적으로 쓰이는 balanced binary search tree이다.
-	prioirty queue via heap
+				표준 구현 tree는 대부분이 red-black tree를 기반으로 구현한다. 
+		treap 
+			node에 임의의 우선순위를 부여해, 우선순위가 높은 node가 root에 가깝도록 tree를 만든다. 
+				평균적으로 lgN의 높이를 유지하며, balanced binary search tree에 비해 구현이 간단하다.
+			custom tree를 구현 할 때 이용하면 유용하다.
+				subtree의 원소의 개수를 가지고 있어서, k번째 원소 구하기를 할 수 있다. 
+				X보다 작은 원소의 개수를 구할 수 있다. 
+			구현
+				node 생성(입력) priority를 랜덤으로 생성한다, rand() 등 이용, size = 1 
+				insert(입력, root) -> return &root
+					priority > root.priority -> 입력을 root로 하고, 기존root를 적절히 split하여 left와 right subtree로 분리 
+					priority < root.priority -> left or right subtree에 input
+					size += 1
+				split(기준, root) -> return pair(&leftnode, &rightnode)
+					기준값보다 큰 값과 작은 값으로 subtree를 분리, 재귀적 구현, merge 이용 
+				merge(leftnode, rightnode) -> return &root
+					left subtree와 right subtree를 merge, 재귀적 구현, priority 고려 
+				delete(대상, root)
+					재귀로 대상 찾기, delete, merge 
 	구간 tree, 펜윅 tree 
 	유니온-파인드 자료구조 
 	트라이 (문자열을 표현하는 트리)
