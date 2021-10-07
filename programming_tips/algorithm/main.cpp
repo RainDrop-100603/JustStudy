@@ -6,10 +6,11 @@
 using namespace std;
 
 int main() {
-    treapNode root(10);
+    treap tree;
     for (int i = 0; i < 10; i++) {
-        root.insert(&treapNode(i));
+        tree.insert(i);
     }
+    tree.printTree();
 
     return 0;
 }

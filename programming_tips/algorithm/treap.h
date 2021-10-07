@@ -12,7 +12,8 @@ class treapNode {
    public:
     int key, priority, size;
     treapNode *left, *right;
-    treapNode(int _key) : key(_key), priority(rand()), size(1), left(NULL), right(NULL) {}
+    treapNode(int _key) : key(_key), priority(rand()), size(1), left(NULL), right(NULL) { cout << "treapNode" << _key << "created\n"; }
+    ~treapNode() { cout << "treapNode" << key << "deleted\n"; }
     // base func
     void setLeft(treapNode* leftNode) {
         left = leftNode;
@@ -162,6 +163,7 @@ class treap {
         if (!find(key)) {
             root = root->insert(root, new treapNode(key));
         }
+        return *this;
     }
     treap& erase(int key) {
         if (root) {
@@ -170,6 +172,7 @@ class treap {
                 delete target;
             }
         }
+        return *this;
     }
     bool find(int key) {
         if (root && root->find(key)) {
@@ -180,6 +183,24 @@ class treap {
     int findKth(int num) { return root->findKth(num)->key; }
     int countLessThan(int key) { return root->countLessThan(key); }
     int size() { return root->size; }
+    void printTree() {
+        vector<treapNode*> stack;
+        stack.push_back(root);
+        while (!stack.empty()) {
+            vector<treapNode*> tmpStack;
+            for (auto& ele : stack) {
+                cout << ele->key << " ";
+                if (ele->left) {
+                    tmpStack.push_back(ele->left);
+                }
+                if (ele->right) {
+                    tmpStack.push_back(ele->right);
+                }
+            }
+            cout << endl;
+            stack.swap(tmpStack);
+        }
+    }
 };
 
 #endif
