@@ -1,14 +1,14 @@
 #include <iostream>
 
+#include "treap.h"
 #include "useful.h"
 
 using namespace std;
 
 int main() {
-    string str1("mississipi");
-    auto result = useful_getSuffixArr(str1);
-    for (auto& ele : result) {
-        cout << ele << " ";
+    treapNode root(10);
+    for (int i = 0; i < 10; i++) {
+        root.insert(&treapNode(i));
     }
 
     return 0;

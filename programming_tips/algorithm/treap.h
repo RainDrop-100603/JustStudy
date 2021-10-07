@@ -13,43 +13,6 @@ class treapNode {
     int key, priority, size;
     treapNode *left, *right;
     treapNode(int _key) : key(_key), priority(rand()), size(1), left(NULL), right(NULL) {}
-    void calcSize() {
-        size = 1;
-        if (left) size += left->size;
-        if (right) size += right->size;
-    }
-    treapNode* setRight(treapNode* node) {
-        right = node;
-        calcSize();
-    }
-    treapNode* setLeft(treapNode* node) {
-        left = node;
-        calcSize();
-    }
-};
-
-class treap {
-    treapNode* root;
-    void clean(treapNode* root) {
-        if (root) {
-            auto left = root->left;
-            auto right = root->right;
-            delete root;
-            if (left) clean(left);
-            if (right) clean(right);
-        }
-    }
-
-   public:
-    treap() : root(NULL) {}
-    ~treap() { clean(root); }
-};
-
-class treapNode {
-   private:
-    int key, priority, size;
-    treapNode *left, *right;
-    treapNode(int _key) : key(_key), priority(rand()), size(1), left(NULL), right(NULL) {}
     //기본함수
     void setLeft(treapNode* leftNode) {
         left = leftNode;
@@ -183,6 +146,31 @@ class treapNode {
             return rightNode;
         }
     }
+};
+
+class treap {
+    treapNode* root;
+    void clean(treapNode* _root) {
+        if (_root) {
+            auto left = _root->left;
+            auto right = _root->right;
+            delete _root;
+            if (left) clean(left);
+            if (right) clean(right);
+        }
+    }
+
+   public:
+    treap() : root(NULL) {}
+    ~treap() { clean(root); }
+    treap& insert(int key) {
+        treapNode* node = new treapNode(key);
+        root->insert(node);
+    }
+    treap& erase(int key) { root->erase(key); }
+    bool find(int key) { return root->find(key); }
+    int findKth(int num) { return root->findKth(num); }
+    int countLessThan(int key) { return root->countLessThan(key); }
 };
 
 #endif
