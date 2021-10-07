@@ -10,11 +10,10 @@ using namespace std;
 
 struct treapNode {
     // key의 중복이 없는 tree
-    int key;
-    int priority, size;
+    int key, priority, size;
     treapNode *left, *right;
     //생성자
-    treapNode(const int _key) : key(_key), priority(rand()), size(1), left(NULL), right(NULL) {}
+    treapNode(int _key) : key(_key), priority(rand()), size(1), left(NULL), right(NULL) {}
     //기본함수
     void setLeft(treapNode* leftNode) {
         left = leftNode;
@@ -29,7 +28,7 @@ struct treapNode {
         if (left) size += left->size;
         if (right) size += right->size;
     }
-    // insert, erase, merge, split, find
+    // insert, erase, merge, split, find, findKth
     treapNode* insert(int key, treapNode* root) {
         treapNode input(key);
         return insert(&input, root);
@@ -62,20 +61,22 @@ struct treapNode {
         return input;
     }
     treapNode* merge(treapNode* leftNode, treapNode* rightNode) {
-        // left subtree is smaller than right subtree
+        // 기저
         if (leftNode == NULL) return rightNode;
         if (rightNode == NULL) return leftNode;
+        // left node is smaller than right node
+        if (leftNode->key > rightNode->key) return merge(rightNode, leftNode);
+        // 연산
         if (leftNode->priority > rightNode->priority) {
             leftNode->setRight(merge(leftNode->right, rightNode));
-            calcSize();
             return leftNode;
         } else {
             rightNode->setLeft(merge(leftNode, rightNode->left));
-            calcSize();
             return rightNode;
         }
     }
     pair<treapNode*, treapNode*> split(int value, treapNode* root) {
+        // divide subtree by value
         if (root == NULL) {
             return pair<treapNode*, treapNode*>{NULL, NULL};
         }
@@ -104,16 +105,17 @@ struct treapNode {
         } else {
             root->setLeft(erase(key, root->left));
         }
+        return root;
     }
     treapNode* find(int key, treapNode* root) {
-        auto tmp = root;
-        while (tmp != NULL) {
-            if (key == tmp->key) {
-                return tmp;
-            } else if (key > tmp->key) {
-                tmp = tmp->right;
+        auto node = root;
+        while (node != NULL) {
+            if (key == node->key) {
+                return node;
+            } else if (key > node->key) {
+                node = node->right;
             } else {
-                tmp = tmp->left;
+                node = node->left;
             }
         }
         return NULL;
