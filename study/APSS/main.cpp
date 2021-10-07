@@ -12,7 +12,7 @@
 
 using namespace std;
 
-// @*@*@*
+// @*@*@* binary search tree(map), 시각화를 통해 문제해결의 힌트를 얻을 수 있다.
 void NERD2_Input(int& applicantsNum, vector<int>& arg1Arr, vector<int>& arg2Arr) {
     cin >> applicantsNum;
     arg1Arr.resize(applicantsNum);
@@ -32,10 +32,11 @@ int NERD2_Algo(int applicantsNum, vector<int> arg1Arr, vector<int> arg2Arr) {
         int value = arg2Arr[i];
         // delete 연산,
         while (true) {
-            if (tree.lower_bound(key) == tree.begin()) {
+            auto nextIter = tree.lower_bound(key);
+            if (nextIter == tree.begin()) {
                 break;
             }
-            auto prevIter = (tree.lower_bound(key)--);
+            auto prevIter = --nextIter;
             if (value > prevIter->second) {
                 tree.erase(prevIter);
             } else {
@@ -48,7 +49,6 @@ int NERD2_Algo(int applicantsNum, vector<int> arg1Arr, vector<int> arg2Arr) {
             tree.insert(make_pair(key, value));
         }
         result += tree.size();
-        cout << ":::" << tree.size() << "\n";
     }
     return result;
 }
@@ -100,20 +100,21 @@ void NERD2() {
     */
     /*전략
         아이디어: tree(map), 시각화를 통한 문제의 특성 이해
-            입력을 순차적으로 처리한다.
-                insert & delete
-                    lower_bound를 통해 p값에 해당하는 위치를 찾는다. next= lower_bound(입력), prev = next --
-                        q > prev_q: delete, until q<prev_q or there's no prev
-                        q > next_q: insert
-                        q < next_q: nothing, 입력 is not nerd
+            입력을 순차적으로 처리한다. 입력 = (p,q)
+                delete
+                    prevIter = --lower_bound(p)
+                    while q > prevIter.q -> erase prevIter
+                insert
+                    nextIter = lower_bound(p)
+                    if nextIter == tree.end || q > nextIter.q
+                        insert (입력)
                 tree.size()를 구하여 정답 계산
         분석
             time complexity: O(nlgn)
-                insert&delete 반복: n회
-                    lower_bound: lgn
-                    delete: 최대 n회, 평균 1회(delete는 각 원소당 최대 1회만 일어남)
-                    insert: 1
-                    tree.size(): 1
+                입력처리 : 반복 n회
+                    delete: 최대 n회, 평균 1회, lgn
+                    insert: lgn
+                    tree.size : 1
             mem complexity: O(n)
         피드백
             문제를 시각화 하는것이 도움이 될 수 있다.

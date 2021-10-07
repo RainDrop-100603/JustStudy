@@ -72,3 +72,8 @@ bool FORTRESS_isSubtree(vector<int>& fortressXpos, vector<int>& fortressYpos, ve
 pair<int, int> FORTRESS_getHeights(vector<int>& fortressXpos, vector<int>& fortressYpos, vector<int>& fortressRadius, vector<int>& tree);
 int FORTRESS_Algo(int fortressNum, vector<int> fortressXpos, vector<int> fortressYpos, vector<int> fortressRadius);
 void FORTRESS();
+
+// @*@*@* binary search tree(map), 시각화를 통해 문제해결의 힌트를 얻을 수 있다.
+void NERD2_Input(int& applicantsNum, vector<int>& arg1Arr, vector<int>& arg2Arr);
+int NERD2_Algo(int applicantsNum, vector<int> arg1Arr, vector<int> arg2Arr);
+void NERD2();
