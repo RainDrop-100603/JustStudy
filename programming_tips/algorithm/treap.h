@@ -28,6 +28,8 @@ struct treapNode {
         if (left) size += left->size;
         if (right) size += right->size;
     }
+    int min() { return findKth(1, this)->key; }
+    int max() { return findKth(this->size, this)->key; }
     // insert, erase, merge, split, find, findKth
     treapNode* insert(int key, treapNode* root) {
         treapNode input(key);
@@ -47,17 +49,9 @@ struct treapNode {
             return root;
         }
         // input->priority > root->priority
-        if (input->key < root->key) {
-            auto leftSplit = split(input->key, root->left);
-            input->setLeft(leftSplit.first);
-            root->setLeft(leftSplit.second);
-            input->setRight(root);
-        } else {
-            auto rightSplit = split(input->key, root->right);
-            input->setRight(rightSplit.second);
-            root->setRight(rightSplit.first);
-            input->setLeft(root);
-        }
+        auto splitted = split(input->key, root);
+        input->setLeft(splitted.first);
+        input->setRight(splitted.second);
         return input;
     }
     treapNode* merge(treapNode* leftNode, treapNode* rightNode) {
@@ -66,6 +60,10 @@ struct treapNode {
         if (rightNode == NULL) return leftNode;
         // left node is smaller than right node
         if (leftNode->key > rightNode->key) return merge(rightNode, leftNode);
+        // should be left.max < right.min
+        if (leftNode->max() >= rightNode->min()) {
+            cout << "subtree(root=" << leftNode->key << ") and subtree(root=" << rightNode->key << ") cant be merged, cause leftSubtree.max >= rightSubtree.min\n";
+        }
         // 연산
         if (leftNode->priority > rightNode->priority) {
             leftNode->setRight(merge(leftNode->right, rightNode));
@@ -80,22 +78,20 @@ struct treapNode {
         if (root == NULL) {
             return pair<treapNode*, treapNode*>{NULL, NULL};
         }
-        pair<treapNode*, treapNode*> result;
         if (value > root->key) {
-            auto tmp = split(value, root->right);
-            result.first = merge(root->left, tmp.first);
-            result.second = tmp.second;
+            auto rightSplit = split(value, root->right);
+            root->setRight(rightSplit.first);
+            return pair<treapNode*, treapNode*>{root, rightSplit.second};
         } else {
-            auto tmp = split(value, root->left);
-            result.first = tmp.first;
-            result.second = merge(tmp.second, root->right);
+            auto leftSplit = split(value, root->left);
+            root->setLeft(leftSplit.second);
+            return pair<treapNode*, treapNode*>{leftSplit.first, root};
         }
-        return result;
     }
     treapNode* erase(int key, treapNode* root) {
         if (root == NULL) {
             cout << "There's no " << key << " in this Tree\n";
-            return NULL;
+            return root;
         }
         if (key == root->key) {
             return merge(root->left, root->right);
@@ -121,7 +117,8 @@ struct treapNode {
         return NULL;
     }
     treapNode* findKth(int num, treapNode* root) {
-        int rootIdx = root->left->size + 1;
+        int rootIdx = 1;
+        if (root->left) rootIdx += root->left->size;
         if (num < rootIdx) {
             return findKth(num, root->left);
         } else if (num == rootIdx) {
@@ -129,6 +126,23 @@ struct treapNode {
         } else {
             return findKth(num - rootIdx, root->right);
         }
+    }
+    int countLessThan(int key, treapNode* root) {
+        int result = 0;
+        auto node = root;
+        while (node != NULL) {
+            int leftSize = node->left ? node->left->size : 0;
+            if (key == node->key) {
+                result += leftSize;
+                return result;
+            } else if (key > node->key) {
+                result += leftSize + 1;
+                node = node->right;
+            } else {
+                node = node->left;
+            }
+        }
+        return -1;  // there's no key in the root-subtree
     }
 };
 
