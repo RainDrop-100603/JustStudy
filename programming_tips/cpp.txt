@@ -45,3 +45,8 @@ c++의 동적할당은 new와 delete를 이용한다.
 			즉 tree는 node를 할당(new,delete)하는 역할만 하며, 기본적인 기능은 node에서 구현하는 것이다. 
 			장점: node 자체가 tree의 역할을 하는것의 단점은, new 와 delete를 직접 할당해야 한다는 것이다. 
 					이를 tree를 통해 자동으로 함으로써, 이용자는 할당에 대해 신경 쓸 필요가 없다. 
+		4. tree는 비어있을때도 있다.
+			그런데 node자체를 tree로 구현해 버리면, 비어있는 것을 구현할 수 없다.
+			따라서 기능은 node로 구현하되, tree라는 controller을 통해 node를 제어한다.
+			이는 new와 delete를 신경쓰지 않아도 되는 장점이 있다. 
+			controller가 먼저 구현되어야 할 듯? 
