@@ -1118,7 +1118,7 @@ void NERD2_Input(int& applicantsNum, vector<int>& arg1Arr, vector<int>& arg2Arr)
     arg1Arr.resize(applicantsNum);
     arg2Arr.resize(applicantsNum);
     for (int i = 0; i < applicantsNum; i++) {
-        cin >> arg1Arr[i] >> arg2Arr[i];
+        scanf("%d %d", &arg1Arr[i], &arg2Arr[i]);
     }
 }
 int NERD2_Algo(int applicantsNum, vector<int> arg1Arr, vector<int> arg2Arr) {
