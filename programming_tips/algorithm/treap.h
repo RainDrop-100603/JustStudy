@@ -120,9 +120,18 @@ class treap {
         }
         return NULL;
     }
+    // erase tree
+    void clean(treapNode* root) {
+        if (root->left) clean(root->left);
+        if (root->right) clean(root->right);
+        delete root;
+    }
 
    public:
     treap() : root(NULL) {}
+    ~treap() {
+        if (root) clean(root);
+    }
     // organize tree
     treap& insert(int key) {
         if (!isExist(key)) {
