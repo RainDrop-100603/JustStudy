@@ -33,21 +33,22 @@ lambda function
 
 c++의 동적할당은 new와 delete를 이용한다.
 	new 선언은 pointer를 반환한다. 
-	tree를 어떻게 구현할 것인가? 
-		1. node와 tree를 분리해서 구현한다. node를 직접적으로 다루지 않으며, 기본적으로 tree를 다룬다. 
-			장점: node를 사용자가 직접 다루지 않으므로, new와 delete를 자유롭게 이용 가능하다. 
-			단점: subtree에 접근하여 무엇을 하는것이 다소 어렵다. 그런데 우리가 subtree에 직접 접근 할 이유가 있을까? 
-				구현이 다소 중복되는 느낌? 사실 node자체로 tree 구현이 가능하다. 
-				재귀를 구현하기 어렵다. 
-			구현: node와 tree를 일치시키는 것과 크게 차이가 나지는 않는다. 오히려 new와 delete가 자유롭다는 장점이 있다. 
-		2. node자체가 tree의 역할을 한다. node를 직접적으로 다룬다. "1"과 반대라고 생각하면 된다. 
-		3. node자체가 tree의 역할을 하도록 한다. 하지만 node를 다루는것은 tree를 통해서만 다루도록 한다. 
-			즉 tree는 node를 할당(new,delete)하는 역할만 하며, 기본적인 기능은 node에서 구현하는 것이다. 
-			장점: node 자체가 tree의 역할을 하는것의 단점은, new 와 delete를 직접 할당해야 한다는 것이다. 
-					이를 tree를 통해 자동으로 함으로써, 이용자는 할당에 대해 신경 쓸 필요가 없다. 
-		4. tree는 비어있을때도 있다.
-			그런데 node자체를 tree로 구현해 버리면, 비어있는 것을 구현할 수 없다.
-			따라서 기능은 node로 구현하되, tree라는 controller을 통해 node를 제어한다.
-			이는 new와 delete를 신경쓰지 않아도 되는 장점이 있다. 
-			controller가 먼저 구현되어야 할 듯? 
-		5. node는 node로서의 역할만, 모든 함수를 tree에서 구현한다. 
+
+new와 delete를 이용해야하는 class 구현 
+	tree 
+		node를 만들고 지우는데 new와 delete를 이용해야 한다. 
+		node는 기본적인 기능만 구현하고, new와 delete는 이용하지 않는다.
+		tree에서 node를 이용할 때, new와 delete를 구현한다. 
+			insert(new), erase(delete), tree erase(모든 node delete)
+
+tree 구현 
+	추천: node는 기초적인 기능만, tree가 node를 다루도록 구현한다. 
+		new와 delete를 이용하는것에 자유롭다. 
+		node의 기능이 단순하기 때문에, tree만 신경쓰면 된다.
+		root가 비어있는 경우도 구현이 가능하다. 
+	실패1: node에 모든 기능을 구현한다.
+		this포인터를 활용하면 다소 비직관적이며, NULL node를 다루기 어렵다.
+		root가 비어있는 경우를 구현하기 까다롭다. 
+	실패2: node에 모든 기능을 구현하고, tree는 가볍게 node를 다룬다. 
+		node와 tree를 모두 신경써야해서, 비 직관적이며 구현에 실수가 생길 가능성이 크다.
+		
