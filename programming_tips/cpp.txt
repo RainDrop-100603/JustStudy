@@ -50,3 +50,4 @@ c++의 동적할당은 new와 delete를 이용한다.
 			따라서 기능은 node로 구현하되, tree라는 controller을 통해 node를 제어한다.
 			이는 new와 delete를 신경쓰지 않아도 되는 장점이 있다. 
 			controller가 먼저 구현되어야 할 듯? 
+		5. node는 node로서의 역할만, 모든 함수를 tree에서 구현한다. 
