@@ -95,6 +95,9 @@ class treap {
         return result;
     }
     treapNode* merge(treapNode* lNode, treapNode* rNode) {
+        if (lNode == NULL) return rNode;
+        if (rNode == NULL) return lNode;
+        //
         if (lNode->priority > rNode->priority) {
             lNode->setRight(merge(lNode->right, rNode));
             return lNode;
@@ -112,7 +115,7 @@ class treap {
             } else if (key < node->key) {
                 node = node->left;
             } else {
-                node = noe->right;
+                node = node->right;
             }
         }
         return NULL;
@@ -121,25 +124,27 @@ class treap {
    public:
     treap() : root(NULL) {}
     // organize tree
-    treapNode* insert(int key) {
+    treap& insert(int key) {
         if (!isExist(key)) {
             root = insert(root, new treapNode(key));
         }
+        return *this;
     }
-    treapNode* erase(int key) {
+    treap& erase(int key) {
         if (isExist(key)) {
             auto target = find(root, key);
             root = erase(root, key);
             delete target;
         }
+        return *this;
     }
     // use tree
     bool isExist(int key) {
         if (root && find(root, key)) return true;
         return false;
     }
-    int kthNode(int num) {
-        num++;  // idx begin from 0, but size begin from 1
+    int kthNode(int num) {  // idx begin from 0
+        num++;              // idx begin from 0, but size begin from 1
         if (root == NULL || root->size < num) {
             return -1;
         }
@@ -178,7 +183,7 @@ class treap {
         }
         return count;
     }
-    bool size() { return root->size; }
+    int size() { return root ? root->size : 0; }
     int min() { return kthNode(0); }
     int max() { return kthNode(size() - 1); }
 };
