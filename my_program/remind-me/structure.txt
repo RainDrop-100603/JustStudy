@@ -1,0 +1,37 @@
+Remind-me Structure 
+
+=====목차=====
+애플리케이션 구현하기 
+    mobile application language
+    JavaScript & React Native
+아이디어 정립하기
+    구조 생성
+    상시 정립
+==============
+
+
+=====애플리케이션 구현하기=====
+    우선 app을 구현할 언어를 선택하고, 해당 언어의 특성을 알아야 구조를 생성하는데 도움이 된다.
+--mobile application language
+    both   
+        Rust, JavaScript & React Native
+    android
+        Java, Kotlin
+    ios
+        Swift, Objective-c
+--JavaScript & React Native 
+    장점 
+        Native언어를 몰라도 개발이 가능하다. 
+            Native: Kotlin, Swift등 실제 개발에 이용되는 언어 
+            React Native: Native로 구성된 library를 이용하여 개발
+                Native를 몰라도 구현이 가능 
+                library를 수정하여 사용하려면 Native를 알아야 한다.
+        커뮤니티가 크다 
+        크로스 플랫폼: ios와 android에서 대부분의 코드를 공유한다.
+        단순화 된 UI
+        third-party plugin 지원
+    단점
+        최적화/ 성능 이슈가 발생할 수 있다. 
+        Native를 결국에는 알아야 한다.
+        library의 완성도가 부족한 것들이 많다. 
+

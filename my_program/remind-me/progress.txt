@@ -1,0 +1,13 @@
+Remind-me Progress
+
+=====목차=====
+언어 배우기
+    React Native 
+    Native(Java, Kotlin, Swift, Objective-c)
+앱 구조 정립하기 
+    기본 틀 
+    각 application
+앱 구현하기 
+    기본 틀
+    각 application
+==============
