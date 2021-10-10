@@ -1,9 +1,11 @@
 Remind-me Progress
 
 =====목차=====
+진로 설정하기 
+
 언어 배우기
     React Native 
-    Native(Java, Kotlin, Swift, Objective-c)
+    Native(Java, Kotlin, Swift, Objective-C)
 앱 구조 정립하기 
     기본 틀 
     각 application
@@ -11,3 +13,12 @@ Remind-me Progress
     기본 틀
     각 application
 ==============
+
+
+=====진로 설정하기=====
+진로를 먼저 설정해야 한다. 
+
+
+=====언어 배우기=====
+    React Native 
+        nomad-coder를 통해 배우기 

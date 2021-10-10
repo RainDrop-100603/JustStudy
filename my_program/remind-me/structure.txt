@@ -14,11 +14,11 @@ Remind-me Structure
     우선 app을 구현할 언어를 선택하고, 해당 언어의 특성을 알아야 구조를 생성하는데 도움이 된다.
 --mobile application language
     both   
-        Rust, JavaScript & React Native
+        Rust, JavaScript & React Native, Flutter
     android
         Java, Kotlin
     ios
-        Swift, Objective-c
+        Swift, Objective-C
 --JavaScript & React Native 
     장점 
         Native언어를 몰라도 개발이 가능하다. 
@@ -34,4 +34,60 @@ Remind-me Structure
         최적화/ 성능 이슈가 발생할 수 있다. 
         Native를 결국에는 알아야 한다.
         library의 완성도가 부족한 것들이 많다. 
+--React Native vs Flutter 
+    library 의존성  
+        React Native
+            다양한 third-party의 의존한다 -> 안정성이 떨어진다.
+            거의 대다수의 기능들이 third-party를 이용해야 한다. 
+        Flutter
+            Google에서 강력한 지원을 해준다. 
+            카메라, navigation등 다양한 기능들을 default로 제공한다.
 
+    지원
+        React Native는 지원을 중단했다.
+            오픈소스이며, 커뮤니티가 지원해야하는 상황 
+        Flutter는 구글이 밀어준다.
+            그런데 구글은, 자기가 밀어주던걸 갑자기 죽이곤 한다. 
+
+    Flutter
+        모든 Flutter 앱은 마치 구글앱처럼 생김 
+            React Native는 각 os의 설정을 존중하는 반면(로딩할때 뜨는 아이콘등등), Flutter는 다 독자적으로 구현
+        Doc 정리가 잘 되어있다.
+        이슈에 대한 고민을 많이 했다. 
+            거의 모든 상황에 대한 위젯이 있다.
+        좋은 개발자 경험 
+            디버거, 시뮬레이터, 버그 거의 없음
+    
+    둘의 구현방식이 상당히 다르다.
+        RN의 개발자의 관점에서는, Flutter는 쉬운건 어렵게, 어려운건 쉽게 구현한다.
+            RN은 대부분이 third-party이므로, 잘 구현되어 있는것은 쉽게 가져다 쓰고, 구현이 안되어 있거나 엉망인 것은 구현이 어렵다.
+            Flutter는 Google지원이므로, 구현되어 있는것들을 가져다 쓰는건 좋은데, 구현이 안되어 있는 것들이 종종 있다.
+            즉 다양성 측면에서는 RN, 안정성 측면에서는 Flutter인듯 
+                다만 안정성측면에서는, RN의 경우 보장이 잘 안되는것이 단점
+        JavaScript와 DART의 차이도 있다.
+            즉 둘의 강점 자체가 다르다고 보면 된다. 
+
+
+
+모바일 앱 개발의 현재와 미래 
+    네이티브 개발 
+        장점    
+            각 플랫폼에 최적화됨 
+            네이티브에 어울리는 룩앤필
+            운영체제에서 제공하는 다양한 API 사용가능 
+        단점    
+            각 운영체제에 맞게 따로따로 개발해야한다.
+            인력 or 시간등이 배로 든다. 
+    하이브리드 개발 
+        WebView를 이용한 개발 
+        네이티브쪽 지식 필요 
+        어색한 룩앤필 
+        무겁다, 느리다.
+        사용 불가능한 네이티브 API도 있다.
+    크로스플랫폼
+        단점 
+            네이티브의 성능과 룩앤필을 따라가지 못한다.
+            운영체제의 기능이 업데이트되면, 크로스플랫폼에서 지원할때 까지 기다려야한다.
+            크로스플랫폼에 대한 의존도가 너무 높아진다(크로스플랫폼에서 버그가 났다면 지원해줄때까지 기다려야한다.)
+            줄여나가는 추세 
+            모바일 개발자는 결국 네이티브가 기본이 되어야 한다. 
