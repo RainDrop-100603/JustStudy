@@ -297,6 +297,13 @@ time complexity 추정
 					left subtree와 right subtree를 merge, 재귀적 구현, priority 고려 
 				delete(대상, root)
 					재귀로 대상 찾기, delete, merge 
+		tree 팁 
+			N개의 원소를 가지는, balance tree 생성법 
+				tree를 좌에서 우로 세고, 우측끝에 도달하면 다음 depth로 가서 다시 좌에서 우로 센다고 하자.
+					0, 12, 34 56, 78 9_10 11_12 13_14 와같은 순서로 세는 것이다. 
+				n번째 원소의 child는, 각각 2n+1, 2n+2 번째 child 이다.
+				root부터 시작해서 child가 N보다 작은 순서면 추가한다. 
+					재귀적 구현 
 	구간 tree, 펜윅 tree 
 	유니온-파인드 자료구조 
 	트라이 (문자열을 표현하는 트리)
