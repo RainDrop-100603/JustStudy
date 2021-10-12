@@ -157,7 +157,7 @@ class treap {
     int countLessThan(int key) {
         if (!isExist(key)) {
             cout << "there's no " << key << " in treap" << endl;
-            return -123456798
+            return -123456798;
         }
         auto node = root;
         int count(0);
