@@ -20,20 +20,23 @@ using namespace std;
         removeNode(idx): idx번째 node를 삭제
         insertNode(value, idx): idx번째 위치에 value insert
         pushNode(value): 가장 마지막 위치에 value insert
+    필요조건
+        serarch가 lgN이내에 이루어지기 위해서, tree의 크기는 평균적으로 lgN이어야한다.
     문제
-        INSERTION 문제를 풀 수 있다.
+        algospot INSERTION 문제를 풀 수 있다.
+        todo - list와 같은것을 사용할 때, 전체크기N 이 크면 유용할 수 있다.
 */
 
-class INSERTION_node {
+class Sequence_node {
    public:
     int key, size;
-    INSERTION_node *left, *right;
-    INSERTION_node(int _key) : key(_key), size(1), left(NULL), right(NULL) {}
-    void setLeft(INSERTION_node* node) {
+    Sequence_node *left, *right;
+    Sequence_node(int _key) : key(_key), size(1), left(NULL), right(NULL) {}
+    void setLeft(Sequence_node* node) {
         left = node;
         calcSize();
     }
-    void setRight(INSERTION_node* node) {
+    void setRight(Sequence_node* node) {
         right = node;
         calcSize();
     }
@@ -43,13 +46,13 @@ class INSERTION_node {
         if (right) size += right->size;
     }
 };
-class INSERTION_treap {
-    INSERTION_node* root;
-    INSERTION_node* makeBalanceTree(int size, int now) {
+class Sequence_tree {
+    Sequence_node* root;
+    Sequence_node* makeBalanceTree(int size, int now) {
         if (now >= size) {
             return NULL;
         }
-        auto node = new INSERTION_node(now);
+        auto node = new Sequence_node(now);
         node->setLeft(makeBalanceTree(size, now * 2 + 1));
         node->setRight(makeBalanceTree(size, now * 2 + 2));
         return node;
@@ -59,7 +62,7 @@ class INSERTION_treap {
             find(i)->key = i;
         }
     }
-    INSERTION_node* find(int idx) {
+    Sequence_node* find(int idx) {
         auto node = root;
         while (true) {
             int nodeIdx = node->left->size;
@@ -73,9 +76,9 @@ class INSERTION_treap {
             }
         }
     }
-    INSERTION_node* findParent(int idx) {
+    Sequence_node* findParent(int idx) {
         auto node = root;
-        INSERTION_node* parent = NULL;
+        Sequence_node* parent = NULL;
         while (true) {
             int nodeIdx = node->left->size;
             if (idx == nodeIdx) {
@@ -90,7 +93,7 @@ class INSERTION_treap {
             }
         }
     }
-    INSERTION_node* remove(int idx) {
+    Sequence_node* remove(int idx) {
         auto parent = findParent(idx);
         if (parent == NULL) {
             root = merge(root->left, root->right);
@@ -102,17 +105,17 @@ class INSERTION_treap {
             parent->setRight(merge(child->left, child->right));
         }
     }
-    INSERTION_node* merge(INSERTION_node* leftNode, INSERTION_node* rightNode) {
+    Sequence_node* merge(Sequence_node* leftNode, Sequence_node* rightNode) {
         if (leftNode == NULL) return rightNode;
         if (rightNode == NULL) return leftNode;
         // root =
     }
 
    public:
-    INSERTION_treap() : root(NULL) {}
+    Sequence_tree() : root(NULL) {}
     void setTree(int size) {
         if (size > 0) {
-            root = new INSERTION_node(0);
+            root = new Sequence_node(0);
             makeBalanceTree(size, 0);
             setBalanceTree();
         }
