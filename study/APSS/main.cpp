@@ -12,16 +12,158 @@
 
 using namespace std;
 
-// @*@*@* binary search tree(map), 시각화를 통해 문제해결의 힌트를 얻을 수 있다.
-void INSERTION_Input(int& applicantsNum, vector<int>& arg1Arr, vector<int>& arg2Arr) {
-    cin >> applicantsNum;
-    arg1Arr.resize(applicantsNum);
-    arg2Arr.resize(applicantsNum);
-    for (int i = 0; i < applicantsNum; i++) {
-        cin >> arg1Arr[i] >> arg2Arr[i];
+class treap_node {
+   public:
+    int key, size, priority;
+    treap_node *left, *right;
+    treap_node(int _key) : key(_key), size(1), priority(rand()), left(NULL), right(NULL) {}
+    void setLeft(treap_node* node) {
+        left = node;
+        calcSize();
+    }
+    void setRight(treap_node* node) {
+        right = node;
+        calcSize();
+    }
+    void calcSize() {
+        size = 1;
+        if (left) size += left->size;
+        if (right) size += right->size;
+    }
+};
+class treap {
+    treap_node* root;
+    // organize tree
+    treap_node* insert(treap_node* node, treap_node* input) {
+        if (node = NULL) {
+            return input;
+        }
+        //
+        if (input->priority < node->priority) {
+            if (input->key < node->key) {
+                node->setLeft(insert(node->left, input));
+            } else {
+                node->setRight(insert(node->right, input));
+            }
+        }
+        //
+        auto splitted = split(node, input->key);
+        input->setLeft(splitted.first);
+        input->setRight(splitted.second);
+        return input;
+    }
+    treap_node* erase(treap_node* node, int key) {
+        if (key == node->key) {
+            return merge(node->left, node->right);
+        } else if (key < node->key) {
+            node->setLeft(erase(node->left, key));
+            return node;
+        } else {
+            node->setRight(erase(node->right, key));
+            return node;
+        }
+    }
+    pair<treap_node*, treap_node*> split(treap_node* node, int key) {
+        pair<treap_node*, treap_node*> result{NULL, NULL};
+        if (node != NULL) {
+            if (key < node->key) {
+                auto splitted = split(node->left, key);
+                node->setLeft(splitted.second);
+                result.first = splitted.first;
+                result.second = node;
+            } else {
+                auto splitted = split(node->right, key);
+                node->setRight(splitted.first);
+                result.first = node;
+                result.second = splitted.second;
+            }
+        }
+        return result;
+    }
+    treap_node* merge(treap_node* leftNode, treap_node* rightNode) {
+        if (leftNode == NULL) return rightNode;
+        if (rightNode == NULL) return leftNode;
+        //
+        if (leftNode->priority > rightNode->priority) {
+            leftNode->setRight(merge(leftNode->right, rightNode));
+            return leftNode;
+        } else {
+            rightNode->setLeft(merge(leftNode, rightNode->left));
+            return rightNode;
+        }
+    }
+    // use tree
+    treap_node* find(int key) {
+        auto node = root;
+        while (node != NULL) {
+            if (key == node->key) {
+                return node;
+            } else if (key < node->key) {
+                node = node->left;
+            } else {
+                node = node->right;
+            }
+        }
+        return NULL;
+    }
+    treap_node* kthNode(int idx) {
+        if (root == NULL || root->size >= idx) return NULL;
+        auto node = root;
+        while (true) {
+            auto nodeIdx = node->left->size;
+            if (idx == nodeIdx) {
+                return node;
+            } else if (idx < nodeIdx) {
+                node = node->left;
+            } else {
+                node = node->right;
+                idx -= nodeIdx;
+            }
+        }
+    }
+    // erase tree
+    void clean(treap_node* node) {
+        if (node->left) clean(node->left);
+        if (node->right) clean(node->right);
+        delete node;
+    }
+
+   public:
+    treap() : root(NULL) {}
+    ~treap() { clean(root); }
+    void insert(int key) {
+        if (!isExist(key)) {
+            root = insert(root, new treap_node(key));
+        }
+    }
+    void erase(int key) {
+        if (isExist(key)) {
+            auto target = find(key);
+            root = erase(root, key);
+            delete target;
+        }
+    }
+    bool isExist(int key) { return find(key) ? true : false; }
+    int kthKey(int idx) {
+        if (auto ret = kthNode(idx)) {
+            return ret->key;
+        } else {
+            cout << idx << " is larger than treap size" << endl;
+            return -123456789;
+        }
+    }
+    int operator[](int idx) { return kthKey(idx); }
+};
+
+// @*@*@* treap, sort-de_sort의 관계와 같이, 순차적으로 수행된 어떤작업은, 반대로 수행함으로서 원래 상태로 되돌릴 수 있다.
+void INSERTION_Input(int& size, vector<int>& shifted) {
+    cin >> size;
+    shifted.resize(size);
+    for (auto& ele : shifted) {
+        cin >> ele;
     }
 }
-int INSERTION_Algo(int applicantsNum, vector<int> arg1Arr, vector<int> arg2Arr) {
+int INSERTION_Algo(int size, vector<int> shifted) {
     // tree: map을 생성한다
     map<int, int> tree;
     //모든 입력에 대해 순차적으로 처리한다, tree가 빈 경우는 맨 처음밖에 없으므로 미리 처리
@@ -92,24 +234,36 @@ void INSERTION() {
                 기존에 있던 prev는 input의 right child으로 대체한다.
             tree를 완성하고 나서, 트리를 0~N-1 번째 까지 순회한다.
                 0번째 값이 k라면, 0의 최초 위치는 k번째라는 뜻이다.-
+        책 참고: 역순으로 문제를 해결하는 방법
+            변수
+                shifted_arr(움직인횟수) original_arr(sort이전) sorted_treap(sort된 것, treap로 저장)
+            방법
+                앞에서부터 뒤로가면서 insertion sort를 수행한다 -> 맨 마지막 원소는 단 한번만 움직인다.
+                    original[idx] = sorted_treap[treap_size - shifted[idx]]
+                        idx == unsorted된 것들 중 last
+                    sorted_treap.pop[treap_size - shifted[idx]]
+            분석
+                time complexity: n times * O(lgn)
         n^2 time
             arr, linked list,
     */
     /*전략
-        아이디어: custom tree
-            custom tree를 만든다.
-
-
-            custom tree를 순회하며, 적절한 위치에 값을 넣어서 A[]를 복원한다.
+        아이디어: treap
+            args: shifted_arr(움직인횟수)
+            sorted_treap 생성, treap에 1~N까지 입력
+            original_arr 생성, 원래 배열 의미
+            while(sorted_tree.size>0)
+                lastIdx = sorted_tree.size -1
+                original_arr[lastIdx] = sorted_treap[lastIdx - shifted_arr[lastIdx]]
+                sorted_treap.remove(original_arr[lastIdx])
         분석
             time complexity: O(nlgn)
                 입력처리 : 반복 n회
-                    delete: 최대 n회, 평균 1회, lgn
-                    insert: lgn
-                    tree.size : 1
+                    treap[idx] (search) -> = O(lgn)
+                    treap.remove -> O(lgn)
             mem complexity: O(n)
         피드백
-            문제를 시각화 하는것이 도움이 될 수 있다.
+            sort는 순서대로 수행되었으므로, 반대로 하면 원래 행렬을 구할 수 있다.
     */
     // Sol
     int testCase;
@@ -119,12 +273,15 @@ void INSERTION() {
     cout.precision(10);
     //각 테스트케이스
     while (testCase--) {
-        int applicantsNum;
-        vector<int> arg1Arr, arg2Arr;
-        INSERTION_Input(applicantsNum, arg1Arr, arg2Arr);
-        auto result = INSERTION_Algo(applicantsNum, arg1Arr, arg2Arr);
+        int size;
+        vector<int> shifted;
+        INSERTION_Input(size, shifted);
+        auto result = INSERTION_Algo(size, shifted);
         // cout << "::::";
-        cout << result << endl;
+        for (auto& ele : result) {
+            cout << ele << " ";
+        }
+        cout << endl;
     }
 }
 
