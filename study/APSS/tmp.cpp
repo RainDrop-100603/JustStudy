@@ -11,6 +11,8 @@ using namespace std;
 
 /*
     tree: 원하는 값을 원하는 위치(idx)에 넣을 수 있는 tree
+    목적
+        원하는 위치에 value를 넣으면, 나머지 값들은 자동으로 뒤로 밀리는 tree
     기능
         setTree: 특정 size의 balancetree를 만든다, idx번째 node의 값은 idx
         kthNode: kth idx node의 값을 반환
@@ -18,6 +20,8 @@ using namespace std;
         removeNode(idx): idx번째 node를 삭제
         insertNode(value, idx): idx번째 위치에 value insert
         pushNode(value): 가장 마지막 위치에 value insert
+    문제
+        INSERTION 문제를 풀 수 있다.
 */
 
 class INSERTION_node {
@@ -101,7 +105,7 @@ class INSERTION_treap {
     INSERTION_node* merge(INSERTION_node* leftNode, INSERTION_node* rightNode) {
         if (leftNode == NULL) return rightNode;
         if (rightNode == NULL) return leftNode;
-        root =
+        // root =
     }
 
    public:
@@ -119,6 +123,6 @@ class INSERTION_treap {
     }
     void moveNode(int from, int to) {
         remove(from);
-        insert(to, from);
+        // insert(to, from);
     }
 };
