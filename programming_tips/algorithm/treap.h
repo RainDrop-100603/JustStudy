@@ -105,10 +105,11 @@ class treap {
         return NULL;
     }
     treap_node* kthNode(int idx) {
-        if (root == NULL || root->size >= idx) return NULL;
+        if (root == NULL || root->size <= idx) return NULL;
         auto node = root;
         while (true) {
-            auto nodeIdx = node->left->size;
+            int nodeIdx = 0;
+            if (node->left) nodeIdx += node->left->size;
             if (idx == nodeIdx) {
                 return node;
             } else if (idx < nodeIdx) {
