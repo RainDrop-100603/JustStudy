@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "classes.h"
+
 using namespace std;
 // @*: 풀었으나 참고해볼만한 문제, @*@*: 어렵게 풀었던 문제, @*@*@*: 책이나 다른 해답을 참고한 문제
 
@@ -77,3 +79,9 @@ void FORTRESS();
 void NERD2_Input(int& applicantsNum, vector<int>& arg1Arr, vector<int>& arg2Arr);
 int NERD2_Algo(int applicantsNum, vector<int> arg1Arr, vector<int> arg2Arr);
 void NERD2();
+
+// @*@*@* treap, sort-de_sort의 관계와 같이, 순차적으로 수행된 어떤작업은, 반대로 수행함으로서 원래 상태로 되돌릴 수 있다.
+// treap을 이용할때, return값 조심
+void INSERTION_Input(int& size, vector<int>& shifted);
+vector<int> INSERTION_Algo(int size, vector<int> shifted);
+void INSERTION();

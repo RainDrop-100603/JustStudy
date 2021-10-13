@@ -35,7 +35,7 @@ class treap {
     treap_node* root;
     // organize tree
     treap_node* insert(treap_node* node, treap_node* input) {
-        if (node = NULL) {
+        if (node == NULL) {
             return input;
         }
         //
@@ -45,6 +45,7 @@ class treap {
             } else {
                 node->setRight(insert(node->right, input));
             }
+            return node;
         }
         //
         auto splitted = split(node, input->key);
@@ -107,10 +108,12 @@ class treap {
         return NULL;
     }
     treap_node* kthNode(int idx) {
-        if (root == NULL || root->size >= idx) return NULL;
+        idx++;  // idx begin from 1, instead of 0
+        if (root == NULL || root->size < idx) return NULL;
         auto node = root;
         while (true) {
-            auto nodeIdx = node->left->size;
+            int nodeIdx = 1;
+            if (node->left) nodeIdx += node->left->size;
             if (idx == nodeIdx) {
                 return node;
             } else if (idx < nodeIdx) {
@@ -130,7 +133,9 @@ class treap {
 
    public:
     treap() : root(NULL) {}
-    ~treap() { clean(root); }
+    ~treap() {
+        if (root) clean(root);
+    }
     void insert(int key) {
         if (!isExist(key)) {
             root = insert(root, new treap_node(key));
@@ -153,9 +158,12 @@ class treap {
         }
     }
     int operator[](int idx) { return kthKey(idx); }
+    bool empty() { return root == NULL; }
+    int size() { return root ? root->size : 0; }
 };
 
 // @*@*@* treap, sort-de_sort의 관계와 같이, 순차적으로 수행된 어떤작업은, 반대로 수행함으로서 원래 상태로 되돌릴 수 있다.
+// treap을 이용할때, return값 조심
 void INSERTION_Input(int& size, vector<int>& shifted) {
     cin >> size;
     shifted.resize(size);
@@ -163,36 +171,19 @@ void INSERTION_Input(int& size, vector<int>& shifted) {
         cin >> ele;
     }
 }
-int INSERTION_Algo(int size, vector<int> shifted) {
-    // tree: map을 생성한다
-    map<int, int> tree;
-    //모든 입력에 대해 순차적으로 처리한다, tree가 빈 경우는 맨 처음밖에 없으므로 미리 처리
-    int result(1);
-    tree.insert(make_pair(arg1Arr[0], arg2Arr[0]));
-    for (int i = 1; i < applicantsNum; i++) {
-        int key = arg1Arr[i];
-        int value = arg2Arr[i];
-        // delete 연산,
-        while (true) {
-            auto nextIter = tree.lower_bound(key);
-            if (nextIter == tree.begin()) {
-                break;
-            }
-            auto prevIter = --nextIter;
-            if (value > prevIter->second) {
-                tree.erase(prevIter);
-            } else {
-                break;
-            }
-        }
-        // insert 연산
-        auto nextIter = tree.lower_bound(key);
-        if (nextIter == tree.end() || value > nextIter->second) {
-            tree.insert(make_pair(key, value));
-        }
-        result += tree.size();
+vector<int> INSERTION_Algo(int size, vector<int> shifted) {
+    treap sorted;
+    for (int i = 1; i <= size; i++) {
+        sorted.insert(i);
     }
-    return result;
+    vector<int> original(size);
+
+    while (!sorted.empty()) {
+        int lastIdx = sorted.size() - 1;
+        original[lastIdx] = sorted[lastIdx - shifted[lastIdx]];
+        sorted.erase(original[lastIdx]);
+    }
+    return original;
 }
 void INSERTION() {
     /*설명 및 입력

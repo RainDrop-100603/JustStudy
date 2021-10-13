@@ -1235,3 +1235,115 @@ void NERD2() {
         cout << result << endl;
     }
 }
+
+void INSERTION_Input(int& size, vector<int>& shifted) {
+    cin >> size;
+    shifted.resize(size);
+    for (auto& ele : shifted) {
+        cin >> ele;
+    }
+}
+vector<int> INSERTION_Algo(int size, vector<int> shifted) {
+    treap sorted;
+    for (int i = 1; i <= size; i++) {
+        sorted.insert(i);
+    }
+    vector<int> original(size);
+
+    while (!sorted.empty()) {
+        int lastIdx = sorted.size() - 1;
+        original[lastIdx] = sorted[lastIdx - shifted[lastIdx]];
+        sorted.erase(original[lastIdx]);
+    }
+    return original;
+}
+void INSERTION() {
+    /*설명 및 입력
+    설명
+        1부터 N까지의 자연수가 한 번씩 포함된 길이 N 인 수열 A[] 를 삽입 정렬했습니다.
+        원래 수열은 알 수 없지만, 그 과정에서 각 원소가 왼쪽으로 몇 칸이나 이동했는지를 알고 있습니다.
+            예를 들어, 5 1 4 3 2 수열이 움직인 칸수를 표현하면 {0,1,1,2,3} 이 됩니다.
+        이 때 원래 수열을 찾아내는 프로그램을 작성하세요.
+    입력
+        입력의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 50) 가 주어집니다.
+        각 테스트 케이스의 첫 줄에는 원 배열의 길이 N (1 <= N <= 50000) 이 주어집니다.
+        그 다음 줄에 N 개의 정수로 A의 각 위치에 있던 값들이 움직인 칸수가 주어집니다.
+        A 는 1부터 N 까지의 정수를 한 번씩 포함합니다.
+    출력
+        각 테스트 케이스마다 재구성한 A[] 를 한 줄에 출력합니다.
+    제한조건
+        2초, 64MB
+    */
+    /*힌트
+        입력이 크므로, 빠른 입력을 이용한다.
+        한번 움직인것은, 왼쪽으로 한칸 이동한 것이다.
+            즉 가상의 행렬을 만들어서 이를 움직이고, 움직인 결과가 insertion sort의 결과임을 이용하여, A[]를 재구성한다
+                예: ABCDE를 움직이면 BEDCA = 12345 이므로, ABCDE = 51432 이다.
+            문제점: 매번 최대 n time움직이면, 전체 시간은 O(n^2)이 된다.
+            특정한 방법을 이용하여 lgn시간내에 목적지를 찾아 한번에 이동하면 O(nlgn)으로 풀 수 있다.
+        custom tree를 이용하는 방법
+            초기상태: n번째 위치에 있는 node의 key는 n 이다.
+                n개의 node를 갖는 balance tree를 만들어서, n번째 node의 key를 n으로 대체한다.
+                balance tree 생성법
+                    root에서부터 높은 depth로 내려가면서
+                        차례대로 왼쪽에서 부터 순서를 센다고 가정하고 (0, 12, 34 56 과 같은식)
+                    n번째 node의 child는 각각 2n+1, 2n+2 번째 node다.
+                    재귀적으로, child가 범위 안에 들어오면 추가하고, 아니면 null을 추가한다.
+            특징: key로 정렬하지 않고, 임의로 정렬한다.
+            k번째 node가 어디에 있는지 알 수 있다.
+            원하는 n번째 위치에 input이 가능하다. 단, 더 큰 위치에서 더 작은 위치로만 가능하다.
+                    (더 작은 위치로도 약간만 생각하면 가능하다)
+                n번째 위치의 값을 input으로 대체한다.
+                기존에 있던 prev는 input의 right child으로 대체한다.
+            tree를 완성하고 나서, 트리를 0~N-1 번째 까지 순회한다.
+                0번째 값이 k라면, 0의 최초 위치는 k번째라는 뜻이다.-
+        책 참고: 역순으로 문제를 해결하는 방법
+            변수
+                shifted_arr(움직인횟수) original_arr(sort이전) sorted_treap(sort된 것, treap로 저장)
+            방법
+                앞에서부터 뒤로가면서 insertion sort를 수행한다 -> 맨 마지막 원소는 단 한번만 움직인다.
+                    original[idx] = sorted_treap[treap_size - shifted[idx]]
+                        idx == unsorted된 것들 중 last
+                    sorted_treap.pop[treap_size - shifted[idx]]
+            분석
+                time complexity: n times * O(lgn)
+        n^2 time
+            arr, linked list,
+    */
+    /*전략
+        아이디어: treap
+            args: shifted_arr(움직인횟수)
+            sorted_treap 생성, treap에 1~N까지 입력
+            original_arr 생성, 원래 배열 의미
+            while(sorted_tree.size>0)
+                lastIdx = sorted_tree.size -1
+                original_arr[lastIdx] = sorted_treap[lastIdx - shifted_arr[lastIdx]]
+                sorted_treap.remove(original_arr[lastIdx])
+        분석
+            time complexity: O(nlgn)
+                입력처리 : 반복 n회
+                    treap[idx] (search) -> = O(lgn)
+                    treap.remove -> O(lgn)
+            mem complexity: O(n)
+        피드백
+            sort는 순서대로 수행되었으므로, 반대로 하면 원래 행렬을 구할 수 있다.
+    */
+    // Sol
+    int testCase;
+    cin >> testCase;
+    //전역변수
+    cout << fixed;
+    cout.precision(10);
+    //각 테스트케이스
+    while (testCase--) {
+        int size;
+        vector<int> shifted;
+        INSERTION_Input(size, shifted);
+        auto result = INSERTION_Algo(size, shifted);
+        // cout << "::::";
+        for (auto& ele : result) {
+            cout << ele << " ";
+        }
+        cout << endl;
+    }
+}
