@@ -31,7 +31,7 @@ class treap {
     treap_node* root;
     // organize tree
     treap_node* insert(treap_node* node, treap_node* input) {
-        if (node = NULL) {
+        if (node == NULL) {
             return input;
         }
         //
