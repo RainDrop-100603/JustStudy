@@ -12,274 +12,104 @@
 
 using namespace std;
 
-class treap_node {
-   public:
-    int key, size, priority;
-    treap_node *left, *right;
-    treap_node(int _key) : key(_key), size(1), priority(rand()), left(NULL), right(NULL) {}
-    void setLeft(treap_node* node) {
-        left = node;
-        calcSize();
+// segment tree
+void MORDOR_Input(int &signNum, int &roadNum, vector<int> &signInfoArr, vector<pair<int, int>> &roadInfoArr) {
+    cin >> signNum >> roadNum;
+    signInfoArr.resize(signNum);
+    roadInfoArr.resize(roadNum);
+    for (auto &ele : signInfoArr) {
+        scanf("%d", &ele);
     }
-    void setRight(treap_node* node) {
-        right = node;
-        calcSize();
-    }
-    void calcSize() {
-        size = 1;
-        if (left) size += left->size;
-        if (right) size += right->size;
-    }
-};
-class treap {
-    treap_node* root;
-    // organize tree
-    treap_node* insert(treap_node* node, treap_node* input) {
-        if (node == NULL) {
-            return input;
-        }
-        //
-        if (input->priority < node->priority) {
-            if (input->key < node->key) {
-                node->setLeft(insert(node->left, input));
-            } else {
-                node->setRight(insert(node->right, input));
-            }
-            return node;
-        }
-        //
-        auto splitted = split(node, input->key);
-        input->setLeft(splitted.first);
-        input->setRight(splitted.second);
-        return input;
-    }
-    treap_node* erase(treap_node* node, int key) {
-        if (key == node->key) {
-            return merge(node->left, node->right);
-        } else if (key < node->key) {
-            node->setLeft(erase(node->left, key));
-            return node;
-        } else {
-            node->setRight(erase(node->right, key));
-            return node;
-        }
-    }
-    pair<treap_node*, treap_node*> split(treap_node* node, int key) {
-        pair<treap_node*, treap_node*> result{NULL, NULL};
-        if (node != NULL) {
-            if (key < node->key) {
-                auto splitted = split(node->left, key);
-                node->setLeft(splitted.second);
-                result.first = splitted.first;
-                result.second = node;
-            } else {
-                auto splitted = split(node->right, key);
-                node->setRight(splitted.first);
-                result.first = node;
-                result.second = splitted.second;
-            }
-        }
-        return result;
-    }
-    treap_node* merge(treap_node* leftNode, treap_node* rightNode) {
-        if (leftNode == NULL) return rightNode;
-        if (rightNode == NULL) return leftNode;
-        //
-        if (leftNode->priority > rightNode->priority) {
-            leftNode->setRight(merge(leftNode->right, rightNode));
-            return leftNode;
-        } else {
-            rightNode->setLeft(merge(leftNode, rightNode->left));
-            return rightNode;
-        }
-    }
-    // use tree
-    treap_node* find(int key) {
-        auto node = root;
-        while (node != NULL) {
-            if (key == node->key) {
-                return node;
-            } else if (key < node->key) {
-                node = node->left;
-            } else {
-                node = node->right;
-            }
-        }
-        return NULL;
-    }
-    treap_node* kthNode(int idx) {
-        idx++;  // idx begin from 1, instead of 0
-        if (root == NULL || root->size < idx) return NULL;
-        auto node = root;
-        while (true) {
-            int nodeIdx = 1;
-            if (node->left) nodeIdx += node->left->size;
-            if (idx == nodeIdx) {
-                return node;
-            } else if (idx < nodeIdx) {
-                node = node->left;
-            } else {
-                node = node->right;
-                idx -= nodeIdx;
-            }
-        }
-    }
-    // erase tree
-    void clean(treap_node* node) {
-        if (node->left) clean(node->left);
-        if (node->right) clean(node->right);
-        delete node;
-    }
-
-   public:
-    treap() : root(NULL) {}
-    ~treap() {
-        if (root) clean(root);
-    }
-    void insert(int key) {
-        if (!isExist(key)) {
-            root = insert(root, new treap_node(key));
-        }
-    }
-    void erase(int key) {
-        if (isExist(key)) {
-            auto target = find(key);
-            root = erase(root, key);
-            delete target;
-        }
-    }
-    bool isExist(int key) { return find(key) ? true : false; }
-    int kthKey(int idx) {
-        if (auto ret = kthNode(idx)) {
-            return ret->key;
-        } else {
-            cout << idx << " is larger than treap size" << endl;
-            return -123456789;
-        }
-    }
-    int operator[](int idx) { return kthKey(idx); }
-    bool empty() { return root == NULL; }
-    int size() { return root ? root->size : 0; }
-};
-
-// @*@*@* treap, sort-de_sort의 관계와 같이, 순차적으로 수행된 어떤작업은, 반대로 수행함으로서 원래 상태로 되돌릴 수 있다.
-// treap을 이용할때, return값 조심
-void INSERTION_Input(int& size, vector<int>& shifted) {
-    cin >> size;
-    shifted.resize(size);
-    for (auto& ele : shifted) {
-        cin >> ele;
+    for (auto &ele : roadInfoArr) {
+        scanf("%d %d", &ele.first, &ele.second);
     }
 }
-vector<int> INSERTION_Algo(int size, vector<int> shifted) {
-    treap sorted;
-    for (int i = 1; i <= size; i++) {
-        sorted.insert(i);
+pair<int, int> MORDOR_init(vector<pair<int, int>> &segTree, vector<int> &signInfoArr, int node, int left, int right) {
+    if (left == right) {
+        return segTree[node] = make_pair(signInfoArr[left], signInfoArr[left]);
     }
-    vector<int> original(size);
-
-    while (!sorted.empty()) {
-        int lastIdx = sorted.size() - 1;
-        original[lastIdx] = sorted[lastIdx - shifted[lastIdx]];
-        sorted.erase(original[lastIdx]);
-    }
-    return original;
+    auto leftSubtree = MORDOR_init(segTree, signInfoArr, node * 2, left, (left + right) / 2);
+    auto rightSubtree = MORDOR_init(segTree, signInfoArr, node * 2 + 1, (left + right) / 2 + 1, right);
+    return segTree[node] = make_pair(min(leftSubtree.first, rightSubtree.first), max(leftSubtree.second, rightSubtree.second));
 }
-void INSERTION() {
+pair<int, int> MORDOR_query(vector<pair<int, int>> &segTree, int node, int treeL, int treeR, int targetL, int targetR) {
+    pair<int, int> result;
+    if (treeR < targetL || targetR < treeL) {
+        return segTree[0];
+    } else if (targetL <= treeL && treeR <= targetR) {
+        return segTree[node];
+    } else {
+        auto leftSubtree = MORDOR_query(segTree, node * 2, treeL, (treeL + treeR) / 2, targetL, targetR);
+        auto rightSubtree = MORDOR_query(segTree, node * 2 + 1, (treeL + treeR) / 2 + 1, treeR, targetL, targetR);
+        return make_pair(min(leftSubtree.first, rightSubtree.first), max(leftSubtree.second, rightSubtree.second));
+    }
+}
+vector<int> MORDOR_Algo(int signNum, int roadNum, vector<int> signInfoArr, vector<pair<int, int>> roadInfoArr) {
+    // make segment Tree, pair.first = min, pair.second = max
+    vector<pair<int, int>> segTree(pow(2, 1 + ceil(log(signNum) / log(2))));
+    segTree[0] = make_pair(23456, -1);  // meaningless value
+    MORDOR_init(segTree, signInfoArr, 1, 0, signNum - 1);
+    // use segment Tree
+    vector<int> difficulties(roadNum);
+    for (int i = 0; i < roadNum; i++) {
+        auto tmp = MORDOR_query(segTree, 1, 0, signNum - 1, roadInfoArr[i].first, roadInfoArr[i].second);
+        difficulties[i] = tmp.second - tmp.first;
+    }
+    return difficulties;
+}
+void MORDOR() {
     /*설명 및 입력
     설명
-        1부터 N까지의 자연수가 한 번씩 포함된 길이 N 인 수열 A[] 를 삽입 정렬했습니다.
-        원래 수열은 알 수 없지만, 그 과정에서 각 원소가 왼쪽으로 몇 칸이나 이동했는지를 알고 있습니다.
-            예를 들어, 5 1 4 3 2 수열이 움직인 칸수를 표현하면 {0,1,1,2,3} 이 됩니다.
-        이 때 원래 수열을 찾아내는 프로그램을 작성하세요.
+        등산로에는 100미터 간격으로 표지판이 있는데, 각 표지판의 해발 고도를 측정한 자료가 있습니다.
+        이 때 등산로의 난이도는 등산로를 가다 만나는 표지판 중 최대 해발 고도와 최저 해발 고도의 차이입니다.
+        개방을 검토하고 있는 등산로의 일부가 주어질 때, 각 부분의 난이도를 계산하는 프로그램을 작성하세요.
     입력
-        입력의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 50) 가 주어집니다.
-        각 테스트 케이스의 첫 줄에는 원 배열의 길이 N (1 <= N <= 50000) 이 주어집니다.
-        그 다음 줄에 N 개의 정수로 A의 각 위치에 있던 값들이 움직인 칸수가 주어집니다.
-        A 는 1부터 N 까지의 정수를 한 번씩 포함합니다.
+        입력의 첫 줄에는 테스트 케이스의 수 C (1 <= C <= 30) 가 주어집니다.
+        각 테스트 케이스의 첫 줄에는 원래 등산로에 있는 표지판의 수 N (1 <= N <= 100,000)과 개방을 고려하고 있는 등산로의 수 Q (1 <= Q <= 10,000)가 주어집니다.
+        그 다음 줄에 N 개의 정수로 각 표지판의 해발 고도 hi 가 순서대로 주어집니다. (0 <= hi <= 20,000)
+        각 표지판은 입력에 주어지는 순서대로 0 번부터 N-1 번까지 번호가 매겨져 있습니다.
+        그 다음 Q 줄에 각 2개의 정수로 개방을 고려하고 있는 등산로의 첫 번째 표지판과 마지막 표지판의 번호 a , b (0 <= a <= b < N) 가 주어집니다.
     출력
-        각 테스트 케이스마다 재구성한 A[] 를 한 줄에 출력합니다.
+        한 줄에 하나씩 개방을 고려하고 있는 각 등산로의 난이도를 출력합니다.
     제한조건
-        2초, 64MB
+        5초, 64MB
     */
     /*힌트
         입력이 크므로, 빠른 입력을 이용한다.
-        한번 움직인것은, 왼쪽으로 한칸 이동한 것이다.
-            즉 가상의 행렬을 만들어서 이를 움직이고, 움직인 결과가 insertion sort의 결과임을 이용하여, A[]를 재구성한다
-                예: ABCDE를 움직이면 BEDCA = 12345 이므로, ABCDE = 51432 이다.
-            문제점: 매번 최대 n time움직이면, 전체 시간은 O(n^2)이 된다.
-            특정한 방법을 이용하여 lgn시간내에 목적지를 찾아 한번에 이동하면 O(nlgn)으로 풀 수 있다.
-        custom tree를 이용하는 방법
-            초기상태: n번째 위치에 있는 node의 key는 n 이다.
-                n개의 node를 갖는 balance tree를 만들어서, n번째 node의 key를 n으로 대체한다.
-                balance tree 생성법
-                    root에서부터 높은 depth로 내려가면서
-                        차례대로 왼쪽에서 부터 순서를 센다고 가정하고 (0, 12, 34 56 과 같은식)
-                    n번째 node의 child는 각각 2n+1, 2n+2 번째 node다.
-                    재귀적으로, child가 범위 안에 들어오면 추가하고, 아니면 null을 추가한다.
-            특징: key로 정렬하지 않고, 임의로 정렬한다.
-            k번째 node가 어디에 있는지 알 수 있다.
-            원하는 n번째 위치에 input이 가능하다. 단, 더 큰 위치에서 더 작은 위치로만 가능하다.
-                    (더 작은 위치로도 약간만 생각하면 가능하다)
-                n번째 위치의 값을 input으로 대체한다.
-                기존에 있던 prev는 input의 right child으로 대체한다.
-            tree를 완성하고 나서, 트리를 0~N-1 번째 까지 순회한다.
-                0번째 값이 k라면, 0의 최초 위치는 k번째라는 뜻이다.-
-        책 참고: 역순으로 문제를 해결하는 방법
-            변수
-                shifted_arr(움직인횟수) original_arr(sort이전) sorted_treap(sort된 것, treap로 저장)
-            방법
-                앞에서부터 뒤로가면서 insertion sort를 수행한다 -> 맨 마지막 원소는 단 한번만 움직인다.
-                    original[idx] = sorted_treap[treap_size - shifted[idx]]
-                        idx == unsorted된 것들 중 last
-                    sorted_treap.pop[treap_size - shifted[idx]]
-            분석
-                time complexity: n times * O(lgn)
-        n^2 time
-            arr, linked list,
+        구간의 min, max 를 구하는 것이므로, segment tree를 이용하면 된다.
+            min segment tree, max segment tree를 이용하거나, pair를 이용하여 min과 max를 둘다 저장한다.
     */
     /*전략
-        아이디어: treap
-            args: shifted_arr(움직인횟수)
-            sorted_treap 생성, treap에 1~N까지 입력
-            original_arr 생성, 원래 배열 의미
-            while(sorted_tree.size>0)
-                lastIdx = sorted_tree.size -1
-                original_arr[lastIdx] = sorted_treap[lastIdx - shifted_arr[lastIdx]]
-                sorted_treap.remove(original_arr[lastIdx])
+        아이디어: pair<min,max>를 저장하는 segment tree
+            segment tree 생성 O(n)
+            m개의 등산로에 대해 m*O(lgn)
+                segment tree query O(lgn)
         분석
-            time complexity: O(nlgn)
-                입력처리 : 반복 n회
-                    treap[idx] (search) -> = O(lgn)
-                    treap.remove -> O(lgn)
+            time complexity: O(n+mlgn)
             mem complexity: O(n)
         피드백
-            sort는 순서대로 수행되었으므로, 반대로 하면 원래 행렬을 구할 수 있다.
     */
     // Sol
     int testCase;
     cin >> testCase;
-    //전역변수
-    cout << fixed;
-    cout.precision(10);
     //각 테스트케이스
     while (testCase--) {
-        int size;
-        vector<int> shifted;
-        INSERTION_Input(size, shifted);
-        auto result = INSERTION_Algo(size, shifted);
+        int signNum, roadNum;
+        vector<int> signInfoArr;
+        vector<pair<int, int>> roadInfoArr;
+        MORDOR_Input(signNum, roadNum, signInfoArr, roadInfoArr);
+        auto result = MORDOR_Algo(signNum, roadNum, signInfoArr, roadInfoArr);
         // cout << "::::";
-        for (auto& ele : result) {
-            cout << ele << " ";
+        for (auto &ele : result) {
+            cout << ele << "\n";
         }
-        cout << endl;
     }
 }
 
 int main(void) {
     // clock_t start,end;
     // start=clock();
-    INSERTION();
+    MORDOR();
     // end=clock();;
     // cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
     return 0;

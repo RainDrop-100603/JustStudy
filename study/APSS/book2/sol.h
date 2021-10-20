@@ -90,3 +90,10 @@ void INSERTION();
 void RUNNINGMEDIAN_Input(int& seqLen, int& seqArg1, int& seqArg2);
 int RUNNINGMEDIAN_Algo(int seqLen, int seqArg1, int seqArg2);
 void RUNNINGMEDIAN();
+
+// segment tree
+void MORDOR_Input(int& signNum, int& roadNum, vector<int>& signInfoArr, vector<pair<int, int>>& roadInfoArr);
+pair<int, int> MORDOR_init(vector<pair<int, int>>& segTree, vector<int>& signInfoArr, int node, int left, int right);
+pair<int, int> MORDOR_query(vector<pair<int, int>>& segTree, int node, int treeL, int treeR, int targetL, int targetR);
+vector<int> MORDOR_Algo(int signNum, int roadNum, vector<int> signInfoArr, vector<pair<int, int>> roadInfoArr);
+void MORDOR();
