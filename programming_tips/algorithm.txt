@@ -328,6 +328,30 @@ time complexity 추정
 			push: heap.push_back(input), leaf-root 갱신 
 			pop: swap(root,heap.back), heap.pop_back, root-leaf 갱신 
 	segment tree, 펜윅 tree 
+		segment tree	
+			특정 구간에 대한 정보를 전처리하여, 그들에 대한 질의를 빠르게 대답할 수 있다. 
+			RMQ(range minimum query): 구간 최소 쿼리, 자주 사용되서 따로 이름도 있다.
+		장점 
+			자료가 특별한 규칙이 없어도 segment tree를 만들 수 있다. 
+			구현이 간단한편이다.
+			arr을 이용하여 속도가 빠르다.
+		규칙 
+			root는 모든 구간에 대한 전처리 값이다.
+			left child는 left ~ mid 구간에 대한 전처리 값이다.
+			right child 는 mid+1 ~ right 구간에 대한 전처리 값이다.
+			필요한 size = pow(2,ceil(log(input.size)/log(2))) * 2 - 1
+				1칸이 비므로, arr[0]을 meaningless value로 이용 가능 
+		구현 
+			arr[0]=meaningless value, arr[1]=root
+			node's left child, right child: arr[node*2], arr[node*2+1]
+			init: node = 전처리(left child init, right child init)
+			query:
+				node표현영역이 target영역에 포함: return arr[node]
+				node표현영역이 target영역에 불포함: return arr[0]
+				node표현영역이 target영역에 일부포함: return 전처리(left child query, right child query)
+			update: 
+				insert, delete, value change등이 발생했을 때 수행 
+				query와 같은 원리를 적용해서, 변경된 부분을 포함하는 영역만 변경해준다.
 	유니온-파인드 자료구조 
 	트라이 (문자열을 표현하는 트리)
 --graph
