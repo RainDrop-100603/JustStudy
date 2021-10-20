@@ -308,8 +308,26 @@ time complexity 추정
 					0, 12, 34 56, 78 9_10 11_12 13_14 와같은 순서로 세는 것이다. 
 				n번째 원소의 child는, 각각 2n+1, 2n+2 번째 child 이다.
 				root부터 시작해서 child가 N보다 작은 순서면 추가한다. 
-					재귀적 구현 
-	구간 tree, 펜윅 tree 
+					재귀적 구현
+	heap 
+		max-heap(min-heap)
+			가장 큰(작은) 원소가 root인 tree 
+			대부분의 표준 라이브러리에 구현되어 있다.	
+			priority queue를 구현하는데 주로 이용된다.	
+			heap sort를 구현할 수 있다. heap을 만들고 모두 pop하면, 메모리상에서 오름차순이 된다.
+		장점 
+			규칙이 단순하여 arr을 통해 구현할 수 있다.
+			tree와 time complexity는 동일하더라도, arr을 이용하므로 실제로는 훨씬 빠르다.
+		규칙
+			root에는 tree에서 가장 큰(작은)원소가 들어간다.
+			node idx는 좌상단에서 우하단으로 센다. 0 12 3456 ...
+		구현 
+			root = heap.front
+			node's parent = heap[(node-1)/2]
+			node's left child, right child: heap[node*2+1], heap[node*2+2]
+			push: heap.push_back(input), leaf-root 갱신 
+			pop: swap(root,heap.back), heap.pop_back, root-leaf 갱신 
+	segment tree, 펜윅 tree 
 	유니온-파인드 자료구조 
 	트라이 (문자열을 표현하는 트리)
 --graph
@@ -334,6 +352,11 @@ time complexity 추정
 	부분 합을 미리계산하여, 평균, 분산등을 빠르게 계산할 수 있으며, 2차원 이상에도 적용할 수 있다.
 --동적배열과 연결리스트
 --큐와 스택, 덱
+	Queue: First In First Out
+		push와 pop이 존재하며, 먼저 들어간 데이터가 먼저 나온다.
+	Priority Queue: max priority out 
+		우선순위가 큰 자료형이 먼저 나온다. 
+		max-heap을 이용하여 구현 가능하다. 
 --문자열 탐색과 매칭
 	문자열 약속: str[i:j]는 str[i]~str[j-1]을 의미한다. i가 비어있으면 0, j가 비어있으면 end 이다.
 	KMP search: str1에서 str2를 찾을 때, O(str1.len + str2.len) 시간으로 탐색이 가능하다. 여러 응용또한 가능하다 
