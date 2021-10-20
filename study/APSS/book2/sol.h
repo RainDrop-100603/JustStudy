@@ -9,7 +9,7 @@
 #include "classes.h"
 
 using namespace std;
-// @*: 풀었으나 참고해볼만한 문제, @*@*: 어렵게 풀었던 문제, @*@*@*: 책이나 다른 해답을 참고한 문제
+// @*: 풀었으나 참고해볼만한 문제, @*@*: 어렵게 풀었던 문제, @*@*@*: 책이나 다른 해답을 참고한 문제, 그렇지 않더라도 좋은 문제
 
 // 비트마스크, combination의 이용, time complexity 구하는 것 유의
 void GRADUATION_Input(int& classNum, int& classTarget, int& semesterNum, int& classLimit, vector<int>& preClass, vector<int>& semesterInfo);
@@ -97,3 +97,12 @@ pair<int, int> MORDOR_init(vector<pair<int, int>>& segTree, vector<int>& signInf
 pair<int, int> MORDOR_query(vector<pair<int, int>>& segTree, int node, int treeL, int treeR, int targetL, int targetR);
 vector<int> MORDOR_Algo(int signNum, int roadNum, vector<int> signInfoArr, vector<pair<int, int>> roadInfoArr);
 void MORDOR();
+
+// @*@*@* 비교할 key가 없는 tree에 key를 부여하여 search tree처럼 만들기
+// query를 할 때, node A를 비교하고 node B를 비교하기전에, 항상 최소공통조상(A,B)를 방문함을 이용하여 segment tree 만들기
+void FAMILYTREE_Input(int& peopleNum, int& casesNum, vector<int>& parentsArr, vector<pair<int, int>>& casesArr);
+vector<vector<int>> FAMILYTREE_makeChildArr(vector<int>& parentsArr);
+int FAMILYTREE_giveKeyAndDepth(vector<vector<int>>& childArr, vector<int>& keyArr, vector<int>& depthArr, int node, int key, int depth);
+int FAMILYTREE_query(vector<vector<int>>& childArr, vector<int>& keyArr, int node, int depth, int person1, int person2);
+vector<int> FAMILYTREE_Algo(int peopleNum, int casesNum, vector<int> parentsArr, vector<pair<int, int>> casesArr);
+void FAMILYTREE();
