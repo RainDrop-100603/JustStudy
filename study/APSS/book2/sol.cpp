@@ -1347,3 +1347,44 @@ void INSERTION() {
         cout << endl;
     }
 }
+
+// priority queue 를 통한 heap 구현
+void RUNNINGMEDIAN_Input(int& seqLen, int& seqArg1, int& seqArg2) { cin >> seqLen >> seqArg1 >> seqArg2; }
+int RUNNINGMEDIAN_Algo(int seqLen, int seqArg1, int seqArg2) {
+    // make maxHeap and minHeap
+    priority_queue<int, vector<int>, less<int>> maxHeap;
+    priority_queue<int, vector<int>, greater<int>> minHeap;
+    // algo
+    int input = 1983;
+    int ret = 0;
+    while (seqLen--) {
+        if (maxHeap.size() == minHeap.size()) {
+            maxHeap.push(input);
+        } else {
+            minHeap.push(input);
+        }
+        if (!maxHeap.empty() && !minHeap.empty() && maxHeap.top() > minHeap.top()) {
+            int left(maxHeap.top()), right(minHeap.top());
+            maxHeap.pop();
+            minHeap.pop();
+            maxHeap.push(right);
+            minHeap.push(left);
+        }
+        ret = (ret + maxHeap.top()) % 20090711;
+        input = ((long long)input * seqArg1 + seqArg2) % 20090711;
+    }
+    return ret;
+}
+void RUNNINGMEDIAN() {
+    // Sol
+    int testCase;
+    cin >> testCase;
+    //각 테스트케이스
+    while (testCase--) {
+        int seqLen, seqArg1, seqArg2;
+        RUNNINGMEDIAN_Input(seqLen, seqArg1, seqArg2);
+        auto result = RUNNINGMEDIAN_Algo(seqLen, seqArg1, seqArg2);
+        // cout << "::::";
+        cout << result << endl;
+    }
+}

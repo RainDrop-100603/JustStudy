@@ -85,3 +85,8 @@ void NERD2();
 void INSERTION_Input(int& size, vector<int>& shifted);
 vector<int> INSERTION_Algo(int size, vector<int> shifted);
 void INSERTION();
+
+// priority queue 를 통한 heap 구현
+void RUNNINGMEDIAN_Input(int& seqLen, int& seqArg1, int& seqArg2);
+int RUNNINGMEDIAN_Algo(int seqLen, int seqArg1, int seqArg2);
+void RUNNINGMEDIAN();
