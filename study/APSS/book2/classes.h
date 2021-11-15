@@ -151,3 +151,27 @@ class treap {
     bool empty() { return root == NULL; }
     int size() { return root ? root->size : 0; }
 };
+
+class MEASURETIME_fenwicktree {
+    vector<int> tree;
+    int size;
+
+   public:
+    MEASURETIME_fenwicktree(int size_) : tree(size_ + 1), size(size_) {}
+    void add(int pos) {
+        pos++;
+        while (pos <= size) {
+            tree[pos] += 1;
+            pos += (pos & -pos);  // pos += pos' last bit, -pos == ~pos + 1
+        }
+    }
+    int pSum(int pos) {
+        pos++;
+        int result = 0;
+        while (pos > 0) {
+            result += tree[pos];
+            pos -= (pos & -pos);
+        }
+        return result;
+    }
+};

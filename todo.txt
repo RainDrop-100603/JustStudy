@@ -15,7 +15,6 @@ vscode python지원?
 https://devblogs.microsoft.com/python/python-in-visual-studio-code-september-2021-release/
 
 
-//https://www.youtube.com/watch?v=x7STjpcKZP8 
-//사회복무요원 교육 
-
 정리방법: 목차에 왠만한 키워드 들어가도록 하기, 상세 정리는 내용에 추가하기 
+
+treap, RMQ, fenwicktree등을 공통적으로 이용할 수 있도록 구현하기, 기존에 풀었던 문제 다시 풀어보기 

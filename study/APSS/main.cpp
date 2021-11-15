@@ -12,56 +12,56 @@
 
 using namespace std;
 
-void MEASURETIME_Input(int &peopleNum, int &relationsNum, vector<int> &parentsArr, vector<pair<int, int>> &relationsArr) {
-    cin >> peopleNum >> relationsNum;
-    signInfoArr.resize(peopleNum);
-    roadInfoArr.resize(relationsNum);
-    for (auto &ele : parentsArr) {
+class MEASURETIME_fenwicktree {
+    vector<int> tree;
+    int size;
+
+   public:
+    MEASURETIME_fenwicktree(int size_) : tree(size_ + 1), size(size_) {}
+    void add(int pos) {
+        pos++;
+        while (pos <= size) {
+            tree[pos] += 1;
+            pos += (pos & -pos);  // pos += pos' last bit, -pos == ~pos + 1
+        }
+    }
+    int pSum(int pos) {
+        pos++;
+        int result = 0;
+        while (pos > 0) {
+            result += tree[pos];
+            pos -= (pos & -pos);
+        }
+        return result;
+    }
+};
+
+void MEASURETIME_Input(int& eleNum, vector<int>& unsorted) {
+    cin >> eleNum;
+    unsorted.resize(eleNum);
+    for (auto& ele : unsorted) {
         scanf("%d", &ele);
     }
-    for (auto &ele : relationsArr) {
-        scanf("%d %d", &ele.first, &ele.second);
-    }
 }
-int MEASURETIME_getSize(int signNum) {
-    int power = log(signNum) / log(2);
-    if (signNum <= pow(2, power)) {
-        return pow(2, power + 1);
-    } else {
-        return pow(2, power + 2);
+int MEASURETIME_Algo(int eleNum, vector<int> unsorted) {
+    int result = 0;
+    // unsorted를 sort한다. O(nlgn)
+    vector<int> sorted = unsorted;
+    sort(sorted.begin(), sorted.end());
+    // fenwicktree을 선언한다. O(n)
+    MEASURETIME_fenwicktree fenwicktree(eleNum);
+    // 각 n개의 원소에 대해 아래 작업을 수행한다. O(nlgn)
+    for (int idx = 0; idx < eleNum; idx++) {
+        // 원소의 sorted에서의 위치를 구한다. O(lgn)
+        int position = lower_bound(sorted.begin(), sorted.end(), unsorted[idx]) - sorted.begin();
+        // fenwicktree을 이용해 sorted중에 현재 원소보다 작거나 같은것의 개수를 구한다. O(1)
+        int smaller = fenwicktree.pSum(position);
+        //움직이는 횟수 = idx - 작거나 같은것의 개수
+        result += idx - smaller;
+        // fenwicktree을 갱신한다. O(lgn)
+        fenwicktree.add(position);
     }
-}
-pair<int, int> MEASURETIME_init(vector<pair<int, int>> &segTree, vector<int> &signInfoArr, int node, int left, int right) {
-    if (left == right) {
-        return segTree[node] = make_pair(signInfoArr[left], signInfoArr[left]);
-    }
-    auto leftSubtree = MEASURETIME_init(segTree, signInfoArr, node * 2, left, (left + right) / 2);
-    auto rightSubtree = MEASURETIME_init(segTree, signInfoArr, node * 2 + 1, (left + right) / 2 + 1, right);
-    return segTree[node] = make_pair(min(leftSubtree.first, rightSubtree.first), max(leftSubtree.second, rightSubtree.second));
-}
-pair<int, int> MEASURETIME_query(vector<pair<int, int>> &segTree, int node, int treeL, int treeR, int targetL, int targetR) {
-    pair<int, int> result;
-    if (treeR < targetL || targetR < treeL) {
-        return make_pair(23456, -1);
-    } else if (targetL <= treeL && treeR <= targetR) {
-        return segTree[node];
-    } else {
-        auto leftSubtree = MEASURETIME_query(segTree, node * 2, treeL, (treeL + treeR) / 2, targetL, targetR);
-        auto rightSubtree = MEASURETIME_query(segTree, node * 2 + 1, (treeL + treeR) / 2 + 1, treeR, targetL, targetR);
-        return make_pair(min(leftSubtree.first, rightSubtree.first), max(leftSubtree.second, rightSubtree.second));
-    }
-}
-vector<int> MEASURETIME_Algo(int signNum, int roadNum, vector<int> signInfoArr, vector<pair<int, int>> roadInfoArr) {
-    // make segment Tree, pair.first = min, pair.second = max
-    vector<pair<int, int>> segTree(MEASURETIME_getSize(signNum));
-    MEASURETIME_init(segTree, signInfoArr, 1, 0, signNum - 1);
-    // use segment Tree
-    vector<int> difficulties(roadNum);
-    for (int i = 0; i < roadNum; i++) {
-        auto tmp = MEASURETIME_query(segTree, 1, 0, signNum - 1, roadInfoArr[i].first, roadInfoArr[i].second);
-        difficulties[i] = tmp.second - tmp.first;
-    }
-    return difficulties;
+    return result;
 }
 void MEASURETIME() {
     /*설명 및 입력
@@ -79,48 +79,72 @@ void MEASURETIME() {
     */
     /*힌트
         입력이 크므로, 빠른 입력을 이용한다.
-        아이디어 1:
-        책의 아이디어:
+        시간제한: n^2 미만이어야 한다.
+        중복되는 입력이 있음에 유의하자.
     */
     /*
-    전략1: tree에 key를 부여해주어서, search tree의 성질을 띄도록한다.
-        구현
-            2차원 child arr을 만든다. O(n)
-            child arr을 이용하여 query를 수행하며, key와 depth를 부여한다. O(n)
-            m 경우의 촌수 계산. m*O(lgn)
-                최소 공통 조상의 depth를 구하고, 두 사람의 촌수를 계산한다.. O(lgn)
-        분석
-            time complexity: O(n+mlgn)
+    아이디어 1
+        설명:
+            fenwicktree으로 구현한 부분합을 이용하여, insertion sort를 할 때, 현재 값보다 작은 값의 갯수가 몇개인지 알 수 있다.
+        개념:
+            unsorted는 O(nlgn)에 sort할 수 있다.
+            unsorted의 각 원소의 sorted에서의 위치는, O(lgn)에 구할 수 있다.
+            부분합을 이용하여, insertion sort를 할 때, 현재 값보다 작은 값의 갯수를  O(1)에 구할 수 있다.
+                sorted[i]가 insertion sort 되었으면 1, 아니면 0으로 한다.
+                ->부분합[i]는 sorted[0]~sorted[i]중 insertion sort된 것의 개수를 나타낸다.
+                ->즉, input되는 원소가 몇번 움직여야 하는지를 알 수 있다.
+            fenwicktree을 이용하여 부분합을 빠르게 구한다.
+                부분합의 갱신은 기본적으로 O(n)이 걸린다.
+                fenwicktree을 이용한다면, O(lgn)으로 갱신이 가능하다.
+        구현:
+            unsorted를 sort한다. O(nlgn)
+            fenwicktree을 선언한다. O(n)
+            각 n개의 원소에 대해 아래 작업을 수행한다. O(nlgn)
+                원소의 sorted에서의 위치를 구한다. O(lgn)
+                fenwicktree을 이용해 sorted중에 현재 원소보다 작거나 같은것의 개수를 구한다. O(lgn)
+                    -> 움직이는 횟수 = idx - 작거나 같은것의 개수
+                fenwicktree을 갱신한다. O(lgn)
+        성능:
+            time complexity: O(ngln)
             mem complexity: O(n)
-        피드백
-    책의 전략: A node와 b node를 방문하려면, 항상 최소공통조상(A,B)를 중간에 방문함을 이용하여 segment tree를 만든다.
-        구현
-            2차원 child arr을 만든다. O(n)
-            child arr을 이용하여 query를 수행하며, visitArr과 positionArr, depthArr 을 만든다. O(n)
-                visitArr: 방문하는 순서대로 node를 기록, 다시 방문한 것도 모두 기록한다.
-                positionArr: node의 visitArr에서의 위치 기록, 마지막 위치로 기록한다.
-            visitArr로 segment tree를 만든다. O(n)
-            m 경우의 촌수 계산 m*O(lgn)
-                segment tree를 이용하여 최소공통조상을 구하고, 두 사람의 촌수를 계산한다.
-        분석
-            time complexity: O(n+mlgn)
-            mem complexity: O(n)
-        피드백
+        한계:
+        피드백:
+    책의 아이디어:
+        fenwick tree를 이용해 풀기
+            원소의 입력 범위가 제한적이므로, 각 원소의 등장 횟수를 나타내는 fenwicktree를 만들어서, 움직이는 횟수를 계산한다.
+            한계점: 원소의 범위가 넓을수록 이용하기 어렵다. 원소의 범위가 넓다면 아이디어1 더 유용하다.
+        segment tree를 이용해 풀기
+            fenwick tree로 구현 가능한 것은 segment tree로도 구현이 가능하다.
+            한계점: 구현이 복잡하다. 원소의 범위가 넓을수록 이용하기 어렵다.
+        binary search tree(treap)을 이용하여 풀기
+            treap을 이용하면 입력은 lgn, 출력은 O(1)에 가능하다. 원소의 범위의 제약을 받지 않는다.
+            한계점: treap이 fenwick tree 보다는 복잡하다.
+        merge sort를 이용해 풀기 - 수열의 반전(inversion)을 수를 세기
+            수열의 반전(inversion): 큰 수가 작은 수보다 앞에있는 경우를 말한다.
+            삽입 정렬 과정에서 숫자를 한번 옮길 때, 반전의 갯수가 하나씩 줄어든다.
+                즉 수열의 반전의 수는 숫자를 옮기는 횟수이다.
+            merge sort를 이용하기
+                merge sort는 수열을 left와 right로 분류한다.
+                수열의 반전의 경우의 수
+                    1. 반전을 이루는 두 수가 모두 left에 포함되어 있다. -> 재귀
+                    2. 반전을 이루는 두 수가 모두 right에 포함되어 있다. -> 재귀
+                    3. 큰 수는 left, 작은 수는 right에 포함되어 있다.
+                        -> merge sort의 merge과정에서 구할 수 있다.
+                            left.first가 right.first보다 크다면, left.remain만큼 inversion이 추가된다.
+                merge sort의 이러한 사용 방식은 다른 문제에도 이용할 수 있으니 참고하자
+                한계점: merge sort를 직접 구현하므로 구현이 약간 복잡하다.
     */
     // Sol
     int testCase;
     cin >> testCase;
     //각 테스트케이스
     while (testCase--) {
-        int peopleNum, relationsNum;
-        vector<int> parentsArr;
-        vector<pair<int, int>> relationsArr;
-        MEASURETIME_Input(peopleNum, relationsNum, parentsArr, relationsArr);
-        auto result = MEASURETIME_Algo(peopleNum, relationsNum, parentsArr, relationsArr);
+        int eleNum;
+        vector<int> unsorted;
+        MEASURETIME_Input(eleNum, unsorted);
+        auto result = MEASURETIME_Algo(eleNum, unsorted);
         // cout << "::::";
-        for (auto &ele : result) {
-            cout << ele << "\n";
-        }
+        cout << result << endl;
     }
 }
 

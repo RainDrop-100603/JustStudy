@@ -106,3 +106,8 @@ int FAMILYTREE_giveKeyAndDepth(vector<vector<int>>& childArr, vector<int>& keyAr
 int FAMILYTREE_query(vector<vector<int>>& childArr, vector<int>& keyArr, int node, int depth, int person1, int person2);
 vector<int> FAMILYTREE_Algo(int peopleNum, int casesNum, vector<int> parentsArr, vector<pair<int, int>> casesArr);
 void FAMILYTREE();
+
+// @*@*@* 부분합의 다른 이용법, 나의 아이디어와 책의 아이디어(merge sort이용법) 모두 확인해보기
+void MEASURETIME_Input(int& eleNum, vector<int>& unsorted);
+int MEASURETIME_Algo(int eleNum, vector<int> unsorted);
+void MEASURETIME();
