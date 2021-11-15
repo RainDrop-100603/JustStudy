@@ -407,5 +407,29 @@ time complexity 추정
 				while value[stack.back()] >= value[nowIdx]:
 					stack.pop()
 				stack.push(nowIdx)
-	이걸 정리하는게 맞을까?
+	FenwickTree
+		부분합을 구현하는 효율적인 방법이다. 
+		성능 
+			time complexity: O(nlgn)
+				입력 및 수정을 O(lgn)에, 부분합 출력은 O(lgn)에 수행할 수 있다.
+				단순 부분합은 입력 및 수정에 O(n), 부분합 출력은 O(1)에 수행된다.
+			mem complexity: O(n)
+				전체 입력의 길이가 n 이라면, tree는 n+1 만큼의 메모리만 점유한다.
+		개념
+			tree에서의 idx는 1 ~ N 범위를 이용한다.  
+			tree[idx]는 일부 구간의 부분합만을 표현하며, 따라서 부분합(1 ~ idx)가 아닐 수 있다.
+				tree[idx] = 부분합(? ~ idx)		//idx번째 값은 반드시 포함한다
+			부분합 출력 
+				while(idx>0)
+					result += tree[idx]
+					idx -= (idx & -idx)		//idx의 마지막 비트 제거 
+			입력 및 수정 
+				while(idx<=tree.size)
+					tree[idx]+=input 
+					idx += (idx & -idx)		//idx의 마지막 비트 더해주기 
+
+treap, segment tree(RMQ), fenwicktree등은 간단하게 구현해두고, 여러 함수에서 공통적으로 사용하는것이 더 편할듯 하다. 
+			
+
+
 

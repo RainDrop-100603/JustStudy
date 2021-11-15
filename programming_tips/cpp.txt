@@ -52,3 +52,5 @@ tree 구현
 	실패2: node에 모든 기능을 구현하고, tree는 가볍게 node를 다룬다. 
 		node와 tree를 모두 신경써야해서, 비 직관적이며 구현에 실수가 생길 가능성이 크다.
 		
+find vs lower_bound
+	find는 n time, lower_bound는 이진탐색이므로 lgn time이다. 
