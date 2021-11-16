@@ -1627,17 +1627,17 @@ int MEASURETIME_Algo(int eleNum, vector<int> unsorted) {
     vector<int> sorted = unsorted;
     sort(sorted.begin(), sorted.end());
     // fenwicktree을 선언한다. O(n)
-    MEASURETIME_fenwicktree fenwicktree(eleNum);
+    fenwicktree fenwick(eleNum);
     // 각 n개의 원소에 대해 아래 작업을 수행한다. O(nlgn)
     for (int idx = 0; idx < eleNum; idx++) {
         // 원소의 sorted에서의 위치를 구한다. O(lgn)
         int position = lower_bound(sorted.begin(), sorted.end(), unsorted[idx]) - sorted.begin();
         // fenwicktree을 이용해 sorted중에 현재 원소보다 작거나 같은것의 개수를 구한다. O(1)
-        int smaller = fenwicktree.pSum(position);
+        int smaller = fenwick.pSum(position);
         //움직이는 횟수 = idx - 작거나 같은것의 개수
         result += idx - smaller;
         // fenwicktree을 갱신한다. O(lgn)
-        fenwicktree.add(position);
+        fenwick.add(position, 1);
     }
     return result;
 }

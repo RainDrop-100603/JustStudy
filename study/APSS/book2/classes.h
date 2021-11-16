@@ -1,4 +1,8 @@
+#ifndef __CLASSES_H__
+#define __CLASSES_H__
+
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -152,17 +156,17 @@ class treap {
     int size() { return root ? root->size : 0; }
 };
 
-class MEASURETIME_fenwicktree {
+class fenwicktree {
     vector<int> tree;
     int size;
 
    public:
-    MEASURETIME_fenwicktree(int size_) : tree(size_ + 1), size(size_) {}
-    void add(int pos) {
-        pos++;
+    fenwicktree(int _size) : tree(_size + 1), size(_size) {}
+    void add(int pos, int value) {
+        pos++;  // idx starts from 1
         while (pos <= size) {
-            tree[pos] += 1;
-            pos += (pos & -pos);  // pos += pos' last bit, -pos == ~pos + 1
+            tree[pos] += value;
+            pos += (pos & -pos);  // add pos' last bit
         }
     }
     int pSum(int pos) {
@@ -175,3 +179,64 @@ class MEASURETIME_fenwicktree {
         return result;
     }
 };
+
+class RangeMinimunQuery {
+    vector<int> rangeMin;
+    int capacity, size;
+    int USELESS = INT32_MAX;
+    int init(vector<int>& inputArr, int node, int left, int right) {
+        if (left == right) {
+            return rangeMin[node] = inputArr[left];
+        }
+        int leftMin = init(inputArr, node * 2 + 1, left, (left + right) / 2);
+        int rightMin = init(inputArr, node * 2 + 2, (left + right) / 2 + 1, right);
+        return rangeMin[node] = min(leftMin, rightMin);
+    }
+    int query(int node, int left, int right, int rangeLeft, int rangeRight) {
+        // query 범위 밖
+        if (rangeRight < left || right < rangeLeft) return USELESS;
+        // query 범위에 완전히 포함
+        if (rangeLeft <= left && right <= rangeRight) return rangeMin[node];
+        // query 범위에 일부 포함
+        int leftQuery = query(node * 2 + 1, left, (left + right) / 2, rangeLeft, rangeRight);
+        int rightQuery = query(node * 2 + 2, (left + right) / 2 + 1, right, rangeLeft, rangeRight);
+        return min(leftQuery, rightQuery);
+    }
+    int update(int node, int left, int right, int idx, int value) {
+        if (idx < left || right < idx) return USELESS;
+        if (left == right) {
+            return rangeMin[node] = value;
+        }
+        int leftMin = update(node * 2 + 1, left, (left + right) / 2, idx, value);
+        int rightMin = update(node * 2 + 2, (left + right) / 2 + 1, right, idx, value);
+        return rangeMin[node] = min(leftMin, rightMin);
+    }
+
+   public:
+    RangeMinimunQuery(vector<int>& inputArr) {
+        capacity = pow(2, ceil(log(inputArr.size()) / log(2)));
+        size = inputArr.size();
+        rangeMin.resize(capacity * 2);
+        init(inputArr, 0, 0, size - 1);
+    }
+    int query(int left, int right) { return query(0, 0, size - 1, left, right); }
+    bool update(int idx, int value) {
+        if (idx >= size) return false;
+        update(0, 0, size - 1, idx, value);
+        return true;
+    }
+    bool push(int value) {
+        if (size == capacity) return false;
+        size++;
+        update(0, 0, size - 1, size - 1, value);
+        return true;
+    }
+    bool pop() {
+        if (size == 0) return false;
+        update(0, 0, size - 1, size - 1, USELESS);
+        size--;
+        return true;
+    }
+};
+
+#endif
