@@ -51,9 +51,9 @@ _Algorithm Tips_
 >		```
 > 라인 4
 
-<hr/>	
+-----	
 
-## __종합 팁__
+# __종합 팁__
 ## _runtime error_
 * 배열을 점검, 배열의 크기가 0인 경우를 반드시 생각하자 
 
@@ -71,9 +71,9 @@ _Algorithm Tips_
 ## _자주하는 실수_
 * return 제대로 했는지 확인 
 
-<hr/>	
+-----
 
-## __조합 문제__
+# __조합 문제__
 ## _제약 충족 문제(Constraint Satisfaction Problem)_
 * 특정한 제약에 해당하는 답을 찾는 문제
 	* 스도쿠, n-queen
@@ -98,14 +98,14 @@ _Algorithm Tips_
 * algospot 444p
 * TSP, Sudoku 문제의 강력한 해결법 (http://norvig.com/sudoku.html)
 
-<hr/>
+-----
 
-## __결정 문제(Decision Problem)__
+# __결정 문제(Decision Problem)__
 * 특정 조건에 대해 예 혹은 아니오의 답만 나오는 문제
 * 최적화 문제를 결정 문제로 바꾸어 해결하는 방법이 존재한다.
 	* 결정문제의 난이도는 최적화 문제보다 쉽거나 같으므로 유용하다.
 
-<hr/>
+-----
 
 이분법 주의사항
 	13.2절의 내용을 보고 더 공부하자
