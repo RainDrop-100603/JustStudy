@@ -12,7 +12,7 @@ _Algorithm Tips_
 	- [_큰 입력_](#큰-입력)
 	- [_자주하는 실수_](#자주하는-실수)
 * [__조합 문제__](#조합-문제)
-	- [_제약 충족 문제 (Constraint Satisfaction Problem)_](#제약-충족-문제Constraint-Satisfaction-Problem)
+	- [_제약 충족 문제(Constraint Satisfaction Problem)_](#제약-충족-문제Constraint-Satisfaction-Problem)
 * [__결정 문제(Decision Problem)__](#결정-문제Decision-Problem)
 * __수치해석__ 
 	- [_이분법_](#)
@@ -74,7 +74,7 @@ _Algorithm Tips_
 <hr/>	
 
 ## __조합 문제__
-## _제약 충족 문제 (Constraint Satisfaction Problem)_
+## _제약 충족 문제(Constraint Satisfaction Problem)_
 * 특정한 제약에 해당하는 답을 찾는 문제
 	* 스도쿠, n-queen
 * 아래 두 조건을 만족하면 대부분 해결된다.
