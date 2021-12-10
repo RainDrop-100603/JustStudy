@@ -11,6 +11,7 @@ _Algorithm Tips_
 	- [_아이디어_](#아이디어)
 	- [_큰 입력_](#큰-입력)
 	- [_자주하는 실수_](#자주하는-실수)
+	- [_애커만 함수(α(n))_](#애커만-함수αn)
 * [__조합 문제__](#조합-문제)
 	- [_제약 충족 문제(Constraint Satisfaction Problem)_](#제약-충족-문제Constraint-Satisfaction-Problem)
 * [__결정 문제(Decision Problem)__](#결정-문제Decision-Problem)
@@ -42,6 +43,7 @@ _Algorithm Tips_
 ## 테스트 
 >테스트라인 1    
 >테스트라인 2   
+>　　테스트라인 3 - 전각띄어쓰기 (　), 괄호사이 복사 붙여넣기
 > - 테스트 특수효과 1
 > 	``` 
 > 	code block
@@ -71,7 +73,11 @@ _Algorithm Tips_
 >## [_자주하는 실수_](#목차)
 >* return 제대로 했는지 확인 
 
------
+>## [_애커만 함수(α(n))_](#목차)
+>* 계산 가능성 이론을 연구하는 과정에서 만들어낸 재귀함수, α(n)이 증가하면 n이 엄청나게 커진다.
+>* α(n) = 5 일때, n ≈ 2^(2^(2^65536))    
+>　즉, 애커만 함수의 결과는 상수시간이라 생각하면 된다. 
+
 
 # [__조합 문제__](#목차)
 >## [_제약 충족 문제(Constraint Satisfaction Problem)_](#목차)
@@ -505,3 +511,27 @@ treap, segment tree(RMQ), fenwicktree등은 간단하게 구현해두고, 여러
 	- 초기화: n개의 원소가 각각의 집합에 포함되도록 초기화
 	- Union: 두 원소 a,b가 주어질 때, 두 원소가 속한 집합을 하나로 합친다.
 	- Find: 어떤 원소 a가 주어질 때, 이 원소가 속한 집합을 반환한다. 
+	```
+- tree를 이용한 상호 배타적 집합의 표현 
+	- root가 같은 원소는 같은 tree(집합)의 원소임을 이용한다.
+	- Time complexity
+		- Find: O(tree height)
+		- Union: 2*Find +1 = O(tree height)
+	- 문제점
+		- tree가 기울어 질 수 있다.
+	- 최적화
+		- union - by- rank
+			```
+			- 높이(rank)가 높은 tree를 낮은 tree의 parent가 되도록 Union 한다.
+			- 높이(rank)인 tree의 원소의 개수는 최소 2^(rank-1)개 이다. -> rank = O(lgn)
+			- 최적화 결과: 
+				rank: O(n) -> O(lgn)
+			```
+		- path compression
+			```
+			- Find의 재귀에서 거쳐간 원소들의 parent를 root로 바꾼다.
+			- 최적화 결과:
+				계산은 복잡하므로 일단은 패스, 결과는 아래 참고
+			```
+		- 두 최적화를 모두 적용한 Union&Find time complexity: O([_α(n)_](#애커만-함수αn)) ≈ O(1)
+		

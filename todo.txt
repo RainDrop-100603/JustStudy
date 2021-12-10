@@ -1,6 +1,8 @@
 django fake data 마무리하기 
 챌린지 진도표 보고 예습 필요하면 하기 
 
+애커민 함수? 
+
 django setup등 정리하기 
 
 airbnb-clone 만들기 
