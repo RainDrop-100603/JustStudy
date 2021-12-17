@@ -17,15 +17,13 @@ void EDITORWARS_Input(int& peopleNum, int& commentNum, vector<int>& commentACK, 
     commentACK.resize(commentNum);
     commentElements.resize(commentNum);
     for (int i = 0; i < commentNum; i++) {
-        string tmpType;
-        cin >> tmpType;
-        cin.ignore();
-        if (tmpType == "ACK") {
+        char tmpType[3];
+        scanf("%s %d %d", tmpType, &commentElements[i].first, &commentElements[i].second);
+        if (tmpType[0] == 'A') {
             commentACK[i] = 1;
         } else {
             commentACK[i] = 0;
         }
-        cin >> commentElements[i].first >> commentElements[i].second;
     }
 }
 int EDITORWARS_Find(vector<int>& parents, int idx) {
@@ -180,6 +178,8 @@ void EDITORWARS() {
             전체 set이 두개일때만 사용할 수 있는 방법이다.
         피드백:
             3720ms/4000ms로 성능이 아슬아슬하다.
+                cin대신 scanf를 이용하여 cin.ignore()를 없애고 입력속도를 높였다.
+                ACK와 DIS는 항상 3글자 이므로, char배열로 scanf를 이용하여 속도를 높였다.
         책의 아이디어:
             dis[A]==-1인 경우를 따로 처리하는 대신, union에 예외처리를 두어 if문을 줄였다.
             정답을 셀 때, A>dis[A]인 경우만 카운팅해서, 배열을 사용하지 않고 중복을 방지했다.
