@@ -21,17 +21,17 @@ void EDITORWARS_Input(int& peopleNum, int& commentNum, vector<int>& commentType,
         cin >> tmpType;
         cin.ignore();
         if (tmpType == "ACK") {
-            commentType[i] = 0;
-        } else {
             commentType[i] = 1;
+        } else {
+            commentType[i] = 0;
         }
         cin >> commentRelation[i].first >> commentRelation[i].second;
     }
 }
 int EDITORWARS_Find(vector<int>& root, int idx) {
     if (root[idx] == idx) {
+        return idx;
     }
-    return idx;
     return root[idx] = EDITORWARS_Find(root, root[idx]);
 }
 int EDITORWARS_union(vector<int>& root, vector<int>& rank, vector<int>& numOfEle, int idxA, int idxB) {
@@ -67,7 +67,7 @@ string EDITORWARS_Algo(int peopleNum, int commentNum, vector<int> commentACK, ve
         if (commentACK[i]) {
             if (rootA == rootB) continue;
             if (disjoint[rootA] == rootB) {
-                return string("CONTRADICTION AT ") + to_string(i);
+                return string("CONTRADICTION AT ") + to_string(i + 1);
             }
             int rootNew = EDITORWARS_union(root, rank, numOfEle, rootA, rootB);
             // disjoint update, disA==-1 means disjoint[rootA] does not exist
@@ -82,7 +82,7 @@ string EDITORWARS_Algo(int peopleNum, int commentNum, vector<int> commentACK, ve
             }
         } else {
             if (rootA == rootB) {
-                return string("CONTRADICTION AT ") + to_string(i);
+                return string("CONTRADICTION AT ") + to_string(i + 1);
             }
             if (disjoint[rootA] == rootB) continue;
             // disjoint update
