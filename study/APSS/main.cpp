@@ -12,20 +12,20 @@
 
 using namespace std;
 
-void EDITORWARS_Input(int& peopleNum, int& commentNum, vector<int>& commentType, vector<pair<int, int>>& commentRelation) {
+void EDITORWARS_Input(int& peopleNum, int& commentNum, vector<int>& commentACK, vector<pair<int, int>>& commentElements) {
     cin >> peopleNum >> commentNum;
-    commentType.resize(commentNum);
-    commentRelation.resize(commentNum);
+    commentACK.resize(commentNum);
+    commentElements.resize(commentNum);
     for (int i = 0; i < commentNum; i++) {
         string tmpType;
         cin >> tmpType;
         cin.ignore();
         if (tmpType == "ACK") {
-            commentType[i] = 1;
+            commentACK[i] = 1;
         } else {
-            commentType[i] = 0;
+            commentACK[i] = 0;
         }
-        cin >> commentRelation[i].first >> commentRelation[i].second;
+        cin >> commentElements[i].first >> commentElements[i].second;
     }
 }
 int EDITORWARS_Find(vector<int>& root, int idx) {
@@ -157,28 +157,50 @@ void EDITORWARS() {
                 3) disjoint관계를 배열로 표현한다.
                     - disjoint는 항상 set의 root간의 관계로 표시한다.
                     - set이 두개밖에 없으므로, disjoint 관계는 단 하나의 set과 가질 수 있다.
-                    1. disjoint가 없다면, DIS가 발생했을 때 disjoint를 생성해준다.
-                    2. disjoint가 이미 존재한다면, disjoint는 두개이상 존재할 수 없으므로, disjoint의 djsjoint를 union한다.
-                        예시) A - B - C (- means disjoint)라면, A와 C를 union한다.
-                        2-1. DIS의 두 원소 모두 disjoint가 존재한다면, 하나씩 union하면 문제없이 수행된다.
-                    counting: disjoint가 없는 원소는 그냥 세고, 있는 원소는 더 큰 숫자로 센다.
+                    - 각 연산시, disjoint관계를 고려하여 추가적인 union연산 및 dis배열 갱신이 필요할 수 있다.
+                        ACK A B
+                            dis[A] and dis[B] exist : union A&B, union dis[A]&dis[B], update dis배열
+                            dis[A] or dis[B] exist: union A&B, update dis배열
+                            dis[A] and dis[B] not exist: union A& B
+                        DIS A B
+                            dis[A] and dis[B] exist: union A&dis[B], union B&dis[A], update dis베열
+                            dis[A] or dis[B] exist: union A&dis[B], update ids배열 (dis[A]가 존재할경우는 A,B 반대로)
+                            dis[A] and dis[B] not exist: update dis배열
                     수행시간
-                        time complexity: union&disjoint(n)+counting(n) = O(n)
+                        time complexity: n*(union, find, disjoint) +counting(n) = O(n)
                         mem complexity: rank(n)+count(n)+parent(n) = O(n)
+                3-1) 책의 경우를 참고하여 깔끔하게 정리
+                    ACK: union A&B, "아군의 적은 나의 적" 원리를 적용하여 union 및 dis배열 정리
+                    DIS: "적의 적은 나의 아군" 원리를 적용하여 union 및 dis배열 정리
+
     */
     /*
     아이디어 1
         설명:
-            disjoint set이므로, ACK는 union-find를 통해 그룹짓는다.
-            그룹이 반드시 두개밖에 없으므로, DIS를 통해 disjoint를 생성하거나, 두 set을 합친다.
-                disjoint: 두 set이 대립 관계임을 나타내는 Link
-                set 합치기: B의 disjoint가 A와 C에대해 모두 존재한다면, A와 C는 같은 set이다.
+            각 원소들의 집합은 disjoint set 형태이며, 전체 집합은 단 두개임을 이용한다.
+                DIS, 즉 disjoint 관계는 dis배열로 표현한다.
+                ACK는 set을 합치는 union 연산이라 생각하면 된다.
+                각 연산시, disjoint관계를 고려하여 추가적인 union연산 및 dis배열 갱신이 필요할 수 있다.
+                    ACK A B
+                        dis[A] and dis[B] exist : union A&B, union dis[A]&dis[B], update dis배열
+                        dis[A] or dis[B] exist: union A&B, update dis배열
+                        dis[A] and dis[B] not exist: union A& B
+                    DIS A B
+                        dis[A] and dis[B] exist: union A&dis[B], union B&dis[A], update dis베열
+                        dis[A] or dis[B] exist: union A&dis[B], update ids배열 (dis[A]가 존재할경우는 A,B 반대로)
+                        dis[A] and dis[B] not exist: update dis배열
+            disjoint연산이므로, 기본적인 연산은 union-find 방식을 채용했다.
+            정답을 셀 때, disjoint인 관계가 있다면 큰 것을 세고, 없다면 그냥 세면 된다.
         성능:
             time complexity: O(M)
             mem complexity: O(N)
         한계:
+            전체 set이 두개일때만 사용할 수 있는 방법이다.
         피드백:
+            3720ms/4000ms로 성능이 아슬아슬하다.
         책의 아이디어:
+            dis[A]==-1인 경우를 따로 처리하는 대신, union에 예외처리를 두어 if문을 줄였다.
+            정답을 셀 때, A>dis[A]인 경우만 카운팅해서, 배열을 사용하지 않고 중복을 방지했다.
     */
     // Sol
     int testCase;
@@ -186,10 +208,10 @@ void EDITORWARS() {
     //각 테스트케이스
     while (testCase--) {
         int peopleNum, commentNum;
-        vector<int> commentType;  // 0 is ACK, 1 is DIS
-        vector<pair<int, int>> commentRelation;
-        EDITORWARS_Input(peopleNum, commentNum, commentType, commentRelation);
-        auto result = EDITORWARS_Algo(peopleNum, commentNum, commentType, commentRelation);
+        vector<int> commentACK;  // 0 is ACK, 1 is DIS
+        vector<pair<int, int>> commentElement;
+        EDITORWARS_Input(peopleNum, commentNum, commentACK, commentElement);
+        auto result = EDITORWARS_Algo(peopleNum, commentNum, commentACK, commentElement);
         // cout << "::::";
         cout << result << endl;
     }
