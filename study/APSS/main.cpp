@@ -28,87 +28,70 @@ void EDITORWARS_Input(int& peopleNum, int& commentNum, vector<int>& commentACK, 
         cin >> commentElements[i].first >> commentElements[i].second;
     }
 }
-int EDITORWARS_Find(vector<int>& root, int idx) {
-    if (root[idx] == idx) {
+int EDITORWARS_Find(vector<int>& parents, int idx) {
+    if (parents[idx] == idx) {
         return idx;
     }
-    return root[idx] = EDITORWARS_Find(root, root[idx]);
+    return parents[idx] = EDITORWARS_Find(parents, parents[idx]);
 }
-int EDITORWARS_union(vector<int>& root, vector<int>& rank, vector<int>& numOfEle, int idxA, int idxB) {
-    int rootA = EDITORWARS_Find(root, idxA), rootB = EDITORWARS_Find(root, idxB);
+int EDITORWARS_union(vector<int>& parents, vector<int>& rank, vector<int>& setSize, int eleA, int eleB) {
+    // invalid union
+    if (eleA == -1 || eleB == -1) return max(eleA, eleB);
+    // union
+    int rootA = EDITORWARS_Find(parents, eleA), rootB = EDITORWARS_Find(parents, eleB);
     if (rootA == rootB) return rootA;
-    if (rank[rootA] > rank[rootB]) {
-        root[rootB] = rootA;
-        numOfEle[rootA] += numOfEle[rootB];
+    if (rank[rootB] > rank[rootA]) {
+        swap(rootA, rootB);
     } else if (rank[rootA] == rank[rootB]) {
-        root[rootB] = rootA;
         rank[rootA]++;
-        numOfEle[rootA] += numOfEle[rootB];
-    } else {
-        root[rootA] = rootB;
-        numOfEle[rootB] += numOfEle[rootA];
     }
-    return EDITORWARS_Find(root, idxA);
+    parents[rootB] = rootA;
+    setSize[rootA] += setSize[rootB];
+    return rootA;
 }
 string EDITORWARS_Algo(int peopleNum, int commentNum, vector<int> commentACK, vector<pair<int, int>> commentElements) {
     // union-find prepare
-    vector<int> root(peopleNum);
+    vector<int> parents(peopleNum);
     for (int i = 0; i < peopleNum; i++) {
-        root[i] = i;
+        parents[i] = i;
     }
     vector<int> rank(peopleNum, 1);
-    vector<int> numOfEle(peopleNum, 1);
+    vector<int> setSize(peopleNum, 1);
     // disjoint[A]=B means A and B are disjoint set
     vector<int> disjoint(peopleNum, -1);
     // ACK makes union, DIS makes disjoint
     for (int i = 0; i < commentNum; i++) {
-        int rootA = EDITORWARS_Find(root, commentElements[i].first);
-        int rootB = EDITORWARS_Find(root, commentElements[i].second);
+        int rootA = EDITORWARS_Find(parents, commentElements[i].first);
+        int rootB = EDITORWARS_Find(parents, commentElements[i].second);
         if (commentACK[i]) {
             if (rootA == rootB) continue;
             if (disjoint[rootA] == rootB) {
                 return string("CONTRADICTION AT ") + to_string(i + 1);
             }
-            int rootNew = EDITORWARS_union(root, rank, numOfEle, rootA, rootB);
-            // disjoint update, disA==-1 means disjoint[rootA] does not exist
-            int disA = disjoint[rootA], disB = disjoint[rootB];
-            if (disA != -1 && disB != -1) {
-                int disNew = EDITORWARS_union(root, rank, numOfEle, disA, disB);
-                disjoint[rootNew] = disNew, disjoint[disNew] = rootNew;
-            } else if (disA != -1) {
-                disjoint[rootNew] = disA;
-            } else if (disB != -1) {
-                disjoint[rootNew] = disB;
-            }
+            int rootNew = EDITORWARS_union(parents, rank, setSize, rootA, rootB);
+            // union's enemy is my enemy, enemy's enemy is my union
+            int disNew = EDITORWARS_union(parents, rank, setSize, disjoint[rootA], disjoint[rootB]);
+            disjoint[rootNew] = disNew;
+            if (disNew != -1) disjoint[disNew] = rootNew;
         } else {
             if (rootA == rootB) {
                 return string("CONTRADICTION AT ") + to_string(i + 1);
             }
             if (disjoint[rootA] == rootB) continue;
-            // disjoint update
-            int disA = disjoint[rootA], disB = disjoint[rootB];
-            if (disA != -1) {
-                rootB = EDITORWARS_union(root, rank, numOfEle, disA, rootB);
-            }
-            if (disB != -1) {
-                rootA = EDITORWARS_union(root, rank, numOfEle, disB, rootA);
-            }
+            // enemy's enemy is my union
+            rootB = EDITORWARS_union(parents, rank, setSize, disjoint[rootA], rootB);
+            rootA = EDITORWARS_union(parents, rank, setSize, disjoint[rootB], rootA);
             disjoint[rootA] = rootB, disjoint[rootB] = rootA;
         }
     }
     // return
     int maxPeople = 0;
-    vector<int> counted(peopleNum, 0);
     for (int i = 0; i < peopleNum; i++) {
-        if (counted[i]) continue;
-        if (EDITORWARS_Find(root, i) != i) continue;
-        if (disjoint[i] == -1) {
-            maxPeople += numOfEle[i];
-        } else {
-            maxPeople += max(numOfEle[i], numOfEle[disjoint[i]]);
-            counted[disjoint[i]] = 1;
-        }
-        counted[i] = 1;
+        if (EDITORWARS_Find(parents, i) != i) continue;
+        if (i < disjoint[i]) continue;  // 중복 방지
+        int mySize = setSize[i];
+        int enemySize = (disjoint[i] == -1 ? 0 : setSize[disjoint[i]]);
+        maxPeople += max(mySize, enemySize);
     }
     return string("MAX PARTY SIZE IS ") + to_string(maxPeople);
 }
@@ -172,7 +155,6 @@ void EDITORWARS() {
                 3-1) 책의 경우를 참고하여 깔끔하게 정리
                     ACK: union A&B, "아군의 적은 나의 적" 원리를 적용하여 union 및 dis배열 정리
                     DIS: "적의 적은 나의 아군" 원리를 적용하여 union 및 dis배열 정리
-
     */
     /*
     아이디어 1
