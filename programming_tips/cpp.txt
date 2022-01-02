@@ -54,3 +54,6 @@ tree 구현
 		
 find vs lower_bound
 	find는 n time, lower_bound는 이진탐색이므로 lgn time이다. 
+
+c-style 배열선언은, vector와 다르게 내용을 자동으로 초기화하지 않는다.
+	따라서 memset이나 반복문등을 이용하여 초기화를 해야한다.
