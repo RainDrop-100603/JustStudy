@@ -239,13 +239,4 @@ class RangeMinimunQuery {
     }
 };
 
-class TrieNode {
-    //  if you want to change input_char_range,
-    //  change "TrieNode* children", "func: int toIdx()"
-    TrieNode* children[26];
-    bool terminal;
-    TrieNode() : terminal(false) {}
-    ~TrieNode() { for () }
-};
-
 #endif

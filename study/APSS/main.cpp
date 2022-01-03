@@ -1,6 +1,8 @@
 // Algorithmic Problem Solving Strategies Book 1, 2
 //대회에서 배우는 알고리즘 문제해결 전략 1, 2
 
+#include <memory.h>
+
 #include <algorithm>
 #include <cmath>
 #include <ctime>
@@ -13,6 +15,61 @@
 #include "classes.h"
 
 using namespace std;
+
+class TrieNode {
+   public:
+    TrieNode* children[26];
+    int terminal = -1;
+    int priority = -1;
+    int autoTerminal = -1;
+    int autoPriority = -1;
+    TrieNode() { memset(children, 0, sizeof(children)); }
+    ~TrieNode() {
+        for (auto& ele : children) {
+            if (ele) delete ele;
+        }
+    }
+    int stringToIdx(char chars) { return chars - 'A'; }
+    void insert(const vector<string>& dict, const string& str, int idx, int terminal, int priority) {
+        // insert finish
+        if (idx == str.length()) {
+            this->terminal = terminal;
+            this->priority = priority;
+            return;
+        }
+        // set autoComplete, root do not have autoComplete
+        if (idx > 0) {
+            if (priority > this->autoPriority) {
+                this->autoPriority = priority;
+                this->autoTerminal = terminal;
+            } else if (priority == this->autoPriority && str.compare(dict[this->autoTerminal]) == -1) {
+                this->autoTerminal = terminal;
+            }
+        }
+
+        // goto terminal
+        auto& target = children[stringToIdx(str[idx])];
+        if (target == NULL) target = new TrieNode();
+        target->insert(dict, str, idx + 1, terminal, priority);
+    }
+    TrieNode* find(const string& str, int idx) {
+        // found
+        if (str.length() == idx) return this;
+        // find
+        auto& target = children[stringToIdx(str[idx])];
+        if (target == NULL) return NULL;
+        return target->find(str, idx + 1);
+    }
+    int autoComplete(const string& str, int idx, int terminal) {
+        // found
+        if (this->autoTerminal == terminal) return idx + 1;
+        if (str.length() == idx) return idx;
+        // find
+        auto& target = children[stringToIdx(str[idx])];
+        if (target == NULL) return 20;
+        return target->autoComplete(str, idx + 1, terminal);
+    }
+};
 
 void SOLONG_Input(int& dictLen, int& inputLen, vector<string>& dictWord, vector<int>& dictPriority, vector<string>& inputWord) {
     cin >> dictLen >> inputLen;
@@ -33,18 +90,18 @@ int SOLONG_Algo(int dictLen, int inputLen, const vector<string>& dictWord, const
     // make trie
     TrieNode trieRoot;
     for (int i = 0; i < dictLen; i++) {
-        trieRoot.insert(dictWord[i], dictPriority[i], i);
+        trieRoot.insert(dictWord, dictWord[i], 0, i, dictPriority[i]);
     }
-    // priority find
+    // autoComplete find
     int ret = 0;
     for (int i = 0; i < inputLen; i++) {
         int wordLen = inputWord[i].length();
-        auto findResult = trieRoot.find(inpurWord[i]);
-        if (findResult && findResult.terminal != -1) {
-            wordLen = min(wordLen, trieRoot.autoComplete(inputWord[i], findResult.terminal, findResult.priority));
-        }
-        ret += wordLen;
+        auto node = trieRoot.find(inputWord[i], 0);
+        int autoComplete = 20;
+        if (node) autoComplete = trieRoot.autoComplete(inputWord[i], 0, node->terminal);
+        ret += min(wordLen, autoComplete) + 1;  // +1 은 공백을 의미
     }
+    ret--;  //공백 하나 제거
     // return
     return ret;
 }
@@ -127,11 +184,10 @@ void SOLONG() {
             time complexity: O(M+N), M=입력의 갯수, N=단어의 갯수
             mem complexity: O(N)
         한계:
-            전체 set이 두개일때만 사용할 수 있는 방법이다.
+            c-style로 배열을 선언했는데, vector를 이용하는 방법은 없는가?
         피드백:
-            3720ms/4000ms로 성능이 아슬아슬하다.
-                cin대신 scanf를 이용하여 cin.ignore()를 없애고 입력속도를 높였다.
-                ACK와 DIS는 항상 3글자 이므로, char배열로 scanf를 이용하여 속도를 높였다.
+            재귀할때 return 까먹지 말자
+            c-style로 배열을 선언하면 반드시 초기화를 해야한다.
         책의 아이디어:
             dis[A]==-1인 경우를 따로 처리하는 대신, union에 예외처리를 두어 if문을 줄였다.
             정답을 셀 때, A>dis[A]인 경우만 카운팅해서, 배열을 사용하지 않고 중복을 방지했다.
@@ -143,7 +199,8 @@ void SOLONG() {
     while (testCase--) {
         int dictLen, inputLen;
         vector<string> dictWord, inputWord;  // 0 is ACK, 1 is DIS
-        vector<int> dictPriority SOLONG_Input(dictLen, inputLen, dictWord, dictPriority, inputWord);
+        vector<int> dictPriority;
+        SOLONG_Input(dictLen, inputLen, dictWord, dictPriority, inputWord);
         auto result = SOLONG_Algo(dictLen, inputLen, dictWord, dictPriority, inputWord);
         // cout << "::::";
         cout << result << endl;
