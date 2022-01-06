@@ -206,11 +206,30 @@ void SOLONG() {
         cout << result << endl;
     }
 }
+void SOLONG_test() {
+    // 문제에서 주어진 예시
+    cout << "testcase1" << endl;
+    vector<string> dictWord1 = {"ALL", "AND", "FISH", "FOR", "SO", "THANKS", "THE"};
+    vector<string> inputWord1 = {"SO", "LONG", "AND", "THANKS", "FOR", "ALL", "THE", "FISH"};
+    vector<int> dictPriority1 = {4, 3, 8, 6, 4, 9, 9};
+    if (28 != SOLONG_Algo(dictWord1.size(), inputWord1.size(), dictWord1, dictPriority1, inputWord1)) {
+        cout << "testcase1 failed" << endl;
+    }
+    cout << "testcase2" << endl;
+    vector<string> dictWord2 = {"ALL", "AND", "FISH", "FOR", "SO", "THANKS", "THE"};
+    vector<string> inputWord2 = {"SO", "LONG", "AND", "THANKS", "FOR", "ALL", "THE", "FISH"};
+    vector<int> dictPriority2 = {4, 5, 3, 6, 8, 1, 2};
+    if (29 != SOLONG_Algo(dictWord2.size(), inputWord2.size(), dictWord2, dictPriority2, inputWord2)) {
+        cout << "testcase2 failed" << endl;
+    }
+    //
+}
 
 int main(void) {
     // clock_t start,end;
     // start=clock();
-    SOLONG();
+    // SOLONG();
+    SOLONG_test();
     // end=clock();;
     // cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
     return 0;
