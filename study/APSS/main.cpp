@@ -31,12 +31,6 @@ class TrieNode {
     }
     int stringToIdx(char chars) { return chars - 'A'; }
     void insert(const vector<string>& dict, const string& str, int idx, int terminal, int priority) {
-        // insert finish
-        if (idx == str.length()) {
-            this->terminal = terminal;
-            this->priority = priority;
-            return;
-        }
         // set autoComplete, root do not have autoComplete
         if (idx > 0) {
             if (priority > this->autoPriority) {
@@ -46,8 +40,13 @@ class TrieNode {
                 this->autoTerminal = terminal;
             }
         }
-
-        // goto terminal
+        // if insert finished
+        if (idx == str.length()) {
+            this->terminal = terminal;
+            this->priority = priority;
+            return;
+        }
+        // goto next node
         auto& target = children[stringToIdx(str[idx])];
         if (target == NULL) target = new TrieNode();
         target->insert(dict, str, idx + 1, terminal, priority);
@@ -80,10 +79,12 @@ void SOLONG_Input(int& dictLen, int& inputLen, vector<string>& dictWord, vector<
     for (int i = 0; i < dictLen; i++) {
         scanf("%s %d", strBuffer, &dictPriority[i]);
         dictWord[i] = string(strBuffer);
+        // cin >> dictWord[i] >> dictPriority[i];
     }
     for (int i = 0; i < inputLen; i++) {
         scanf("%s", strBuffer);
         inputWord[i] = string(strBuffer);
+        // cin >> inputWord[i];
     }
 }
 int SOLONG_Algo(int dictLen, int inputLen, const vector<string>& dictWord, const vector<int>& dictPriority, const vector<string>& inputWord) {
@@ -95,13 +96,13 @@ int SOLONG_Algo(int dictLen, int inputLen, const vector<string>& dictWord, const
     // autoComplete find
     int ret = 0;
     for (int i = 0; i < inputLen; i++) {
-        int wordLen = inputWord[i].length();
         auto node = trieRoot.find(inputWord[i], 0);
+        int wordLen = inputWord[i].length();
         int autoComplete = 20;
-        if (node) autoComplete = trieRoot.autoComplete(inputWord[i], 0, node->terminal);
-        ret += min(wordLen, autoComplete) + 1;  // +1 은 공백을 의미
+        if (node && node->terminal != -1) autoComplete = trieRoot.autoComplete(inputWord[i], 0, node->terminal);
+        ret += min(wordLen, autoComplete);
     }
-    ret--;  //공백 하나 제거
+    ret += inputLen - 1;  //단어 사이사이 공백
     // return
     return ret;
 }
@@ -174,8 +175,7 @@ void SOLONG() {
                         trie 생성: N*단어의길이(10)*단어비교(10) = O(N), N=단어의 개수
                         자동완성 탐색: M*단어의길이(10) = O(M), M=입력의개수
     */
-    /*
-    아이디어 1
+    /*아이디어 1
         설명:
             힌트-알고리즘-trie를 이용한 방법
             현재노드에서 자동완성을 한다면 반환할 원소의 terimal과 priority를 저장하도록 하여, 자동완성을 용이하게 한다.
@@ -222,14 +222,22 @@ void SOLONG_test() {
     if (29 != SOLONG_Algo(dictWord2.size(), inputWord2.size(), dictWord2, dictPriority2, inputWord2)) {
         cout << "testcase2 failed" << endl;
     }
-    //
+    // 우선순위가 모두 같을 때
+    cout << "testcase3" << endl;
+    vector<string> dictWord3 = {"ALL", "AND", "FISH", "FOR", "SO", "THANKS", "THE"};
+    vector<int> dictPriority3 = {1, 1, 1, 1, 1, 1, 1};
+    vector<string> inputWord3 = {"SO", "LONG", "AND", "THANKS", "FOR", "ALL", "THE", "FISH"};  // 2,4,3,2,3,2,3,2 -> 21
+    auto ret3 = SOLONG_Algo(dictWord3.size(), inputWord3.size(), dictWord3, dictPriority3, inputWord3);
+    if (28 != ret3) {
+        cout << "testcase3 failed, 28 != " << ret3 << endl;
+    }
 }
 
 int main(void) {
     // clock_t start,end;
     // start=clock();
-    // SOLONG();
-    SOLONG_test();
+    SOLONG();
+    // SOLONG_test();
     // end=clock();;
     // cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
     return 0;
