@@ -22,7 +22,7 @@ int buy(int mNumber, int mStock, int mQuantity, int mPrice) {
     // set valid
     invalidTrade.push_back(0);
     // trading
-    while (!sellQueue[mStock].empty()) {
+    while (mQuantity && !sellQueue[mStock].empty()) {
         auto tmp = sellQueue[mStock].top();
         int price(tmp.first * -1), idx(tmp.second * -1), &quantity(quantities[idx]);
         if (price > mPrice) break;
@@ -34,7 +34,6 @@ int buy(int mNumber, int mStock, int mQuantity, int mPrice) {
         if (quantity > mQuantity) {
             quantity -= mQuantity;
             mQuantity = 0;
-            break;
         } else {
             mQuantity -= quantity;
             quantity = 0;
@@ -53,7 +52,7 @@ int sell(int mNumber, int mStock, int mQuantity, int mPrice) {
     // set valid
     invalidTrade.push_back(0);
     // trading
-    while (!buyQueue[mStock].empty()) {
+    while (mQuantity && !buyQueue[mStock].empty()) {
         auto tmp = buyQueue[mStock].top();
         int price(tmp.first), idx(tmp.second * -1), &quantity(quantities[idx]);
         if (price < mPrice) break;
@@ -65,7 +64,6 @@ int sell(int mNumber, int mStock, int mQuantity, int mPrice) {
         if (quantity > mQuantity) {
             quantity -= mQuantity;
             mQuantity = 0;
-            break;
         } else {
             mQuantity -= quantity;
             quantity = 0;
