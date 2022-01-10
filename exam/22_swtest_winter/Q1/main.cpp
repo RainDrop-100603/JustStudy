@@ -4,6 +4,10 @@
 
 #include <stdio.h>
 
+#include <iostream>
+
+using namespace std;
+
 #define CMD_INIT 1
 #define CMD_BUY 2
 #define CMD_SELL 3
@@ -70,6 +74,7 @@ static bool run() {
                 isCorrect = false;
                 break;
         }
+        // cout << i << " " << isCorrect << endl;
     }
 
     return isCorrect;

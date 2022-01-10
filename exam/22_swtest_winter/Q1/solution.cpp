@@ -5,14 +5,14 @@
 using namespace std;
 
 vector<priority_queue<pair<int, int>>> buyQueue, sellQueue;
-vector<int> validTrade, quantities, minPrice, maxProfit;
+vector<int> invalidTrade, quantities, minPrice, maxProfit;
 
 int MAXPRICE = 1000000;
 
 void init() {
     buyQueue = vector<priority_queue<pair<int, int>>>(6);   // pair (price , -1 * idx)
     sellQueue = vector<priority_queue<pair<int, int>>>(6);  // pair (-1 * price, -1 * idx)
-    validTrade = vector<int>(1, 0);
+    invalidTrade = vector<int>(1, 1);
     quantities = vector<int>(1, 0);
     minPrice = vector<int>(6, MAXPRICE + 100);
     maxProfit = vector<int>(6, 0);
@@ -20,12 +20,16 @@ void init() {
 
 int buy(int mNumber, int mStock, int mQuantity, int mPrice) {
     // set valid
-    validTrade.push_back(1);
+    invalidTrade.push_back(0);
     // trading
     while (!sellQueue[mStock].empty()) {
         auto tmp = sellQueue[mStock].top();
         int price(tmp.first * -1), idx(tmp.second * -1), &quantity(quantities[idx]);
         if (price > mPrice) break;
+        if (invalidTrade[idx]) {
+            sellQueue[mStock].pop();
+            continue;
+        }
         // trade
         if (quantity > mQuantity) {
             quantity -= mQuantity;
@@ -47,12 +51,16 @@ int buy(int mNumber, int mStock, int mQuantity, int mPrice) {
 
 int sell(int mNumber, int mStock, int mQuantity, int mPrice) {
     // set valid
-    validTrade.push_back(1);
+    invalidTrade.push_back(0);
     // trading
     while (!buyQueue[mStock].empty()) {
         auto tmp = buyQueue[mStock].top();
         int price(tmp.first), idx(tmp.second * -1), &quantity(quantities[idx]);
         if (price < mPrice) break;
+        if (invalidTrade[idx]) {
+            buyQueue[mStock].pop();
+            continue;
+        }
         // trade
         if (quantity > mQuantity) {
             quantity -= mQuantity;
@@ -72,6 +80,6 @@ int sell(int mNumber, int mStock, int mQuantity, int mPrice) {
     return mQuantity;
 }
 
-void cancel(int mNumber) { validTrade[mNumber] = 0; }
+void cancel(int mNumber) { invalidTrade[mNumber] = 1; }
 
 int bestProfit(int mStock) { return maxProfit[mStock]; }
