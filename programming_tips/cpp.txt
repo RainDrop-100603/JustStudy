@@ -57,3 +57,7 @@ find vs lower_bound
 
 c-style 배열선언은, vector와 다르게 내용을 자동으로 초기화하지 않는다.
 	따라서 memset이나 반복문등을 이용하여 초기화를 해야한다.
+
+#define의 내용이 같다면 겹쳐도 된다?
+	https://github.com/RainDrop-100603/JustStudy/tree/master/exam/22_swtest_winter/Q2
+	main.cpp와 solution.cpp 참고 
