@@ -94,7 +94,7 @@ static void cmd_countMember() {
 int main() {
     setbuf(stdout, NULL);
 
-    //	freopen("sample_input.txt", "r", stdin);
+    freopen("sample_input.txt", "r", stdin);
 
     int T, scoreIdx;
     scanf("%d %d", &T, &scoreIdx);
