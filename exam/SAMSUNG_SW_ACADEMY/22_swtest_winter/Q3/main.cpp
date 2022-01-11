@@ -4,6 +4,10 @@
 
 #include <stdio.h>
 
+#include <iostream>
+
+using namespace std;
+
 extern void init(int limit);
 extern void play();
 
@@ -113,6 +117,8 @@ int main() {
             play();
 
             if (hit != 0) callcount = MAX_CALLCOUNT;
+
+                        cout << hit << ":" << callcount << endl;
 
             if (callcount > limit) score = 0;
 
