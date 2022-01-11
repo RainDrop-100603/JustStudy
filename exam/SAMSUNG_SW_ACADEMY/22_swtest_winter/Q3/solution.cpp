@@ -5,7 +5,6 @@
 #define SUBMARINE 4
 #define DESTROYER 5
 
-#include <iostream>
 #include <utility>
 #include <vector>
 
@@ -63,9 +62,9 @@ void repeatFire(int row, int col, int& currentSize, int remain, int up, int down
         if (currentSize == shipSize) return;
         int tmpRow = row + i * down - i * up;
         int tmpCol = col + i * right - i * left;
-        int ret = fire(tmpRow, tmpCol);
-        boards[tmpRow][tmpCol] = ret;
-        if (ret != ship) {
+        int& target = boards[tmpRow][tmpCol];
+        if (target == -1) target = fire(tmpRow, tmpCol);
+        if (target != ship) {
             return;
         } else {
             currentSize++;
@@ -77,9 +76,9 @@ void findShip(int row, int col) {
     int shipSize = shipsSize[ship];
     shipsRemain[ship] = 0;
     // check remain space
-    int spaceUp = spaceRemain(row, col, DIR_UP, ship);
-    int spaceDown = spaceRemain(row, col, DIR_DOWN, ship);
-    int spaceLeft = spaceRemain(row, col, DIR_LEFT, ship);
+    int spaceUp = spaceRemain(row, col, DIR_UP);
+    int spaceDown = spaceRemain(row, col, DIR_DOWN);
+    int spaceLeft = spaceRemain(row, col, DIR_LEFT);
     int spaceRight = spaceRemain(row, col, DIR_RIGHT, ship);
     // find ship
     int currentSize = 1;
@@ -119,12 +118,4 @@ void play() {
         if (nowPoint != 0 && shipsRemain[nowPoint]) findShip(row, col);
         idx++;
     }
-
-    // cout << "---------------\n";
-    // for (auto& ele : boards) {
-    //     for (auto& ele2 : ele) {
-    //         cout << ele2;
-    //     }
-    //     cout << endl;
-    // }
 }
