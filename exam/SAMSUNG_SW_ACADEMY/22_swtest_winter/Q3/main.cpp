@@ -110,15 +110,37 @@ int main() {
         for (int game = 0; game < 10; ++game) {
             doarrangment();
 
+            int cache[10][10];
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    cache[i][j] = board[i][j];
+                }
+            }
+
             hit = 0;
             for (int k = 0; k < 5; ++k) hit += len[k];
 
             callcount = 0;
             play();
 
-            if (hit != 0) callcount = MAX_CALLCOUNT;
+            // cout << hit << ":" << callcount << endl;
 
-                        cout << hit << ":" << callcount << endl;
+            if (hit != 0) {
+                callcount = MAX_CALLCOUNT;
+                for (auto& ele : cache) {
+                    for (auto& ele2 : ele) {
+                        cout << ele2 << " ";
+                    }
+                    cout << endl;
+                }
+                cout << "-------\n";
+                for (auto& ele : board) {
+                    for (auto& ele2 : ele) {
+                        cout << ele2 << " ";
+                    }
+                    cout << endl;
+                }
+            }
 
             if (callcount > limit) score = 0;
 

@@ -5,13 +5,13 @@
 #define SUBMARINE 4
 #define DESTROYER 5
 
+#include <iostream>
 #include <utility>
 #include <vector>
 
 using namespace std;
 
-vector<vector<int>> boards;    // -1: none, 0: MISS, 1~5: ships
-vector<pair<int, int>> stack;  // pos that i have to check, (row,col)
+vector<vector<int>> boards;  // -1: none, 0: MISS, 1~5: ships
 vector<int> shipsRemain;
 vector<int> shipsSize = {0, 5, 4, 3, 3, 2};
 
@@ -22,29 +22,29 @@ int DIR_RIGHT = 3;
 
 extern int fire(int r, int c);
 
-int spaceRemain(int row, int col, int direction) {
+int spaceRemain(int row, int col, int direction, int value = -1) {
     int count = 0;
     if (direction == DIR_UP) {
         row--;
-        while (row >= 0 && boards[row][col] == -1) {
+        while (row >= 0 && (boards[row][col] == -1 || boards[row][col] == value)) {
             count++;
             row--;
         }
     } else if (direction == DIR_LEFT) {
         col--;
-        while (col >= 0 && boards[row][col] == -1) {
+        while (col >= 0 && (boards[row][col] == -1 || boards[row][col] == value)) {
             count++;
             col--;
         }
     } else if (direction == DIR_DOWN) {
         row++;
-        while (row < 10 && boards[row][col] == -1) {
+        while (row < 10 && (boards[row][col] == -1 || boards[row][col] == value)) {
             count++;
             row++;
         }
     } else if (direction == DIR_RIGHT) {
         col++;
-        while (col < 10 && boards[row][col] == -1) {
+        while (col < 10 && (boards[row][col] == -1 || boards[row][col] == value)) {
             count++;
             col++;
         }
@@ -65,37 +65,33 @@ void repeatFire(int row, int col, int& currentSize, int remain, int up, int down
         int tmpCol = col + i * right - i * left;
         int ret = fire(tmpRow, tmpCol);
         boards[tmpRow][tmpCol] = ret;
-        if (ret == 0) {
+        if (ret != ship) {
             return;
-        } else if (ret != ship) {
-            stack.push_back(make_pair(tmpRow, tmpCol));
-            break;
         } else {
             currentSize++;
         }
     }
 }
-void findShip(vector<pair<int, int>>& stack) {
-    int row = stack.back().first;
-    int col = stack.back().second;
+void findShip(int row, int col) {
     int ship = boards[row][col];
     int shipSize = shipsSize[ship];
-    stack.pop_back();
     shipsRemain[ship] = 0;
     // check remain space
-    int spaceUp = spaceRemain(row, col, DIR_UP);
-    int spaceDown = spaceRemain(row, col, DIR_DOWN);
-    int spaceLeft = spaceRemain(row, col, DIR_LEFT);
-    int spaceRight = spaceRemain(row, col, DIR_RIGHT);
+    int spaceUp = spaceRemain(row, col, DIR_UP, ship);
+    int spaceDown = spaceRemain(row, col, DIR_DOWN, ship);
+    int spaceLeft = spaceRemain(row, col, DIR_LEFT, ship);
+    int spaceRight = spaceRemain(row, col, DIR_RIGHT, ship);
     // find ship
     int currentSize = 1;
     if (1 + spaceDown + spaceUp >= shipSize) {
+        // col check
         repeatFire(row, col, currentSize, spaceUp, 1, 0, 0, 0);
         repeatFire(row, col, currentSize, spaceDown, 0, 1, 0, 0);
-    } else {
-        repeatFire(row, col, currentSize, spaceLeft, 0, 0, 1, 0);
-        repeatFire(row, col, currentSize, spaceRight, 0, 0, 0, 1);
     }
+    if (currentSize == shipSize) return;
+    // row check
+    repeatFire(row, col, currentSize, spaceLeft, 0, 0, 1, 0);
+    repeatFire(row, col, currentSize, spaceRight, 0, 0, 0, 1);
 }
 
 void init(int limit) {}
@@ -103,7 +99,6 @@ void init(int limit) {}
 void play() {
     // init
     boards = vector<vector<int>>(10, vector<int>(10, -1));
-    stack = vector<pair<int, int>>();
     shipsRemain = vector<int>{0, 1, 1, 1, 1, 1};
     // fire
     int idx = 0;
@@ -116,21 +111,20 @@ void play() {
             }
         }
         if (smallestShip == 0) break;
-        // choose shooting point
-        int row = idx / 10, col = idx % 10;
-        if (!fireHeuristic(row, col, shipsSize[smallestShip])) {
-            idx++;
-            continue;
-        }
         // shooting
-        boards[row][col] = fire(row, col);
-        // shooting feedback
-        if (boards[row][col] != 0) {
-            stack.push_back(make_pair(row, col));
-            while (!stack.empty()) {
-                findShip(stack);
-            }
-        }
+        int row = idx / 10, col = idx % 10;
+        int& nowPoint = boards[row][col];
+        if (nowPoint == -1 && fireHeuristic(row, col, shipsSize[smallestShip])) nowPoint = fire(row, col);
+        // point feedback
+        if (nowPoint != 0 && shipsRemain[nowPoint]) findShip(row, col);
         idx++;
     }
+
+    // cout << "---------------\n";
+    // for (auto& ele : boards) {
+    //     for (auto& ele2 : ele) {
+    //         cout << ele2;
+    //     }
+    //     cout << endl;
+    // }
 }
