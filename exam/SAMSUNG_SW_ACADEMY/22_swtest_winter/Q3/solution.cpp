@@ -9,4 +9,9 @@ extern int fire(int r, int c);
 
 void init(int limit) {}
 
-void play() {}
+void play() {
+    // choose shooting point
+    // heuristic - can i shoot?
+    // shooting
+    // shooting feedback
+}
