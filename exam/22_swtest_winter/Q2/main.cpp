@@ -4,6 +4,10 @@
 
 #include <stdio.h>
 
+#include <iostream>
+
+using namespace std;
+
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 #define MALE 0
@@ -19,6 +23,8 @@
 #define CHILD 2
 
 #define NAME_LEN_MAX 19
+
+int DEBUGIDX;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -36,6 +42,9 @@ static void cmd_init() {
     int initialMemberSex;
 
     scanf("%s %d", initialMemberName, &initialMemberSex);
+
+    DEBUGIDX = 0;
+    cout << "--------------" << endl;
 
     init(initialMemberName, initialMemberSex);
 }
@@ -56,6 +65,7 @@ static void cmd_addMember() {
 
     if (ansbool != userAns) {
         score = 0;
+        cout << DEBUGIDX << endl;
     }
 }
 
@@ -72,6 +82,7 @@ static void cmd_getDistance() {
 
     if (ans != userAns) {
         score = 0;
+        cout << DEBUGIDX << endl;
     }
 }
 
@@ -85,9 +96,9 @@ static void cmd_countMember() {
 
     int ans;
     scanf("%d", &ans);
-
     if (ans != userAns) {
         score = 0;
+        cout << DEBUGIDX << ":" << ans << ":" << userAns << endl;
     }
 }
 
@@ -108,6 +119,8 @@ int main() {
         for (int cmdIdx = 0; cmdIdx < cmdL; ++cmdIdx) {
             int c_num;
             scanf("%d", &c_num);
+
+            DEBUGIDX = cmdIdx;
 
             switch (c_num) {
                 case INIT:
@@ -130,7 +143,6 @@ int main() {
                     break;
             }
         }
-
         printf("#%d %d\n", TC, score == scoreIdx ? scoreIdx : 0);
     }
     return 0;
