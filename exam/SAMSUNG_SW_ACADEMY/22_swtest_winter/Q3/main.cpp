@@ -90,7 +90,7 @@ static void doarrangment() {
 int main() {
     int TC;
 
-    // freopen("sample_input.txt", "r", stdin);
+    freopen("sample_input.txt", "r", stdin);
 
     setbuf(stdout, NULL);
     scanf("%d", &TC);
