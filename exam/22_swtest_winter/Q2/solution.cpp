@@ -147,7 +147,7 @@ int countMember(char name[], int dist) {
     int idx = nameMapping.find(string(name))->second;
     int cnt = 0;
     for (int i = 0; i < memberNum; i++) {
-        if (i == idx) continue;
+        if (i == idx) continue;  // dist[i][i]==0 from updateDistances, so do not count it
         if (distances[idx][i] == dist) cnt++;
     }
     return cnt;
