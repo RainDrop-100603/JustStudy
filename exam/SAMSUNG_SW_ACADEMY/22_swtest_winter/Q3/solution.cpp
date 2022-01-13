@@ -76,7 +76,7 @@ void findShip(int row, int col) {
     int shipSize = shipsSize[ship];
     shipsRemain[ship] = 0;
     // check remain space
-    int spaceUp = spaceRemain(row, col, DIR_UP);
+    int spaceUp = spaceRemain(row, col, DIR_UP, ship);
     int spaceDown = spaceRemain(row, col, DIR_DOWN);
     int spaceLeft = spaceRemain(row, col, DIR_LEFT);
     int spaceRight = spaceRemain(row, col, DIR_RIGHT, ship);
