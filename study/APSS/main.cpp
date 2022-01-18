@@ -106,7 +106,27 @@ int SOLONG_Algo(int dictLen, int inputLen, const vector<string>& dictWord, const
     // return
     return ret;
 }
-void SOLONG() {
+int SOLONG_Main() {
+    int dictLen, inputLen;
+    vector<string> dictWord, inputWord;  // 0 is ACK, 1 is DIS
+    vector<int> dictPriority;
+    SOLONG_Input(dictLen, inputLen, dictWord, dictPriority, inputWord);
+    return SOLONG_Algo(dictLen, inputLen, dictWord, dictPriority, inputWord);
+}
+void SOLONG_test() {
+    setbuf(stdout, NULL);
+    freopen("sample_input.txt", "r", stdin);
+    int testCase;
+    cin >> testCase;
+    vector<int> answer = {28, 29, 3, 5, 2};
+    for (int i = 0; i < testCase; i++) {
+        auto ret = SOLONG_Main();
+        if (ret != answer[i]) {
+            cout << "testCase " << i << "is failed, answer is " << answer[i] << ", ret is " << ret << endl;
+        }
+    }
+}
+void SOLONG_print() {
     /*설명 및 입력
     설명
         이번에 출시한 돌고래용 타블렛의 자동 완성 알고리즘은 사전에 저장된 N개의 단어들을 이용해 자동완성을 수행합니다.
@@ -195,49 +215,17 @@ void SOLONG() {
     // Sol
     int testCase;
     cin >> testCase;
-    //각 테스트케이스
     while (testCase--) {
-        int dictLen, inputLen;
-        vector<string> dictWord, inputWord;  // 0 is ACK, 1 is DIS
-        vector<int> dictPriority;
-        SOLONG_Input(dictLen, inputLen, dictWord, dictPriority, inputWord);
-        auto result = SOLONG_Algo(dictLen, inputLen, dictWord, dictPriority, inputWord);
-        // cout << "::::";
-        cout << result << endl;
-    }
-}
-void SOLONG_test() {
-    // 문제에서 주어진 예시
-    cout << "testcase1" << endl;
-    vector<string> dictWord1 = {"ALL", "AND", "FISH", "FOR", "SO", "THANKS", "THE"};
-    vector<string> inputWord1 = {"SO", "LONG", "AND", "THANKS", "FOR", "ALL", "THE", "FISH"};
-    vector<int> dictPriority1 = {4, 3, 8, 6, 4, 9, 9};
-    if (28 != SOLONG_Algo(dictWord1.size(), inputWord1.size(), dictWord1, dictPriority1, inputWord1)) {
-        cout << "testcase1 failed" << endl;
-    }
-    cout << "testcase2" << endl;
-    vector<string> dictWord2 = {"ALL", "AND", "FISH", "FOR", "SO", "THANKS", "THE"};
-    vector<string> inputWord2 = {"SO", "LONG", "AND", "THANKS", "FOR", "ALL", "THE", "FISH"};
-    vector<int> dictPriority2 = {4, 5, 3, 6, 8, 1, 2};
-    if (29 != SOLONG_Algo(dictWord2.size(), inputWord2.size(), dictWord2, dictPriority2, inputWord2)) {
-        cout << "testcase2 failed" << endl;
-    }
-    // 우선순위가 모두 같을 때
-    cout << "testcase3" << endl;
-    vector<string> dictWord3 = {"ALL", "AND", "FISH", "FOR", "SO", "THANKS", "THE"};
-    vector<int> dictPriority3 = {1, 1, 1, 1, 1, 1, 1};
-    vector<string> inputWord3 = {"SO", "LONG", "AND", "THANKS", "FOR", "ALL", "THE", "FISH"};  // 2,4,3,2,3,2,3,2 -> 21
-    auto ret3 = SOLONG_Algo(dictWord3.size(), inputWord3.size(), dictWord3, dictPriority3, inputWord3);
-    if (28 != ret3) {
-        cout << "testcase3 failed, 28 != " << ret3 << endl;
+        auto ret = SOLONG_Main();
+        cout << ret << endl;
     }
 }
 
 int main(void) {
     // clock_t start,end;
     // start=clock();
-    SOLONG();
-    // SOLONG_test();
+    // SOLONG_print();
+    SOLONG_test();
     // end=clock();;
     // cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
     return 0;
