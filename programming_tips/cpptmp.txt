@@ -1096,9 +1096,9 @@ https://stackoverflow.com/questions/31162367/significance-of-ios-basesync-with-s
 					첫번째 원소부터 비교해서 작은 순서(사전에서 앞쪽)면 -1
 					모두 비교해서 같다면 길이가 짧은 쪽이 -1
 					더 확인은 해보자 
-					str==str2 -> return 0
-					str>str2 -> return 1		(사전 순서로 느릴 때, 더 크다고 한다. 즉 사전에서 더 뒤에 idx에 있다면 더 큰 것이다.)	
-					str<str2 -> return -1
+					str==str2 -> ret == 0
+					str>str2 -> ret > 0		(사전 순서로 느릴 때, 더 크다고 한다. 즉 사전에서 더 뒤에 idx에 있다면 더 큰 것이다.)	
+					str<str2 -> ret < 0
 					index와 len은 str의 index부터 len 길이를, index2와 len2는 str2의 그것을 의미한다.
 			str.copy(...)
 				size_t copy(char* arr, size_t len, size_t index= 0) const;
