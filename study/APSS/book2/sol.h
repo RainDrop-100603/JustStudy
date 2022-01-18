@@ -111,3 +111,11 @@ void FAMILYTREE();
 void MEASURETIME_Input(int& eleNum, vector<int>& unsorted);
 int MEASURETIME_Algo(int eleNum, vector<int> unsorted);
 void MEASURETIME();
+
+// trie 개요, Algo1은 trie에 특정한 비교를 도입했고, Algo2는 비교가 필요 없더록 사전정렬했다.
+void SOLONG_Input(int& dictLen, int& inputLen, vector<string>& dictWord, vector<int>& dictPriority, vector<string>& inputWord);
+int SOLONG_Algo(int dictLen, int inputLen, const vector<string>& dictWord, const vector<int>& dictPriority, const vector<string>& inputWord);
+int SOLONG_Algo2(int dictLen, int inputLen, const vector<string>& dictWord, const vector<int>& dictPriority, const vector<string>& inputWord);
+int SOLONG_Main();
+void SOLONG_print();
+void SOLONG_test();

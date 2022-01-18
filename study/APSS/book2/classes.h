@@ -1,6 +1,8 @@
 #ifndef __CLASSES_H__
 #define __CLASSES_H__
 
+#include <memory.h>
+
 #include <iostream>
 #include <vector>
 
@@ -236,6 +238,105 @@ class RangeMinimunQuery {
         update(0, 0, size - 1, size - 1, USELESS);
         size--;
         return true;
+    }
+};
+
+class SOLONG_TrieNode {
+   public:
+    SOLONG_TrieNode* children[26];
+    int terminal = -1;
+    int priority = -1;
+    int autoTerminal = -1;
+    int autoPriority = -1;
+    SOLONG_TrieNode() { memset(children, 0, sizeof(children)); }
+    ~SOLONG_TrieNode() {
+        for (auto& ele : children) {
+            if (ele) delete ele;
+        }
+    }
+    int stringToIdx(char chars) { return chars - 'A'; }
+    void insert(const vector<string>& dict, const string& str, int idx, int terminal, int priority) {
+        // set autoComplete, root do not have autoComplete
+        if (idx > 0) {
+            if (priority > this->autoPriority) {
+                this->autoPriority = priority;
+                this->autoTerminal = terminal;
+            } else if (priority == this->autoPriority && str.compare(dict[this->autoTerminal]) < 0) {
+                this->autoTerminal = terminal;
+            }
+        }
+        // if insert finished
+        if (idx == str.length()) {
+            this->terminal = terminal;
+            this->priority = priority;
+            return;
+        }
+        // goto next node
+        auto& target = children[stringToIdx(str[idx])];
+        if (target == NULL) target = new SOLONG_TrieNode();
+        target->insert(dict, str, idx + 1, terminal, priority);
+    }
+    SOLONG_TrieNode* find(const string& str, int idx) {
+        // found
+        if (str.length() == idx) return this;
+        // find
+        auto& target = children[stringToIdx(str[idx])];
+        if (target == NULL) return NULL;
+        return target->find(str, idx + 1);
+    }
+    int autoComplete(const string& str, int idx, int terminal) {
+        // found
+        if (this->autoTerminal == terminal) return idx + 1;
+        if (str.length() == idx) return idx;
+        // find
+        auto& target = children[stringToIdx(str[idx])];
+        if (target == NULL) return 20;
+        return target->autoComplete(str, idx + 1, terminal);
+    }
+};
+
+class SOLONG_TrieNode2 {
+   public:
+    SOLONG_TrieNode2* children[26];
+    int terminal = -1;
+    int first = -1;
+    SOLONG_TrieNode2() { memset(children, 0, sizeof(children)); }
+    ~SOLONG_TrieNode2() {
+        for (auto& ele : children) {
+            if (ele) delete ele;
+        }
+    }
+    int stringToIdx(char chars) { return chars - 'A'; }
+    void insert(const string& str, int idx, int terminal) {
+        // if insert finished
+        if (idx == str.length()) {
+            this->terminal = terminal;
+            return;
+        }
+        // goto next node
+        auto& target = children[stringToIdx(str[idx])];
+        if (target == NULL) {
+            target = new SOLONG_TrieNode2();
+            target->first = terminal;
+        }
+        target->insert(str, idx + 1, terminal);
+    }
+    SOLONG_TrieNode2* find(const string& str, int idx) {
+        // found
+        if (str.length() == idx) return this;
+        // find
+        auto& target = children[stringToIdx(str[idx])];
+        if (target == NULL) return NULL;
+        return target->find(str, idx + 1);
+    }
+    int autoComplete(const string& str, int idx, int terminal) {
+        // found
+        if (this->first == terminal) return idx + 1;
+        if (str.length() == idx) return idx;
+        // find
+        auto& target = children[stringToIdx(str[idx])];
+        if (target == NULL) return 20;
+        return target->autoComplete(str, idx + 1, terminal);
     }
 };
 

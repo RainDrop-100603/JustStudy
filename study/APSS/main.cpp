@@ -16,66 +16,12 @@
 
 using namespace std;
 
-class TrieNode {
-   public:
-    TrieNode* children[26];
-    int terminal = -1;
-    int priority = -1;
-    int autoTerminal = -1;
-    int autoPriority = -1;
-    TrieNode() { memset(children, 0, sizeof(children)); }
-    ~TrieNode() {
-        for (auto& ele : children) {
-            if (ele) delete ele;
-        }
-    }
-    int stringToIdx(char chars) { return chars - 'A'; }
-    void insert(const vector<string>& dict, const string& str, int idx, int terminal, int priority) {
-        // set autoComplete, root do not have autoComplete
-        if (idx > 0) {
-            if (priority > this->autoPriority) {
-                this->autoPriority = priority;
-                this->autoTerminal = terminal;
-            } else if (priority == this->autoPriority && str.compare(dict[this->autoTerminal]) == -1) {
-                this->autoTerminal = terminal;
-            }
-        }
-        // if insert finished
-        if (idx == str.length()) {
-            this->terminal = terminal;
-            this->priority = priority;
-            return;
-        }
-        // goto next node
-        auto& target = children[stringToIdx(str[idx])];
-        if (target == NULL) target = new TrieNode();
-        target->insert(dict, str, idx + 1, terminal, priority);
-    }
-    TrieNode* find(const string& str, int idx) {
-        // found
-        if (str.length() == idx) return this;
-        // find
-        auto& target = children[stringToIdx(str[idx])];
-        if (target == NULL) return NULL;
-        return target->find(str, idx + 1);
-    }
-    int autoComplete(const string& str, int idx, int terminal) {
-        // found
-        if (this->autoTerminal == terminal) return idx + 1;
-        if (str.length() == idx) return idx;
-        // find
-        auto& target = children[stringToIdx(str[idx])];
-        if (target == NULL) return 20;
-        return target->autoComplete(str, idx + 1, terminal);
-    }
-};
-
 void SOLONG_Input(int& dictLen, int& inputLen, vector<string>& dictWord, vector<int>& dictPriority, vector<string>& inputWord) {
     cin >> dictLen >> inputLen;
     dictWord.resize(dictLen);
     dictPriority.resize(dictLen);
     inputWord.resize(inputLen);
-    char strBuffer[11];
+    char strBuffer[100];
     for (int i = 0; i < dictLen; i++) {
         scanf("%s %d", strBuffer, &dictPriority[i]);
         dictWord[i] = string(strBuffer);
@@ -89,9 +35,35 @@ void SOLONG_Input(int& dictLen, int& inputLen, vector<string>& dictWord, vector<
 }
 int SOLONG_Algo(int dictLen, int inputLen, const vector<string>& dictWord, const vector<int>& dictPriority, const vector<string>& inputWord) {
     // make trie
-    TrieNode trieRoot;
+    SOLONG_TrieNode trieRoot;
     for (int i = 0; i < dictLen; i++) {
         trieRoot.insert(dictWord, dictWord[i], 0, i, dictPriority[i]);
+    }
+    // autoComplete find
+    int ret = 0;
+    for (int i = 0; i < inputLen; i++) {
+        auto node = trieRoot.find(inputWord[i], 0);
+        int wordLen = inputWord[i].length();
+        int autoComplete = 20;
+        if (node && node->terminal != -1) autoComplete = trieRoot.autoComplete(inputWord[i], 0, node->terminal);
+        ret += min(wordLen, autoComplete);
+    }
+    ret += inputLen - 1;  //단어 사이사이 공백
+    // return
+    return ret;
+}
+int SOLONG_Algo2(int dictLen, int inputLen, const vector<string>& dictWord, const vector<int>& dictPriority, const vector<string>& inputWord) {
+    // sort dict by priority and lexicographical order
+    vector<pair<int, string>> dict2(dictLen);
+    for (int i = 0; i < dictLen; i++) {
+        dict2[i].first = dictPriority[i] * -1;  // bigger is first
+        dict2[i].second = dictWord[i];
+    }
+    sort(dict2.begin(), dict2.end());
+    // make trie
+    SOLONG_TrieNode2 trieRoot;
+    for (int i = 0; i < dictLen; i++) {
+        trieRoot.insert(dict2[i].second, 0, i);
     }
     // autoComplete find
     int ret = 0;
@@ -111,20 +83,9 @@ int SOLONG_Main() {
     vector<string> dictWord, inputWord;  // 0 is ACK, 1 is DIS
     vector<int> dictPriority;
     SOLONG_Input(dictLen, inputLen, dictWord, dictPriority, inputWord);
-    return SOLONG_Algo(dictLen, inputLen, dictWord, dictPriority, inputWord);
-}
-void SOLONG_test() {
-    setbuf(stdout, NULL);
-    freopen("sample_input.txt", "r", stdin);
-    int testCase;
-    cin >> testCase;
-    vector<int> answer = {28, 29, 3, 5, 2};
-    for (int i = 0; i < testCase; i++) {
-        auto ret = SOLONG_Main();
-        if (ret != answer[i]) {
-            cout << "testCase " << i << "is failed, answer is " << answer[i] << ", ret is " << ret << endl;
-        }
-    }
+    // auto ret= SOLONG_Algo(dictLen, inputLen, dictWord, dictPriority, inputWord);
+    auto ret = SOLONG_Algo2(dictLen, inputLen, dictWord, dictPriority, inputWord);
+    return ret;
 }
 void SOLONG_print() {
     /*설명 및 입력
@@ -201,16 +162,20 @@ void SOLONG_print() {
             현재노드에서 자동완성을 한다면 반환할 원소의 terimal과 priority를 저장하도록 하여, 자동완성을 용이하게 한다.
                 각각 autoTerminal, autoPriority로 저장한다.
         성능:
-            time complexity: O(M+N), M=입력의 갯수, N=단어의 갯수
+            time complexity: O(K(M+N)+L), M=입력의 갯수, N=단어의 갯수, K=입력문자의 최대길이, L = 타이핑할 문자열의 전체 길이
             mem complexity: O(N)
         한계:
             c-style로 배열을 선언했는데, vector를 이용하는 방법은 없는가?
         피드백:
+            136ms
             재귀할때 return 까먹지 말자
             c-style로 배열을 선언하면 반드시 초기화를 해야한다.
         책의 아이디어:
-            dis[A]==-1인 경우를 따로 처리하는 대신, union에 예외처리를 두어 if문을 줄였다.
-            정답을 셀 때, A>dis[A]인 경우만 카운팅해서, 배열을 사용하지 않고 중복을 방지했다.
+            단어를 우선순위, 사전순으로 정렬을 해두면, 먼저 입력된 자동완성이 항상 추천됨을 보장한다. -> 152ms
+            책의 아이디어는 trie를 구현하는것이 간단하다는 점에 있고,
+                나의 아이디어는 다양한 우선순위(정렬로 해결하기힘든경우)에도 적용할 수 있다.
+                물론 대부분의 경우는 비교를 먼저해서 정렬하면 되긴 한다. 나의 경우만이 가능한 케이스는 드물 듯
+                이 경우 time complexity는 O(KNlgN + KM + L)
     */
     // Sol
     int testCase;
@@ -220,12 +185,76 @@ void SOLONG_print() {
         cout << ret << endl;
     }
 }
+void SOLONG_test() {
+    /* sample_input
+7
+7 8
+ALL 4
+AND 3
+FISH 8
+FOR 6
+SO 4
+THANKS 9
+THE 9
+SO LONG AND THANKS FOR ALL THE FISH
+7 8
+ALL 4
+AND 5
+FISH 3
+FOR 6
+SO 8
+THANKS 1
+THE 2
+SO LONG AND THANKS FOR ALL THE FISH
+4 4
+AAABBBCCCDDD 8
+AAABBBCCC 6
+AAABBB 4
+AAA 2
+AAABBBCCCD AAABBBC AAAB AAABBBCCCDDDEEEFFF
+3 1
+AABCD 4
+AAB 4
+AA 4
+AABCD
+3 1
+AAC 4
+AABB 4
+AAAAA 4
+AAAAA
+4 5
+A 1
+AB 2
+ABC 3
+ABCD 4
+ABCD ABC AA BCA ABCDF
+4 5
+A 1
+AA 2
+AAA 3
+AAAA 4
+A AA AAA AAAA AAAAA
+    */
+    setbuf(stdout, NULL);
+    freopen("sample_input.txt", "r", stdin);
+    int testCase;
+    cin >> testCase;
+    vector<int> answer = {28, 29, 3, 5, 2, 19, 17};
+    for (int i = 0; i < testCase; i++) {
+        auto ret = SOLONG_Main();
+        if (ret != answer[i]) {
+            cout << "testCase " << i << " is failed, answer is " << answer[i] << ", ret is " << ret << endl;
+        } else {
+            cout << "testCase " << i << " is Success!" << endl;
+        }
+    }
+}
 
 int main(void) {
     // clock_t start,end;
     // start=clock();
-    // SOLONG_print();
-    SOLONG_test();
+    SOLONG_print();
+    // SOLONG_test();  // run with F5(debug mode)
     // end=clock();;
     // cout<<"time(s): "<<(double)(end-start)/CLOCKS_PER_SEC<<endl;
     return 0;
