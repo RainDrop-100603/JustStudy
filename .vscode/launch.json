@@ -2,6 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "c++ debug",
             "type": "cppdbg",
             "request": "launch",
@@ -21,13 +28,15 @@
             ],
             "preLaunchTask": "g++ build debug"
         },
-
         {
             "name": "c++ debug from file",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": ["<", "in.txt"],
+            "args": [
+                "<",
+                "in.txt"
+            ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
