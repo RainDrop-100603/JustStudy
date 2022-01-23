@@ -34,7 +34,7 @@ def forward(network, x):
 
     z1 = sigmoid_func(b1 + np.dot(x, W1))
     z2 = sigmoid_func(b2 + np.dot(z1, W2))
-    z3 = sigmoid_func(b3 + np.dot(z2, W3))
+    z3 = softmax_func(b3 + np.dot(z2, W3))
 
     return z3
 
