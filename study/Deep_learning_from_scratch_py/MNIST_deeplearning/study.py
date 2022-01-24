@@ -23,10 +23,7 @@ def cross_entropy_error2(y, t):
         y = y.reshape(1, y.size)
 
     batch_size = y.shape[0]
-    print(y[[np.arange(batch_size)], t])
-    # programmingtips/python.txt 참고바람, 아직은 확실한 원리는 모르겠다.
-    # 추측하기로는, ret[idx] = y[idx][t[idx]]와 같은 형태로 가져온다는 것이다.
-    # 위와 같은 경우로 가져온다면, 정답만을 가져오는것이기 때문에, cross_entropy_error함수와 같게 된다.
+    # numpy 배열이기에 가능한 연산, 정확한 해석은 programming_tips/python.txt 를 참고하자
     return -np.sum(np.log(y[np.arange(batch_size), t] + 1e-10)) / batch_size
 
 
@@ -76,9 +73,9 @@ t_batch = t[idx : idx + batch_size]
 print(np.sum(cross_entropy_error2(y_batch, t_batch)))
 
 # batch 검증, 작은 오차는 delta및 부동소수점 연산오류로 인해 생길 수 있다.
-# sums = 0
-# for i in np.arange(batch_size):
-#     yk = predict(network, x[idx + i])
-#     tk = t[idx + i]
-#     sums += cross_entropy_error(yk, tk)
-# print(sums / batch_size)
+sums = 0
+for i in np.arange(batch_size):
+    yk = predict(network, x[idx + i])
+    tk = t[idx + i]
+    sums += cross_entropy_error2(yk, tk)
+print(sums / batch_size)
