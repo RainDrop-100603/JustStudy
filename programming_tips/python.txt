@@ -151,3 +151,12 @@ sudo apt-get update && sudo apt-get upgrage : 무언가를 설치하기 전에 �
 -----pickle
 	특정 객체를 파일로 저장할 수 있는 기능 
 		로컬스토리지와 같이 이용할 수 있다. 서버에서 파일을 불러올 때 최초 한번만 불러오고 이후에는 pickle를 이용하는 식으로 
+
+
+y[np.arange(batch_size), t]
+	해석: 우선 y와 t의 크기는 batch_size만큼의 크기이다. 
+		np.arange(batch_size)를 통해 0 ~ batch_size-1의 배열이 생성되었을 것이다. 따라서 위 식을 다시 풀면 아래와 같다.
+		ret = y[[0,1,2 ... ,batch_size-1],t]
+		이를 다시 해석하면, ret[0] = y[0][t[0]]과 같이 되는 듯하다. 
+		즉 ret = [y[0][t[0]], y[1]t[1], ... , y[batch_size-1][t[batch_size-1]]] 이 되는 것이다. 
+    
