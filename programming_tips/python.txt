@@ -139,6 +139,20 @@ sudo apt-get update && sudo apt-get upgrage : 무언가를 설치하기 전에 �
 				해석: arrX>=15를 하면 array([True,True,False,...],dtype=bool)과 같은 행렬을 반환한다. 
 						arrX>=15의 결과대로 원소를 가져와 행렬로 반환하므로, 결과적으로 arrX>=15인 조건을 만족하는 행렬을 반환하는 형태 
 	
+	y[np.arange(batch_size), t]
+	해석: 
+		1. numpy arr은 python의 기본 arr과는 다른 특징이 존재한다. 여기서 사용할 특징은 아래와 같다.
+			numpyArr[0,1] = numpyArr[0][1]
+			즉 다차원배열을 접근할 때, 콤마를 이용하여 접근하는 방법이 존재한다는 것이다. 
+		2. numpy에는 배열연산을 지원하여 간편한 배열 연산을 가능하게 해준다. 아래를 확인해보자  
+			a = [0,1], b=[3,7] 
+			numpyArr[a,b] = [numpyArr[0,3], numpyArr[1,7]] (python배열은 에러를 내뿜게 된다.)
+			즉, python에서는 하지 못하는 연산이 numpy에서는 가능함을 알 수 있다.
+			numpyArr이 다차원 배열이라면, numpyArr[a,b,c,d, ...] 도 가능할 것이다. 
+			유의사항: 배열 a와 배열 b의 크기는 같아야 한다. 
+		결론: 위 1번과 2번을 조합해보면, 위 식의 결과는 아래와 같다.(참고로 t또한 배열이며 크기는 batch_size 만큼이다.)
+			ret = [y[0,t0], y[1,t1], y[2,t2], ...]
+
 -----matplotlib
 	목표: 그래프를 그려 데이터를 시각화한다. 
 		plt 
@@ -153,10 +167,5 @@ sudo apt-get update && sudo apt-get upgrage : 무언가를 설치하기 전에 �
 		로컬스토리지와 같이 이용할 수 있다. 서버에서 파일을 불러올 때 최초 한번만 불러오고 이후에는 pickle를 이용하는 식으로 
 
 
-y[np.arange(batch_size), t]
-	해석: 우선 y와 t의 크기는 batch_size만큼의 크기이다. 
-		np.arange(batch_size)를 통해 0 ~ batch_size-1의 배열이 생성되었을 것이다. 따라서 위 식을 다시 풀면 아래와 같다.
-		ret = y[[0,1,2 ... ,batch_size-1],t]
-		이를 다시 해석하면, ret[0] = y[0][t[0]]과 같이 되는 듯하다. 
-		즉 ret = [y[0][t[0]], y[1]t[1], ... , y[batch_size-1][t[batch_size-1]]] 이 되는 것이다. 
+
     
