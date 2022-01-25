@@ -1,3 +1,4 @@
+#%%
 import sys, os
 from deeplearning_data.mnist import load_mnist
 import numpy as np
@@ -54,28 +55,33 @@ def predict(network, x):
     return y
 
 
-# prepare
-x, t = get_data()
-network = init_network()
-idx = 10
-batch_size = 10
+def study_runDL_batch():
 
-# individual
-# yk = predict(network, x[idx])
-# tk = t[idx]
-# print(cross_entropy_error(yk, tk))
+    # prepare
+    x, t = get_data()
+    network = init_network()
+    idx = 10
+    batch_size = 10
+
+    # individual
+    # yk = predict(network, x[idx])
+    # tk = t[idx]
+    # print(cross_entropy_error(yk, tk))
+
+    # batch
+    x_batch = x[idx : idx + batch_size]
+    y_batch = predict(network, x_batch)
+    t_batch = t[idx : idx + batch_size]
+    print(np.sum(cross_entropy_error2(y_batch, t_batch)))
+
+    # batch 검증, 작은 오차는 delta및 부동소수점 연산오류로 인해 생길 수 있다.
+    sums = 0
+    for i in np.arange(batch_size):
+        yk = predict(network, x[idx + i])
+        tk = t[idx + i]
+        sums += cross_entropy_error2(yk, tk)
+    print(sums / batch_size)
 
 
-# batch
-x_batch = x[idx : idx + batch_size]
-y_batch = predict(network, x_batch)
-t_batch = t[idx : idx + batch_size]
-print(np.sum(cross_entropy_error2(y_batch, t_batch)))
-
-# batch 검증, 작은 오차는 delta및 부동소수점 연산오류로 인해 생길 수 있다.
-sums = 0
-for i in np.arange(batch_size):
-    yk = predict(network, x[idx + i])
-    tk = t[idx + i]
-    sums += cross_entropy_error2(yk, tk)
-print(sums / batch_size)
+study_runDL_batch()
+# %%
