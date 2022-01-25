@@ -51,6 +51,7 @@ plt.plot(x1, y2, label="cos", linestyle="--")
 plt.xlabel("x")
 plt.ylabel("y")
 plt.title("sin & cos")  # 각 선이 무엇을 나타내는지 label해주는 박스 추가
+plt.legend()
 plt.show()
 
 img = imread("img1.jpg")
