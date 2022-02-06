@@ -1,8 +1,20 @@
+나의 생각, 음악 처리
+    data를 특정한 간격으로 자르고, n개의 자른 조각을 한번에 학습 
+        이때 다음 학습은 now+n이 아니라, now+n/2로 하는 등, 조각들이 겹치게 학습
+        따라서 data를 어떤 간격으로 자르느냐, 조각을 몇개나 학습하냐, 얼마나 겹치게 하느냐가 다 중요할듯 
+        STFT를 하면 조각을 겹치게 할 필요가 있나? 
+            그래도 겹치게 하긴 해야할거 같기도 하고 
+    하이퍼 파라미터를 정할 때, 직접만든 음원을 이용하여 분석하면 좋을듯 
+        피아노, 기타, 베이스 등을 합친 음원을 실제로 분석하면 어떻게 나오는지 분석 
+    초기 가중치 W를 정할 때, 우리가 만든 clean한 데이터를 사용하는 것도 ㄱㅊ을 듯?
+        clean 데이터로 가중치를 미리 만들면, 유효한 값을 위주로 학습할 듯 하다. 
+        
+
 토크ON74차. 디지털신호처리 이해 | T아카데미
 https://youtube.com/playlist?list=PL9mhQYIlKEhem5_wrQqDtNqNcaDyFrYGN
 
 1강: [토크ON세미나] 디지털신호처리 이해 1강 - 디지털신호처리(DSP) 기초 I - Sampling, Quantization | T아카데미 
-    (https://youtu.be/RxbkEjV7c0o)
+    https://youtu.be/RxbkEjV7c0o
 
     음성처리 동향: feature 추출 에서 end-to-end로 가는중 
 
@@ -61,3 +73,86 @@ https://youtube.com/playlist?list=PL9mhQYIlKEhem5_wrQqDtNqNcaDyFrYGN
             그런데 mel- spectrogram으로 보면 분리되서 나오는 듯? 
 
     1장에서 음을 직접 생성하는 법이 나온다. 물론 복잡한건 아니고 특정 주파수의 간단한 음인데, 추후 복잡하게 만들 수도 있으려나? 
+
+2강: [토크ON세미나] 디지털신호처리 이해 2강 - 디지털신호처리(DSP) 기초 II - STFT, Spectrogram, Mel-Spectrogram | T아카데미
+    https://youtu.be/FjYNM3YGFB4
+
+    frequency에 대한 설명 
+
+    sinusoidal wave(정현파)에 대한 설명 
+
+    파형을 time-domain representation으로 시각화 시키는 방법
+
+    normalize: 딥러닝시 성능 향상
+    mu-law encoding: mel-spectrogram을 사용하므로 굳이 안해도 됨 
+        mu-law encoding은 amplitude에 대한 것이고 mel은 freq에 대한 것
+        실제 실험해 보든가?
+
+    frequency를 얻는 법
+        fourier transform: complex wave를 sinusoidal wave의 합으로 분해 
+            복소 지수함수로 분해,즉 실수부와 허수부를 가지는 복소수가 얻어짐
+            spectrum magnitude: 복소수의 절댓값, 주파수의강도
+            phase spectrum: 복소수의 phase, 주파수의 위상 
+        실수부가 freq, 허수부가 phase? 이건 뭔 소린지
+
+    지수함수 or 주기함수? 
+        오일러 공식: e^(iθ) = cosθ+isinθ
+        즉, 표현 방식의 차이 
+
+    DFT: discrete한 실제 digital data를 FT하는 방법 
+
+    사람들이 실제로 소리를 들을 때는 한번에 긴 파장을 동시에 처리하는게 아니라, 짧은 신호를 연속해서 듣는것과 같다.
+        그래서 나온게 STFT 
+
+    STFT(Short Time fourier transform)  
+        FT는 시간에 흐름에 따라 신호의 주파수가 변했을 때, 어느 시간대에 주파수가 변하는지 모르게 된다.
+            헷갈리면, 그냥 사람이 소리를 듣는건 3분길이를 한번에 듣는게 아니라, 0.5초씩 듣는다고 생각
+        사람은 0.5초정도 주기다? 
+        아무튼 사람의 인식주기랑 비슷하게 잘라서 FT를 하면, 사람이 듣는 것과 비슷할 것이다. 
+        hop size: 겹치게 하는 정도 
+            0~1초, 1~2초를 하는 것 보단, 0~1초, 0.5~1.5초, 1~2초로 하는것, 즉 겹치게 하는것이 더 풍부한 정보를 얻을 수 있다.
+
+    STFT는 라이브러리에서 구현된걸 쓰자, 직접 구현은 까다롭 
+
+    audio deep_learning을 할 때는 허수부를 날린다고 함
+        소리를 인지하는데 큰 info를 담고있다곤 생각되진 않는다고 함 
+        허수부->phase
+        날릴때 보통 절댓값의 제곱을 취해준다. 
+            즉 허수부를 아예반영 안하는 건 아닌듯  
+
+    STFT를 하면 m-spectrogram에서 본것과 같은, 그런 모양의 spectrogram을 얻을 수 있다. 
+
+    STFT에서의 window size: STFT를 하면 데이터를 자르기 때문에 연속성이 깨지는 경우가 발생하는데, 이를 방지하기 위함
+        window function을 곱해주면 양 끝부분이 0에 수렴한다.
+        (파동의 모양에서 양 끝부분의 반영분이 낮아진다고 봐도 될듯 )
+
+    N_FFT는 얼마로? -> 연산효율을 위해선 보통 1024
+    window length와 N_FFT는 일치시키는게 좋다.
+    hop_size: 1/2, 1/4등 알아서 
+    음성은 1024(N_FFT), 512(hop_size),1024(win_length)의 경우 많은 경우에 쓸만하다.
+    음악일 경우에는 또 다를 것이다.
+        -> 피아노니까 피아노박자로 맞추는 것도 좋은 선택인듯 
+
+    power_to_db: 출력단을 db단위로 표현 
+
+    mel-단위 
+        소리는 저주파 단위가 더 구분을 잘하고 풍부하다.
+        설명이 상세히 나와있으니 추후 정리하면 좋을듯
+        basilar membrane은 각각 위치 영역이 특정 freq에 맵핑되어 있는데 ~ 
+            이론 정리할 때 쓰면 될듯 
+        mel 단위를 써야하나?
+            악기의 음 또한 아마 사람이 듣는걸 고려해서 설계되었을 것이다.
+            따라서 mel-spectrogram을 사용하는것도 괜찮을 듯 하다. 
+            음성,음악모두 mel-scale을 쓰면 더 성능이 좋다고 함 
+        특정 주파수 영역의 가중치를 높이고, 다른 영역을 낮추는 것임 
+           
+    ft하지 않고 그냥 주파수를 넣어서(wave form, amplitude만 보여주는 우리가 아는 그것) end-to-end로 학습하려는 시도도 있음 
+        아직까지는 spectrogram이 많지만, wave form단위로 내려가려는 시도롤 하는 듯 
+
+    n_mel (mel bin) 
+        음성은 40, 음악은 92나 128 
+    악기별로 spectrogram을 뽑아서, 어느 영역까지 필요한지 보고 mel bin을 정하면 ㄱㅊ을듯 
+        이 부분은 영상 다시 보면서 복습하거나 하자 
+
+    phase를 항상 날리는건 아님 
+        magenta참고 
