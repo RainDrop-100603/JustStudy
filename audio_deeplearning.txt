@@ -1,0 +1,63 @@
+토크ON74차. 디지털신호처리 이해 | T아카데미
+https://youtube.com/playlist?list=PL9mhQYIlKEhem5_wrQqDtNqNcaDyFrYGN
+
+1강: [토크ON세미나] 디지털신호처리 이해 1강 - 디지털신호처리(DSP) 기초 I - Sampling, Quantization | T아카데미 
+    (https://youtu.be/RxbkEjV7c0o)
+
+    음성처리 동향: feature 추출 에서 end-to-end로 가는중 
+
+    사용한 tool: torch, torchaudio
+
+    음성을 다룰 때 입력의 형태: spectrogram
+    spectrogram
+
+    컴퓨터가 음성을 처리하는 방식
+        Sampling rate: 초당 몇번 sampling 할 것인가
+            Nyquist theorem: 최대 sr의 두배로 sampling하면, 데이터를 잃지 않고 추출할 수 있다
+                (물론 실제로는 Quantization때문에 데이터를 약간 잃는다.)
+                    frequency관련해서는 안 잃던가? DSP복습 하면 괜찮을듯 
+            음성별로 sr을 정해도 되지만, speech, music등 영역별로 정형화된 sr이 존재한다.
+                music은 22.05kHz혹은 44.1kHz, speech는 그거보다 낮다.
+        Quantization: 음은 연속적이지만 sampling가능한 단계는 연속적이지 못하다.
+            예를들어 "도"와 "레" 사이에는 무수히 많은 음이 있지만, 모두를 표현할 수 없다.
+            적절한 수준으로 양자화하여 사용한다.
+            B bit 사용시, -2^(B-1)~2^(B-1)-1 
+        Normalization: Quantization 값을 -1 ~ 1 사이의 값으로 처리
+
+    sr에 따른 성능 차이가 존재하는가?
+        16k와 8k로 했을 때 비슷했었다.
+        근데 학습 시간도 비슷했었다.
+        
+    소리의 표현 방식
+    time-domain representation: 시간에 따른 amplitude(음압)의 변화
+    time-frequency representation: 시간에 따른 frequency의 변화 
+
+    보통은 audio input을 받으면 spectrogram으로 바꿔버리기 때문에 Quantization을 안 한다.
+        근데 어차피 우리는 이미 Quantization된 음악파일을 이용한다. 
+
+    소리의 물리량
+        amplitude: 진폭
+        frequency: 주파수
+        phase: 위상 
+    음향?
+        소리의 특징을 구분하는 방법? 
+            물리는 물리적인 특성, 심리는 우리가 느끼는 특성을 말하는 것 같기도 
+        물리 음향
+            intensity: 진폭의 세기
+            frequency: 떨림의 빠르기
+            tone-color: 파동의 모양
+        심리 음향
+            loudness: 소리 크기
+            pitch: 음정, 소리의 높낮이/진동수
+            timbre: 음색, 소리 감각
+        
+    딥러닝에는 보통 amplitude, frequency를 이용한다. 
+        음악을 다룰때는 또 모르겠다.
+        frequency는 음의 높낮이를 결정 
+
+    complex wave: 우리가 사용하는 대부분의 소리들은 정현파가 합쳐진 복합파다.
+        정현파: 일종의 복소 주기함수, 피아노로 한 건반을 누르면 그것이 정현파다.
+        ** 특정 주파수 영역만 사용하는것은, complex wave를 다룰때는 부적합 할 수도 있을듯 
+            그런데 mel- spectrogram으로 보면 분리되서 나오는 듯? 
+
+    1장에서 음을 직접 생성하는 법이 나온다. 물론 복잡한건 아니고 특정 주파수의 간단한 음인데, 추후 복잡하게 만들 수도 있으려나? 
