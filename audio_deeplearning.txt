@@ -186,3 +186,41 @@ https://youtube.com/playlist?list=PL9mhQYIlKEhem5_wrQqDtNqNcaDyFrYGN
 
 4강: [토크ON세미나] 디지털신호처리 이해 4강 - 디지털신호처리(DSP) 실습 I - Data augmentation | T아카데미
     https://youtu.be/VzR0hBVZvRA
+
+    Data augmentation 
+        1. wave form level에서 noise를 섞는등의 가공
+        2. spectrogram level에서 마스킹을 주는 방법 
+        3. data split - task 마다 다르다. 
+
+    1번 2번에 대해서 실습 
+
+    wave-form 가공  
+        pitch-shift: 음의 옥타브를 바꾸어서 새로운 데이터를 만듬 
+            librosa.effects.pitch_shift를 통해 구현 
+        value_augmentation: amplitude를 랜덤하게 키운다.
+            음성에서만 이용되는 방법일듯? 
+            별로 잘 안된다고 함
+        noise: 노이즈도 잘 되지는 않음 
+            노이즈는 의미있는 수준으로 해야하기 때문에, 귀로 들어보며 추가하는것도 ㄱㅊ 
+        hpss(harmonic percussive): 음악쪽에서 많이 씀
+            멜로디라인, 음악라인을 부분해서 씀
+            노래하는 음악이면 꽤나 괜찮다. 
+        shift: 순서 도치, 내가 말을 한다-> 말을 내가 한다와 같은 것 
+            잘 안됨
+        stretch: 늘리거나 줄여줌, 빨리감기라 생각하면 편함 
+        change_speed: stretch랑 비슷 
+        음성의 경우 pitch-shift랑 stretch가 좋았다고 함(하나씩 할때는)
+            실제 할때는 다 적용시켜 버려서 모르겠다고 함
+
+    spectrogram 가공 
+        masking: time이랑 frequency를 전부 날려버림, 0처리(특정 부분)
+
+
+    음악은 effector나 리벌브? 를 넣는다거나 (9:00)
+        음악논문 같은 경우 augmentation을 잘 안적어 놓는다고 한다. 
+
+    augmentation은 train set에서만 사용 
+
+    이미지를 반반씩 섞는 방법론도 있음
+    mixup, medifold mixup(cnn레일를 몇개 거친 것을 mixup하는 경우도 있음)
+    
