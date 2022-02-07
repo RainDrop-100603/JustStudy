@@ -16,3 +16,5 @@
         2. spectrogram, m-spectrogram, MFCC로 정리하여 특성 확인 
         3. 실제 음원을 잘라서 한번 비교도 해보기         
 
+    
+
