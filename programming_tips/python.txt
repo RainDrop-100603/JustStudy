@@ -72,6 +72,9 @@ pipenv
 			해결방법 추가바람 
 		가상화 제거는 그냥 폴더를 삭제하면 된다.
 			//wsl$/Ubuntu/home/rain/.local/share/virtualenvs/[폴더]
+		가상화시, 가상화 폴더에 있는 program만 사용한다.
+			예컨대, black을 전역에 설치하였더라도, 가상화 폴더에 설치가 안되어 있으면 사용하지 못한다.
+			우측아래 interpreter를 가상화 폴더로 선택하고, run python file in terminal을 해주면 해당 interpreter로 실행해준다. 
 
 
 -----Linter & Formatter-----
