@@ -1,7 +1,12 @@
 """
 purpose: for deep learning 
-linter: flaek8
+linter: flake8
 formatter: black 
+for jupyter notebook
+    install ipykernel (in shell)
+    python -m ipykernel install --user --display-name deep_learning_k --name deep_learning
+torch 
+
 """
 
 
