@@ -42,3 +42,10 @@ vscode 셋팅
 	디버그: F5
 	바로실행: 테스트 작업 실행(단축키는 ctrl shift a로 했음) 
 
+deep learning
+	https://medium.com/dawn-cau/wsl2-%EB%94%A5%EB%9F%AC%EB%8B%9D-%ED%99%98%EA%B2%BD-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0-95d7b95d1f4b
+	https://developer.nvidia.com/cuda/wsl
+	https://docs.nvidia.com/cuda/wsl-user-guide/index.html
+	win11 혹은 2050빌드 이상에서 wsl on cuda가 가능하다. 
+	cuda 사용은 윈도우에서 하는것으로 선회하자 
+	
