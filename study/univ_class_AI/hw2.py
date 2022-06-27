@@ -107,16 +107,16 @@ def get_data(batch_size, num_workers):
     train_loader = torch.utils.data.DataLoader(
         train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers, drop_last=True
     )
-    validation_loader = train_loader = torch.utils.data.DataLoader(
+    validation_loader = torch.utils.data.DataLoader(
         validation_set, batch_size=batch_size, shuffle=False, num_workers=num_workers, drop_last=True
     )
 
     # test set
     test_set = torchvision.datasets.CIFAR10(root="./data", train=False, download=True, transform=transform)
-    test_loader = train_loader = torch.utils.data.DataLoader(
+    test_loader = torch.utils.data.DataLoader(
         test_set, batch_size=batch_size, shuffle=False, num_workers=num_workers, drop_last=True
     )
-
+    print(len(test_loader))
     return train_loader, validation_loader, test_loader
 
 
@@ -138,8 +138,8 @@ def main():
     # run
     print(model_name)
     train_loader, validation_loader, test_loader = get_data(batch_size, num_workers)  # model 불러오기
-    train_model(device, train_loader, validation_loader, learning_rate, training_epochs, model_name)  # model train
-    run_model(device, test_loader, model_name)  # test data로 실행
+    # train_model(device, train_loader, validation_loader, learning_rate, training_epochs, model_name)  # model train
+    run_model(device, train_loader, model_name)  # test data로 실행
 
 
 if __name__ == "__main__":
