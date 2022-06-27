@@ -116,7 +116,6 @@ def get_data(batch_size, num_workers):
     test_loader = torch.utils.data.DataLoader(
         test_set, batch_size=batch_size, shuffle=False, num_workers=num_workers, drop_last=True
     )
-    print(len(test_loader))
     return train_loader, validation_loader, test_loader
 
 
@@ -132,14 +131,14 @@ def main():
     num_workers = 4  # 멀티태스킹, 오류 안나는 선에서 적당히
     batch_size = 256
     learning_rate = 0.001
-    training_epochs = 30
+    training_epochs = 10
     model_name = "cnn3_256_001_30"
 
     # run
     print(model_name)
     train_loader, validation_loader, test_loader = get_data(batch_size, num_workers)  # model 불러오기
-    # train_model(device, train_loader, validation_loader, learning_rate, training_epochs, model_name)  # model train
-    run_model(device, train_loader, model_name)  # test data로 실행
+    train_model(device, train_loader, validation_loader, learning_rate, training_epochs, model_name)  # model train
+    run_model(device, test_loader, model_name)  # test data로 실행
 
 
 if __name__ == "__main__":
