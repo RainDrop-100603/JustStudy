@@ -138,7 +138,7 @@ def main():
     # run
     print(model_name)
     train_loader, validation_loader, test_loader = get_data(batch_size, num_workers)  # model 불러오기
-    # train_model(device, train_loader, validation_loader, learning_rate, training_epochs, model_name) # model train
+    train_model(device, train_loader, validation_loader, learning_rate, training_epochs, model_name)  # model train
     run_model(device, test_loader, model_name)  # test data로 실행
 
 
