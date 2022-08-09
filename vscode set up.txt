@@ -62,6 +62,11 @@ vscode 셋팅
 		vsc: c/c++ 확장 설치
 		linux gdb환경 구성: sudo apt-get install build-essential gdb 
 
+vsc git 연동
+	1: repository 복제
+	2: git 이름, 이메일 셋팅 
+	3: 아무 커밋이나 해서 허가 받기 
+
 deep learning
 	https://medium.com/dawn-cau/wsl2-%EB%94%A5%EB%9F%AC%EB%8B%9D-%ED%99%98%EA%B2%BD-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0-95d7b95d1f4b
 	https://developer.nvidia.com/cuda/wsl
