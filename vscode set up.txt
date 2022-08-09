@@ -56,7 +56,8 @@ vscode 셋팅
 언어 셋팅
 	python
 		vsc: python 확장 설치
-		windows: 설치 
+		windows: 홈페이지에서 다운
+			Add Python To Path 체크 
 		python: 설치되어 있음
 	c++ 
 		vsc: c/c++ 확장 설치
