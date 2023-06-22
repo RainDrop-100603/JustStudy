@@ -8,7 +8,6 @@ int main() {
 
     // get box info
     int boxNum = (size + 1) / 4;
-    int centerBoxSize = size - boxNum * 4 + 2;
 
     // make spiral
     for (int r = 0; r < size; r++) {
