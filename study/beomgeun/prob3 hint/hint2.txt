@@ -1,0 +1,7 @@
+2번문제는 다양하게 풀 수 있는데, 아래와 같은 방법을 이용해서 풀면 조금 3번 문제를 풀 때 더 쉽다.
+
+for(int row=0;row<size;row++){
+    for(int col=0;col<size;col++){
+        blabla~~~
+    }
+}
