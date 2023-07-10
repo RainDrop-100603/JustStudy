@@ -1,7 +1,8 @@
 // Author: Beomgeun Kim
 // Student ID: z5446304
 // Date finished: 8 July 2023
-// The coding for the Flim Flam game identifying the best rule for winning the game
+// The coding for the Flim Flam game identifying the best rule for
+// winning the game
 
 #include <stdio.h>
 
@@ -11,8 +12,11 @@ int main() {
     int integers[16][6] = {0};
 
     // Checking the values are 6 integers.
-    if (scanf("%d %d %d %d %d %d", &nums[0], &nums[1], &nums[2], &nums[3], &nums[4], &nums[5]) != 6) {
-        printf("Invalid input: 6 integers 1..9 in sorted order must be supplied.\n");
+    if (scanf("%d %d %d %d %d %d", &nums[0], &nums[1], &nums[2],
+              &nums[3], &nums[4], &nums[5]) != 6) {
+        printf(
+            "Invalid input: 6 integers 1..9 in sorted order must be "
+            "supplied.\n");
         return 0;
     }
 
@@ -20,19 +24,24 @@ int main() {
     int i = 0;
     while (i < 6) {
         if (nums[i] < 1 || nums[i] > 9) {
-            printf("Invalid input: 6 integers 1..9 in sorted order must be supplied.\n");
+            printf(
+                "Invalid input: 6 integers 1..9 in sorted order must "
+                "be supplied.\n");
             return 0;
         }
         if (i > 0 && nums[i] < nums[i - 1]) {
-            printf("Invalid input: 6 integers 1..9 in sorted order must be supplied.\n");
+            printf(
+                "Invalid input: 6 integers 1..9 in sorted order must "
+                "be supplied.\n");
             return 0;
         }
         i = i + 1;
     }
 
-    // alphabetical order flim flam(0) - match(1~5) - sequence(6~10) - sum(11 ~ 14) - total(15)
-    // For "total" rule
-    int totalScore = (nums[0] + nums[1] + nums[2] + nums[3] + nums[4] + nums[5]);
+    // alphabetical order flim flam(0) - match(1~5) - sequence(6~10) -
+    // sum(11 ~ 14) - total(15) For "total" rule
+    int totalScore =
+        (nums[0] + nums[1] + nums[2] + nums[3] + nums[4] + nums[5]);
     rules[15] = totalScore;
     integers[15][0] = nums[0];
     integers[15][1] = nums[1];
@@ -47,7 +56,8 @@ int main() {
         if (nums[i] == nums[i + 1]) {
             int possibleScore = 2 * nums[i] + 19;
             rules[1] = possibleScore;
-            integers[1][0] = nums[i];  // Storing value of xa for output statement
+            integers[1][0] =
+                nums[i];  // Storing value of xa for output statement
         }
         i = i + 1;
     }
@@ -58,7 +68,8 @@ int main() {
         if (nums[i] == nums[i + 1] && nums[i] == nums[i + 2]) {
             int possibleScore = 3 * nums[i] + 21;
             rules[2] = possibleScore;
-            integers[2][0] = nums[i];  // Storing value of xa for output statement
+            integers[2][0] =
+                nums[i];  // Storing value of xa for output statement
         }
         i = i + 1;
     }
@@ -66,10 +77,12 @@ int main() {
     // For "match-4" rule
     i = 0;
     while (i < 3) {
-        if (nums[i] == nums[i + 1] && nums[i] == nums[i + 2] && nums[i] == nums[i + 3]) {
+        if (nums[i] == nums[i + 1] && nums[i] == nums[i + 2] &&
+            nums[i] == nums[i + 3]) {
             int possibleScore = 4 * nums[i] + 23;
             rules[3] = possibleScore;
-            integers[3][0] = nums[i];  // Storing value of xa for output statement
+            integers[3][0] =
+                nums[i];  // Storing value of xa for output statement
         }
         i = i + 1;
     }
@@ -77,19 +90,24 @@ int main() {
     // For "match-5" rule
     i = 0;
     while (i < 2) {
-        if (nums[i] == nums[i + 1] && nums[i] == nums[i + 2] && nums[i] == nums[i + 3] && nums[i] == nums[i + 4]) {
+        if (nums[i] == nums[i + 1] && nums[i] == nums[i + 2] &&
+            nums[i] == nums[i + 3] && nums[i] == nums[i + 4]) {
             int possibleScore = 5 * nums[i] + 25;
             rules[4] = possibleScore;
-            integers[4][0] = nums[i];  // Storing value of xa for output statement
+            integers[4][0] =
+                nums[i];  // Storing value of xa for output statement
         }
         i = i + 1;
     }
 
     // For "match-6" rule
-    if (nums[0] == nums[1] && nums[0] == nums[2] && nums[0] == nums[3] && nums[0] == nums[4] && nums[0] == nums[5]) {
+    if (nums[0] == nums[1] && nums[0] == nums[2] &&
+        nums[0] == nums[3] && nums[0] == nums[4] &&
+        nums[0] == nums[5]) {
         int possibleScore = 6 * nums[0] + 27;
         rules[5] = possibleScore;
-        integers[5][0] = nums[0];  // Storing value of xa for output statement
+        integers[5][0] =
+            nums[0];  // Storing value of xa for output statement
     }
 
     // For "sequence-2" rule
@@ -122,7 +140,8 @@ int main() {
                     }
                     p = p + 1;
                 }
-                if (sequence[0] + 1 == sequence[1] && sequence[0] + 2 == sequence[2]) {
+                if (sequence[0] + 1 == sequence[1] &&
+                    sequence[0] + 2 == sequence[2]) {
                     int possibleScore = 3 * sequence[2] + 18;
                     if (possibleScore > rules[7]) {
                         rules[7] = possibleScore;
@@ -154,7 +173,9 @@ int main() {
                 }
                 p = p + 1;
             }
-            if (sequence[0] + 1 == sequence[1] && sequence[0] + 2 == sequence[2] && sequence[0] + 3 == sequence[3]) {
+            if (sequence[0] + 1 == sequence[1] &&
+                sequence[0] + 2 == sequence[2] &&
+                sequence[0] + 3 == sequence[3]) {
                 int possibleScore = 4 * sequence[3] + 19;
                 if (possibleScore > rules[8]) {
                     rules[8] = possibleScore;
@@ -183,7 +204,10 @@ int main() {
             }
             p = p + 1;
         }
-        if (sequence[0] + 1 == sequence[1] && sequence[0] + 2 == sequence[2] && sequence[0] + 3 == sequence[3] && sequence[0] + 4 == sequence[4]) {
+        if (sequence[0] + 1 == sequence[1] &&
+            sequence[0] + 2 == sequence[2] &&
+            sequence[0] + 3 == sequence[3] &&
+            sequence[0] + 4 == sequence[4]) {
             int possibleScore = 5 * sequence[4] + 20;
             if (possibleScore > rules[9]) {
                 rules[9] = possibleScore;
@@ -198,7 +222,9 @@ int main() {
     }
 
     // For "sequence-6" rule
-    if (nums[5] - 1 == nums[4] && nums[5] - 2 == nums[3] && nums[5] - 3 == nums[2] && nums[5] - 4 == nums[1] && nums[5] - 5 == nums[0]) {
+    if (nums[5] - 1 == nums[4] && nums[5] - 2 == nums[3] &&
+        nums[5] - 3 == nums[2] && nums[5] - 4 == nums[1] &&
+        nums[5] - 5 == nums[0]) {
         int possibleScore = 6 * nums[5] + 21;
         rules[10] = possibleScore;
         integers[10][0] = nums[0];
@@ -316,7 +342,8 @@ int main() {
     }
 
     // For "flim flam" rule
-    // alphabetical order flim flam(0) - match(1~5) - sequence(6~10) - sum(11 ~ 14) - total(15)
+    // alphabetical order flim flam(0) - match(1~5) - sequence(6~10) -
+    // sum(11 ~ 14) - total(15)
     i = 0;
     while (i < 6) {
         int j = i + 1;
@@ -326,8 +353,8 @@ int main() {
                 // find xa, xb, xc, xd, xe, xf.
                 int left[3] = {0};   // Arrays storing xa, xb, xc.
                 int right[3] = {0};  // Arrays storing xd, xe, xf.
-                int cnt = 0;         // Number of values stored in left[3].
-                int k = 0;           // while loop.
+                int cnt = 0;  // Number of values stored in left[3].
+                int k = 0;    // while loop.
                 while (k < 6) {
                     if (k != i && k != j && k != t) {
                         left[cnt] = nums[k];
@@ -339,9 +366,12 @@ int main() {
                 right[1] = nums[j];
                 right[2] = nums[t];
                 // checking the values satisfies the Flim Flam rule.
-                if (left[0] + left[1] == left[2] && right[0] + right[1] == right[2]) {
+                if (left[0] + left[1] == left[2] &&
+                    right[0] + right[1] == right[2]) {
                     if (left[0] <= right[0]) {
-                        int possibleScore = left[0] + 2 * left[1] + 3 * left[2] + 4 * right[0] + 5 * right[1] + 6 * right[2];
+                        int possibleScore = left[0] + 2 * left[1] +
+                                            3 * left[2] + 4 * right[0] +
+                                            5 * right[1] + 6 * right[2];
                         if (possibleScore > rules[0]) {
                             rules[0] = possibleScore;
                             integers[0][0] = left[0];
@@ -361,8 +391,8 @@ int main() {
         i = i + 1;
     }
 
-    // alphabetical order flim flam(0) - match(1~5) - sequence(6~10) - sum(11 ~ 14) - total(15)
-    // Output the result
+    // alphabetical order flim flam(0) - match(1~5) - sequence(6~10) -
+    // sum(11 ~ 14) - total(15) Output the result
     i = 0;
     int maximumScore = 0;
     int RuleNumber = 0;
@@ -377,35 +407,61 @@ int main() {
     if (RuleNumber == 15) {
         printf("Rule total - score %d.\n", maximumScore);
     } else if (RuleNumber == 1) {
-        printf("Rule match-2(%d) - score %d.\n", integers[1][0], maximumScore);
+        printf("Rule match-2(%d) - score %d.\n", integers[1][0],
+               maximumScore);
     } else if (RuleNumber == 2) {
-        printf("Rule match-3(%d) - score %d.\n", integers[2][0], maximumScore);
+        printf("Rule match-3(%d) - score %d.\n", integers[2][0],
+               maximumScore);
     } else if (RuleNumber == 3) {
-        printf("Rule match-4(%d) - score %d.\n", integers[3][0], maximumScore);
+        printf("Rule match-4(%d) - score %d.\n", integers[3][0],
+               maximumScore);
     } else if (RuleNumber == 4) {
-        printf("Rule match-5(%d) - score %d.\n", integers[4][0], maximumScore);
+        printf("Rule match-5(%d) - score %d.\n", integers[4][0],
+               maximumScore);
     } else if (RuleNumber == 5) {
-        printf("Rule match-6(%d) - score %d.\n", integers[5][0], maximumScore);
+        printf("Rule match-6(%d) - score %d.\n", integers[5][0],
+               maximumScore);
     } else if (RuleNumber == 6) {
-        printf("Rule sequence-2(%d,%d) - score %d.\n", integers[6][0], integers[6][1], maximumScore);
+        printf("Rule sequence-2(%d,%d) - score %d.\n", integers[6][0],
+               integers[6][1], maximumScore);
     } else if (RuleNumber == 7) {
-        printf("Rule sequence-3(%d,%d,%d) - score %d.\n", integers[7][0], integers[7][1], integers[7][2], maximumScore);
+        printf("Rule sequence-3(%d,%d,%d) - score %d.\n",
+               integers[7][0], integers[7][1], integers[7][2],
+               maximumScore);
     } else if (RuleNumber == 8) {
-        printf("Rule sequence-4(%d,%d,%d,%d) - score %d.\n", integers[8][0], integers[8][1], integers[8][2], integers[8][3], maximumScore);
+        printf("Rule sequence-4(%d,%d,%d,%d) - score %d.\n",
+               integers[8][0], integers[8][1], integers[8][2],
+               integers[8][3], maximumScore);
     } else if (RuleNumber == 9) {
-        printf("Rule sequence-5(%d,%d,%d,%d,%d) - score %d.\n", integers[9][0], integers[9][1], integers[9][2], integers[9][3], integers[9][4], maximumScore);
+        printf("Rule sequence-5(%d,%d,%d,%d,%d) - score %d.\n",
+               integers[9][0], integers[9][1], integers[9][2],
+               integers[9][3], integers[9][4], maximumScore);
     } else if (RuleNumber == 10) {
-        printf("Rule sequence-6(%d,%d,%d,%d,%d,%d) - score %d.\n", integers[10][0], integers[10][1], integers[10][2], integers[10][3], integers[10][4], integers[10][5], maximumScore);
+        printf("Rule sequence-6(%d,%d,%d,%d,%d,%d) - score %d.\n",
+               integers[10][0], integers[10][1], integers[10][2],
+               integers[10][3], integers[10][4], integers[10][5],
+               maximumScore);
     } else if (RuleNumber == 11) {
-        printf("Rule sum-2(%d+%d=%d) - score %d.\n", integers[11][0], integers[11][1], integers[11][2], maximumScore);
+        printf("Rule sum-2(%d+%d=%d) - score %d.\n", integers[11][0],
+               integers[11][1], integers[11][2], maximumScore);
     } else if (RuleNumber == 12) {
-        printf("Rule sum-3(%d+%d+%d=%d) - score %d.\n", integers[12][0], integers[12][1], integers[12][2], integers[12][3], maximumScore);
+        printf("Rule sum-3(%d+%d+%d=%d) - score %d.\n", integers[12][0],
+               integers[12][1], integers[12][2], integers[12][3],
+               maximumScore);
     } else if (RuleNumber == 13) {
-        printf("Rule sum-4(%d+%d+%d+%d=%d) - score %d.\n", integers[13][0], integers[13][1], integers[13][2], integers[13][3], integers[13][4], maximumScore);
+        printf("Rule sum-4(%d+%d+%d+%d=%d) - score %d.\n",
+               integers[13][0], integers[13][1], integers[13][2],
+               integers[13][3], integers[13][4], maximumScore);
     } else if (RuleNumber == 14) {
-        printf("Rule sum-5(%d+%d+%d+%d+%d=%d) - score %d.\n", integers[14][0], integers[14][1], integers[14][2], integers[14][3], integers[14][4], integers[14][5], maximumScore);
+        printf("Rule sum-5(%d+%d+%d+%d+%d=%d) - score %d.\n",
+               integers[14][0], integers[14][1], integers[14][2],
+               integers[14][3], integers[14][4], integers[14][5],
+               maximumScore);
     } else if (RuleNumber == 0) {
-        printf("Rule flim-flam(%d+%d=%d,%d+%d=%d) - score %d.\n", integers[0][0], integers[0][1], integers[0][2], integers[0][3], integers[0][4], integers[0][5], maximumScore);
+        printf("Rule flim-flam(%d+%d=%d,%d+%d=%d) - score %d.\n",
+               integers[0][0], integers[0][1], integers[0][2],
+               integers[0][3], integers[0][4], integers[0][5],
+               maximumScore);
     }
 
     return 0;
