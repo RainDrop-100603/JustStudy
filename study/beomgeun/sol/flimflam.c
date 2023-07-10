@@ -56,8 +56,8 @@ int main() {
         if (nums[i] == nums[i + 1]) {
             int possibleScore = 2 * nums[i] + 19;
             rules[1] = possibleScore;
-            integers[1][0] =
-                nums[i];  // Storing value of xa for output statement
+            // Storing value of xa for output statement
+            integers[1][0] = nums[i];
         }
         i = i + 1;
     }
@@ -68,8 +68,8 @@ int main() {
         if (nums[i] == nums[i + 1] && nums[i] == nums[i + 2]) {
             int possibleScore = 3 * nums[i] + 21;
             rules[2] = possibleScore;
-            integers[2][0] =
-                nums[i];  // Storing value of xa for output statement
+            // Storing value of xa for output statement
+            integers[2][0] = nums[i];
         }
         i = i + 1;
     }
@@ -81,8 +81,8 @@ int main() {
             nums[i] == nums[i + 3]) {
             int possibleScore = 4 * nums[i] + 23;
             rules[3] = possibleScore;
-            integers[3][0] =
-                nums[i];  // Storing value of xa for output statement
+            // Storing value of xa for output statement
+            integers[3][0] = nums[i];
         }
         i = i + 1;
     }
@@ -94,8 +94,8 @@ int main() {
             nums[i] == nums[i + 3] && nums[i] == nums[i + 4]) {
             int possibleScore = 5 * nums[i] + 25;
             rules[4] = possibleScore;
-            integers[4][0] =
-                nums[i];  // Storing value of xa for output statement
+            // Storing value of xa for output statement
+            integers[4][0] = nums[i];
         }
         i = i + 1;
     }
@@ -106,8 +106,8 @@ int main() {
         nums[0] == nums[5]) {
         int possibleScore = 6 * nums[0] + 27;
         rules[5] = possibleScore;
-        integers[5][0] =
-            nums[0];  // Storing value of xa for output statement
+        // Storing value of xa for output statement
+        integers[5][0] = nums[0];
     }
 
     // For "sequence-2" rule
