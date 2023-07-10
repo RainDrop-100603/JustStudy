@@ -43,7 +43,7 @@ int main(void) {
     }
 
     // alphabetical order flim flam(0) - match(1~5) - sequence(6~10) -
-    // sum(11 ~ 14) - total(15) For "total" rule
+    // sum(11 ~ 14) - total(15)
 
     // For "total score" rule
     totalScore(nums, rules, integers[15], 15);
@@ -117,9 +117,11 @@ int getInput(int* nums) {
         }
         i = i + 1;
     }
+    // no problem, return TRUE
     return TRUE;
 }
 void totalScore(int* nums, int* rules, int* integers, int priority) {
+    // check total score
     int totalScore =
         (nums[0] + nums[1] + nums[2] + nums[3] + nums[4] + nums[5]);
     rules[priority] = totalScore;
@@ -132,6 +134,7 @@ void totalScore(int* nums, int* rules, int* integers, int priority) {
 }
 
 void match2(int* nums, int* rules, int* integers, int priority) {
+    // check match2
     int i = 0;
     while (i < 5) {
         if (nums[i] == nums[i + 1]) {
@@ -144,6 +147,7 @@ void match2(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void match3(int* nums, int* rules, int* integers, int priority) {
+    // check match3
     int i = 0;
     while (i < 4) {
         if (nums[i] == nums[i + 1] && nums[i] == nums[i + 2]) {
@@ -156,6 +160,7 @@ void match3(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void match4(int* nums, int* rules, int* integers, int priority) {
+    // check match4
     int i = 0;
     while (i < 3) {
         if (nums[i] == nums[i + 1] && nums[i] == nums[i + 2] &&
@@ -169,6 +174,7 @@ void match4(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void match5(int* nums, int* rules, int* integers, int priority) {
+    // check match5
     int i = 0;
     while (i < 2) {
         if (nums[i] == nums[i + 1] && nums[i] == nums[i + 2] &&
@@ -182,6 +188,7 @@ void match5(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void match6(int* nums, int* rules, int* integers, int priority) {
+    // check match6
     if (nums[0] == nums[1] && nums[0] == nums[2] &&
         nums[0] == nums[3] && nums[0] == nums[4] &&
         nums[0] == nums[5]) {
@@ -192,6 +199,7 @@ void match6(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void sequence2(int* nums, int* rules, int* integers, int priority) {
+    // check sequence2 for near number
     int i = 1;
     while (i < 6) {
         if (nums[i] - 1 == nums[i - 1]) {
@@ -204,6 +212,7 @@ void sequence2(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void sequence3(int* nums, int* rules, int* integers, int priority) {
+    // eliminate 3 numbers(i,j,k) and check sequence3
     int i = 5;
     while (i >= 2) {
         int j = i - 1;
@@ -239,6 +248,7 @@ void sequence3(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void sequence4(int* nums, int* rules, int* integers, int priority) {
+    // eliminate 2 numbers(i,j) and check sequence4
     int i = 5;
     while (i >= 1) {
         int j = i - 1;
@@ -272,6 +282,7 @@ void sequence4(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void sequence5(int* nums, int* rules, int* integers, int priority) {
+    // eliminate 1 numbers(i) and check sequence5
     int i = 5;
     while (i >= 0) {
         // find xa, xb, xc.
@@ -303,6 +314,7 @@ void sequence5(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void sequence6(int* nums, int* rules, int* integers, int priority) {
+    // check sequence6
     if (nums[5] - 1 == nums[4] && nums[5] - 2 == nums[3] &&
         nums[5] - 3 == nums[2] && nums[5] - 4 == nums[1] &&
         nums[5] - 5 == nums[0]) {
@@ -317,6 +329,7 @@ void sequence6(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void sum2(int* nums, int* rules, int* integers, int priority) {
+    // select 3 numbers(i,j,k) and check sum2
     int i = 5;
     while (i >= 2) {
         int j = i - 1;
@@ -340,6 +353,7 @@ void sum2(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void sum3(int* nums, int* rules, int* integers, int priority) {
+    // eliminate 2 numbers(i,j) and check sum3
     int i = 0;
     while (i < 6) {
         int j = i + 1;
@@ -377,6 +391,7 @@ void sum3(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void sum4(int* nums, int* rules, int* integers, int priority) {
+    // eliminate 1 numbers(i) and check sum4
     int i = 0;
     while (i < 6) {
         // find xa, xb, xc, xd, xe.
@@ -411,6 +426,7 @@ void sum4(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void sum5(int* nums, int* rules, int* integers, int priority) {
+    // check sum5
     if (nums[0] + nums[1] + nums[2] + nums[3] + nums[4] == nums[5]) {
         int possibleScore = nums[0] + nums[5] + 49;
         rules[priority] = possibleScore;
@@ -423,6 +439,7 @@ void sum5(int* nums, int* rules, int* integers, int priority) {
     }
 }
 void filmFlam(int* nums, int* rules, int* integers, int priority) {
+    // select 3 numbers(i,j,k) and check film-flam
     int i = 0;
     while (i < 6) {
         int j = i + 1;
@@ -471,11 +488,13 @@ void filmFlam(int* nums, int* rules, int* integers, int priority) {
     }
 }
 int findHighest(int* rules) {
+    // find highest - score idx
+
     // alphabetical order flim flam(0) - match(1~5) - sequence(6~10) -
-    // sum(11 ~ 14) - total(15) Output the result
-    int i = 0;
+    // sum(11 ~ 14) - total(15)
     int maximumScore = 0;
     int highest = 0;
+    int i = 0;
     while (i < 16) {
         if (rules[i] > maximumScore) {
             maximumScore = rules[i];
@@ -486,8 +505,10 @@ int findHighest(int* rules) {
     return highest;
 }
 void makeOutput(int* rules, int* integers, int highest) {
+    // output result
+
     // alphabetical order flim flam(0) - match(1~5) - sequence(6~10) -
-    // sum(11 ~ 14) - total(15) Output the result
+    // sum(11 ~ 14) - total(15)
 
     int maximumScore = rules[highest];
     if (highest == 15) {
