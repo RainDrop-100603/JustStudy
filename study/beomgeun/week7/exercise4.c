@@ -12,6 +12,7 @@ int main(void) {
     for (int i = 0; i < length; i++) {
         printf("%c\n", line[i]);
     }
+    return 0;
 }
 
 int strlength(char *s) {
