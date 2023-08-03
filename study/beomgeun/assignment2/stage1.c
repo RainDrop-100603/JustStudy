@@ -41,6 +41,9 @@ struct tile {
 // stage 1.1
 void stage1_1(struct tile map[MAP_ROWS][MAP_COLUMNS], int* lives, int* money, int* startRow, int* startCol, int* endRow, int* endCol);
 
+// stage 2.2
+void stage2_2(struct tile map[MAP_ROWS][MAP_COLUMNS], int* initialEnemies, int startRow, int startCol);
+
 // Validates if a given point is within map boundaries.
 // Returns 1 if valid, 0 otherwise.
 int valid_point(int row, int column);
@@ -86,14 +89,7 @@ int main(void) {
     // `n_enemies` value at that position to be this scanned value!
 
     int initialEnemies;
-    printf("Initial Enemies: ");
-    scanf("%d", &initialEnemies);
-
-    if (initialEnemies > 0) {
-        map[startRow][startCol].entity = ENEMY;
-        map[startRow][startCol].n_enemies = initialEnemies;
-    }
-
+    stage2_2(map, &initialEnemies, startRow, startCol);
     print_map(map, lives, money);
 
     int lakeRow, lakeCol, lakeHeight, lakeWidth;
@@ -126,6 +122,16 @@ void stage1_1(struct tile map[MAP_ROWS][MAP_COLUMNS], int* lives, int* money, in
 
     map[*startRow][*startCol].land = PATH_START;
     map[*endRow][*endCol].land = PATH_END;
+}
+
+void stage2_2(struct tile map[MAP_ROWS][MAP_COLUMNS], int* initialEnemies, int startRow, int startCol) {
+    printf("Initial Enemies: ");
+    scanf("%d", initialEnemies);
+
+    if (initialEnemies > 0) {
+        map[startRow][startCol].entity = ENEMY;
+        map[startRow][startCol].n_enemies = *initialEnemies;
+    }
 }
 
 int valid_point(int row, int column) { return row >= 0 && row < MAP_ROWS && column >= 0 && column < MAP_COLUMNS; }
