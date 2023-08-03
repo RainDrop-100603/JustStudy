@@ -38,6 +38,9 @@ struct tile {
 ////////////////////////////////////////////////////////////////////////////////
 // Function prototypes.
 
+// stage 1.1
+void stage1_1(struct tile map[MAP_ROWS][MAP_COLUMNS], int* lives, int* money, int* startRow, int* startCol, int* endRow, int* endCol);
+
 // Validates if a given point is within map boundaries.
 // Returns 1 if valid, 0 otherwise.
 int valid_point(int row, int column);
@@ -75,22 +78,7 @@ int main(void) {
     // print out the map!
     int lives, money;
     int startRow, startCol, endRow, endCol;
-
-    printf("Starting Lives: ");
-    scanf("%d", &lives);
-
-    printf("Starting Money($): ");
-    scanf("%d", &money);
-
-    printf("Start Point: ");
-    scanf("%d %d", &startRow, &startCol);
-
-    printf("End Point: ");
-    scanf("%d %d", &endRow, &endCol);
-
-    map[startRow][startCol].land = PATH_START;
-    map[endRow][endCol].land = PATH_END;
-
+    stage1_1(map, &lives, &money, &startRow, &startCol, &endRow, &endCol);
     print_map(map, lives, money);
 
     // TODO: Stage 1.2 - Scan in the initial enemies. Make sure you change the
@@ -122,6 +110,23 @@ int main(void) {
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////  YOUR FUNCTIONS //////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+void stage1_1(struct tile map[MAP_ROWS][MAP_COLUMNS], int* lives, int* money, int* startRow, int* startCol, int* endRow, int* endCol) {
+    printf("Starting Lives: ");
+    scanf("%d", lives);
+
+    printf("Starting Money($): ");
+    scanf("%d", money);
+
+    printf("Start Point: ");
+    scanf("%d %d", startRow, startCol);
+
+    printf("End Point: ");
+    scanf("%d %d", endRow, endCol);
+
+    map[*startRow][*startCol].land = PATH_START;
+    map[*endRow][*endCol].land = PATH_END;
+}
 
 int valid_point(int row, int column) { return row >= 0 && row < MAP_ROWS && column >= 0 && column < MAP_COLUMNS; }
 
