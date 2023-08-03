@@ -233,7 +233,7 @@ void print_tile(struct tile tile, int entity_print) {
     } else {
         switch (tile.entity) {
             case EMPTY:
-                printf(" ");
+                printf("   ");
                 break;
             case ENEMY:
                 printf("%03d", tile.n_enemies);
