@@ -10,9 +10,6 @@
 #define MAP_ROWS 6
 #define MAP_COLUMNS 12
 
-////////////////////////////////////////////////////////////////////////////////
-/////////////////////////// USER DEFINED TYPES  ////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 enum land_type { GRASS, WATER, PATH_START, PATH_END, PATH_UP, PATH_RIGHT, PATH_DOWN, PATH_LEFT, TELEPORTER };
 
 enum entity {
@@ -30,57 +27,75 @@ struct tile {
     int n_enemies;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////  YOUR FUNCTION PROTOTYPE  /////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+int valid_point(int row, int column);
+void add_lake(struct tile map[MAP_ROWS][MAP_COLUMNS], int startRow, int startCol, int height, int width);
 
-// TODO: Put your function prototypes here
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////// PROVIDED FUNCTION PROTOTYPE  ////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 void initialise_map(struct tile map[MAP_ROWS][MAP_COLUMNS]);
 void print_map(struct tile map[MAP_ROWS][MAP_COLUMNS], int lives, int money);
 void print_tile(struct tile tile, int entity_print);
 
 int main(void) {
-    // This `map` variable is a 2D array of `struct tile`s.
-    // It is `MAP_ROWS` x `MAP_COLUMNS` in size (which is 6x12 for this
-    // assignment!)
     struct tile map[MAP_ROWS][MAP_COLUMNS];
 
-    // This will initialise all tiles in the map to have GRASS land and EMPTY
-    // entity values.
     initialise_map(map);
 
-    // TODO: Start writing code here!
+    int lives, money;
+    int startRow, startCol, endRow, endCol;
 
-    // TODO: Stage 1.1 - Scan in lives, money and start/ending points, then
-    // print out the map!
+    printf("Starting Lives: ");
+    scanf("%d", &lives);
 
-    // TODO: Stage 1.2 - Scan in the initial enemies. Make sure you change the
-    // `entity` at the starting position to be ENEMY, and that you update the
-    // `n_enemies` value at that position to be this scanned value!
+    printf("Starting Money($): ");
+    scanf("%d", &money);
+
+    printf("Start Point: ");
+    scanf("%d %d", &startRow, &startCol);
+
+    printf("End Point: ");
+    scanf("%d %d", &endRow, &endCol);
+
+    map[startRow][startCol].land = PATH_START;
+    map[endRow][endCol].land = PATH_END;
+
+    print_map(map, lives, money);
+
+    int initialEnemies;
+    printf("Initial Enemies: ");
+    scanf("%d", &initialEnemies);
+
+    if (initialEnemies > 0) {
+        map[startRow][startCol].entity = ENEMY;
+        map[startRow][startCol].n_enemies = initialEnemies;
+    }
+
+    print_map(map, lives, money);
+
+    int lakeRow, lakeCol, lakeHeight, lakeWidth;
+    printf("Enter Lake: ");
+    scanf("%d %d %d %d", &lakeRow, &lakeCol, &lakeHeight, &lakeWidth);
+
+    add_lake(map, lakeRow, lakeCol, lakeHeight, lakeWidth);
+
+    print_map(map, lives, money);
+
+    return 0;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////  YOUR FUNCTIONS //////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+int valid_point(int row, int column) { return row >= 0 && row < MAP_ROWS && column >= 0 && column < MAP_COLUMNS; }
 
-// TODO: Put your functions here
+void add_lake(struct tile map[MAP_ROWS][MAP_COLUMNS], int startRow, int startCol, int height, int width) {
+    if (!valid_point(startRow + height - 1, startCol + width - 1)) {
+        printf("Error: Lake out of bounds, ignoring...\n");
+        return;
+    }
 
-////////////////////////////////////////////////////////////////////////////////
-/////////////////////////// PROVIDED FUNCTIONS  ///////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+    for (int row = startRow; row < startRow + height; ++row) {
+        for (int col = startCol; col < startCol + width; ++col) {
+            map[row][col].land = WATER;
+        }
+    }
+}
 
-/**
- * Initialises map tiles to contain GRASS land and EMPTY entity.
- *
- * Parameters:
- *     map - The map to initialise.
- * Returns:
- *     Nothing.
- */
 void initialise_map(struct tile map[MAP_ROWS][MAP_COLUMNS]) {
     for (int row = 0; row < MAP_ROWS; ++row) {
         for (int col = 0; col < MAP_COLUMNS; ++col) {
@@ -91,17 +106,6 @@ void initialise_map(struct tile map[MAP_ROWS][MAP_COLUMNS]) {
     }
 }
 
-/**
- * Prints all map tiles based on their value, with a header displaying lives
- * and money.
- *
- * Parameters:
- *     map   - The map to print tiles from.
- *     lives - The number of lives to print with the map.
- *     money - The amount of money to print with the map.
- * Returns:
- *     Nothing.
- */
 void print_map(struct tile map[MAP_ROWS][MAP_COLUMNS], int lives, int money) {
     printf("\nLives: %d Money: $%d\n", lives, money);
     for (int row = 0; row < MAP_ROWS * 2; ++row) {
@@ -112,54 +116,60 @@ void print_map(struct tile map[MAP_ROWS][MAP_COLUMNS], int lives, int money) {
     }
 }
 
-/**
- * Prints either the land or entity component of a single tile, based on
- * the `land_print` parameter;
- *
- * Parameters:
- *     tile         - The tile to print the land/entity from
- *     land_print - Whether to print the land part of the tile or the entity
- *         part of the tile. If this value is 0, it prints the land, otherwise
- *         it prints the entity.
- * Returns:
- *     Nothing.
- */
-void print_tile(struct tile tile, int land_print) {
-    if (land_print) {
-        if (tile.land == GRASS) {
-            printf(" . ");
-        } else if (tile.land == WATER) {
-            printf(" ~ ");
-        } else if (tile.land == PATH_START) {
-            printf(" S ");
-        } else if (tile.land == PATH_END) {
-            printf(" E ");
-        } else if (tile.land == PATH_UP) {
-            printf(" ^ ");
-        } else if (tile.land == PATH_RIGHT) {
-            printf(" > ");
-        } else if (tile.land == PATH_DOWN) {
-            printf(" v ");
-        } else if (tile.land == PATH_LEFT) {
-            printf(" < ");
-        } else if (tile.land == TELEPORTER) {
-            printf("( )");
-        } else {
-            printf(" ? ");
+void print_tile(struct tile tile, int entity_print) {
+    if (entity_print) {
+        switch (tile.land) {
+            case GRASS:
+                printf(" . ");
+                break;
+            case WATER:
+                printf(" ~ ");
+                break;
+            case PATH_START:
+                printf(" S ");
+                break;
+            case PATH_END:
+                printf(" E ");
+                break;
+            case PATH_UP:
+                printf(" ^ ");
+                break;
+            case PATH_RIGHT:
+                printf(" > ");
+                break;
+            case PATH_DOWN:
+                printf(" v ");
+                break;
+            case PATH_LEFT:
+                printf(" < ");
+                break;
+            case TELEPORTER:
+                printf("( )");
+                break;
+            default:
+                printf(" ? ");
+                break;
         }
     } else {
-        if (tile.entity == EMPTY) {
-            printf("   ");
-        } else if (tile.entity == ENEMY) {
-            printf("%03d", tile.n_enemies);
-        } else if (tile.entity == BASIC_TOWER) {
-            printf("[B]");
-        } else if (tile.entity == POWER_TOWER) {
-            printf("[P]");
-        } else if (tile.entity == FORTIFIED_TOWER) {
-            printf("[F]");
-        } else {
-            printf(" ? ");
+        switch (tile.entity) {
+            case EMPTY:
+                printf(" ");
+                break;
+            case ENEMY:
+                printf("%03d", tile.n_enemies);
+                break;
+            case BASIC_TOWER:
+                printf("[B]");
+                break;
+            case POWER_TOWER:
+                printf("[P]");
+                break;
+            case FORTIFIED_TOWER:
+                printf("[F]");
+                break;
+            default:
+                printf(" ? ");
+                break;
         }
     }
 }
