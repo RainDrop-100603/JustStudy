@@ -12,6 +12,9 @@
 #define MAP_ROWS 6
 #define MAP_COLUMNS 12
 
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////// USER DEFINED TYPES  ////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // Defined types for various land types and entities in the game.
 enum land_type { GRASS, WATER, PATH_START, PATH_END, PATH_UP, PATH_RIGHT, PATH_DOWN, PATH_LEFT, TELEPORTER };
 
@@ -30,6 +33,9 @@ struct tile {
     int n_enemies;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////  YOUR FUNCTION PROTOTYPE  /////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 // Function prototypes.
 
 // Validates if a given point is within map boundaries.
@@ -38,6 +44,10 @@ int valid_point(int row, int column);
 
 // Adds a lake to the map at the specified location.
 void add_lake(struct tile map[MAP_ROWS][MAP_COLUMNS], int startRow, int startCol, int height, int width);
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////// PROVIDED FUNCTION PROTOTYPE  ////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 // Initializes all the tiles of the map to GRASS and EMPTY.
 void initialise_map(struct tile map[MAP_ROWS][MAP_COLUMNS]);
@@ -50,9 +60,19 @@ void print_tile(struct tile tile, int entity_print);
 
 // Main function of the program.
 int main(void) {
+    // This `map` variable is a 2D array of `struct tile`s.
+    // It is `MAP_ROWS` x `MAP_COLUMNS` in size (which is 6x12 for this
+    // assignment!)
     struct tile map[MAP_ROWS][MAP_COLUMNS];
+
+    // This will initialise all tiles in the map to have GRASS land and EMPTY
+    // entity values.
     initialise_map(map);
 
+    // TODO: Start writing code here!
+
+    // TODO: Stage 1.1 - Scan in lives, money and start/ending points, then
+    // print out the map!
     int lives, money;
     int startRow, startCol, endRow, endCol;
 
@@ -72,6 +92,10 @@ int main(void) {
     map[endRow][endCol].land = PATH_END;
 
     print_map(map, lives, money);
+
+    // TODO: Stage 1.2 - Scan in the initial enemies. Make sure you change the
+    // `entity` at the starting position to be ENEMY, and that you update the
+    // `n_enemies` value at that position to be this scanned value!
 
     int initialEnemies;
     printf("Initial Enemies: ");
@@ -95,6 +119,10 @@ int main(void) {
     return 0;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////  YOUR FUNCTIONS //////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 int valid_point(int row, int column) { return row >= 0 && row < MAP_ROWS && column >= 0 && column < MAP_COLUMNS; }
 
 void add_lake(struct tile map[MAP_ROWS][MAP_COLUMNS], int startRow, int startCol, int height, int width) {
@@ -110,6 +138,18 @@ void add_lake(struct tile map[MAP_ROWS][MAP_COLUMNS], int startRow, int startCol
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////// PROVIDED FUNCTIONS  ///////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Initialises map tiles to contain GRASS land and EMPTY entity.
+ *
+ * Parameters:
+ *     map - The map to initialise.
+ * Returns:
+ *     Nothing.
+ */
 void initialise_map(struct tile map[MAP_ROWS][MAP_COLUMNS]) {
     for (int row = 0; row < MAP_ROWS; ++row) {
         for (int col = 0; col < MAP_COLUMNS; ++col) {
@@ -119,7 +159,17 @@ void initialise_map(struct tile map[MAP_ROWS][MAP_COLUMNS]) {
         }
     }
 }
-
+/**
+ * Prints all map tiles based on their value, with a header displaying lives
+ * and money.
+ *
+ * Parameters:
+ *     map   - The map to print tiles from.
+ *     lives - The number of lives to print with the map.
+ *     money - The amount of money to print with the map.
+ * Returns:
+ *     Nothing.
+ */
 void print_map(struct tile map[MAP_ROWS][MAP_COLUMNS], int lives, int money) {
     printf("\nLives: %d Money: $%d\n", lives, money);
     for (int row = 0; row < MAP_ROWS * 2; ++row) {
@@ -129,7 +179,18 @@ void print_map(struct tile map[MAP_ROWS][MAP_COLUMNS], int lives, int money) {
         printf("\n");
     }
 }
-
+/**
+ * Prints either the land or entity component of a single tile, based on
+ * the `land_print` parameter;
+ *
+ * Parameters:
+ *     tile         - The tile to print the land/entity from
+ *     land_print - Whether to print the land part of the tile or the entity
+ *         part of the tile. If this value is 0, it prints the land, otherwise
+ *         it prints the entity.
+ * Returns:
+ *     Nothing.
+ */
 void print_tile(struct tile tile, int entity_print) {
     if (entity_print) {
         switch (tile.land) {
