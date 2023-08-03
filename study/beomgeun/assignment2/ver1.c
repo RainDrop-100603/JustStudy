@@ -3,13 +3,16 @@
 // This program was written by [your name] (z5555555)
 // on [date]
 //
-// TODO: Description of program
+// This program is a game in which the user controls a map with various entities
+// and tiles. The user can define the start and end points, the number of enemies,
+// and the position of a lake in the map.
 
 #include <stdio.h>
 
 #define MAP_ROWS 6
 #define MAP_COLUMNS 12
 
+// Defined types for various land types and entities in the game.
 enum land_type { GRASS, WATER, PATH_START, PATH_END, PATH_UP, PATH_RIGHT, PATH_DOWN, PATH_LEFT, TELEPORTER };
 
 enum entity {
@@ -20,23 +23,34 @@ enum entity {
     FORTIFIED_TOWER,
 };
 
+// Structure defining the tile of the map.
 struct tile {
     enum land_type land;
     enum entity entity;
-
     int n_enemies;
 };
 
+// Function prototypes.
+
+// Validates if a given point is within map boundaries.
+// Returns 1 if valid, 0 otherwise.
 int valid_point(int row, int column);
+
+// Adds a lake to the map at the specified location.
 void add_lake(struct tile map[MAP_ROWS][MAP_COLUMNS], int startRow, int startCol, int height, int width);
 
+// Initializes all the tiles of the map to GRASS and EMPTY.
 void initialise_map(struct tile map[MAP_ROWS][MAP_COLUMNS]);
+
+// Prints the map along with the lives and money.
 void print_map(struct tile map[MAP_ROWS][MAP_COLUMNS], int lives, int money);
+
+// Prints a tile based on its land and entity values.
 void print_tile(struct tile tile, int entity_print);
 
+// Main function of the program.
 int main(void) {
     struct tile map[MAP_ROWS][MAP_COLUMNS];
-
     initialise_map(map);
 
     int lives, money;
