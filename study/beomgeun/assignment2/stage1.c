@@ -44,12 +44,15 @@ void stage1_1(struct tile map[MAP_ROWS][MAP_COLUMNS], int* lives, int* money, in
 // stage 1.2
 void stage1_2(struct tile map[MAP_ROWS][MAP_COLUMNS], int* initialEnemies, int startRow, int startCol);
 
-// Validates if a given point is within map boundaries.
-// Returns 1 if valid, 0 otherwise.
-int valid_point(int row, int column);
+// stage 1.3
+void stage1_3(struct tile map[MAP_ROWS][MAP_COLUMNS], int* lakeRow, int* lakeCol, int* lakeHeight, int* lakeWidth);
 
 // Adds a lake to the map at the specified location.
 void add_lake(struct tile map[MAP_ROWS][MAP_COLUMNS], int startRow, int startCol, int height, int width);
+
+// Validates if a given point is within map boundaries.
+// Returns 1 if valid, 0 otherwise.
+int valid_point(int row, int column);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////// PROVIDED FUNCTION PROTOTYPE  ////////////////////////////
@@ -92,12 +95,9 @@ int main(void) {
     stage1_2(map, &initialEnemies, startRow, startCol);
     print_map(map, lives, money);
 
+    // stage 1.3
     int lakeRow, lakeCol, lakeHeight, lakeWidth;
-    printf("Enter Lake: ");
-    scanf("%d %d %d %d", &lakeRow, &lakeCol, &lakeHeight, &lakeWidth);
-
-    add_lake(map, lakeRow, lakeCol, lakeHeight, lakeWidth);
-
+    stage1_3(map, &lakeRow, &lakeCol, &lakeHeight, &lakeWidth);
     print_map(map, lives, money);
 
     return 0;
@@ -134,7 +134,12 @@ void stage1_2(struct tile map[MAP_ROWS][MAP_COLUMNS], int* initialEnemies, int s
     }
 }
 
-int valid_point(int row, int column) { return row >= 0 && row < MAP_ROWS && column >= 0 && column < MAP_COLUMNS; }
+void stage1_3(struct tile map[MAP_ROWS][MAP_COLUMNS], int* lakeRow, int* lakeCol, int* lakeHeight, int* lakeWidth) {
+    printf("Enter Lake: ");
+    scanf("%d %d %d %d", lakeRow, lakeCol, lakeHeight, lakeWidth);
+
+    add_lake(map, *lakeRow, *lakeCol, *lakeHeight, *lakeWidth);
+}
 
 void add_lake(struct tile map[MAP_ROWS][MAP_COLUMNS], int startRow, int startCol, int height, int width) {
     if (!valid_point(startRow + height - 1, startCol + width - 1)) {
@@ -148,6 +153,8 @@ void add_lake(struct tile map[MAP_ROWS][MAP_COLUMNS], int startRow, int startCol
         }
     }
 }
+
+int valid_point(int row, int column) { return row >= 0 && row < MAP_ROWS && column >= 0 && column < MAP_COLUMNS; }
 
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////////// PROVIDED FUNCTIONS  ///////////////////////////////
